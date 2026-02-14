@@ -308,6 +308,12 @@
       "decision": "Theorem42 接口结构化：新增 `TwoLayerRealizationAlgebraOps` 与 `TwoLayerStoneRouteAlgebraicGeneratorParamSepData`，将 `hConst/hAdd/hMul` 三个存在性前提收敛为可计算代数操作接口，并新增 strict 包装器 `theorem42_strict_final_of_algebraic_generator_param_sep`。",
       "status": "active",
       "impact": "调用端前提从“存在性引理集合”收敛为“操作对象 + 语义等式”，更便于 Codex 在项目内复用与自动构造证明上下文。"
+    },
+    {
+      "date": "2026-02-14",
+      "decision": "Theorem42 接口再下沉：新增 `TwoLayerStoneRouteAlgebraicExistsParamSepData`，仅需给出 const/add/mul 的存在性条件；通过 `Classical.choose` 自动生成 `TwoLayerRealizationAlgebraOps`，并新增 strict 包装器 `theorem42_strict_final_of_algebraic_exists_param_sep`。",
+      "status": "active",
+      "impact": "调用端可从“显式操作构造”降到“存在性证明”，进一步减少样板并保持 strict 路线可编译验证。"
     }
   ],
   "modules": [
@@ -2271,7 +2277,7 @@
       "last_search_date": "2026-02-14",
       "sources_checked": "paper-template Theorem42.StoneRoute/StrictFinal/SmokeFinal；mathlib: Algebra.adjoin_induction, Set.SeparatesPoints, StoneWeierstrass",
       "candidate_repo": "leanprover-community/mathlib4",
-      "next_action": "继续下沉：尝试从更贴近课件的网络参数约束/激活条件自动构造代数生成器操作（const/add/mul）与分离点条件，减少人工提供结构字段。"
+      "next_action": "继续下沉：从更自然的网络参数约束（如宽度拼接、零单元、激活闭包）推导 const/add/mul 存在性，减少人工提供存在性证明。"
     }
   ],
   "books": [
