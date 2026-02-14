@@ -320,6 +320,12 @@
       "decision": "Theorem42 接口继续下沉：新增 `TwoLayerStoneRouteEvalExistsParamSepData`，仅要求在 `evalTwoLayerParams` 层给出 const/add/mul 闭包存在性；自动提升为函数层存在性并新增 strict 包装器 `theorem42_strict_final_of_eval_exists_param_sep`。",
       "status": "active",
       "impact": "调用端可只在网络公式级别证明闭包条件，不必手写 `C(UnitCube d, ℝ)` 等式，进一步降低接入成本。"
+    },
+    {
+      "date": "2026-02-14",
+      "decision": "Theorem42 接口继续构造化：新增 `TwoLayerEvalAlgebraOps` 与 `TwoLayerStoneRouteEvalConstructiveParamSepData`，调用端直接提供 const/add/mul 参数构造子及 eval 语义；系统自动降解到 strict 路线。",
+      "status": "active",
+      "impact": "调用端从“存在性证明”进一步收敛为“构造函数 + 语义证明”，便于后续从网络拼接算子自动派生接口实例。"
     }
   ],
   "modules": [
@@ -2283,7 +2289,7 @@
       "last_search_date": "2026-02-14",
       "sources_checked": "paper-template Theorem42.StoneRoute/StrictFinal/SmokeFinal；mathlib: Algebra.adjoin_induction, Set.SeparatesPoints, StoneWeierstrass",
       "candidate_repo": "leanprover-community/mathlib4",
-      "next_action": "继续下沉：从网络构造子（如宽度拼接、零网络、乘法闭包）自动推出 eval 层 `hConstEvalExists/hAddEvalExists/hMulEvalExists` 与 `hSepParam`，再自动接入 strict 入口。"
+      "next_action": "下一步聚焦分离点自动化：从网络构造子（宽度拼接、零网络、线性分离单元）自动推出 `hSepParam`，完成构造子到 strict 入口的全自动桥接。"
     }
   ],
   "books": [
