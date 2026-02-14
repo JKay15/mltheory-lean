@@ -302,6 +302,12 @@
       "decision": "Theorem42 接口再降黑话：新增参数级分离点接口（`hSepParam : ∀ x ≠ y, ∃ p, realizeC p x ≠ realizeC p y`）及自动转换链，新增 strict 包装器 `theorem42_strict_final_of_generated_param_sep` 与 `theorem42_strict_final_of_algebra_closed_param_sep`。",
       "status": "active",
       "impact": "调用端不再需要直接书写 `Set.SeparatesPoints`；可用更直观的参数级分离条件接入 strict 路线。"
+    },
+    {
+      "date": "2026-02-14",
+      "decision": "Theorem42 接口结构化：新增 `TwoLayerRealizationAlgebraOps` 与 `TwoLayerStoneRouteAlgebraicGeneratorParamSepData`，将 `hConst/hAdd/hMul` 三个存在性前提收敛为可计算代数操作接口，并新增 strict 包装器 `theorem42_strict_final_of_algebraic_generator_param_sep`。",
+      "status": "active",
+      "impact": "调用端前提从“存在性引理集合”收敛为“操作对象 + 语义等式”，更便于 Codex 在项目内复用与自动构造证明上下文。"
     }
   ],
   "modules": [
@@ -2263,9 +2269,9 @@
       "topic": "严格版 Theorem42：Stone 结果到二层类闭包桥接",
       "status": "partial",
       "last_search_date": "2026-02-14",
-      "sources_checked": "paper-template Theorem42.StoneRoute/StrictFinal/SmokeFinal；mathlib: Set.SeparatesPoints, Algebra.adjoin_induction, StoneWeierstrass",
+      "sources_checked": "paper-template Theorem42.StoneRoute/StrictFinal/SmokeFinal；mathlib: Algebra.adjoin_induction, Set.SeparatesPoints, StoneWeierstrass",
       "candidate_repo": "leanprover-community/mathlib4",
-      "next_action": "继续下沉：评估是否可从更结构化的特征族条件自动推出参数级分离与代数闭包，进一步逼近课件自然前提。"
+      "next_action": "继续下沉：尝试从更贴近课件的网络参数约束/激活条件自动构造代数生成器操作（const/add/mul）与分离点条件，减少人工提供结构字段。"
     }
   ],
   "books": [
