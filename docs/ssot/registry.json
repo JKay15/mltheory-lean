@@ -344,6 +344,12 @@
       "decision": "补充单点域自动实例化路径：新增 `TwoLayerEvalAlgebraOps.toNaturalData_of_subsingleton` 与 `theorem42_strict_final_natural_of_subsingleton`，在 `UnitCube d` 为 subsingleton 时免去分离构造子输入。",
       "status": "active",
       "impact": "为最终自然入口提供可执行的零样板实例化通道，降低最小可用接入成本。"
+    },
+    {
+      "date": "2026-02-14",
+      "decision": "外部候选复检：发现 `Leorasz/uat_proof`（Lean4，Leshno 1993 UAT 方向，当前 WIP，仓库仅 `README.md` 与 `step1.lean`，无可直接依赖的 Lake 项目骨架）。",
+      "status": "active",
+      "impact": "可作为定理路线参考证据，但暂不适合作为 git 依赖；继续采用“本仓自研 + 声明级复刻评估”策略。"
     }
   ],
   "modules": [
@@ -2295,9 +2301,9 @@
       "topic": "外部候选声明级复刻清单（不直接加依赖）",
       "status": "partial",
       "last_search_date": "2026-02-14",
-      "sources_checked": "auto-res/lean-rademacher, YuanheZ/lean-stat-learning-theory（README/lakefile/toolchain）",
-      "candidate_repo": "auto-res/lean-rademacher; YuanheZ/lean-stat-learning-theory",
-      "next_action": "按声明级清单在本仓先复刻并回归验证；仅当 Lean 版本与 license 稳定后评估 git 依赖接入。"
+      "sources_checked": "auto-res/lean-rademacher, YuanheZ/lean-stat-learning-theory（README/lakefile/toolchain）, Leorasz/uat_proof（README/step1.lean，GitHub API）",
+      "candidate_repo": "auto-res/lean-rademacher; YuanheZ/lean-stat-learning-theory; Leorasz/uat_proof",
+      "next_action": "优先复刻可独立引用的声明；`Leorasz/uat_proof` 先做路线参考，不作为直接依赖，待其项目骨架成熟后再评估接入。"
     },
     {
       "book": "StrictFormalization",
