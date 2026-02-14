@@ -63,3 +63,5 @@
 | 2026-02-15 | Theorem42 接口补桥：新增 `TwoLayerStoneRouteEvalSeparationOpsData.toNaturalData` 与 strict 包装器 `theorem42_strict_final_natural_of_eval_separation_ops`，使 EvalSeparationOps 可直接走自然入口。 | active | 调用端若已有 `ops + sepParam` 可直接接入自然 strict 接口，减少 Stone 中间对象显式装配。 |
 | 2026-02-15 | 外部复检新增 `or4nge19/NeuralNetworks`（Apache-2.0，Lean4 v4.24.0-rc1）：内容以 Hopfield/LLM/NN 建模为主，未提供可直接复用的 UAT（Theorem42）定理入口。 | active | 作为神经网络形式化参考候选保留，但当前不作为 Theorem42 严格路线依赖。 |
 | 2026-02-15 | Theorem42 接口再去前提化：新增 `TwoLayerStoneRouteEvalCoordinateOpsData` 与 `toEvalSeparationOpsData`，并提供 strict 包装器 `theorem42_strict_final_natural_of_eval_coordinate_ops`。 | active | 调用端只需给出坐标参数族 `coordParam` 与代数操作，即可自动合成点分离并接入自然 strict 入口。 |
+| 2026-02-15 | Theorem42 主接口收口：引入 `TwoLayerTheorem42FinalData`（最终对象）与 `theorem42_strict_final_final`/`theorem42_strict_final_class_dense`，并在最终对象上显式提供 const/add/mul/separatesPoints 能力定理。 | active | Theorem42 现在具备‘函数类本身稠密’的稳定最终入口，后续工作聚焦于具体激活函数实例化，不再扩展中间桥接层。 |
+| 2026-02-15 | 签名门禁升级：`check_final_signature.sh` 新增对 `theorem42_strict_final_final` 的禁止中间前提检查。 | active | 保证 canonical Theorem42 最终入口不回归到 `hDense/UniversalApprox.../SampleConcentration...` 等中间假设接口。 |

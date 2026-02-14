@@ -374,6 +374,18 @@
       "decision": "Theorem42 接口再去前提化：新增 `TwoLayerStoneRouteEvalCoordinateOpsData` 与 `toEvalSeparationOpsData`，并提供 strict 包装器 `theorem42_strict_final_natural_of_eval_coordinate_ops`。",
       "status": "active",
       "impact": "调用端只需给出坐标参数族 `coordParam` 与代数操作，即可自动合成点分离并接入自然 strict 入口。"
+    },
+    {
+      "date": "2026-02-15",
+      "decision": "Theorem42 主接口收口：引入 `TwoLayerTheorem42FinalData`（最终对象）与 `theorem42_strict_final_final`/`theorem42_strict_final_class_dense`，并在最终对象上显式提供 const/add/mul/separatesPoints 能力定理。",
+      "status": "active",
+      "impact": "Theorem42 现在具备‘函数类本身稠密’的稳定最终入口，后续工作聚焦于具体激活函数实例化，不再扩展中间桥接层。"
+    },
+    {
+      "date": "2026-02-15",
+      "decision": "签名门禁升级：`check_final_signature.sh` 新增对 `theorem42_strict_final_final` 的禁止中间前提检查。",
+      "status": "active",
+      "impact": "保证 canonical Theorem42 最终入口不回归到 `hDense/UniversalApprox.../SampleConcentration...` 等中间假设接口。"
     }
   ],
   "modules": [
@@ -2335,9 +2347,9 @@
       "topic": "严格版 Theorem42：Stone 结果到二层类闭包桥接",
       "status": "partial",
       "last_search_date": "2026-02-15",
-      "sources_checked": "paper-template Theorem42.StoneRoute/StrictFinal/SmokeFinal（新增 natural_local + surjective + eval_coordinate 路径）；mathlib: Algebra.adjoin_induction, Set.SeparatesPoints, StoneWeierstrass",
+      "sources_checked": "paper-template Theorem42.StoneRoute/StrictFinal/SmokeFinal（新增 final-data + class-dense 入口）；mathlib: StoneWeierstrass, ContinuousMap.exists_mem_subalgebra_near_continuousMap_of_separatesPoints",
       "candidate_repo": "leanprover-community/mathlib4",
-      "next_action": "下一步将 `TwoLayerStoneRouteEvalCoordinateOpsData` 实例化到具体激活函数与参数构造（优先复用现成 formalization，缺失再自研最小闭环）。"
+      "next_action": "进入实例化收口：将 `TwoLayerTheorem42FinalData` 连接到具体激活函数与参数构造（优先复用现成 formalization）。"
     }
   ],
   "books": [
