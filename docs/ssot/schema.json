@@ -1,0 +1,203 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mltheory.local/docs/ssot/schema.json",
+  "title": "MLTheory SSOT Registry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "meta",
+    "decisions",
+    "modules",
+    "gaps",
+    "books",
+    "aliases"
+  ],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "language",
+        "toolchain",
+        "last_updated",
+        "policy"
+      ],
+      "properties": {
+        "schema_version": { "type": "string" },
+        "language": { "type": "string" },
+        "toolchain": { "type": "string" },
+        "last_updated": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+        },
+        "policy": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "decisions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["date", "decision", "status", "impact"],
+        "properties": {
+          "date": {
+            "type": "string",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+          },
+          "decision": { "type": "string" },
+          "status": {
+            "type": "string",
+            "enum": ["locked", "active", "deprecated", "draft"]
+          },
+          "impact": { "type": "string" }
+        }
+      }
+    },
+    "modules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "module_path",
+          "domain",
+          "status",
+          "source",
+          "book_refs",
+          "layer",
+          "proof_status",
+          "placeholder_policy_scope"
+        ],
+        "properties": {
+          "module_path": { "type": "string" },
+          "domain": { "type": "string" },
+          "status": {
+            "type": "string",
+            "enum": ["planned", "partial", "covered", "gap"]
+          },
+          "source": {
+            "type": "string",
+            "enum": ["mathlib", "slt", "external"]
+          },
+          "book_refs": { "type": "string" },
+          "layer": {
+            "type": "string",
+            "enum": ["core", "methods", "applications", "books", "legacy"]
+          },
+          "proof_status": {
+            "type": "string",
+            "enum": ["placeholder", "statement", "proved"]
+          },
+          "placeholder_policy_scope": {
+            "type": "string",
+            "enum": ["allowed", "forbidden"]
+          }
+        }
+      }
+    },
+    "gaps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "book",
+          "chapter",
+          "topic",
+          "status",
+          "last_search_date",
+          "sources_checked",
+          "candidate_repo",
+          "next_action"
+        ],
+        "properties": {
+          "book": { "type": "string" },
+          "chapter": { "type": "string" },
+          "topic": { "type": "string" },
+          "status": {
+            "type": "string",
+            "enum": ["planned", "partial", "covered", "gap"]
+          },
+          "last_search_date": {
+            "type": "string",
+            "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+          },
+          "sources_checked": { "type": "string" },
+          "candidate_repo": { "type": "string" },
+          "next_action": { "type": "string" }
+        }
+      }
+    },
+    "books": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "book_id",
+          "title",
+          "edition",
+          "doc_file",
+          "evidence_links",
+          "coverage_rows"
+        ],
+        "properties": {
+          "book_id": { "type": "string" },
+          "title": { "type": "string" },
+          "edition": { "type": "string" },
+          "doc_file": { "type": "string" },
+          "evidence_links": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "coverage_rows": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "章节",
+                "对应模块",
+                "覆盖状态",
+                "证据链接",
+                "缺口说明",
+                "后续动作"
+              ],
+              "properties": {
+                "章节": { "type": "string" },
+                "对应模块": { "type": "string" },
+                "覆盖状态": {
+                  "type": "string",
+                  "enum": ["planned", "partial", "covered", "gap"]
+                },
+                "证据链接": { "type": "string" },
+                "缺口说明": { "type": "string" },
+                "后续动作": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "aliases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["legacy_module", "canonical_module", "status"],
+        "properties": {
+          "legacy_module": { "type": "string" },
+          "canonical_module": { "type": "string" },
+          "status": {
+            "type": "string",
+            "enum": ["active", "deprecated"]
+          }
+        }
+      }
+    }
+  }
+}

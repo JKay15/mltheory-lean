@@ -1,0 +1,2831 @@
+{
+  "meta": {
+    "schema_version": "1.1.0",
+    "language": "zh-CN",
+    "toolchain": "v4.27.0",
+    "last_updated": "2026-02-13",
+    "policy": [
+      "json_ssot_only",
+      "markdown_generated_only",
+      "concept_first_layout",
+      "compatible_migration_with_aliases",
+      "append_first_and_logged_deletions",
+      "no_external_dependency_integration_phase",
+      "single_source_truth_docs_ssot_registry",
+      "derived_markdown_generated_via_sync_docs",
+      "legacy_book_modules_as_compatibility_adapters",
+      "three_repo_collaboration",
+      "repo_scope_skills_first",
+      "mcp_lean_lsp_uvx_enabled",
+      "placeholder_policy_phase1_soft_then_phase2_hard"
+    ]
+  },
+  "decisions": [
+    {
+      "date": "2026-02-13",
+      "decision": "Lean 包名采用 `MLTheory`（CamelCase），GitHub 仓库名采用 `mltheory-lean`。",
+      "status": "locked",
+      "impact": "统一 import 体验并保持仓库命名可读性。"
+    },
+    {
+      "date": "2026-02-13",
+      "decision": "项目初始化流程采用 mathlib 模板：`lake +leanprover-community/mathlib4:lean-toolchain new MLTheory math`，并执行 `lake exe cache get` + `lake build`。",
+      "status": "locked",
+      "impact": "保证 mathlib 依赖与 toolchain 一致，降低首次构建成本。"
+    },
+    {
+      "date": "2026-02-13",
+      "decision": "主题层模块固定为 `Probability/Statistics/OR/Learning/AI/LLM`。",
+      "status": "locked",
+      "impact": "建立长期稳定的公共库边界，避免后续重命名破坏下游。"
+    },
+    {
+      "date": "2026-02-13",
+      "decision": "HDP（Vershynin）采用“混合层”：主题模块承载实现，`HDP/Ch01..Ch09` 作为章节索引（re-export）。",
+      "status": "locked",
+      "impact": "兼顾按主题复用与按章节检索。"
+    },
+    {
+      "date": "2026-02-13",
+      "decision": "机器学习高级理论（SLT）策略：`v0.1` 先占位后接入。",
+      "status": "locked",
+      "impact": "先稳住基础依赖，降低首版复杂度与版本风险。"
+    },
+    {
+      "date": "2026-02-13",
+      "decision": "Durrett 覆盖基线采用第 5 版（I–XI 章）并先建占位模块（`CLTBridge/Brownian/CTMC/...`）。",
+      "status": "locked",
+      "impact": "明确概率主线补漏范围，支持分阶段迭代。"
+    },
+    {
+      "date": "2026-02-13",
+      "decision": "本阶段保持现有 toolchain（4.27.x），不立即接入外部仓库作为硬依赖。",
+      "status": "locked",
+      "impact": "避免版本漂移导致构建不稳定。"
+    },
+    {
+      "date": "2026-02-13",
+      "decision": "外部候选仓库仅登记不集成：`RemyDegenne/CLT`、`RemyDegenne/brownian-motion`、`BasharHamade12/MarkovChain_Formalisation_Lean`。",
+      "status": "active",
+      "impact": "为后续补齐 CLT/Brownian/Markov chain 留出路线图。"
+    },
+    {
+      "date": "2026-02-13",
+      "decision": "文档治理采用“中文 + 多文档索引制”，并固定 `INDEX/DecisionLog/ModuleCatalog/GapLedger/books/*` 结构。",
+      "status": "locked",
+      "impact": "后续扩展到多本书时可持续维护。"
+    },
+    {
+      "date": "2026-02-13",
+      "decision": "增加 `AGENTS.md` 作为仓库级执行规范；要求“新信息必回写文档系统”，并执行“非随意删除、删除必须留痕”。",
+      "status": "locked",
+      "impact": "后续所有任务都有统一约束，降低信息丢失和误删风险。"
+    },
+    {
+      "date": "2026-02-13",
+      "decision": "新增书籍覆盖基线：Lattimore & Szepesvari《Bandit Algorithms》，采用 Part I-VII 组织并引入 `MLTheory.Bandits.*` 模块族。",
+      "status": "locked",
+      "impact": "建立 bandit/在线决策主线，补齐与现有概率/学习模块的连接。"
+    },
+    {
+      "date": "2026-02-13",
+      "decision": "Bandit 当前策略：先建定义与章节索引占位，不立即引入外部依赖（GitHub 检索暂未发现成熟 Lean4 bandit 专项仓库）。",
+      "status": "active",
+      "impact": "降低初期实现风险，同时保留后续并入外部成果的空间。"
+    },
+    {
+      "date": "2026-02-13",
+      "decision": "新增书籍覆盖基线：Hazan《Introduction to Online Convex Optimization (Second Edition)》，采用“优先复用已有模块 + 最小新增 OCO 模块”策略。",
+      "status": "locked",
+      "impact": "控制模块冗余，确保 OCO 与 Bandit/Convex/Probability 模块一致协作。"
+    },
+    {
+      "date": "2026-02-13",
+      "decision": "执行全量文档去重：移除各书覆盖文档中的重复治理说明，统一以 `INDEX.md` + 模板文档作为规则单一来源。",
+      "status": "locked",
+      "impact": "降低文档冗余，避免多处规则漂移。"
+    },
+    {
+      "date": "2026-02-13",
+      "decision": "第二轮去重：移除书籍覆盖文档中与 `ModuleCatalog.md` 重复的模块长列表，保留“章节映射 + 缺口动作 + 证据”三要素。",
+      "status": "locked",
+      "impact": "将模块清单收敛到单一事实源（`ModuleCatalog.md`），降低跨文档维护成本。"
+    },
+    {
+      "date": "2026-02-13",
+      "decision": "新增书籍覆盖基线：Mohri-Rostamizadeh-Talwalkar《Foundations of Machine Learning (2nd)》，采用“复用既有 Learning/OCO/Bandit 模块 + 最小新增缺口模块”策略。",
+      "status": "locked",
+      "impact": "在不扩散模块命名的前提下纳入 FoML2 主线，保持跨书一致性。"
+    },
+    {
+      "date": "2026-02-13",
+      "decision": "FoML2 信息源限定为官方 MIT Press 页面与官方 TOC PDF；Lean 生态状态以 GitHub API 检索结果为准，不使用未验证二手摘要。",
+      "status": "locked",
+      "impact": "降低目录与生态判断误差，满足“不可编造”约束。"
+    },
+    {
+      "date": "2026-02-13",
+      "decision": "实施 FoML2 第一批代码骨架：`Ch02_PACLearning`、`Ch03_RademacherVCDimension`、`Ch04_ModelSelection` 三个占位模块已创建并接入 `MLTheory` 入口。",
+      "status": "locked",
+      "impact": "FoML2 从“纯文档规划”进入“可编译占位实现”阶段，便于后续逐章填充定理。"
+    },
+    {
+      "date": "2026-02-13",
+      "decision": "网络超时场景采用 `terminal-vpn-proxy`（`run_with_proxy.sh`）拉取 mathlib cache，并完成 `lake build`。",
+      "status": "active",
+      "impact": "形成可复用的网络故障处理路径，降低后续依赖拉取失败风险。"
+    },
+    {
+      "date": "2026-02-13",
+      "decision": "实施 FoML2 第二批代码骨架：`Ch05_SupportVectorMachines`、`Ch06_KernelMethods` 已创建并接入 `MLTheory.Books.FoML2` 入口。",
+      "status": "locked",
+      "impact": "FoML2 的 SVM/Kernel 主线已进入可编译占位阶段，后续可直接叠加 primal-dual 与 representer theorem 证明。"
+    },
+    {
+      "date": "2026-02-13",
+      "decision": "新增书籍覆盖基线：Sutton-Barto《Reinforcement Learning: An Introduction (2nd)》，采用“复用 Bandits/OCO/Learning 模块 + 最小新增 RL 模块族”策略。",
+      "status": "locked",
+      "impact": "在不重复造轮子的前提下纳入 RL 主线，并与既有书籍共享术语与证明接口。"
+    },
+    {
+      "date": "2026-02-13",
+      "decision": "RL2 目录证据优先使用作者官方书页与 MIT Press eTextbook TOC；Lean 生态状态以 GitHub API 检索结果为准。",
+      "status": "locked",
+      "impact": "降低章节映射与生态判断误差，满足“不可编造”约束。"
+    },
+    {
+      "date": "2026-02-13",
+      "decision": "实施 RL2 第一批代码骨架：`Ch03_MDP`、`Ch04_DynamicProgramming` 已创建并接入 `MLTheory.Books.SuttonBartoRL2` 入口。",
+      "status": "locked",
+      "impact": "RL2 从纯文档规划进入可编译占位实现阶段，后续可直接追加 Bellman/DP 收敛定理陈述。"
+    },
+    {
+      "date": "2026-02-13",
+      "decision": "文档检索与展示采用 JSON 单一事实源：`docs/ssot/registry.json`；Markdown 文档全部改为派生文件。",
+      "status": "locked",
+      "impact": "避免多处手工维护导致漂移，支持 Codex/jq/python 稳定检索与自动更新。"
+    },
+    {
+      "date": "2026-02-13",
+      "decision": "新增 `tools/docs/validate_ssot.py` 与 `tools/docs/sync_docs.py`，文档维护流程固定为“先改 SSOT，再生成派生文档”。",
+      "status": "locked",
+      "impact": "建立可重复执行的文档契约校验与生成流水线。"
+    },
+    {
+      "date": "2026-02-13",
+      "decision": "代码组织改为概念优先分层：`Core/Methods/Applications` 承载定义与方法，`Books/*` 收敛为兼容适配层。",
+      "status": "locked",
+      "impact": "实现跨书复用与稳定导入路径，同时不破坏既有章节 import。"
+    },
+    {
+      "date": "2026-02-13",
+      "decision": "接入本地 Lean 专用技能：从同级仓库 `lean-proof-skills` 安装 `lean4` skill 到 `~/.codex/skills/lean4`，后续 Lean 任务优先按该技能流程执行。",
+      "status": "active",
+      "impact": "统一 Lean 证明与排错流程，降低 tactic 试错与检索成本，提高 mathlib/LSP 使用一致性。"
+    },
+    {
+      "date": "2026-02-13",
+      "decision": "三仓协同关系锁定：`paper-template` 作为运行入口，`lean-proof-skills` 作为 skillpack 父仓（含 `lean4` 与 `ml-paper-workflow`），`MLTheory` 作为 Lake `git + tag` 依赖。",
+      "status": "locked",
+      "impact": "明确职责边界并支持独立升级/回滚。"
+    },
+    {
+      "date": "2026-02-13",
+      "decision": "模板仓技能接入方式锁定：`.agents/skillpacks/lean-proof-skills` 使用 submodule；`.agents/skills/lean4` 与 `.agents/skills/ml-paper-workflow` 使用 facade symlink。",
+      "status": "locked",
+      "impact": "确保 Codex 在 repo-scope 优先加载项目技能，减少全局配置漂移。"
+    },
+    {
+      "date": "2026-02-13",
+      "decision": "Lean LSP 统一接入策略锁定为 `codex mcp add lean-lsp -- uvx lean-lsp-mcp`，全局技能仅作兜底，正式链路以模板仓 repo-scope 配置为准。",
+      "status": "active",
+      "impact": "提升交互式证明与检索稳定性，并降低环境差异。"
+    },
+    {
+      "date": "2026-02-13",
+      "decision": "占位治理采用两阶段门禁：Phase 1 允许 `Applications/Books/Legacy` 占位但 `Core/Methods` 必须为 0；Phase 2 在 CI 对 `Core/Methods` 占位回归硬失败。",
+      "status": "active",
+      "impact": "在保证迭代速度的同时，持续收敛核心层证明质量。"
+    },
+    {
+      "date": "2026-02-13",
+      "decision": "补齐旧路径兼容层：新增 `MLTheory.Probability/Statistics/OR/Learning/AI/LLM/OCO/RL/Bandits/HDP` 与 `Concentration/Optimization/InfoTheory` 薄封装入口，避免历史 import 断裂。",
+      "status": "active",
+      "impact": "新旧导入路径可并行编译，迁移成本可控。"
+    },
+    {
+      "date": "2026-02-13",
+      "decision": "CI 增加导入回归冒烟：`Eval/ImportSmoke.lean` 同时验证分层路径与兼容路径可编译。",
+      "status": "active",
+      "impact": "防止后续重构破坏兼容入口。"
+    },
+    {
+      "date": "2026-02-14",
+      "decision": "新增术语白话表 `docs/Glossary.md` 并纳入自动生成流程，用于统一解释 JSON/SSOT/Lean/CI 相关术语。",
+      "status": "active",
+      "impact": "减少沟通黑话，确保用户与 Codex 对关键概念的语义一致。"
+    }
+  ],
+  "modules": [
+    {
+      "module_path": "MLTheory",
+      "domain": "Root",
+      "status": "planned",
+      "source": "mathlib",
+      "book_refs": "Vershynin Ch1-9; Durrett I-XI; BanditAlgorithms Part I-VII; HazanOCO2 Ch1-13; FoML2 Ch1-17; SuttonBartoRL2 Ch1-17",
+      "layer": "legacy",
+      "proof_status": "statement",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Probability",
+      "domain": "Probability",
+      "status": "planned",
+      "source": "mathlib",
+      "book_refs": "Vershynin Ch1-2; Durrett I-VIII; BanditAlgorithms Part I-IV; HazanOCO2 Ch3-10; FoML2 Ch2-3/Ch11",
+      "layer": "legacy",
+      "proof_status": "statement",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Statistics",
+      "domain": "Statistics",
+      "status": "planned",
+      "source": "mathlib",
+      "book_refs": "Vershynin Ch2/Ch8; Durrett III-IV; BanditAlgorithms Ch20-21; FoML2 Ch4/Ch10-13",
+      "layer": "legacy",
+      "proof_status": "statement",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.OR",
+      "domain": "Operations Research",
+      "status": "planned",
+      "source": "mathlib",
+      "book_refs": "Vershynin Ch3-4; HazanOCO2 Ch2-8; FoML2 Ch4-6/Ch12-13/Ch15",
+      "layer": "legacy",
+      "proof_status": "statement",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Learning",
+      "domain": "ML Theory",
+      "status": "planned",
+      "source": "mathlib",
+      "book_refs": "Vershynin Ch7-9; BanditAlgorithms Part IV-VII; HazanOCO2 Ch9-13; FoML2 Ch1-11/Ch14-16; SuttonBartoRL2 Ch1/Ch6-13",
+      "layer": "legacy",
+      "proof_status": "statement",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.AI",
+      "domain": "AI Theory",
+      "status": "planned",
+      "source": "mathlib",
+      "book_refs": "Vershynin Ch8.4; HazanOCO2 Ch9-12; FoML2 Ch7/Ch9/Ch14/Ch17; SuttonBartoRL2 Ch13-17",
+      "layer": "legacy",
+      "proof_status": "statement",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.LLM",
+      "domain": "LLM Theory",
+      "status": "planned",
+      "source": "mathlib",
+      "book_refs": "Vershynin Ch8.4（扩展应用）",
+      "layer": "legacy",
+      "proof_status": "statement",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.HDP",
+      "domain": "Book Index",
+      "status": "planned",
+      "source": "mathlib",
+      "book_refs": "Vershynin Ch1-9",
+      "layer": "legacy",
+      "proof_status": "statement",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Books",
+      "domain": "Book Index",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "Durrett I-XI; BanditAlgorithms Part I-VII; HazanOCO2 Ch1-13; FoML2 Ch1-17; SuttonBartoRL2 Ch1-17",
+      "layer": "books",
+      "proof_status": "statement",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Bandits",
+      "domain": "Bandits",
+      "status": "planned",
+      "source": "mathlib",
+      "book_refs": "BanditAlgorithms Part I-VII",
+      "layer": "legacy",
+      "proof_status": "statement",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Bandits.Foundations",
+      "domain": "Bandits",
+      "status": "planned",
+      "source": "mathlib",
+      "book_refs": "BanditAlgorithms Part I; SuttonBartoRL2 Ch2",
+      "layer": "legacy",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Bandits.Stochastic",
+      "domain": "Bandits",
+      "status": "planned",
+      "source": "mathlib",
+      "book_refs": "BanditAlgorithms Part II; SuttonBartoRL2 Ch2",
+      "layer": "legacy",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Bandits.Adversarial",
+      "domain": "Bandits",
+      "status": "gap",
+      "source": "external",
+      "book_refs": "BanditAlgorithms Part III",
+      "layer": "legacy",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Bandits.ContextualLinear",
+      "domain": "Bandits",
+      "status": "gap",
+      "source": "external",
+      "book_refs": "BanditAlgorithms Part IV",
+      "layer": "legacy",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Bandits.InformationTheory",
+      "domain": "Bandits",
+      "status": "planned",
+      "source": "mathlib",
+      "book_refs": "BanditAlgorithms Ch20-21",
+      "layer": "legacy",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Bandits.LargeActionSpaces",
+      "domain": "Bandits",
+      "status": "gap",
+      "source": "external",
+      "book_refs": "BanditAlgorithms Part V",
+      "layer": "legacy",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Bandits.BestArmIdentification",
+      "domain": "Bandits",
+      "status": "gap",
+      "source": "external",
+      "book_refs": "BanditAlgorithms Ch25-27",
+      "layer": "legacy",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Bandits.Dueling",
+      "domain": "Bandits",
+      "status": "gap",
+      "source": "external",
+      "book_refs": "BanditAlgorithms Ch28",
+      "layer": "legacy",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Bandits.PureExplorationLinear",
+      "domain": "Bandits",
+      "status": "gap",
+      "source": "external",
+      "book_refs": "BanditAlgorithms Ch29",
+      "layer": "legacy",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Bandits.RLBridge",
+      "domain": "Bandits",
+      "status": "gap",
+      "source": "external",
+      "book_refs": "BanditAlgorithms Part VII; FoML2 Ch17; SuttonBartoRL2 Ch3/Ch8/Ch17",
+      "layer": "legacy",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.OCO",
+      "domain": "OCO",
+      "status": "planned",
+      "source": "mathlib",
+      "book_refs": "HazanOCO2 Ch1-13",
+      "layer": "legacy",
+      "proof_status": "statement",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.OCO.OptimizationCore",
+      "domain": "OCO",
+      "status": "planned",
+      "source": "mathlib",
+      "book_refs": "HazanOCO2 Ch2-5/Ch7; FoML2 Ch8; SuttonBartoRL2 Ch13",
+      "layer": "legacy",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.OCO.BanditConvex",
+      "domain": "OCO",
+      "status": "gap",
+      "source": "external",
+      "book_refs": "HazanOCO2 Ch6",
+      "layer": "legacy",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.OCO.GamesAndDuality",
+      "domain": "OCO",
+      "status": "gap",
+      "source": "external",
+      "book_refs": "HazanOCO2 Ch8/Ch13",
+      "layer": "legacy",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.OCO.Generalization",
+      "domain": "OCO",
+      "status": "planned",
+      "source": "mathlib",
+      "book_refs": "HazanOCO2 Ch9",
+      "layer": "legacy",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.OCO.DynamicRegret",
+      "domain": "OCO",
+      "status": "gap",
+      "source": "external",
+      "book_refs": "HazanOCO2 Ch10",
+      "layer": "legacy",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.OCO.Boosting",
+      "domain": "OCO",
+      "status": "gap",
+      "source": "external",
+      "book_refs": "HazanOCO2 Ch11-12; FoML2 Ch7",
+      "layer": "legacy",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.RL",
+      "domain": "RL",
+      "status": "planned",
+      "source": "mathlib",
+      "book_refs": "SuttonBartoRL2 Ch1-17",
+      "layer": "legacy",
+      "proof_status": "statement",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.RL.MDP",
+      "domain": "RL",
+      "status": "gap",
+      "source": "external",
+      "book_refs": "SuttonBartoRL2 Ch3",
+      "layer": "legacy",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.RL.DynamicProgramming",
+      "domain": "RL",
+      "status": "gap",
+      "source": "external",
+      "book_refs": "SuttonBartoRL2 Ch4",
+      "layer": "legacy",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.RL.MonteCarlo",
+      "domain": "RL",
+      "status": "gap",
+      "source": "external",
+      "book_refs": "SuttonBartoRL2 Ch5",
+      "layer": "legacy",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.RL.TemporalDifference",
+      "domain": "RL",
+      "status": "gap",
+      "source": "external",
+      "book_refs": "SuttonBartoRL2 Ch6-7",
+      "layer": "legacy",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.RL.ModelBasedPlanning",
+      "domain": "RL",
+      "status": "gap",
+      "source": "external",
+      "book_refs": "SuttonBartoRL2 Ch8",
+      "layer": "legacy",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.RL.FunctionApproximation",
+      "domain": "RL",
+      "status": "gap",
+      "source": "external",
+      "book_refs": "SuttonBartoRL2 Ch9-10",
+      "layer": "legacy",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.RL.OffPolicy",
+      "domain": "RL",
+      "status": "gap",
+      "source": "external",
+      "book_refs": "SuttonBartoRL2 Ch11",
+      "layer": "legacy",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.RL.EligibilityTraces",
+      "domain": "RL",
+      "status": "gap",
+      "source": "external",
+      "book_refs": "SuttonBartoRL2 Ch12",
+      "layer": "legacy",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.RL.PolicyGradient",
+      "domain": "RL",
+      "status": "gap",
+      "source": "external",
+      "book_refs": "SuttonBartoRL2 Ch13",
+      "layer": "legacy",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.RL.PsychologyBridge",
+      "domain": "RL",
+      "status": "gap",
+      "source": "external",
+      "book_refs": "SuttonBartoRL2 Ch14",
+      "layer": "legacy",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.RL.NeuroscienceBridge",
+      "domain": "RL",
+      "status": "gap",
+      "source": "external",
+      "book_refs": "SuttonBartoRL2 Ch15",
+      "layer": "legacy",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.RL.CaseStudies",
+      "domain": "RL",
+      "status": "gap",
+      "source": "external",
+      "book_refs": "SuttonBartoRL2 Ch16",
+      "layer": "legacy",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.RL.Frontiers",
+      "domain": "RL",
+      "status": "gap",
+      "source": "external",
+      "book_refs": "SuttonBartoRL2 Ch17",
+      "layer": "legacy",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Probability.Conditioning",
+      "domain": "Probability",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "Vershynin Ch1.5; Durrett II-III",
+      "layer": "legacy",
+      "proof_status": "statement",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Probability.DensityCDF",
+      "domain": "Probability",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "Vershynin Ch1.3/Ch2; Durrett II",
+      "layer": "legacy",
+      "proof_status": "statement",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Probability.Moments",
+      "domain": "Probability",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "Vershynin Ch2.6-2.9; Durrett III-IV",
+      "layer": "legacy",
+      "proof_status": "statement",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Probability.LimitLaws",
+      "domain": "Probability",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "Vershynin Ch1.7; Durrett IV",
+      "layer": "legacy",
+      "proof_status": "statement",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Probability.BasicMeasure",
+      "domain": "Probability",
+      "status": "planned",
+      "source": "mathlib",
+      "book_refs": "Durrett I-II",
+      "layer": "legacy",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Probability.ProbIneq",
+      "domain": "Probability",
+      "status": "planned",
+      "source": "mathlib",
+      "book_refs": "Vershynin Ch1.6/Ch2; Durrett II-IV; BanditAlgorithms Ch4/Ch16/Ch38; HazanOCO2 Ch3-4/Ch10; FoML2 Ch2/Ch11",
+      "layer": "legacy",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Probability.Martingales",
+      "domain": "Probability",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "Durrett VII; BanditAlgorithms Ch31-38; HazanOCO2 Ch10",
+      "layer": "legacy",
+      "proof_status": "statement",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Probability.MarkovKernels",
+      "domain": "Probability",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "Durrett VI",
+      "layer": "legacy",
+      "proof_status": "statement",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Probability.Ergodic",
+      "domain": "Probability",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "Durrett XI",
+      "layer": "legacy",
+      "proof_status": "statement",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Probability.CLTBridge",
+      "domain": "Probability",
+      "status": "gap",
+      "source": "external",
+      "book_refs": "Durrett IV",
+      "layer": "legacy",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Probability.PoissonApprox",
+      "domain": "Probability",
+      "status": "gap",
+      "source": "external",
+      "book_refs": "Durrett V",
+      "layer": "legacy",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Probability.Brownian",
+      "domain": "Probability",
+      "status": "gap",
+      "source": "external",
+      "book_refs": "Durrett VIII",
+      "layer": "legacy",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Probability.Stationary",
+      "domain": "Probability",
+      "status": "gap",
+      "source": "external",
+      "book_refs": "Durrett IX",
+      "layer": "legacy",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Probability.CTMC",
+      "domain": "Probability",
+      "status": "gap",
+      "source": "external",
+      "book_refs": "Durrett X",
+      "layer": "legacy",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Statistics.Risk",
+      "domain": "Statistics",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "Vershynin Ch8.4; FoML2 Ch4/Ch10-11",
+      "layer": "legacy",
+      "proof_status": "statement",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Statistics.Information",
+      "domain": "Statistics",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "Vershynin Ch8.4; BanditAlgorithms Ch20-21; FoML2 Ch12-13",
+      "layer": "legacy",
+      "proof_status": "statement",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.OR.ConvexCore",
+      "domain": "OR",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "Vershynin Ch1.1/Ch3; FoML2 Ch4-5/Ch12-13",
+      "layer": "legacy",
+      "proof_status": "statement",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.OR.StochasticMatrix",
+      "domain": "OR",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "Vershynin Ch3-4; FoML2 Ch15",
+      "layer": "legacy",
+      "proof_status": "statement",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.OR.DiscreteOptimization",
+      "domain": "OR",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "Vershynin Ch3.6/Ch4.3",
+      "layer": "legacy",
+      "proof_status": "statement",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.OR.GraphOptimization",
+      "domain": "OR",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "Vershynin Ch3.6",
+      "layer": "legacy",
+      "proof_status": "statement",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Learning.Capacity",
+      "domain": "Learning",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "Vershynin Ch4.2/Ch8; FoML2 Ch2-5/Ch15",
+      "layer": "legacy",
+      "proof_status": "statement",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Learning.KernelBayes",
+      "domain": "Learning",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "Vershynin Ch7-8; Durrett VI; FoML2 Ch6",
+      "layer": "legacy",
+      "proof_status": "statement",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Learning.Sequential",
+      "domain": "Learning",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "Vershynin Ch7; Durrett VII; FoML2 Ch8; SuttonBartoRL2 Ch6-8",
+      "layer": "legacy",
+      "proof_status": "statement",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Learning.DiscreteModeling",
+      "domain": "Learning",
+      "status": "planned",
+      "source": "mathlib",
+      "book_refs": "Vershynin Ch2/Ch8; FoML2 Ch9-11",
+      "layer": "legacy",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Learning.AdvancedSLT",
+      "domain": "Learning",
+      "status": "planned",
+      "source": "slt",
+      "book_refs": "Vershynin Ch8-9; FoML2 Ch3",
+      "layer": "legacy",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Learning.AutomataLanguage",
+      "domain": "Learning",
+      "status": "gap",
+      "source": "external",
+      "book_refs": "FoML2 Ch16",
+      "layer": "legacy",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.AI.Generalization",
+      "domain": "AI",
+      "status": "planned",
+      "source": "mathlib",
+      "book_refs": "Vershynin Ch8.4; HazanOCO2 Ch9; FoML2 Ch14",
+      "layer": "legacy",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.AI.DecisionLearning",
+      "domain": "AI",
+      "status": "planned",
+      "source": "mathlib",
+      "book_refs": "Vershynin Ch8.4; HazanOCO2 Ch8/Ch11; FoML2 Ch7/Ch9/Ch17; SuttonBartoRL2 Ch13/Ch16-17",
+      "layer": "legacy",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.LLM.Autoregressive",
+      "domain": "LLM",
+      "status": "planned",
+      "source": "mathlib",
+      "book_refs": "Vershynin Ch8.4（扩展）",
+      "layer": "legacy",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.LLM.Sampling",
+      "domain": "LLM",
+      "status": "planned",
+      "source": "mathlib",
+      "book_refs": "Vershynin Ch7-8（扩展）",
+      "layer": "legacy",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.LLM.AlignmentObjectives",
+      "domain": "LLM",
+      "status": "planned",
+      "source": "mathlib",
+      "book_refs": "Vershynin Ch8.4（扩展）",
+      "layer": "legacy",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.HDP.Ch01_Refresher",
+      "domain": "HDP Index",
+      "status": "planned",
+      "source": "mathlib",
+      "book_refs": "Vershynin Ch1",
+      "layer": "legacy",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.HDP.Ch02_IndependentSums",
+      "domain": "HDP Index",
+      "status": "planned",
+      "source": "mathlib",
+      "book_refs": "Vershynin Ch2",
+      "layer": "legacy",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.HDP.Ch03_RandomVectors",
+      "domain": "HDP Index",
+      "status": "planned",
+      "source": "mathlib",
+      "book_refs": "Vershynin Ch3",
+      "layer": "legacy",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.HDP.Ch04_RandomMatrices",
+      "domain": "HDP Index",
+      "status": "planned",
+      "source": "mathlib",
+      "book_refs": "Vershynin Ch4",
+      "layer": "legacy",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.HDP.Ch05_WithoutIndependence",
+      "domain": "HDP Index",
+      "status": "planned",
+      "source": "mathlib",
+      "book_refs": "Vershynin Ch5",
+      "layer": "legacy",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.HDP.Ch06_QuadraticSymmContraction",
+      "domain": "HDP Index",
+      "status": "planned",
+      "source": "mathlib",
+      "book_refs": "Vershynin Ch6",
+      "layer": "legacy",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.HDP.Ch07_RandomProcesses",
+      "domain": "HDP Index",
+      "status": "planned",
+      "source": "mathlib",
+      "book_refs": "Vershynin Ch7",
+      "layer": "legacy",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.HDP.Ch08_Chaining",
+      "domain": "HDP Index",
+      "status": "planned",
+      "source": "slt",
+      "book_refs": "Vershynin Ch8",
+      "layer": "legacy",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.HDP.Ch09_MatrixDeviations",
+      "domain": "HDP Index",
+      "status": "planned",
+      "source": "slt",
+      "book_refs": "Vershynin Ch9",
+      "layer": "legacy",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Books.Durrett5",
+      "domain": "Durrett Index",
+      "status": "planned",
+      "source": "mathlib",
+      "book_refs": "Durrett I-XI",
+      "layer": "books",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Books.Durrett5.Ch01_MeasureTheory",
+      "domain": "Durrett Index",
+      "status": "planned",
+      "source": "mathlib",
+      "book_refs": "Durrett I",
+      "layer": "books",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Books.Durrett5.Ch02_ProbabilityTheory",
+      "domain": "Durrett Index",
+      "status": "planned",
+      "source": "mathlib",
+      "book_refs": "Durrett II",
+      "layer": "books",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Books.Durrett5.Ch03_IndependenceExpectations",
+      "domain": "Durrett Index",
+      "status": "planned",
+      "source": "mathlib",
+      "book_refs": "Durrett III",
+      "layer": "books",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Books.Durrett5.Ch04_LimitTheorems",
+      "domain": "Durrett Index",
+      "status": "planned",
+      "source": "external",
+      "book_refs": "Durrett IV",
+      "layer": "books",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Books.Durrett5.Ch05_PoissonApproximation",
+      "domain": "Durrett Index",
+      "status": "gap",
+      "source": "external",
+      "book_refs": "Durrett V",
+      "layer": "books",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Books.Durrett5.Ch06_MarkovChains",
+      "domain": "Durrett Index",
+      "status": "planned",
+      "source": "mathlib",
+      "book_refs": "Durrett VI",
+      "layer": "books",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Books.Durrett5.Ch07_Martingales",
+      "domain": "Durrett Index",
+      "status": "planned",
+      "source": "mathlib",
+      "book_refs": "Durrett VII",
+      "layer": "books",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Books.Durrett5.Ch08_BrownianMotion",
+      "domain": "Durrett Index",
+      "status": "gap",
+      "source": "external",
+      "book_refs": "Durrett VIII",
+      "layer": "books",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Books.Durrett5.Ch09_StationaryProcesses",
+      "domain": "Durrett Index",
+      "status": "gap",
+      "source": "external",
+      "book_refs": "Durrett IX",
+      "layer": "books",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Books.Durrett5.Ch10_CTMC",
+      "domain": "Durrett Index",
+      "status": "gap",
+      "source": "external",
+      "book_refs": "Durrett X",
+      "layer": "books",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Books.Durrett5.Ch11_ErgodicTheorems",
+      "domain": "Durrett Index",
+      "status": "planned",
+      "source": "mathlib",
+      "book_refs": "Durrett XI",
+      "layer": "books",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Books.BanditAlgorithms",
+      "domain": "Bandit Index",
+      "status": "planned",
+      "source": "mathlib",
+      "book_refs": "BanditAlgorithms Part I-VII",
+      "layer": "books",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Books.BanditAlgorithms.PartI_Foundations",
+      "domain": "Bandit Index",
+      "status": "planned",
+      "source": "mathlib",
+      "book_refs": "BanditAlgorithms Part I",
+      "layer": "books",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Books.BanditAlgorithms.PartII_StochasticBandits",
+      "domain": "Bandit Index",
+      "status": "planned",
+      "source": "mathlib",
+      "book_refs": "BanditAlgorithms Part II",
+      "layer": "books",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Books.BanditAlgorithms.PartIII_AdversarialBandits",
+      "domain": "Bandit Index",
+      "status": "gap",
+      "source": "external",
+      "book_refs": "BanditAlgorithms Part III",
+      "layer": "books",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Books.BanditAlgorithms.PartIV_ContextualLinearBandits",
+      "domain": "Bandit Index",
+      "status": "gap",
+      "source": "external",
+      "book_refs": "BanditAlgorithms Part IV",
+      "layer": "books",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Books.BanditAlgorithms.PartV_LargeActionSpaces",
+      "domain": "Bandit Index",
+      "status": "gap",
+      "source": "external",
+      "book_refs": "BanditAlgorithms Part V",
+      "layer": "books",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Books.BanditAlgorithms.PartVI_PureExploration",
+      "domain": "Bandit Index",
+      "status": "gap",
+      "source": "external",
+      "book_refs": "BanditAlgorithms Part VI",
+      "layer": "books",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Books.BanditAlgorithms.PartVII_ReinforcementLearning",
+      "domain": "Bandit Index",
+      "status": "gap",
+      "source": "external",
+      "book_refs": "BanditAlgorithms Part VII",
+      "layer": "books",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Books.HazanOCO2",
+      "domain": "OCO Index",
+      "status": "planned",
+      "source": "mathlib",
+      "book_refs": "HazanOCO2 Ch1-13",
+      "layer": "books",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Books.HazanOCO2.PartI_Core",
+      "domain": "OCO Index",
+      "status": "planned",
+      "source": "mathlib",
+      "book_refs": "HazanOCO2 Ch1-5/Ch7",
+      "layer": "books",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Books.HazanOCO2.PartII_BanditAndGames",
+      "domain": "OCO Index",
+      "status": "gap",
+      "source": "external",
+      "book_refs": "HazanOCO2 Ch6/Ch8",
+      "layer": "books",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Books.HazanOCO2.PartIII_GeneralizationAndAdaptivity",
+      "domain": "OCO Index",
+      "status": "gap",
+      "source": "external",
+      "book_refs": "HazanOCO2 Ch9-10",
+      "layer": "books",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Books.HazanOCO2.PartIV_BoostingAndApproachability",
+      "domain": "OCO Index",
+      "status": "gap",
+      "source": "external",
+      "book_refs": "HazanOCO2 Ch11-13",
+      "layer": "books",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Books.FoML2",
+      "domain": "FoML2 Index",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "FoML2 Ch1-17",
+      "layer": "books",
+      "proof_status": "statement",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Books.FoML2.Ch02_PACLearning",
+      "domain": "FoML2 Index",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "FoML2 Ch2",
+      "layer": "books",
+      "proof_status": "statement",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Books.FoML2.Ch03_RademacherVCDimension",
+      "domain": "FoML2 Index",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "FoML2 Ch3",
+      "layer": "books",
+      "proof_status": "statement",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Books.FoML2.Ch04_ModelSelection",
+      "domain": "FoML2 Index",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "FoML2 Ch4",
+      "layer": "books",
+      "proof_status": "statement",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Books.FoML2.Ch05_SupportVectorMachines",
+      "domain": "FoML2 Index",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "FoML2 Ch5",
+      "layer": "books",
+      "proof_status": "statement",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Books.FoML2.Ch06_KernelMethods",
+      "domain": "FoML2 Index",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "FoML2 Ch6",
+      "layer": "books",
+      "proof_status": "statement",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Books.SuttonBartoRL2",
+      "domain": "RL2 Index",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "SuttonBartoRL2 Ch1-17",
+      "layer": "books",
+      "proof_status": "statement",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Books.SuttonBartoRL2.PartI_TabularMethods",
+      "domain": "RL2 Index",
+      "status": "gap",
+      "source": "external",
+      "book_refs": "SuttonBartoRL2 Ch2-8",
+      "layer": "books",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Books.SuttonBartoRL2.PartII_ApproximateMethods",
+      "domain": "RL2 Index",
+      "status": "gap",
+      "source": "external",
+      "book_refs": "SuttonBartoRL2 Ch9-13",
+      "layer": "books",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Books.SuttonBartoRL2.PartIII_LookingDeeper",
+      "domain": "RL2 Index",
+      "status": "gap",
+      "source": "external",
+      "book_refs": "SuttonBartoRL2 Ch14-17",
+      "layer": "books",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Books.SuttonBartoRL2.Ch03_MDP",
+      "domain": "RL2 Index",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "SuttonBartoRL2 Ch3",
+      "layer": "books",
+      "proof_status": "statement",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Books.SuttonBartoRL2.Ch04_DynamicProgramming",
+      "domain": "RL2 Index",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "SuttonBartoRL2 Ch4",
+      "layer": "books",
+      "proof_status": "statement",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Core",
+      "domain": "Architecture",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "FoML2 Ch2-6; SuttonBartoRL2 Ch3-4",
+      "layer": "core",
+      "proof_status": "statement",
+      "placeholder_policy_scope": "forbidden"
+    },
+    {
+      "module_path": "MLTheory.Core.Learning",
+      "domain": "Architecture",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "FoML2 Ch2-3",
+      "layer": "core",
+      "proof_status": "statement",
+      "placeholder_policy_scope": "forbidden"
+    },
+    {
+      "module_path": "MLTheory.Core.Learning.PAC",
+      "domain": "Learning",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "FoML2 Ch2",
+      "layer": "core",
+      "proof_status": "statement",
+      "placeholder_policy_scope": "forbidden"
+    },
+    {
+      "module_path": "MLTheory.Core.Learning.Capacity",
+      "domain": "Learning",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "FoML2 Ch3; Vershynin Ch8",
+      "layer": "core",
+      "proof_status": "statement",
+      "placeholder_policy_scope": "forbidden"
+    },
+    {
+      "module_path": "MLTheory.Core.RL",
+      "domain": "Architecture",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "SuttonBartoRL2 Ch3-4",
+      "layer": "core",
+      "proof_status": "statement",
+      "placeholder_policy_scope": "forbidden"
+    },
+    {
+      "module_path": "MLTheory.Core.RL.MDP",
+      "domain": "RL",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "SuttonBartoRL2 Ch3",
+      "layer": "core",
+      "proof_status": "statement",
+      "placeholder_policy_scope": "forbidden"
+    },
+    {
+      "module_path": "MLTheory.Methods",
+      "domain": "Architecture",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "FoML2 Ch4-6; SuttonBartoRL2 Ch4",
+      "layer": "methods",
+      "proof_status": "statement",
+      "placeholder_policy_scope": "forbidden"
+    },
+    {
+      "module_path": "MLTheory.Methods.Learning",
+      "domain": "Architecture",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "FoML2 Ch4-6",
+      "layer": "methods",
+      "proof_status": "statement",
+      "placeholder_policy_scope": "forbidden"
+    },
+    {
+      "module_path": "MLTheory.Methods.Learning.ModelSelection",
+      "domain": "Learning",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "FoML2 Ch4",
+      "layer": "methods",
+      "proof_status": "statement",
+      "placeholder_policy_scope": "forbidden"
+    },
+    {
+      "module_path": "MLTheory.Methods.Learning.SVM",
+      "domain": "Learning",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "FoML2 Ch5",
+      "layer": "methods",
+      "proof_status": "statement",
+      "placeholder_policy_scope": "forbidden"
+    },
+    {
+      "module_path": "MLTheory.Methods.Learning.KernelMethods",
+      "domain": "Learning",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "FoML2 Ch6",
+      "layer": "methods",
+      "proof_status": "statement",
+      "placeholder_policy_scope": "forbidden"
+    },
+    {
+      "module_path": "MLTheory.Methods.RL",
+      "domain": "Architecture",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "SuttonBartoRL2 Ch4",
+      "layer": "methods",
+      "proof_status": "statement",
+      "placeholder_policy_scope": "forbidden"
+    },
+    {
+      "module_path": "MLTheory.Methods.RL.DynamicProgramming",
+      "domain": "RL",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "SuttonBartoRL2 Ch4",
+      "layer": "methods",
+      "proof_status": "statement",
+      "placeholder_policy_scope": "forbidden"
+    },
+    {
+      "module_path": "MLTheory.Applications",
+      "domain": "Architecture",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "FoML2 Ch17; SuttonBartoRL2 Ch16-17",
+      "layer": "applications",
+      "proof_status": "statement",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Applications.Learning",
+      "domain": "Applications",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "FoML2 Ch7-17",
+      "layer": "applications",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Applications.RL",
+      "domain": "Applications",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "SuttonBartoRL2 Ch13-17",
+      "layer": "applications",
+      "proof_status": "placeholder",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Concentration",
+      "domain": "Probability",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "Vershynin Ch2; Durrett II-IV; BanditAlgorithms Ch4/Ch16/Ch38",
+      "layer": "legacy",
+      "proof_status": "statement",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Optimization",
+      "domain": "Operations Research",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "Vershynin Ch3-4; HazanOCO2 Ch2-8; FoML2 Ch4-6/Ch12-13/Ch15",
+      "layer": "legacy",
+      "proof_status": "statement",
+      "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.InfoTheory",
+      "domain": "Statistics",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "BanditAlgorithms Ch20-21; FoML2 Ch12-13; SuttonBartoRL2 Ch2/Ch13",
+      "layer": "legacy",
+      "proof_status": "statement",
+      "placeholder_policy_scope": "allowed"
+    }
+  ],
+  "gaps": [
+    {
+      "book": "Vershynin",
+      "chapter": "Ch2",
+      "topic": "Subexponential/Bernstein 全链路",
+      "status": "gap",
+      "last_search_date": "2026-02-13",
+      "sources_checked": "mathlib4、SLT、FoML",
+      "candidate_repo": "`lean-stat-learning-theory`",
+      "next_action": "在 `MLTheory.Probability.ProbIneq` 增加占位定理列表并继续检索对应实现。"
+    },
+    {
+      "book": "Vershynin",
+      "chapter": "Ch2",
+      "topic": "median-of-means estimator",
+      "status": "gap",
+      "last_search_date": "2026-02-13",
+      "sources_checked": "mathlib4、SLT",
+      "candidate_repo": "无明确仓库",
+      "next_action": "先建立定义层与误差分解接口，后续补具体浓缩不等式。"
+    },
+    {
+      "book": "Vershynin",
+      "chapter": "Ch3",
+      "topic": "PCA/Grothendieck/MaxCut/kernel trick",
+      "status": "gap",
+      "last_search_date": "2026-02-13",
+      "sources_checked": "mathlib4（线代/图论）、SLT",
+      "candidate_repo": "无明确仓库",
+      "next_action": "先在 `MLTheory.OR.GraphOptimization` 写问题定义与松弛框架占位。"
+    },
+    {
+      "book": "Vershynin",
+      "chapter": "Ch4",
+      "topic": "error correcting codes/community detection/clustering",
+      "status": "gap",
+      "last_search_date": "2026-02-13",
+      "sources_checked": "mathlib4、SLT",
+      "candidate_repo": "无明确仓库",
+      "next_action": "先建章节索引 TODO，后续按主题拆分到 OR 与 Learning。"
+    },
+    {
+      "book": "Vershynin",
+      "chapter": "Ch5",
+      "topic": "Johnson-Lindenstrauss 与 Matrix Bernstein",
+      "status": "gap",
+      "last_search_date": "2026-02-13",
+      "sources_checked": "mathlib4、SLT、FoML",
+      "candidate_repo": "`lean-stat-learning-theory`",
+      "next_action": "先在 `MLTheory.Learning.Capacity` 增加 JL 占位接口。"
+    },
+    {
+      "book": "Vershynin",
+      "chapter": "Ch6",
+      "topic": "Hanson-Wright/Decoupling/Contraction",
+      "status": "gap",
+      "last_search_date": "2026-02-13",
+      "sources_checked": "mathlib4、SLT、FoML",
+      "candidate_repo": "`lean-stat-learning-theory`",
+      "next_action": "在 `MLTheory.Learning.AdvancedSLT` 增加子模块占位。"
+    },
+    {
+      "book": "Vershynin",
+      "chapter": "Ch7",
+      "topic": "Slepian/Sudakov-Fernique/Gordon/Gaussian width",
+      "status": "gap",
+      "last_search_date": "2026-02-13",
+      "sources_checked": "mathlib4、SLT",
+      "candidate_repo": "无明确仓库",
+      "next_action": "先定义 `GaussianWidth` 接口与估计模板，挂在 `Learning.AdvancedSLT`。"
+    },
+    {
+      "book": "Vershynin",
+      "chapter": "Ch8",
+      "topic": "VC dimension/generic chaining/Chevet",
+      "status": "gap",
+      "last_search_date": "2026-02-13",
+      "sources_checked": "mathlib4、SLT、FoML",
+      "candidate_repo": "`lean-stat-learning-theory`",
+      "next_action": "Ch8 索引保留 TODO；优先补 VC 与 generic chaining 文献线索。"
+    },
+    {
+      "book": "Vershynin",
+      "chapter": "Ch9",
+      "topic": "M* bound/escape theorem/Dvoretzky-Milman",
+      "status": "gap",
+      "last_search_date": "2026-02-13",
+      "sources_checked": "mathlib4、SLT",
+      "candidate_repo": "无明确仓库",
+      "next_action": "先记录术语与定义依赖，再分拆到线性代数与测度模块。"
+    },
+    {
+      "book": "Durrett5",
+      "chapter": "Ch4",
+      "topic": "Central Limit Theorem 主定理接入",
+      "status": "partial",
+      "last_search_date": "2026-02-13",
+      "sources_checked": "mathlib4、RemyDegenne/CLT",
+      "candidate_repo": "`RemyDegenne/CLT`",
+      "next_action": "保持 4.27.x 下先做 `CLTBridge` 占位；后续评估依赖兼容再接入。"
+    },
+    {
+      "book": "Durrett5",
+      "chapter": "Ch5",
+      "topic": "Poisson approximation/Stein 方法",
+      "status": "gap",
+      "last_search_date": "2026-02-13",
+      "sources_checked": "mathlib4、GitHub 检索",
+      "candidate_repo": "无明确仓库",
+      "next_action": "在 `PoissonApprox` 写占位接口与关键词检索脚本。"
+    },
+    {
+      "book": "Durrett5",
+      "chapter": "Ch8",
+      "topic": "Brownian motion / Itô calculus",
+      "status": "partial",
+      "last_search_date": "2026-02-13",
+      "sources_checked": "mathlib4、RemyDegenne/brownian-motion",
+      "candidate_repo": "`RemyDegenne/brownian-motion`",
+      "next_action": "先 `Brownian` 占位，不升级 toolchain；持续跟踪迁移到 mathlib 的进度。"
+    },
+    {
+      "book": "Durrett5",
+      "chapter": "Ch9",
+      "topic": "Stationary processes",
+      "status": "gap",
+      "last_search_date": "2026-02-13",
+      "sources_checked": "mathlib4、GitHub 检索",
+      "candidate_repo": "无明确仓库",
+      "next_action": "在 `Stationary` 定义平稳过程接口与 TODO。"
+    },
+    {
+      "book": "Durrett5",
+      "chapter": "Ch10",
+      "topic": "Continuous-time Markov chains",
+      "status": "gap",
+      "last_search_date": "2026-02-13",
+      "sources_checked": "mathlib4、MarkovChain_Formalisation_Lean",
+      "candidate_repo": "`BasharHamade12/MarkovChain_Formalisation_Lean`",
+      "next_action": "先在 `CTMC` 写状态空间与生成元占位定义。"
+    },
+    {
+      "book": "Durrett5",
+      "chapter": "Ch11",
+      "topic": "Ergodic theorems (probability flavor)",
+      "status": "partial",
+      "last_search_date": "2026-02-13",
+      "sources_checked": "mathlib4（Dynamics/Ergodic）",
+      "candidate_repo": "无",
+      "next_action": "在 `Ergodic` 对齐概率记号并补示例定理入口。"
+    },
+    {
+      "book": "BanditAlgorithms",
+      "chapter": "Part I",
+      "topic": "Explore-Then-Commit / Optimism 形式化接口",
+      "status": "partial",
+      "last_search_date": "2026-02-13",
+      "sources_checked": "mathlib4（概率不等式/鞅）",
+      "candidate_repo": "无明确仓库",
+      "next_action": "在 `MLTheory.Bandits.Foundations` 建立 regret、arm、policy 核心定义。"
+    },
+    {
+      "book": "BanditAlgorithms",
+      "chapter": "Part II",
+      "topic": "UCB/Thompson Sampling 的有限时间 regret 证明链",
+      "status": "gap",
+      "last_search_date": "2026-02-13",
+      "sources_checked": "mathlib4、GitHub 检索",
+      "candidate_repo": "无明确仓库",
+      "next_action": "在 `MLTheory.Bandits.Stochastic` 先写 theorem statement 占位和依赖清单。"
+    },
+    {
+      "book": "BanditAlgorithms",
+      "chapter": "Part III",
+      "topic": "Adversarial bandits（EXP3, first/second-order）",
+      "status": "gap",
+      "last_search_date": "2026-02-13",
+      "sources_checked": "mathlib4、GitHub 检索",
+      "candidate_repo": "无明确仓库",
+      "next_action": "在 `MLTheory.Bandits.Adversarial` 先定义对手模型与性能基准。"
+    },
+    {
+      "book": "BanditAlgorithms",
+      "chapter": "Part IV",
+      "topic": "Contextual/Linear/Kernels（自归一化过程、线性 UCB/TS）",
+      "status": "gap",
+      "last_search_date": "2026-02-13",
+      "sources_checked": "mathlib4、GitHub 检索",
+      "candidate_repo": "无明确仓库",
+      "next_action": "在 `MLTheory.Bandits.ContextualLinear` + `InformationTheory` 先建符号层与置信集接口。"
+    },
+    {
+      "book": "BanditAlgorithms",
+      "chapter": "Part VI",
+      "topic": "Best-arm identification / Dueling / 线性纯探索",
+      "status": "gap",
+      "last_search_date": "2026-02-13",
+      "sources_checked": "mathlib4、GitHub 检索",
+      "candidate_repo": "无明确仓库",
+      "next_action": "在 `BestArmIdentification/Dueling/PureExplorationLinear` 写固定预算与固定置信定义。"
+    },
+    {
+      "book": "BanditAlgorithms",
+      "chapter": "Part VII",
+      "topic": "MDP regret（有限时域/折扣/渐近）",
+      "status": "gap",
+      "last_search_date": "2026-02-13",
+      "sources_checked": "mathlib4、GitHub 检索",
+      "candidate_repo": "无明确仓库",
+      "next_action": "在 `RLBridge` 增加 bandit 与 MDP 的接口桥接层。"
+    },
+    {
+      "book": "BanditAlgorithms",
+      "chapter": "全书生态",
+      "topic": "Lean4 专门 bandit 仓库可用性",
+      "status": "gap",
+      "last_search_date": "2026-02-13",
+      "sources_checked": "GitHub API：`bandit lean4`、`multi-armed bandit lean`、`reinforcement learning lean4 mdp`",
+      "candidate_repo": "无",
+      "next_action": "每月复检一次，发现可用仓库后更新 candidate_repo。"
+    },
+    {
+      "book": "HazanOCO2",
+      "chapter": "Ch3-Ch5",
+      "topic": "OGD/second-order/regularization regret 证明链",
+      "status": "gap",
+      "last_search_date": "2026-02-13",
+      "sources_checked": "mathlib4、GitHub 检索",
+      "candidate_repo": "无明确仓库",
+      "next_action": "在 `MLTheory.OCO.OptimizationCore` 先落 theorem statement 与假设模板。"
+    },
+    {
+      "book": "HazanOCO2",
+      "chapter": "Ch6",
+      "topic": "Bandit convex optimization",
+      "status": "gap",
+      "last_search_date": "2026-02-13",
+      "sources_checked": "mathlib4、BanditAlgorithms 覆盖文档、GitHub 检索",
+      "candidate_repo": "无明确仓库",
+      "next_action": "复用 `MLTheory.Bandits.*`，并在 `MLTheory.OCO.BanditConvex` 补连续动作反馈模型。"
+    },
+    {
+      "book": "HazanOCO2",
+      "chapter": "Ch7",
+      "topic": "Projection-free OCO",
+      "status": "gap",
+      "last_search_date": "2026-02-13",
+      "sources_checked": "mathlib4、GitHub 检索",
+      "candidate_repo": "无明确仓库",
+      "next_action": "在 `MLTheory.OCO.OptimizationCore` 增加 online Frank-Wolfe 接口。"
+    },
+    {
+      "book": "HazanOCO2",
+      "chapter": "Ch8/Ch13",
+      "topic": "Games/duality/Blackwell approachability",
+      "status": "gap",
+      "last_search_date": "2026-02-13",
+      "sources_checked": "mathlib4、GitHub 检索",
+      "candidate_repo": "无明确仓库",
+      "next_action": "在 `MLTheory.OCO.GamesAndDuality` 先建立对偶与 approachability 定义层。"
+    },
+    {
+      "book": "HazanOCO2",
+      "chapter": "Ch9",
+      "topic": "Generalization and OCO",
+      "status": "partial",
+      "last_search_date": "2026-02-13",
+      "sources_checked": "mathlib4、现有 `MLTheory.AI.Generalization`",
+      "candidate_repo": "无",
+      "next_action": "先复用 AI 泛化模块，再补在线学习特有的稳定性/遗憾转化。"
+    },
+    {
+      "book": "HazanOCO2",
+      "chapter": "Ch10",
+      "topic": "Learning in changing environments（dynamic regret）",
+      "status": "gap",
+      "last_search_date": "2026-02-13",
+      "sources_checked": "mathlib4、GitHub 检索",
+      "candidate_repo": "无明确仓库",
+      "next_action": "在 `MLTheory.OCO.DynamicRegret` 增加 comparator drift 与 adaptive regret 定义。"
+    },
+    {
+      "book": "HazanOCO2",
+      "chapter": "Ch11-Ch12",
+      "topic": "Boosting and regret minimization / Online boosting",
+      "status": "gap",
+      "last_search_date": "2026-02-13",
+      "sources_checked": "mathlib4、GitHub 检索",
+      "candidate_repo": "无明确仓库",
+      "next_action": "在 `MLTheory.OCO.Boosting` 增加 weak learner/oracle 抽象。"
+    },
+    {
+      "book": "HazanOCO2",
+      "chapter": "全书生态",
+      "topic": "Lean4 专门 OCO 仓库可用性",
+      "status": "gap",
+      "last_search_date": "2026-02-13",
+      "sources_checked": "GitHub API：`online convex optimization lean`、`mirror descent lean4`、`online learning regret lean4`、`blackwell approachability lean`",
+      "candidate_repo": "无",
+      "next_action": "每月复检一次，若出现可用仓库则更新 candidate_repo 并评估接入。"
+    },
+    {
+      "book": "FoML2",
+      "chapter": "Ch3",
+      "topic": "VC dimension / Rademacher complexity 与书中记号对齐",
+      "status": "partial",
+      "last_search_date": "2026-02-13",
+      "sources_checked": "MIT TOC、`lean-stat-learning-theory`、`lean-rademacher`",
+      "candidate_repo": "`YuanheZ/lean-stat-learning-theory`; `auto-res/lean-rademacher`",
+      "next_action": "在 `MLTheory.Learning.AdvancedSLT` 建 FoML2 记号桥接层。"
+    },
+    {
+      "book": "FoML2",
+      "chapter": "Ch4",
+      "topic": "Model selection（SRM/CV/regularization）",
+      "status": "partial",
+      "last_search_date": "2026-02-13",
+      "sources_checked": "MIT TOC、mathlib4、本仓库占位模块",
+      "candidate_repo": "无明确仓库",
+      "next_action": "在 `MLTheory.Books.FoML2.Ch04_ModelSelection` 补 SRM/CV theorem statement。"
+    },
+    {
+      "book": "FoML2",
+      "chapter": "Ch5",
+      "topic": "Support Vector Machines（primal/dual/margin）",
+      "status": "partial",
+      "last_search_date": "2026-02-13",
+      "sources_checked": "MIT TOC、mathlib4、本仓库占位模块",
+      "candidate_repo": "无明确仓库",
+      "next_action": "在 `MLTheory.Books.FoML2.Ch05_SupportVectorMachines` 补 primal/dual theorem statement。"
+    },
+    {
+      "book": "FoML2",
+      "chapter": "Ch6",
+      "topic": "Kernel Methods（PSD kernel / representer theorem）",
+      "status": "partial",
+      "last_search_date": "2026-02-13",
+      "sources_checked": "MIT TOC、mathlib4、本仓库占位模块",
+      "candidate_repo": "无明确仓库",
+      "next_action": "在 `MLTheory.Books.FoML2.Ch06_KernelMethods` 补 representer theorem 接口。"
+    },
+    {
+      "book": "FoML2",
+      "chapter": "Ch7",
+      "topic": "Boosting（AdaBoost 与博弈视角）",
+      "status": "gap",
+      "last_search_date": "2026-02-13",
+      "sources_checked": "MIT TOC、HazanOCO2 覆盖文档",
+      "candidate_repo": "无明确仓库",
+      "next_action": "复用 `MLTheory.OCO.Boosting`，补 FoML2 专用术语与定理入口。"
+    },
+    {
+      "book": "FoML2",
+      "chapter": "Ch10-Ch11",
+      "topic": "Ranking/Regression 泛化界主线",
+      "status": "gap",
+      "last_search_date": "2026-02-13",
+      "sources_checked": "MIT TOC、mathlib4",
+      "candidate_repo": "无明确仓库",
+      "next_action": "在 `MLTheory.Learning.DiscreteModeling` 增加 ranking 与 regression 风险接口。"
+    },
+    {
+      "book": "FoML2",
+      "chapter": "Ch12-Ch13",
+      "topic": "Maximum entropy / Conditional maximum entropy",
+      "status": "gap",
+      "last_search_date": "2026-02-13",
+      "sources_checked": "MIT TOC、mathlib4",
+      "candidate_repo": "无明确仓库",
+      "next_action": "在 `MLTheory.Statistics.Information` 增加 maxent/conditional maxent 占位层。"
+    },
+    {
+      "book": "FoML2",
+      "chapter": "Ch16",
+      "topic": "Learning automata and languages",
+      "status": "gap",
+      "last_search_date": "2026-02-13",
+      "sources_checked": "MIT TOC、GitHub 检索",
+      "candidate_repo": "无明确仓库",
+      "next_action": "新建 `MLTheory.Learning.AutomataLanguage` 作为缺口承载模块。"
+    },
+    {
+      "book": "FoML2",
+      "chapter": "Ch17",
+      "topic": "Reinforcement learning（MDP/TD/Q-learning）",
+      "status": "gap",
+      "last_search_date": "2026-02-13",
+      "sources_checked": "MIT TOC、Bandit 覆盖文档、GitHub 检索",
+      "candidate_repo": "无明确仓库",
+      "next_action": "复用 `MLTheory.Bandits.RLBridge`，补 TD/Q-learning 术语与接口。"
+    },
+    {
+      "book": "FoML2",
+      "chapter": "全书生态",
+      "topic": "Lean4 专门 FoML2 书级仓库可用性",
+      "status": "gap",
+      "last_search_date": "2026-02-13",
+      "sources_checked": "GitHub API：`\\\"Foundations of Machine Learning\\\" lean4`、`lean4 \\\"statistical learning theory\\\"`、`lean4 PAC learning`",
+      "candidate_repo": "`YuanheZ/lean-stat-learning-theory`; `auto-res/lean-rademacher`",
+      "next_action": "每月复检一次；若出现书级仓库则更新 candidate_repo 并评估接入。"
+    },
+    {
+      "book": "SuttonBartoRL2",
+      "chapter": "Ch3-Ch4",
+      "topic": "有限 MDP 与动态规划主链",
+      "status": "partial",
+      "last_search_date": "2026-02-13",
+      "sources_checked": "MIT TOC、mathlib4、Bandit 覆盖文档、本仓库占位模块",
+      "candidate_repo": "无明确仓库",
+      "next_action": "在 `MLTheory.Books.SuttonBartoRL2.Ch03_MDP` 与 `MLTheory.Books.SuttonBartoRL2.Ch04_DynamicProgramming` 补 Bellman 与收敛陈述。"
+    },
+    {
+      "book": "SuttonBartoRL2",
+      "chapter": "Ch5-Ch8",
+      "topic": "MC/TD/n-step/规划学习（表格法）",
+      "status": "gap",
+      "last_search_date": "2026-02-13",
+      "sources_checked": "MIT TOC、mathlib4",
+      "candidate_repo": "无明确仓库",
+      "next_action": "在 `MLTheory.RL.MonteCarlo`、`MLTheory.RL.TemporalDifference`、`MLTheory.RL.ModelBasedPlanning` 建算法接口。"
+    },
+    {
+      "book": "SuttonBartoRL2",
+      "chapter": "Ch9-Ch13",
+      "topic": "函数逼近与策略梯度主链",
+      "status": "gap",
+      "last_search_date": "2026-02-13",
+      "sources_checked": "MIT TOC、FoML2/Hazan 覆盖文档、mathlib4",
+      "candidate_repo": "无明确仓库",
+      "next_action": "先在 `MLTheory.RL.FunctionApproximation` 与 `MLTheory.RL.PolicyGradient` 建占位证明接口。"
+    },
+    {
+      "book": "SuttonBartoRL2",
+      "chapter": "Ch14-Ch15",
+      "topic": "Psychology / Neuroscience 跨学科桥接",
+      "status": "gap",
+      "last_search_date": "2026-02-13",
+      "sources_checked": "MIT TOC、GitHub 检索",
+      "candidate_repo": "无明确仓库",
+      "next_action": "在 `MLTheory.RL.PsychologyBridge`、`MLTheory.RL.NeuroscienceBridge` 仅做术语层。"
+    },
+    {
+      "book": "SuttonBartoRL2",
+      "chapter": "Ch16-Ch17",
+      "topic": "案例与前沿（应用/开放问题）",
+      "status": "gap",
+      "last_search_date": "2026-02-13",
+      "sources_checked": "MIT TOC、GitHub 检索",
+      "candidate_repo": "无明确仓库",
+      "next_action": "在 `MLTheory.RL.CaseStudies`、`MLTheory.RL.Frontiers` 维护映射与待办。"
+    },
+    {
+      "book": "SuttonBartoRL2",
+      "chapter": "全书生态",
+      "topic": "Lean4 专门 RL2 书级仓库可用性",
+      "status": "gap",
+      "last_search_date": "2026-02-13",
+      "sources_checked": "GitHub API：`lean4 reinforcement learning`、`lean4 markov decision process`、`lean4 q-learning`",
+      "candidate_repo": "`fraware/saferl-proof-stack`（非书级、待评估）",
+      "next_action": "每月复检；若出现书级仓库或稳定 MDP 形式化则更新 candidate_repo。"
+    }
+  ],
+  "books": [
+    {
+      "book_id": "Vershynin",
+      "title": "Vershynin《High-Dimensional Probability》",
+      "edition": "2018",
+      "doc_file": "docs/books/Vershynin_HDP_Coverage.md",
+      "evidence_links": [],
+      "coverage_rows": [
+        {
+          "章节": "Ch1 A Quick Refresher on Analysis and Probability",
+          "对应模块": "`MLTheory.Probability.Conditioning`, `MLTheory.Probability.LimitLaws`, `MLTheory.OR.ConvexCore`, `MLTheory.HDP.Ch01_Refresher`",
+          "覆盖状态": "partial",
+          "证据链接": "见该书文档证据小节",
+          "缺口说明": "凸分析/条件期望/极限定理基础可对接；按书级完整组织仍待补。",
+          "后续动作": "见 GapLedger 对应条目"
+        },
+        {
+          "章节": "Ch2 Concentration of Sums of Independent Random Variables",
+          "对应模块": "`MLTheory.Probability.ProbIneq`, `MLTheory.Probability.Moments`, `MLTheory.HDP.Ch02_IndependentSums`, `MLTheory.Concentration`",
+          "覆盖状态": "partial",
+          "证据链接": "见该书文档证据小节",
+          "缺口说明": "Hoeffding/Chernoff/SubGaussian 有基础；Subexponential/Bernstein/MoM 待补。",
+          "后续动作": "见 GapLedger 对应条目"
+        },
+        {
+          "章节": "Ch3 Random Vectors in High Dimensions",
+          "对应模块": "`MLTheory.Probability.Moments`, `MLTheory.OR.StochasticMatrix`, `MLTheory.OR.GraphOptimization`, `MLTheory.HDP.Ch03_RandomVectors`",
+          "覆盖状态": "partial",
+          "证据链接": "见该书文档证据小节",
+          "缺口说明": "协方差、子高斯、矩阵基础可对接；PCA/Grothendieck/MaxCut 缺口较大。",
+          "后续动作": "见 GapLedger 对应条目"
+        },
+        {
+          "章节": "Ch4 Random Matrices",
+          "对应模块": "`MLTheory.Learning.Capacity`, `MLTheory.OR.DiscreteOptimization`, `MLTheory.HDP.Ch04_RandomMatrices`",
+          "覆盖状态": "partial",
+          "证据链接": "见该书文档证据小节",
+          "缺口说明": "covering/packing 与线代基础较强；应用侧（编码/社区检测）不足。",
+          "后续动作": "见 GapLedger 对应条目"
+        },
+        {
+          "章节": "Ch5 Concentration Without Independence",
+          "对应模块": "`MLTheory.Probability.ProbIneq`, `MLTheory.Learning.Capacity`, `MLTheory.HDP.Ch05_WithoutIndependence`",
+          "覆盖状态": "gap",
+          "证据链接": "见该书文档证据小节",
+          "缺口说明": "JL、Matrix Bernstein 等仍是缺口。",
+          "后续动作": "见 GapLedger 对应条目"
+        },
+        {
+          "章节": "Ch6 Quadratic Forms, Symmetrization and Contraction",
+          "对应模块": "`MLTheory.Learning.AdvancedSLT`, `MLTheory.HDP.Ch06_QuadraticSymmContraction`",
+          "覆盖状态": "gap",
+          "证据链接": "见该书文档证据小节",
+          "缺口说明": "Hanson-Wright/decoupling/contraction 仍需外部补强。",
+          "后续动作": "见 GapLedger 对应条目"
+        },
+        {
+          "章节": "Ch7 Random Processes",
+          "对应模块": "`MLTheory.Learning.Sequential`, `MLTheory.Probability.Martingales`, `MLTheory.HDP.Ch07_RandomProcesses`",
+          "覆盖状态": "partial",
+          "证据链接": "见该书文档证据小节",
+          "缺口说明": "process/martingale 基础可用；比较不等式链路未成体系。",
+          "后续动作": "见 GapLedger 对应条目"
+        },
+        {
+          "章节": "Ch8 Chaining",
+          "对应模块": "`MLTheory.Learning.Capacity`, `MLTheory.Learning.AdvancedSLT`, `MLTheory.Learning.DiscreteModeling`, `MLTheory.Statistics`, `MLTheory.Statistics.Risk`, `MLTheory.Statistics.Information`, `MLTheory.LLM`, `MLTheory.LLM.Autoregressive`, `MLTheory.LLM.Sampling`, `MLTheory.LLM.AlignmentObjectives`, `MLTheory.HDP.Ch08_Chaining`",
+          "覆盖状态": "partial",
+          "证据链接": "见该书文档证据小节",
+          "缺口说明": "Dudley/entropy integral 外部有高质量实现，但尚未并入本库。",
+          "后续动作": "见 GapLedger 对应条目"
+        },
+        {
+          "章节": "Ch9 Deviations of Random Matrices on Sets",
+          "对应模块": "`MLTheory.Learning.AdvancedSLT`, `MLTheory.HDP.Ch09_MatrixDeviations`",
+          "覆盖状态": "gap",
+          "证据链接": "见该书文档证据小节",
+          "缺口说明": "M*、escape、Dvoretzky-Milman 等尚缺。",
+          "后续动作": "见 GapLedger 对应条目"
+        },
+        {
+          "章节": "Meta 概念分层对齐",
+          "对应模块": "`MLTheory`, `MLTheory.Core`, `MLTheory.Methods`, `MLTheory.Applications`, `MLTheory.HDP`, `MLTheory.OR`, `MLTheory.Probability`",
+          "覆盖状态": "partial",
+          "证据链接": "SSOT 架构对齐",
+          "缺口说明": "概念层与适配层锚点。",
+          "后续动作": "保持与 ModuleCatalog 同步。"
+        }
+      ]
+    },
+    {
+      "book_id": "Durrett5",
+      "title": "Durrett《Probability Theory and Examples》",
+      "edition": "5th",
+      "doc_file": "docs/books/Durrett5_Coverage.md",
+      "evidence_links": [],
+      "coverage_rows": [
+        {
+          "章节": "I Measure Theory",
+          "对应模块": "`MLTheory.Books.Durrett5.Ch01_MeasureTheory`, `MLTheory.Probability.BasicMeasure`",
+          "覆盖状态": "partial",
+          "证据链接": "见该书文档证据小节",
+          "缺口说明": "测度基础可复用，书级叙事需索引化补全。",
+          "后续动作": "见 GapLedger 对应条目"
+        },
+        {
+          "章节": "II Probability Theory",
+          "对应模块": "`MLTheory.Books.Durrett5.Ch02_ProbabilityTheory`, `MLTheory.Probability.Conditioning`, `MLTheory.Probability.DensityCDF`, `MLTheory.Probability.ProbIneq`",
+          "覆盖状态": "partial",
+          "证据链接": "见该书文档证据小节",
+          "缺口说明": "条件期望、分布、尾界基础可接入。",
+          "后续动作": "见 GapLedger 对应条目"
+        },
+        {
+          "章节": "III Independence, Expectations, and Sums",
+          "对应模块": "`MLTheory.Books.Durrett5.Ch03_IndependenceExpectations`, `MLTheory.Probability.Moments`, `MLTheory.Probability.LimitLaws`",
+          "覆盖状态": "partial",
+          "证据链接": "见该书文档证据小节",
+          "缺口说明": "独立性、矩、分布与 LLN 基础可用。",
+          "后续动作": "见 GapLedger 对应条目"
+        },
+        {
+          "章节": "IV Limit Theorems",
+          "对应模块": "`MLTheory.Books.Durrett5.Ch04_LimitTheorems`, `MLTheory.Probability.CLTBridge`, `MLTheory.Probability.LimitLaws`",
+          "覆盖状态": "partial",
+          "证据链接": "见该书文档证据小节",
+          "缺口说明": "SLLN 有，CLT 需桥接外部项目。",
+          "后续动作": "见 GapLedger 对应条目"
+        },
+        {
+          "章节": "V Poisson Approximation",
+          "对应模块": "`MLTheory.Books.Durrett5.Ch05_PoissonApproximation`, `MLTheory.Probability.PoissonApprox`",
+          "覆盖状态": "gap",
+          "证据链接": "见该书文档证据小节",
+          "缺口说明": "目前缺少系统化 Poisson 近似/Stein 路线。",
+          "后续动作": "见 GapLedger 对应条目"
+        },
+        {
+          "章节": "VI Markov Chains",
+          "对应模块": "`MLTheory.Books.Durrett5.Ch06_MarkovChains`, `MLTheory.Probability.MarkovKernels`, `MLTheory.Learning.KernelBayes`",
+          "覆盖状态": "partial",
+          "证据链接": "见该书文档证据小节",
+          "缺口说明": "mathlib kernel 体系较强，Markov chain 书级接口待补。",
+          "后续动作": "见 GapLedger 对应条目"
+        },
+        {
+          "章节": "VII Martingales",
+          "对应模块": "`MLTheory.Books.Durrett5.Ch07_Martingales`, `MLTheory.Probability.Martingales`, `MLTheory.Learning.Sequential`",
+          "覆盖状态": "partial",
+          "证据链接": "见该书文档证据小节",
+          "缺口说明": "martingale 系列模块已有较高可用度。",
+          "后续动作": "见 GapLedger 对应条目"
+        },
+        {
+          "章节": "VIII Brownian Motion",
+          "对应模块": "`MLTheory.Books.Durrett5.Ch08_BrownianMotion`, `MLTheory.Probability.Brownian`",
+          "覆盖状态": "gap",
+          "证据链接": "见该书文档证据小节",
+          "缺口说明": "Brownian/Itô 需外部仓库或后续迁移。",
+          "后续动作": "见 GapLedger 对应条目"
+        },
+        {
+          "章节": "IX Stationary Processes",
+          "对应模块": "`MLTheory.Books.Durrett5.Ch09_StationaryProcesses`, `MLTheory.Probability.Stationary`",
+          "覆盖状态": "gap",
+          "证据链接": "见该书文档证据小节",
+          "缺口说明": "平稳过程系统化模块不足。",
+          "后续动作": "见 GapLedger 对应条目"
+        },
+        {
+          "章节": "X Continuous-Time Markov Chains",
+          "对应模块": "`MLTheory.Books.Durrett5.Ch10_CTMC`, `MLTheory.Probability.CTMC`",
+          "覆盖状态": "gap",
+          "证据链接": "见该书文档证据小节",
+          "缺口说明": "CTMC 结构尚未成体系。",
+          "后续动作": "见 GapLedger 对应条目"
+        },
+        {
+          "章节": "XI Ergodic Theorems",
+          "对应模块": "`MLTheory.Books.Durrett5.Ch11_ErgodicTheorems`, `MLTheory.Probability.Ergodic`",
+          "覆盖状态": "partial",
+          "证据链接": "见该书文档证据小节",
+          "缺口说明": "dynamics/ergodic 可复用，但概率叙事层待补。",
+          "后续动作": "见 GapLedger 对应条目"
+        },
+        {
+          "章节": "Meta 书籍适配层索引",
+          "对应模块": "`MLTheory.Books.Durrett5`",
+          "覆盖状态": "partial",
+          "证据链接": "SSOT 架构对齐",
+          "缺口说明": "概念层与适配层锚点。",
+          "后续动作": "保持与 ModuleCatalog 同步。"
+        }
+      ]
+    },
+    {
+      "book_id": "BanditAlgorithms",
+      "title": "Lattimore & Szepesvari《Bandit Algorithms》",
+      "edition": "2020",
+      "doc_file": "docs/books/BanditAlgorithms_Coverage.md",
+      "evidence_links": [
+        "https://tor-lattimore.com/downloads/book/book.pdf",
+        "https://www.barnesandnoble.com/w/bandit-algorithms-tor-lattimore/1130390382"
+      ],
+      "coverage_rows": [
+        {
+          "章节": "Ch1",
+          "对应模块": "`MLTheory.Bandits.Foundations`, `MLTheory.Books.BanditAlgorithms.PartI_Foundations`",
+          "覆盖状态": "planned",
+          "证据链接": "官方 PDF + 目录页",
+          "缺口说明": "仅有规划，尚无定义与定理",
+          "后续动作": "先落多臂老虎机基础对象与 regret 定义。"
+        },
+        {
+          "章节": "Ch2-Ch4",
+          "对应模块": "`MLTheory.Bandits.Foundations`, `MLTheory.Probability.ProbIneq`, `MLTheory.Probability.Martingales`",
+          "覆盖状态": "partial",
+          "证据链接": "mathlib 概率/鞅基础",
+          "缺口说明": "探索-利用算法证明链未落地",
+          "后续动作": "建 `ExploreThenCommit/UCB optimism` 占位定理。"
+        },
+        {
+          "章节": "Ch5-Ch9",
+          "对应模块": "`MLTheory.Bandits.Stochastic`, `MLTheory.Books.BanditAlgorithms.PartII_StochasticBandits`",
+          "覆盖状态": "partial",
+          "证据链接": "mathlib + 书目录",
+          "缺口说明": "UCB 下界、Bayesian regret、TS 证明缺口",
+          "后续动作": "先写问题与 regret 目标函数接口，再补上界/下界模板。"
+        },
+        {
+          "章节": "Ch10-Ch14",
+          "对应模块": "`MLTheory.Bandits.Adversarial`, `MLTheory.Books.BanditAlgorithms.PartIII_AdversarialBandits`",
+          "覆盖状态": "gap",
+          "证据链接": "书目录",
+          "缺口说明": "EXP3/一二阶 regret 与 minimax 下界缺口大",
+          "后续动作": "先定义 adversarial protocol 和 benchmark，再补权重更新框架。"
+        },
+        {
+          "章节": "Ch15-Ch23",
+          "对应模块": "`MLTheory.Bandits.ContextualLinear`, `MLTheory.Bandits.InformationTheory`, `MLTheory.Books.BanditAlgorithms.PartIV_ContextualLinearBandits`",
+          "覆盖状态": "gap",
+          "证据链接": "书目录",
+          "缺口说明": "自归一化过程、线性 UCB/TS、核化 bandit 尚无现成实现",
+          "后续动作": "优先建立线性 bandit 记号层与置信椭球接口。"
+        },
+        {
+          "章节": "Ch24",
+          "对应模块": "`MLTheory.Bandits.LargeActionSpaces`, `MLTheory.Books.BanditAlgorithms.PartV_LargeActionSpaces`",
+          "覆盖状态": "gap",
+          "证据链接": "书目录",
+          "缺口说明": "active arms 方向缺少基础 formalization",
+          "后续动作": "先落动作筛选/活跃集定义。"
+        },
+        {
+          "章节": "Ch25-Ch29",
+          "对应模块": "`MLTheory.Bandits.BestArmIdentification`, `MLTheory.Bandits.Dueling`, `MLTheory.Bandits.PureExplorationLinear`, `MLTheory.Books.BanditAlgorithms.PartVI_PureExploration`",
+          "覆盖状态": "gap",
+          "证据链接": "书目录",
+          "缺口说明": "BAI、dueling、线性纯探索均缺口",
+          "后续动作": "先写固定预算/固定置信定义与复杂度度量。"
+        },
+        {
+          "章节": "Ch30-Ch38",
+          "对应模块": "`MLTheory.Bandits.RLBridge`, `MLTheory.Books.BanditAlgorithms.PartVII_ReinforcementLearning`",
+          "覆盖状态": "gap",
+          "证据链接": "书目录",
+          "缺口说明": "MDP regret、渐近 regret、burn-in 等尚未成体系",
+          "后续动作": "先建 bandit->MDP 桥接接口并标注与 RL 文献对齐点。"
+        },
+        {
+          "章节": "Meta 书籍适配层索引",
+          "对应模块": "`MLTheory.Bandits`, `MLTheory.Books`, `MLTheory.Books.BanditAlgorithms`",
+          "覆盖状态": "partial",
+          "证据链接": "SSOT 架构对齐",
+          "缺口说明": "概念层与适配层锚点。",
+          "后续动作": "保持与 ModuleCatalog 同步。"
+        }
+      ]
+    },
+    {
+      "book_id": "HazanOCO2",
+      "title": "Hazan《Introduction to Online Convex Optimization》",
+      "edition": "Second Edition",
+      "doc_file": "docs/books/HazanOCO2_Coverage.md",
+      "evidence_links": [
+        "https://www.cs.princeton.edu/~ehazan/book2full.pdf",
+        "https://www.barnesandnoble.com/w/introduction-to-online-convex-optimization-elad-hazan/1147060507"
+      ],
+      "coverage_rows": [
+        {
+          "章节": "Ch1 Introduction",
+          "对应模块": "`MLTheory.Books.HazanOCO2.PartI_Core`, `MLTheory.OCO`",
+          "覆盖状态": "planned",
+          "证据链接": "目录来源",
+          "缺口说明": "仅有规划入口",
+          "后续动作": "建立 OCO 术语与问题定义总入口。"
+        },
+        {
+          "章节": "Ch2 Basic convex optimization",
+          "对应模块": "`MLTheory.OR.ConvexCore`, `MLTheory.OCO.OptimizationCore`, `MLTheory.Optimization`",
+          "覆盖状态": "partial",
+          "证据链接": "mathlib Convex.*",
+          "缺口说明": "书内算法化叙事未落地",
+          "后续动作": "将凸集/凸函数基础封装为 OCO 可用接口。"
+        },
+        {
+          "章节": "Ch3 Online gradient descent",
+          "对应模块": "`MLTheory.OCO.OptimizationCore`, `MLTheory.Probability.ProbIneq`",
+          "覆盖状态": "partial",
+          "证据链接": "目录 + mathlib 概率工具",
+          "缺口说明": "regret 证明链路缺口",
+          "后续动作": "增加 OGD regret theorem-statement 占位。"
+        },
+        {
+          "章节": "Ch4 Second-order methods",
+          "对应模块": "`MLTheory.OCO.OptimizationCore`",
+          "覆盖状态": "gap",
+          "证据链接": "目录来源",
+          "缺口说明": "ONS/self-concordance 缺口",
+          "后续动作": "增加二阶方法接口与假设层。"
+        },
+        {
+          "章节": "Ch5 Regularization",
+          "对应模块": "`MLTheory.OCO.OptimizationCore`",
+          "覆盖状态": "partial",
+          "证据链接": "目录来源",
+          "缺口说明": "FTRL/FTRL-Prox 证明缺失",
+          "后续动作": "增加 regularizer 与 update rule 抽象。"
+        },
+        {
+          "章节": "Ch6 Bandit convex optimization",
+          "对应模块": "`MLTheory.Books.HazanOCO2.PartII_BanditAndGames`, `MLTheory.OCO.BanditConvex`, `MLTheory.Bandits.Stochastic`",
+          "覆盖状态": "gap",
+          "证据链接": "目录来源 + Bandit 覆盖文档",
+          "缺口说明": "连续动作 bandit 缺口",
+          "后续动作": "建立 bandit convex feedback 模型。"
+        },
+        {
+          "章节": "Ch7 Projection-free OCO",
+          "对应模块": "`MLTheory.OCO.OptimizationCore`",
+          "覆盖状态": "gap",
+          "证据链接": "目录来源",
+          "缺口说明": "online Frank-Wolfe 缺口",
+          "后续动作": "增加 projection-free 更新接口。"
+        },
+        {
+          "章节": "Ch8 Games, duality, regret",
+          "对应模块": "`MLTheory.Books.HazanOCO2.PartII_BanditAndGames`, `MLTheory.OCO.GamesAndDuality`, `MLTheory.OCO.BanditConvex`",
+          "覆盖状态": "partial",
+          "证据链接": "目录来源",
+          "缺口说明": "minimax/duality 形式化不完整",
+          "后续动作": "补零和博弈与 regret 对偶框架。"
+        },
+        {
+          "章节": "Ch9 Learning theory, generalization and OCO",
+          "对应模块": "`MLTheory.Books.HazanOCO2.PartIII_GeneralizationAndAdaptivity`, `MLTheory.OCO.Generalization`, `MLTheory.AI.Generalization`",
+          "覆盖状态": "partial",
+          "证据链接": "目录来源 + 现有 AI 模块",
+          "缺口说明": "泛化边界与稳定性证明不足",
+          "后续动作": "先统一在线学习泛化接口。"
+        },
+        {
+          "章节": "Ch10 Learning in changing environments",
+          "对应模块": "`MLTheory.Books.HazanOCO2.PartIII_GeneralizationAndAdaptivity`, `MLTheory.OCO.DynamicRegret`, `MLTheory.Learning.Sequential`",
+          "覆盖状态": "gap",
+          "证据链接": "目录来源",
+          "缺口说明": "adaptive/dynamic regret 缺口",
+          "后续动作": "增加 comparator drift 与 dynamic regret 定义。"
+        },
+        {
+          "章节": "Ch11 Boosting and regret minimization",
+          "对应模块": "`MLTheory.Books.HazanOCO2.PartIV_BoostingAndApproachability`, `MLTheory.OCO.Boosting`, `MLTheory.AI.DecisionLearning`",
+          "覆盖状态": "gap",
+          "证据链接": "目录来源",
+          "缺口说明": "boosting-regret 联动缺口",
+          "后续动作": "增加 boosting->online learning 抽象桥接。"
+        },
+        {
+          "章节": "Ch12 Online boosting",
+          "对应模块": "`MLTheory.Books.HazanOCO2.PartIV_BoostingAndApproachability`, `MLTheory.OCO.Boosting`",
+          "覆盖状态": "gap",
+          "证据链接": "目录来源",
+          "缺口说明": "online boosting 算法与保证缺口",
+          "后续动作": "建立 weak learner/oracle 接口。"
+        },
+        {
+          "章节": "Ch13 Blackwell approachability and OCO",
+          "对应模块": "`MLTheory.Books.HazanOCO2.PartIV_BoostingAndApproachability`, `MLTheory.OCO.GamesAndDuality`",
+          "覆盖状态": "gap",
+          "证据链接": "目录来源",
+          "缺口说明": "approachability 方向缺口",
+          "后续动作": "增加 Blackwell set-valued payoff 抽象。"
+        },
+        {
+          "章节": "Meta 书籍适配层索引",
+          "对应模块": "`MLTheory.Books.HazanOCO2`",
+          "覆盖状态": "partial",
+          "证据链接": "SSOT 架构对齐",
+          "缺口说明": "概念层与适配层锚点。",
+          "后续动作": "保持与 ModuleCatalog 同步。"
+        }
+      ]
+    },
+    {
+      "book_id": "FoML2",
+      "title": "Mohri-Rostamizadeh-Talwalkar《Foundations of Machine Learning》",
+      "edition": "Second Edition",
+      "doc_file": "docs/books/FoML2_Coverage.md",
+      "evidence_links": [
+        "https://mitpress.mit.edu/9780262039406/foundations-of-machine-learning/",
+        "https://mitp-content-server.mit.edu/books/content/sectbyfn/books_pres_0/10290/Toc.pdf?dl=1"
+      ],
+      "coverage_rows": [
+        {
+          "章节": "Ch1 Introduction",
+          "对应模块": "`MLTheory.Books.FoML2`, `MLTheory.Learning`",
+          "覆盖状态": "planned",
+          "证据链接": "MIT TOC PDF",
+          "缺口说明": "仅完成书级入口规划",
+          "后续动作": "保持章节映射为主，不复制模块清单。"
+        },
+        {
+          "章节": "Ch2 PAC Learning Framework",
+          "对应模块": "`MLTheory.Books.FoML2.Ch02_PACLearning`, `MLTheory.Learning.Capacity`, `MLTheory.Probability.ProbIneq`",
+          "覆盖状态": "partial",
+          "证据链接": "MIT TOC PDF + 本仓库占位模块",
+          "缺口说明": "PAC 上下界证明链路不完整",
+          "后续动作": "在占位骨架上补 finite hypothesis set 定理陈述层。"
+        },
+        {
+          "章节": "Ch3 Rademacher Complexity and VC-Dimension",
+          "对应模块": "`MLTheory.Books.FoML2.Ch03_RademacherVCDimension`, `MLTheory.Learning.Capacity`, `MLTheory.Learning.AdvancedSLT`",
+          "覆盖状态": "partial",
+          "证据链接": "MIT TOC PDF + `lean-stat-learning-theory` + `lean-rademacher` + 本仓库占位模块",
+          "缺口说明": "VC/Rademacher 与书中组织未完全对齐",
+          "后续动作": "在占位骨架上建立 FoML2 记号桥接层。"
+        },
+        {
+          "章节": "Ch4 Model Selection",
+          "对应模块": "`MLTheory.Books.FoML2.Ch04_ModelSelection`, `MLTheory.Statistics.Risk`, `MLTheory.Learning.Capacity`, `MLTheory.OR.ConvexCore`",
+          "覆盖状态": "partial",
+          "证据链接": "MIT TOC PDF + 本仓库占位模块",
+          "缺口说明": "已有目标函数占位，SRM/CV 保证链路缺口仍大",
+          "后续动作": "在占位骨架上补 SRM/CV 相关 theorem statement。"
+        },
+        {
+          "章节": "Ch5 Support Vector Machines",
+          "对应模块": "`MLTheory.Books.FoML2.Ch05_SupportVectorMachines`, `MLTheory.OR.ConvexCore`, `MLTheory.Learning.Capacity`",
+          "覆盖状态": "partial",
+          "证据链接": "MIT TOC PDF + mathlib convex + 本仓库占位模块",
+          "缺口说明": "SVM 对偶与留一法分析未成体系",
+          "后续动作": "在占位骨架上补 primal/dual theorem statement。"
+        },
+        {
+          "章节": "Ch6 Kernel Methods",
+          "对应模块": "`MLTheory.Books.FoML2.Ch06_KernelMethods`, `MLTheory.Learning.KernelBayes`",
+          "覆盖状态": "partial",
+          "证据链接": "MIT TOC PDF + mathlib kernel 基础 + 本仓库占位模块",
+          "缺口说明": "representer theorem 与序列核细节缺口",
+          "后续动作": "在占位骨架上补 representer theorem 接口。"
+        },
+        {
+          "章节": "Ch7 Boosting",
+          "对应模块": "`MLTheory.OCO.Boosting`, `MLTheory.AI.DecisionLearning`",
+          "覆盖状态": "gap",
+          "证据链接": "MIT TOC PDF",
+          "缺口说明": "AdaBoost 理论链与博弈解释未落地",
+          "后续动作": "与 Hazan OCO 的 boosting 模块共建接口。"
+        },
+        {
+          "章节": "Ch8 On-Line Learning",
+          "对应模块": "`MLTheory.Learning.Sequential`, `MLTheory.OCO.OptimizationCore`",
+          "覆盖状态": "partial",
+          "证据链接": "MIT TOC PDF + HazanOCO2 覆盖文档",
+          "缺口说明": "专家建议/感知机/Winnow 细节缺口",
+          "后续动作": "复用 OCO 定义后补 online-to-batch 桥接。"
+        },
+        {
+          "章节": "Ch9 Multi-Class Classification",
+          "对应模块": "`MLTheory.Learning.DiscreteModeling`, `MLTheory.AI.DecisionLearning`",
+          "覆盖状态": "gap",
+          "证据链接": "MIT TOC PDF",
+          "缺口说明": "多分类组合策略与结构化预测缺口",
+          "后续动作": "先补 one-vs-all/one-vs-one 形式化接口。"
+        },
+        {
+          "章节": "Ch10 Ranking",
+          "对应模块": "`MLTheory.Learning.DiscreteModeling`, `MLTheory.Statistics.Risk`",
+          "覆盖状态": "gap",
+          "证据链接": "MIT TOC PDF",
+          "缺口说明": "ranking 损失与 AUC 证明缺口",
+          "后续动作": "在离散建模层补 ranking 指标定义。"
+        },
+        {
+          "章节": "Ch11 Regression",
+          "对应模块": "`MLTheory.Learning.DiscreteModeling`, `MLTheory.Statistics.Risk`, `MLTheory.Probability.ProbIneq`",
+          "覆盖状态": "partial",
+          "证据链接": "MIT TOC PDF + mathlib",
+          "缺口说明": "pseudo-dimension 与回归算法族缺口",
+          "后续动作": "补回归通用假设与泛化界模板。"
+        },
+        {
+          "章节": "Ch12 Maximum Entropy Models",
+          "对应模块": "`MLTheory.Statistics.Information`, `MLTheory.OR.ConvexCore`, `MLTheory.InfoTheory`",
+          "覆盖状态": "gap",
+          "证据链接": "MIT TOC PDF",
+          "缺口说明": "maxent 对偶与泛化界缺口",
+          "后续动作": "新增 maxent 模型与对偶问题占位。"
+        },
+        {
+          "章节": "Ch13 Conditional Maximum Entropy Models",
+          "对应模块": "`MLTheory.Statistics.Information`, `MLTheory.OR.ConvexCore`",
+          "覆盖状态": "gap",
+          "证据链接": "MIT TOC PDF",
+          "缺口说明": "条件 maxent / logistic 统一视角缺口",
+          "后续动作": "在信息统计层补条件熵模型接口。"
+        },
+        {
+          "章节": "Ch14 Algorithmic Stability",
+          "对应模块": "`MLTheory.AI.Generalization`",
+          "覆盖状态": "partial",
+          "证据链接": "MIT TOC PDF + mathlib 基础",
+          "缺口说明": "稳定性到泛化界完整链路缺口",
+          "后续动作": "增加 stability-based generalization 定理占位。"
+        },
+        {
+          "章节": "Ch15 Dimensionality Reduction",
+          "对应模块": "`MLTheory.OR.StochasticMatrix`, `MLTheory.Learning.Capacity`",
+          "覆盖状态": "partial",
+          "证据链接": "MIT TOC PDF + Vershynin 覆盖文档",
+          "缺口说明": "KPCA/流形学习/JL 的统一接口不足",
+          "后续动作": "复用 JL 缺口条目并补 KPCA 占位。"
+        },
+        {
+          "章节": "Ch16 Learning Automata and Languages",
+          "对应模块": "`MLTheory.Learning.AutomataLanguage`",
+          "覆盖状态": "gap",
+          "证据链接": "MIT TOC PDF",
+          "缺口说明": "自动机学习主线在现有模块中缺失",
+          "后续动作": "新建 Automata/Language 占位模块并记录外部候选。"
+        },
+        {
+          "章节": "Ch17 Reinforcement Learning",
+          "对应模块": "`MLTheory.Bandits.RLBridge`, `MLTheory.AI.DecisionLearning`",
+          "覆盖状态": "gap",
+          "证据链接": "MIT TOC PDF + Bandit 覆盖文档",
+          "缺口说明": "MDP/TD/Q-learning 体系缺口",
+          "后续动作": "与 Bandit Part VII 统一 RL 桥接层。"
+        },
+        {
+          "章节": "Meta 概念层学习接口",
+          "对应模块": "`MLTheory.Core.Learning`, `MLTheory.Core.Learning.PAC`, `MLTheory.Core.Learning.Capacity`, `MLTheory.Methods.Learning`, `MLTheory.Methods.Learning.ModelSelection`, `MLTheory.Methods.Learning.SVM`, `MLTheory.Methods.Learning.KernelMethods`, `MLTheory.Applications.Learning`, `MLTheory.AI`",
+          "覆盖状态": "partial",
+          "证据链接": "SSOT 架构对齐",
+          "缺口说明": "概念层与适配层锚点。",
+          "后续动作": "保持与 ModuleCatalog 同步。"
+        }
+      ]
+    },
+    {
+      "book_id": "SuttonBartoRL2",
+      "title": "Sutton-Barto《Reinforcement Learning: An Introduction》",
+      "edition": "Second Edition",
+      "doc_file": "docs/books/SuttonBarto_RL2_Coverage.md",
+      "evidence_links": [
+        "http://incompleteideas.net/book/the-book-2nd.html",
+        "https://mitpress.ublish.com/book/reinforcement-learning-an-introduction-2"
+      ],
+      "coverage_rows": [
+        {
+          "章节": "Ch1 Introduction",
+          "对应模块": "`MLTheory.Books.SuttonBartoRL2`, `MLTheory.RL`",
+          "覆盖状态": "planned",
+          "证据链接": "官方书页 + MIT TOC",
+          "缺口说明": "仅有规划入口",
+          "后续动作": "先统一 agent/environment/value/reward 术语层。"
+        },
+        {
+          "章节": "Ch2 Multi-armed Bandits",
+          "对应模块": "`MLTheory.Books.SuttonBartoRL2.PartI_TabularMethods`, `MLTheory.Bandits.Foundations`, `MLTheory.Bandits.Stochastic`",
+          "覆盖状态": "partial",
+          "证据链接": "MIT TOC + Bandit 覆盖文档",
+          "缺口说明": "书内算法链路未全部对齐",
+          "后续动作": "复用已有 bandit 模块并补 RL2 记号桥接。"
+        },
+        {
+          "章节": "Ch3 Finite Markov Decision Processes",
+          "对应模块": "`MLTheory.Books.SuttonBartoRL2.Ch03_MDP`, `MLTheory.RL.MDP`, `MLTheory.Bandits.RLBridge`",
+          "覆盖状态": "partial",
+          "证据链接": "MIT TOC + 本仓库占位模块",
+          "缺口说明": "已有 MDP/Bellman 占位接口，完整定理链缺口仍在",
+          "后续动作": "在占位骨架上补 Bellman expectation/optimality theorem statement。"
+        },
+        {
+          "章节": "Ch4 Dynamic Programming",
+          "对应模块": "`MLTheory.Books.SuttonBartoRL2.Ch04_DynamicProgramming`, `MLTheory.RL.DynamicProgramming`",
+          "覆盖状态": "partial",
+          "证据链接": "MIT TOC + 本仓库占位模块",
+          "缺口说明": "已有 DP 更新与策略迭代占位，收敛证明缺口仍在",
+          "后续动作": "在占位骨架上补 policy iteration/value iteration 收敛陈述。"
+        },
+        {
+          "章节": "Ch5 Monte Carlo Methods",
+          "对应模块": "`MLTheory.RL.MonteCarlo`",
+          "覆盖状态": "gap",
+          "证据链接": "MIT TOC",
+          "缺口说明": "on/off-policy MC 主线未实现",
+          "后续动作": "增加重要性采样与 MC 控制接口。"
+        },
+        {
+          "章节": "Ch6 Temporal-Difference Learning",
+          "对应模块": "`MLTheory.RL.TemporalDifference`, `MLTheory.Probability.Martingales`",
+          "覆盖状态": "partial",
+          "证据链接": "MIT TOC + mathlib martingale 基础",
+          "缺口说明": "Sarsa/Q-learning/Expected Sarsa 缺口",
+          "后续动作": "在 TD 模块先补算法定义与误差递推接口。"
+        },
+        {
+          "章节": "Ch7 n-step Bootstrapping",
+          "对应模块": "`MLTheory.RL.TemporalDifference`",
+          "覆盖状态": "gap",
+          "证据链接": "MIT TOC",
+          "缺口说明": "n-step 统一框架缺口",
+          "后续动作": "增加 n-step return 与 tree-backup 占位。"
+        },
+        {
+          "章节": "Ch8 Planning and Learning with Tabular Methods",
+          "对应模块": "`MLTheory.RL.ModelBasedPlanning`, `MLTheory.Bandits.RLBridge`",
+          "覆盖状态": "gap",
+          "证据链接": "MIT TOC",
+          "缺口说明": "Dyna/MCTS/RTDP 缺口",
+          "后续动作": "先做 model-based planning 术语与接口。"
+        },
+        {
+          "章节": "Ch9 On-policy Prediction with Approximation",
+          "对应模块": "`MLTheory.Books.SuttonBartoRL2.PartII_ApproximateMethods`, `MLTheory.RL.FunctionApproximation`",
+          "覆盖状态": "gap",
+          "证据链接": "MIT TOC",
+          "缺口说明": "逼近器与半梯度预测链路缺口",
+          "后续动作": "增加线性逼近与半梯度定义层。"
+        },
+        {
+          "章节": "Ch10 On-policy Control with Approximation",
+          "对应模块": "`MLTheory.RL.FunctionApproximation`",
+          "覆盖状态": "gap",
+          "证据链接": "MIT TOC",
+          "缺口说明": "逼近控制主线缺口",
+          "后续动作": "增加半梯度控制占位接口。"
+        },
+        {
+          "章节": "Ch11 Off-policy Methods with Approximation",
+          "对应模块": "`MLTheory.RL.OffPolicy`",
+          "覆盖状态": "gap",
+          "证据链接": "MIT TOC",
+          "缺口说明": "deadly triad/GTD/ETD 体系缺口",
+          "后续动作": "建立 off-policy 稳定性占位层。"
+        },
+        {
+          "章节": "Ch12 Eligibility Traces",
+          "对应模块": "`MLTheory.RL.EligibilityTraces`",
+          "覆盖状态": "gap",
+          "证据链接": "MIT TOC",
+          "缺口说明": "TD(λ)/Sarsa(λ) 体系缺口",
+          "后续动作": "增加 λ-return 与 eligibility trace 接口。"
+        },
+        {
+          "章节": "Ch13 Policy Gradient Methods",
+          "对应模块": "`MLTheory.Books.SuttonBartoRL2.PartII_ApproximateMethods`, `MLTheory.RL.PolicyGradient`, `MLTheory.OCO.OptimizationCore`",
+          "覆盖状态": "partial",
+          "证据链接": "MIT TOC + HazanOCO2 覆盖文档",
+          "缺口说明": "REINFORCE/actor-critic 未落地",
+          "后续动作": "在 policy gradient 模块补 log-derivative 接口。"
+        },
+        {
+          "章节": "Ch14 Psychology",
+          "对应模块": "`MLTheory.Books.SuttonBartoRL2.PartIII_LookingDeeper`, `MLTheory.RL.PsychologyBridge`",
+          "覆盖状态": "gap",
+          "证据链接": "MIT TOC",
+          "缺口说明": "跨学科内容与当前模块耦合弱",
+          "后续动作": "先建术语桥接，不在 v0.1 深挖。"
+        },
+        {
+          "章节": "Ch15 Neuroscience",
+          "对应模块": "`MLTheory.RL.NeuroscienceBridge`",
+          "覆盖状态": "gap",
+          "证据链接": "MIT TOC",
+          "缺口说明": "神经科学机制形式化缺口",
+          "后续动作": "先建 reward prediction error 术语层。"
+        },
+        {
+          "章节": "Ch16 Applications and Case Studies",
+          "对应模块": "`MLTheory.RL.CaseStudies`, `MLTheory.AI.DecisionLearning`",
+          "覆盖状态": "gap",
+          "证据链接": "MIT TOC",
+          "缺口说明": "章节偏应用，缺抽象接口",
+          "后续动作": "先记录案例映射，不做重实现。"
+        },
+        {
+          "章节": "Ch17 Frontiers",
+          "对应模块": "`MLTheory.RL.Frontiers`, `MLTheory.AI.DecisionLearning`",
+          "覆盖状态": "gap",
+          "证据链接": "MIT TOC",
+          "缺口说明": "options/auxiliary tasks/reward design 缺口",
+          "后续动作": "建立 frontier 术语与开放问题台账。"
+        },
+        {
+          "章节": "Meta 概念层 RL 接口",
+          "对应模块": "`MLTheory.Core.RL`, `MLTheory.Core.RL.MDP`, `MLTheory.Methods.RL`, `MLTheory.Methods.RL.DynamicProgramming`, `MLTheory.Applications.RL`",
+          "覆盖状态": "partial",
+          "证据链接": "SSOT 架构对齐",
+          "缺口说明": "概念层与适配层锚点。",
+          "后续动作": "保持与 ModuleCatalog 同步。"
+        }
+      ]
+    }
+  ],
+  "aliases": [
+    {
+      "legacy_module": "MLTheory.Books.FoML2.Ch02_PACLearning",
+      "canonical_module": "MLTheory.Core.Learning.PAC",
+      "status": "active"
+    },
+    {
+      "legacy_module": "MLTheory.Books.FoML2.Ch03_RademacherVCDimension",
+      "canonical_module": "MLTheory.Core.Learning.Capacity",
+      "status": "active"
+    },
+    {
+      "legacy_module": "MLTheory.Books.FoML2.Ch04_ModelSelection",
+      "canonical_module": "MLTheory.Methods.Learning.ModelSelection",
+      "status": "active"
+    },
+    {
+      "legacy_module": "MLTheory.Books.FoML2.Ch05_SupportVectorMachines",
+      "canonical_module": "MLTheory.Methods.Learning.SVM",
+      "status": "active"
+    },
+    {
+      "legacy_module": "MLTheory.Books.FoML2.Ch06_KernelMethods",
+      "canonical_module": "MLTheory.Methods.Learning.KernelMethods",
+      "status": "active"
+    },
+    {
+      "legacy_module": "MLTheory.Books.SuttonBartoRL2.Ch03_MDP",
+      "canonical_module": "MLTheory.Core.RL.MDP",
+      "status": "active"
+    },
+    {
+      "legacy_module": "MLTheory.Books.SuttonBartoRL2.Ch04_DynamicProgramming",
+      "canonical_module": "MLTheory.Methods.RL.DynamicProgramming",
+      "status": "active"
+    },
+    {
+      "legacy_module": "MLTheory.Concentration",
+      "canonical_module": "MLTheory.Probability",
+      "status": "active"
+    },
+    {
+      "legacy_module": "MLTheory.Optimization",
+      "canonical_module": "MLTheory.OR",
+      "status": "active"
+    },
+    {
+      "legacy_module": "MLTheory.InfoTheory",
+      "canonical_module": "MLTheory.Statistics",
+      "status": "active"
+    }
+  ]
+}
