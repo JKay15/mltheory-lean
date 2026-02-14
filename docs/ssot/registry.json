@@ -326,6 +326,12 @@
       "decision": "Theorem42 接口继续构造化：新增 `TwoLayerEvalAlgebraOps` 与 `TwoLayerStoneRouteEvalConstructiveParamSepData`，调用端直接提供 const/add/mul 参数构造子及 eval 语义；系统自动降解到 strict 路线。",
       "status": "active",
       "impact": "调用端从“存在性证明”进一步收敛为“构造函数 + 语义证明”，便于后续从网络拼接算子自动派生接口实例。"
+    },
+    {
+      "date": "2026-02-14",
+      "decision": "Theorem42 分离点接口构造化：新增 `TwoLayerStoneRouteEvalSeparationOpsData`，调用端通过 `sepParam + sep_spec` 显式给出点分离构造子；系统自动生成 `hSepParam` 并接入 strict 路线。",
+      "status": "active",
+      "impact": "调用端不再手写分离点存在性 `∃ p`，接口向“网络构造子驱动”进一步收敛。"
     }
   ],
   "modules": [
@@ -2289,7 +2295,7 @@
       "last_search_date": "2026-02-14",
       "sources_checked": "paper-template Theorem42.StoneRoute/StrictFinal/SmokeFinal；mathlib: Algebra.adjoin_induction, Set.SeparatesPoints, StoneWeierstrass",
       "candidate_repo": "leanprover-community/mathlib4",
-      "next_action": "下一步聚焦分离点自动化：从网络构造子（宽度拼接、零网络、线性分离单元）自动推出 `hSepParam`，完成构造子到 strict 入口的全自动桥接。"
+      "next_action": "下一步收口：构造“最终自然入口”定理，内部消费 eval 构造子与分离构造子接口，不再对外暴露 Stone 中间结构。"
     }
   ],
   "books": [
