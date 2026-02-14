@@ -284,6 +284,12 @@
       "decision": "Theorem42 严格化推进：新增 `TwoLayerStoneRoutePrimitiveData`，并通过 `toClosureData` 自动把“witnessAlg 内稠密”降解为 strict final 所需的闭包见证接口。",
       "status": "active",
       "impact": "最终入口不再要求手工提供 `hWitnessInClosure`，Theorem42 向“仅保留原始前提”再前进一步。"
+    },
+    {
+      "date": "2026-02-14",
+      "decision": "Theorem42 严格化继续下沉：新增 `TwoLayerStoneRouteGeneratedData`，固定 `witnessAlg = adjoin(range realizeC)`，由 `hSepRange` 自动推出 `hSep`，并新增 strict 入口包装器 `theorem42_strict_final_of_generated`。",
+      "status": "active",
+      "impact": "最终接口进一步移除手工子代数字段，用户仅需提供“range 分离点 + 在 adjoin 子类型的稠密性”两类更原始条件。"
     }
   ],
   "modules": [
@@ -2245,9 +2251,9 @@
       "topic": "严格版 Theorem42：Stone 结果到二层类闭包桥接",
       "status": "partial",
       "last_search_date": "2026-02-14",
-      "sources_checked": "paper-template Theorem42.StoneRoute/StrictFinal/SmokeFinal；mathlib Stone-Weierstrass + DenseRange.exists_mem_open + Metric.mem_closure_iff",
+      "sources_checked": "paper-template Theorem42.StoneRoute/StrictFinal/SmokeFinal；mathlib: Set.SeparatesPoints, ContinuousMap.Subalgebra.SeparatesPoints, Subalgebra.separatesPoints_monotone, StoneWeierstrass",
       "candidate_repo": "leanprover-community/mathlib4",
-      "next_action": "继续下沉：把 `witnessAlg` 与 `hSep` 从最终接口外移，优先尝试以更原始的二层特征生成条件自动构造分离点与稠密链。"
+      "next_action": "继续下沉：尝试把 `hDenseInAdjoin` 也从更原始可检验条件自动推出，最终把 Theorem42 strict 入口收敛到课件层自然前提。"
     }
   ],
   "books": [
