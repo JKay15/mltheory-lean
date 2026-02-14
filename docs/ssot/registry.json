@@ -332,6 +332,12 @@
       "decision": "Theorem42 分离点接口构造化：新增 `TwoLayerStoneRouteEvalSeparationOpsData`，调用端通过 `sepParam + sep_spec` 显式给出点分离构造子；系统自动生成 `hSepParam` 并接入 strict 路线。",
       "status": "active",
       "impact": "调用端不再手写分离点存在性 `∃ p`，接口向“网络构造子驱动”进一步收敛。"
+    },
+    {
+      "date": "2026-02-14",
+      "decision": "Theorem42 最终自然入口落地：新增 `TwoLayerTheorem42NaturalData`，并给出 `theorem42_strict_final_natural`/`theorem42_strict_final_natural_formula`；最终调用接口不再暴露 Stone 中间结构名。",
+      "status": "active",
+      "impact": "对外可直接使用“网络构造子 + 分离构造子”接口调用 strict 定理，内部保持 Stone 路线证明闭环。"
     }
   ],
   "modules": [
@@ -2295,7 +2301,7 @@
       "last_search_date": "2026-02-14",
       "sources_checked": "paper-template Theorem42.StoneRoute/StrictFinal/SmokeFinal；mathlib: Algebra.adjoin_induction, Set.SeparatesPoints, StoneWeierstrass",
       "candidate_repo": "leanprover-community/mathlib4",
-      "next_action": "下一步收口：构造“最终自然入口”定理，内部消费 eval 构造子与分离构造子接口，不再对外暴露 Stone 中间结构。"
+      "next_action": "下一步把最终自然入口实例化到具体网络族（如 ReLU/sigmoid 的可用构造子与分离构造子），减少用户手工装配。"
     }
   ],
   "books": [
