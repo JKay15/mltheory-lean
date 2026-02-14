@@ -368,6 +368,12 @@
       "decision": "外部复检新增 `or4nge19/NeuralNetworks`（Apache-2.0，Lean4 v4.24.0-rc1）：内容以 Hopfield/LLM/NN 建模为主，未提供可直接复用的 UAT（Theorem42）定理入口。",
       "status": "active",
       "impact": "作为神经网络形式化参考候选保留，但当前不作为 Theorem42 严格路线依赖。"
+    },
+    {
+      "date": "2026-02-15",
+      "decision": "Theorem42 接口再去前提化：新增 `TwoLayerStoneRouteEvalCoordinateOpsData` 与 `toEvalSeparationOpsData`，并提供 strict 包装器 `theorem42_strict_final_natural_of_eval_coordinate_ops`。",
+      "status": "active",
+      "impact": "调用端只需给出坐标参数族 `coordParam` 与代数操作，即可自动合成点分离并接入自然 strict 入口。"
     }
   ],
   "modules": [
@@ -2329,9 +2335,9 @@
       "topic": "严格版 Theorem42：Stone 结果到二层类闭包桥接",
       "status": "partial",
       "last_search_date": "2026-02-15",
-      "sources_checked": "paper-template Theorem42.StoneRoute/StrictFinal/SmokeFinal（新增 natural_local + surjective 路径）；mathlib: Algebra.adjoin_induction, Set.SeparatesPoints, StoneWeierstrass",
+      "sources_checked": "paper-template Theorem42.StoneRoute/StrictFinal/SmokeFinal（新增 natural_local + surjective + eval_coordinate 路径）；mathlib: Algebra.adjoin_induction, Set.SeparatesPoints, StoneWeierstrass",
       "candidate_repo": "leanprover-community/mathlib4",
-      "next_action": "下一步把 natural_local/surjective 接口实例化到具体激活函数与网络族（优先复用 mathlib/外部现成声明，缺失再自研最小闭环）。"
+      "next_action": "下一步将 `TwoLayerStoneRouteEvalCoordinateOpsData` 实例化到具体激活函数与参数构造（优先复用现成 formalization，缺失再自研最小闭环）。"
     }
   ],
   "books": [
