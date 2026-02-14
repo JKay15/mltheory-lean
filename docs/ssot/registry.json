@@ -272,6 +272,12 @@
       "decision": "外部库复用策略锁定为“先本地复刻后评估依赖”：候选声明先在本仓实现与验证，再决定是否引入 git 依赖。",
       "status": "locked",
       "impact": "避免上游版本与许可证不确定性直接传导到主仓构建链。"
+    },
+    {
+      "date": "2026-02-14",
+      "decision": "Theorem42 strict 入口从“精确表示 witness”升级为“闭包桥接 witness”（`A ⊆ closure(range F₂)`），并保留精确表示兼容包装器。",
+      "status": "active",
+      "impact": "降低对代数元素可精确表示的强假设，向课件“二层类稠密”目标更接近。"
     }
   ],
   "modules": [
@@ -2226,6 +2232,16 @@
       "sources_checked": "auto-res/lean-rademacher, YuanheZ/lean-stat-learning-theory（README/lakefile/toolchain）",
       "candidate_repo": "auto-res/lean-rademacher; YuanheZ/lean-stat-learning-theory",
       "next_action": "按声明级清单在本仓先复刻并回归验证；仅当 Lean 版本与 license 稳定后评估 git 依赖接入。"
+    },
+    {
+      "book": "StrictFormalization",
+      "chapter": "Phase3-Theorem42-ClosureBridge",
+      "topic": "严格版 Theorem42：Stone 结果到二层类闭包桥接",
+      "status": "partial",
+      "last_search_date": "2026-02-14",
+      "sources_checked": "paper-template Theorem42.StoneRoute + mathlib StoneWeierstrass",
+      "candidate_repo": "leanprover-community/mathlib4",
+      "next_action": "继续下沉：从更原始两层网络生成条件自动构造 `hWitnessInClosure`，并最终消解该见证字段。"
     }
   ],
   "books": [
