@@ -224,6 +224,12 @@
       "decision": "新增术语白话表 `docs/Glossary.md` 并纳入自动生成流程，用于统一解释 JSON/SSOT/Lean/CI 相关术语。",
       "status": "active",
       "impact": "减少沟通黑话，确保用户与 Codex 对关键概念的语义一致。"
+    },
+    {
+      "date": "2026-02-14",
+      "decision": "删除 `AGENT.md` 兼容入口并将唯一规范入口统一为 `AGENTS.md`；无语义损失，相关约束已并入主规范文件。",
+      "status": "locked",
+      "impact": "减少重复入口与维护歧义，避免规范分叉。"
     }
   ],
   "modules": [

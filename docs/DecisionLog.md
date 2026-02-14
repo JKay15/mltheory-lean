@@ -38,3 +38,4 @@
 | 2026-02-13 | 补齐旧路径兼容层：新增 `MLTheory.Probability/Statistics/OR/Learning/AI/LLM/OCO/RL/Bandits/HDP` 与 `Concentration/Optimization/InfoTheory` 薄封装入口，避免历史 import 断裂。 | active | 新旧导入路径可并行编译，迁移成本可控。 |
 | 2026-02-13 | CI 增加导入回归冒烟：`Eval/ImportSmoke.lean` 同时验证分层路径与兼容路径可编译。 | active | 防止后续重构破坏兼容入口。 |
 | 2026-02-14 | 新增术语白话表 `docs/Glossary.md` 并纳入自动生成流程，用于统一解释 JSON/SSOT/Lean/CI 相关术语。 | active | 减少沟通黑话，确保用户与 Codex 对关键概念的语义一致。 |
+| 2026-02-14 | 删除 `AGENT.md` 兼容入口并将唯一规范入口统一为 `AGENTS.md`；无语义损失，相关约束已并入主规范文件。 | locked | 减少重复入口与维护歧义，避免规范分叉。 |
