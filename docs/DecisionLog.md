@@ -59,3 +59,4 @@
 | 2026-02-14 | Theorem42 最终自然入口落地：新增 `TwoLayerTheorem42NaturalData`，并给出 `theorem42_strict_final_natural`/`theorem42_strict_final_natural_formula`；最终调用接口不再暴露 Stone 中间结构名。 | active | 对外可直接使用“网络构造子 + 分离构造子”接口调用 strict 定理，内部保持 Stone 路线证明闭环。 |
 | 2026-02-14 | 补充单点域自动实例化路径：新增 `TwoLayerEvalAlgebraOps.toNaturalData_of_subsingleton` 与 `theorem42_strict_final_natural_of_subsingleton`，在 `UnitCube d` 为 subsingleton 时免去分离构造子输入。 | active | 为最终自然入口提供可执行的零样板实例化通道，降低最小可用接入成本。 |
 | 2026-02-14 | 外部候选复检：发现 `Leorasz/uat_proof`（Lean4，Leshno 1993 UAT 方向，当前 WIP，仓库仅 `README.md` 与 `step1.lean`，无可直接依赖的 Lake 项目骨架）。 | active | 可作为定理路线参考证据，但暂不适合作为 git 依赖；继续采用“本仓自研 + 声明级复刻评估”策略。 |
+| 2026-02-15 | Theorem42 接口继续去前提化：新增 `TwoLayerTheorem42NaturalLocalData` 与 `TwoLayerTheorem42SurjectiveData`，并提供 strict 包装器 `theorem42_strict_final_natural_local` / `theorem42_strict_final_of_surjective_realizeC`。 | active | 调用端可用“局部闭包”或“满射实现”两条路径接入 strict 最终定理，进一步降低手工装配成本，且不改变 Stone 主证明链。 |

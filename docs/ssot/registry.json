@@ -350,6 +350,12 @@
       "decision": "外部候选复检：发现 `Leorasz/uat_proof`（Lean4，Leshno 1993 UAT 方向，当前 WIP，仓库仅 `README.md` 与 `step1.lean`，无可直接依赖的 Lake 项目骨架）。",
       "status": "active",
       "impact": "可作为定理路线参考证据，但暂不适合作为 git 依赖；继续采用“本仓自研 + 声明级复刻评估”策略。"
+    },
+    {
+      "date": "2026-02-15",
+      "decision": "Theorem42 接口继续去前提化：新增 `TwoLayerTheorem42NaturalLocalData` 与 `TwoLayerTheorem42SurjectiveData`，并提供 strict 包装器 `theorem42_strict_final_natural_local` / `theorem42_strict_final_of_surjective_realizeC`。",
+      "status": "active",
+      "impact": "调用端可用“局部闭包”或“满射实现”两条路径接入 strict 最终定理，进一步降低手工装配成本，且不改变 Stone 主证明链。"
     }
   ],
   "modules": [
@@ -2310,10 +2316,10 @@
       "chapter": "Phase3-Theorem42-ClosureBridge",
       "topic": "严格版 Theorem42：Stone 结果到二层类闭包桥接",
       "status": "partial",
-      "last_search_date": "2026-02-14",
-      "sources_checked": "paper-template Theorem42.StoneRoute/StrictFinal/SmokeFinal；mathlib: Algebra.adjoin_induction, Set.SeparatesPoints, StoneWeierstrass",
+      "last_search_date": "2026-02-15",
+      "sources_checked": "paper-template Theorem42.StoneRoute/StrictFinal/SmokeFinal（新增 natural_local + surjective 路径）；mathlib: Algebra.adjoin_induction, Set.SeparatesPoints, StoneWeierstrass",
       "candidate_repo": "leanprover-community/mathlib4",
-      "next_action": "下一步把最终自然入口实例化到具体网络族（如 ReLU/sigmoid 的可用构造子与分离构造子），减少用户手工装配。"
+      "next_action": "下一步把 natural_local/surjective 接口实例化到具体激活函数与网络族（优先复用 mathlib/外部现成声明，缺失再自研最小闭环）。"
     }
   ],
   "books": [
