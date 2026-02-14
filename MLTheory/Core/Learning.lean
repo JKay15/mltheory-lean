@@ -5,11 +5,11 @@ Authors: Xiong Jiangkai, Codex
 -/
 import MLTheory.Core.Learning.PAC
 import MLTheory.Core.Learning.Capacity
+import MLTheory.Core.Learning.FunctionClass
 
 /-!
 # MLTheory.Core.Learning
 
 Core abstractions and foundational statements for MLTheory.
 -/
-
 

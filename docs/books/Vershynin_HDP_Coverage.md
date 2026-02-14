@@ -5,7 +5,7 @@
 ## 书目信息
 - 书名：Vershynin《High-Dimensional Probability》
 - 版本：2018
-- 覆盖日期：2026-02-13
+- 覆盖日期：2026-02-14
 - 维护人：Codex + 用户
 
 ## 目录来源与证据
@@ -19,7 +19,7 @@
 | Ch3 Random Vectors in High Dimensions | `MLTheory.Probability.Moments`, `MLTheory.OR.StochasticMatrix`, `MLTheory.OR.GraphOptimization`, `MLTheory.HDP.Ch03_RandomVectors` | partial | 见该书文档证据小节 | 协方差、子高斯、矩阵基础可对接；PCA/Grothendieck/MaxCut 缺口较大。 | 见 GapLedger 对应条目 |
 | Ch4 Random Matrices | `MLTheory.Learning.Capacity`, `MLTheory.OR.DiscreteOptimization`, `MLTheory.HDP.Ch04_RandomMatrices` | partial | 见该书文档证据小节 | covering/packing 与线代基础较强；应用侧（编码/社区检测）不足。 | 见 GapLedger 对应条目 |
 | Ch5 Concentration Without Independence | `MLTheory.Probability.ProbIneq`, `MLTheory.Learning.Capacity`, `MLTheory.HDP.Ch05_WithoutIndependence` | gap | 见该书文档证据小节 | JL、Matrix Bernstein 等仍是缺口。 | 见 GapLedger 对应条目 |
-| Ch6 Quadratic Forms, Symmetrization and Contraction | `MLTheory.Learning.AdvancedSLT`, `MLTheory.HDP.Ch06_QuadraticSymmContraction` | gap | 见该书文档证据小节 | Hanson-Wright/decoupling/contraction 仍需外部补强。 | 见 GapLedger 对应条目 |
+| Ch6 Quadratic Forms, Symmetrization and Contraction | `MLTheory.Methods.Learning.Rademacher`, `MLTheory.Methods.Learning.Contraction`, `MLTheory.Learning.AdvancedSLT`, `MLTheory.HDP.Ch06_QuadraticSymmContraction` | gap | Vershynin TOC + MLTheory 通用工具模块 + `lean-stat-learning-theory` | Hanson-Wright/decoupling 仍需补齐；已建立 contraction 可复用接口 | 见 GapLedger 对应条目 |
 | Ch7 Random Processes | `MLTheory.Learning.Sequential`, `MLTheory.Probability.Martingales`, `MLTheory.HDP.Ch07_RandomProcesses` | partial | 见该书文档证据小节 | process/martingale 基础可用；比较不等式链路未成体系。 | 见 GapLedger 对应条目 |
 | Ch8 Chaining | `MLTheory.Learning.Capacity`, `MLTheory.Learning.AdvancedSLT`, `MLTheory.Learning.DiscreteModeling`, `MLTheory.Statistics`, `MLTheory.Statistics.Risk`, `MLTheory.Statistics.Information`, `MLTheory.LLM`, `MLTheory.LLM.Autoregressive`, `MLTheory.LLM.Sampling`, `MLTheory.LLM.AlignmentObjectives`, `MLTheory.HDP.Ch08_Chaining` | partial | 见该书文档证据小节 | Dudley/entropy integral 外部有高质量实现，但尚未并入本库。 | 见 GapLedger 对应条目 |
 | Ch9 Deviations of Random Matrices on Sets | `MLTheory.Learning.AdvancedSLT`, `MLTheory.HDP.Ch09_MatrixDeviations` | gap | 见该书文档证据小节 | M*、escape、Dvoretzky-Milman 等尚缺。 | 见 GapLedger 对应条目 |

@@ -74,6 +74,7 @@
 | MLTheory.Core | Architecture | partial | mathlib | FoML2 Ch2-6; SuttonBartoRL2 Ch3-4 | core | statement | forbidden |
 | MLTheory.Core.Learning | Architecture | partial | mathlib | FoML2 Ch2-3 | core | statement | forbidden |
 | MLTheory.Core.Learning.Capacity | Learning | partial | mathlib | FoML2 Ch3; Vershynin Ch8 | core | statement | forbidden |
+| MLTheory.Core.Learning.FunctionClass | Learning | partial | mathlib | FoML2 Ch3; Vershynin Ch6 | core | proved | forbidden |
 | MLTheory.Core.Learning.PAC | Learning | partial | mathlib | FoML2 Ch2 | core | statement | forbidden |
 | MLTheory.Core.RL | Architecture | partial | mathlib | SuttonBartoRL2 Ch3-4 | core | statement | forbidden |
 | MLTheory.Core.RL.MDP | RL | partial | mathlib | SuttonBartoRL2 Ch3 | core | statement | forbidden |
@@ -101,8 +102,11 @@
 | MLTheory.Learning.Sequential | Learning | partial | mathlib | Vershynin Ch7; Durrett VII; FoML2 Ch8; SuttonBartoRL2 Ch6-8 | legacy | statement | allowed |
 | MLTheory.Methods | Architecture | partial | mathlib | FoML2 Ch4-6; SuttonBartoRL2 Ch4 | methods | statement | forbidden |
 | MLTheory.Methods.Learning | Architecture | partial | mathlib | FoML2 Ch4-6 | methods | statement | forbidden |
+| MLTheory.Methods.Learning.Contraction | Learning | partial | mathlib | FoML2 Ch3; Vershynin Ch6 | methods | proved | forbidden |
+| MLTheory.Methods.Learning.GeneralizationTools | Learning | partial | mathlib | FoML2 Ch2-Ch3; Vershynin Ch2 | methods | proved | forbidden |
 | MLTheory.Methods.Learning.KernelMethods | Learning | partial | mathlib | FoML2 Ch6 | methods | statement | forbidden |
 | MLTheory.Methods.Learning.ModelSelection | Learning | partial | mathlib | FoML2 Ch4 | methods | statement | forbidden |
+| MLTheory.Methods.Learning.Rademacher | Learning | partial | mathlib | FoML2 Ch3; Vershynin Ch6 | methods | proved | forbidden |
 | MLTheory.Methods.Learning.SVM | Learning | partial | mathlib | FoML2 Ch5 | methods | statement | forbidden |
 | MLTheory.Methods.RL | Architecture | partial | mathlib | SuttonBartoRL2 Ch4 | methods | statement | forbidden |
 | MLTheory.Methods.RL.DynamicProgramming | RL | partial | mathlib | SuttonBartoRL2 Ch4 | methods | statement | forbidden |

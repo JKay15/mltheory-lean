@@ -3,7 +3,7 @@
     "schema_version": "1.1.0",
     "language": "zh-CN",
     "toolchain": "v4.27.0",
-    "last_updated": "2026-02-13",
+    "last_updated": "2026-02-14",
     "policy": [
       "json_ssot_only",
       "markdown_generated_only",
@@ -230,6 +230,18 @@
       "decision": "删除 `AGENT.md` 兼容入口并将唯一规范入口统一为 `AGENTS.md`；无语义损失，相关约束已并入主规范文件。",
       "status": "locked",
       "impact": "减少重复入口与维护歧义，避免规范分叉。"
+    },
+    {
+      "date": "2026-02-14",
+      "decision": "执行“工具优先重排”：MLTheory 主库只承载通用学习理论工具（Rademacher/Contraction/PAC+Concentration），题目专用定理留在 paper-template。",
+      "status": "locked",
+      "impact": "避免把单题建模污染共享库接口，提升跨论文复用性。"
+    },
+    {
+      "date": "2026-02-14",
+      "decision": "完成外部库审计：`auto-res/lean-rademacher`（Lean 4.27.0-rc1，MIT）可作为高优先参考；`YuanheZ/lean-stat-learning-theory`（Lean 4.27.0-rc1，license 未声明）暂不作为直接依赖。",
+      "status": "active",
+      "impact": "形成“可复用声明名 + 许可证 + 直接依赖可行性”的审计基线，后续接入可追溯。"
     }
   ],
   "modules": [
@@ -1602,6 +1614,46 @@
       "layer": "legacy",
       "proof_status": "statement",
       "placeholder_policy_scope": "allowed"
+    },
+    {
+      "module_path": "MLTheory.Core.Learning.FunctionClass",
+      "domain": "Learning",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "FoML2 Ch3; Vershynin Ch6",
+      "layer": "core",
+      "proof_status": "proved",
+      "placeholder_policy_scope": "forbidden"
+    },
+    {
+      "module_path": "MLTheory.Methods.Learning.Rademacher",
+      "domain": "Learning",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "FoML2 Ch3; Vershynin Ch6",
+      "layer": "methods",
+      "proof_status": "proved",
+      "placeholder_policy_scope": "forbidden"
+    },
+    {
+      "module_path": "MLTheory.Methods.Learning.Contraction",
+      "domain": "Learning",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "FoML2 Ch3; Vershynin Ch6",
+      "layer": "methods",
+      "proof_status": "proved",
+      "placeholder_policy_scope": "forbidden"
+    },
+    {
+      "module_path": "MLTheory.Methods.Learning.GeneralizationTools",
+      "domain": "Learning",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "FoML2 Ch2-Ch3; Vershynin Ch2",
+      "layer": "methods",
+      "proof_status": "proved",
+      "placeholder_policy_scope": "forbidden"
     }
   ],
   "gaps": [
@@ -1910,10 +1962,10 @@
       "chapter": "Ch3",
       "topic": "VC dimension / Rademacher complexity 与书中记号对齐",
       "status": "partial",
-      "last_search_date": "2026-02-13",
-      "sources_checked": "MIT TOC、`lean-stat-learning-theory`、`lean-rademacher`",
+      "last_search_date": "2026-02-14",
+      "sources_checked": "MIT TOC、MLTheory 新增通用模块、`auto-res/lean-rademacher`、`YuanheZ/lean-stat-learning-theory`",
       "candidate_repo": "`YuanheZ/lean-stat-learning-theory`; `auto-res/lean-rademacher`",
-      "next_action": "在 `MLTheory.Learning.AdvancedSLT` 建 FoML2 记号桥接层。"
+      "next_action": "优先以 `MLTheory.Methods.Learning.Rademacher/Contraction/GeneralizationTools` 对齐 FoML2 记号，再逐步补 VC 维相关引理。"
     },
     {
       "book": "FoML2",
@@ -2064,6 +2116,26 @@
       "sources_checked": "GitHub API：`lean4 reinforcement learning`、`lean4 markov decision process`、`lean4 q-learning`",
       "candidate_repo": "`fraware/saferl-proof-stack`（非书级、待评估）",
       "next_action": "每月复检；若出现书级仓库或稳定 MDP 形式化则更新 candidate_repo。"
+    },
+    {
+      "book": "ExternalAudit",
+      "chapter": "lean-rademacher",
+      "topic": "Rademacher/PAC 通用工具可复用性审计",
+      "status": "partial",
+      "last_search_date": "2026-02-14",
+      "sources_checked": "GitHub API + README/lakefile/lean-toolchain；可复用声明名：`empiricalRademacherComplexity`、`rademacherComplexity`、`le_two_smul_rademacher`、`linear_predictor_l2_bound`、`dudley_entropy_integral`；Lean 4.27.0-rc1；license=MIT",
+      "candidate_repo": "auto-res/lean-rademacher",
+      "next_action": "保持“先不直接依赖”；以该仓声明命名为参考，在 MLTheory 自实现最小通用接口后再评估按 tag 接入。"
+    },
+    {
+      "book": "ExternalAudit",
+      "chapter": "lean-stat-learning-theory",
+      "topic": "经验过程/覆盖数/Dudley 工具可复用性审计",
+      "status": "partial",
+      "last_search_date": "2026-02-14",
+      "sources_checked": "GitHub API + README/lakefile/lean-toolchain；可复用声明名：`dudley`、`coveringNumber`、`coveringNumber_euclideanBall_le`；Lean 4.27.0-rc1；license=null",
+      "candidate_repo": "YuanheZ/lean-stat-learning-theory",
+      "next_action": "许可证未声明，暂不直接依赖；仅作为证明结构与术语参考，待 license 明确后再评估接入。"
     }
   ],
   "books": [
@@ -2116,10 +2188,10 @@
         },
         {
           "章节": "Ch6 Quadratic Forms, Symmetrization and Contraction",
-          "对应模块": "`MLTheory.Learning.AdvancedSLT`, `MLTheory.HDP.Ch06_QuadraticSymmContraction`",
+          "对应模块": "`MLTheory.Methods.Learning.Rademacher`, `MLTheory.Methods.Learning.Contraction`, `MLTheory.Learning.AdvancedSLT`, `MLTheory.HDP.Ch06_QuadraticSymmContraction`",
           "覆盖状态": "gap",
-          "证据链接": "见该书文档证据小节",
-          "缺口说明": "Hanson-Wright/decoupling/contraction 仍需外部补强。",
+          "证据链接": "Vershynin TOC + MLTheory 通用工具模块 + `lean-stat-learning-theory`",
+          "缺口说明": "Hanson-Wright/decoupling 仍需补齐；已建立 contraction 可复用接口",
           "后续动作": "见 GapLedger 对应条目"
         },
         {
@@ -2497,11 +2569,11 @@
         },
         {
           "章节": "Ch3 Rademacher Complexity and VC-Dimension",
-          "对应模块": "`MLTheory.Books.FoML2.Ch03_RademacherVCDimension`, `MLTheory.Learning.Capacity`, `MLTheory.Learning.AdvancedSLT`",
+          "对应模块": "`MLTheory.Books.FoML2.Ch03_RademacherVCDimension`, `MLTheory.Core.Learning.FunctionClass`, `MLTheory.Methods.Learning.Rademacher`, `MLTheory.Methods.Learning.Contraction`, `MLTheory.Methods.Learning.GeneralizationTools`, `MLTheory.Learning.AdvancedSLT`",
           "覆盖状态": "partial",
-          "证据链接": "MIT TOC PDF + `lean-stat-learning-theory` + `lean-rademacher` + 本仓库占位模块",
-          "缺口说明": "VC/Rademacher 与书中组织未完全对齐",
-          "后续动作": "在占位骨架上建立 FoML2 记号桥接层。"
+          "证据链接": "MIT TOC PDF + MLTheory 通用工具模块 + `lean-rademacher` + `lean-stat-learning-theory`",
+          "缺口说明": "VC 维细节与书中完整常数链路仍待补齐",
+          "后续动作": "保持题目证明在 paper-template；MLTheory 继续补通用工具与记号桥接。"
         },
         {
           "章节": "Ch4 Model Selection",
@@ -2617,7 +2689,7 @@
         },
         {
           "章节": "Meta 概念层学习接口",
-          "对应模块": "`MLTheory.Core.Learning`, `MLTheory.Core.Learning.PAC`, `MLTheory.Core.Learning.Capacity`, `MLTheory.Methods.Learning`, `MLTheory.Methods.Learning.ModelSelection`, `MLTheory.Methods.Learning.SVM`, `MLTheory.Methods.Learning.KernelMethods`, `MLTheory.Applications.Learning`, `MLTheory.AI`",
+          "对应模块": "`MLTheory.Core.Learning`, `MLTheory.Core.Learning.PAC`, `MLTheory.Core.Learning.Capacity`, `MLTheory.Core.Learning.FunctionClass`, `MLTheory.Methods.Learning`, `MLTheory.Methods.Learning.Rademacher`, `MLTheory.Methods.Learning.Contraction`, `MLTheory.Methods.Learning.GeneralizationTools`, `MLTheory.Methods.Learning.ModelSelection`, `MLTheory.Methods.Learning.SVM`, `MLTheory.Methods.Learning.KernelMethods`, `MLTheory.Applications.Learning`, `MLTheory.AI`",
           "覆盖状态": "partial",
           "证据链接": "SSOT 架构对齐",
           "缺口说明": "概念层与适配层锚点。",

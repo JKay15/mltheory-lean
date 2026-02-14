@@ -5,7 +5,7 @@
 ## 书目信息
 - 书名：Hazan《Introduction to Online Convex Optimization》
 - 版本：Second Edition
-- 覆盖日期：2026-02-13
+- 覆盖日期：2026-02-14
 - 维护人：Codex + 用户
 
 ## 目录来源与证据

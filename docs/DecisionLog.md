@@ -39,3 +39,5 @@
 | 2026-02-13 | CI 增加导入回归冒烟：`Eval/ImportSmoke.lean` 同时验证分层路径与兼容路径可编译。 | active | 防止后续重构破坏兼容入口。 |
 | 2026-02-14 | 新增术语白话表 `docs/Glossary.md` 并纳入自动生成流程，用于统一解释 JSON/SSOT/Lean/CI 相关术语。 | active | 减少沟通黑话，确保用户与 Codex 对关键概念的语义一致。 |
 | 2026-02-14 | 删除 `AGENT.md` 兼容入口并将唯一规范入口统一为 `AGENTS.md`；无语义损失，相关约束已并入主规范文件。 | locked | 减少重复入口与维护歧义，避免规范分叉。 |
+| 2026-02-14 | 执行“工具优先重排”：MLTheory 主库只承载通用学习理论工具（Rademacher/Contraction/PAC+Concentration），题目专用定理留在 paper-template。 | locked | 避免把单题建模污染共享库接口，提升跨论文复用性。 |
+| 2026-02-14 | 完成外部库审计：`auto-res/lean-rademacher`（Lean 4.27.0-rc1，MIT）可作为高优先参考；`YuanheZ/lean-stat-learning-theory`（Lean 4.27.0-rc1，license 未声明）暂不作为直接依赖。 | active | 形成“可复用声明名 + 许可证 + 直接依赖可行性”的审计基线，后续接入可追溯。 |
