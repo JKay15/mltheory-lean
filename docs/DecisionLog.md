@@ -60,3 +60,5 @@
 | 2026-02-14 | 补充单点域自动实例化路径：新增 `TwoLayerEvalAlgebraOps.toNaturalData_of_subsingleton` 与 `theorem42_strict_final_natural_of_subsingleton`，在 `UnitCube d` 为 subsingleton 时免去分离构造子输入。 | active | 为最终自然入口提供可执行的零样板实例化通道，降低最小可用接入成本。 |
 | 2026-02-14 | 外部候选复检：发现 `Leorasz/uat_proof`（Lean4，Leshno 1993 UAT 方向，当前 WIP，仓库仅 `README.md` 与 `step1.lean`，无可直接依赖的 Lake 项目骨架）。 | active | 可作为定理路线参考证据，但暂不适合作为 git 依赖；继续采用“本仓自研 + 声明级复刻评估”策略。 |
 | 2026-02-15 | Theorem42 接口继续去前提化：新增 `TwoLayerTheorem42NaturalLocalData` 与 `TwoLayerTheorem42SurjectiveData`，并提供 strict 包装器 `theorem42_strict_final_natural_local` / `theorem42_strict_final_of_surjective_realizeC`。 | active | 调用端可用“局部闭包”或“满射实现”两条路径接入 strict 最终定理，进一步降低手工装配成本，且不改变 Stone 主证明链。 |
+| 2026-02-15 | Theorem42 接口补桥：新增 `TwoLayerStoneRouteEvalSeparationOpsData.toNaturalData` 与 strict 包装器 `theorem42_strict_final_natural_of_eval_separation_ops`，使 EvalSeparationOps 可直接走自然入口。 | active | 调用端若已有 `ops + sepParam` 可直接接入自然 strict 接口，减少 Stone 中间对象显式装配。 |
+| 2026-02-15 | 外部复检新增 `or4nge19/NeuralNetworks`（Apache-2.0，Lean4 v4.24.0-rc1）：内容以 Hopfield/LLM/NN 建模为主，未提供可直接复用的 UAT（Theorem42）定理入口。 | active | 作为神经网络形式化参考候选保留，但当前不作为 Theorem42 严格路线依赖。 |

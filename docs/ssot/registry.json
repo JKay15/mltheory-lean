@@ -356,6 +356,18 @@
       "decision": "Theorem42 接口继续去前提化：新增 `TwoLayerTheorem42NaturalLocalData` 与 `TwoLayerTheorem42SurjectiveData`，并提供 strict 包装器 `theorem42_strict_final_natural_local` / `theorem42_strict_final_of_surjective_realizeC`。",
       "status": "active",
       "impact": "调用端可用“局部闭包”或“满射实现”两条路径接入 strict 最终定理，进一步降低手工装配成本，且不改变 Stone 主证明链。"
+    },
+    {
+      "date": "2026-02-15",
+      "decision": "Theorem42 接口补桥：新增 `TwoLayerStoneRouteEvalSeparationOpsData.toNaturalData` 与 strict 包装器 `theorem42_strict_final_natural_of_eval_separation_ops`，使 EvalSeparationOps 可直接走自然入口。",
+      "status": "active",
+      "impact": "调用端若已有 `ops + sepParam` 可直接接入自然 strict 接口，减少 Stone 中间对象显式装配。"
+    },
+    {
+      "date": "2026-02-15",
+      "decision": "外部复检新增 `or4nge19/NeuralNetworks`（Apache-2.0，Lean4 v4.24.0-rc1）：内容以 Hopfield/LLM/NN 建模为主，未提供可直接复用的 UAT（Theorem42）定理入口。",
+      "status": "active",
+      "impact": "作为神经网络形式化参考候选保留，但当前不作为 Theorem42 严格路线依赖。"
     }
   ],
   "modules": [
@@ -2306,10 +2318,10 @@
       "chapter": "Phase1-ExternalCandidates",
       "topic": "外部候选声明级复刻清单（不直接加依赖）",
       "status": "partial",
-      "last_search_date": "2026-02-14",
-      "sources_checked": "auto-res/lean-rademacher, YuanheZ/lean-stat-learning-theory（README/lakefile/toolchain）, Leorasz/uat_proof（README/step1.lean，GitHub API）",
-      "candidate_repo": "auto-res/lean-rademacher; YuanheZ/lean-stat-learning-theory; Leorasz/uat_proof",
-      "next_action": "优先复刻可独立引用的声明；`Leorasz/uat_proof` 先做路线参考，不作为直接依赖，待其项目骨架成熟后再评估接入。"
+      "last_search_date": "2026-02-15",
+      "sources_checked": "auto-res/lean-rademacher, YuanheZ/lean-stat-learning-theory（README/lakefile/toolchain）, Leorasz/uat_proof（README/step1.lean，GitHub API）, or4nge19/NeuralNetworks（README/tree/toolchain，GitHub API）",
+      "candidate_repo": "auto-res/lean-rademacher; YuanheZ/lean-stat-learning-theory; Leorasz/uat_proof; or4nge19/NeuralNetworks",
+      "next_action": "优先复刻可独立引用的声明；UAT 方向仍以 `Leorasz/uat_proof` 路线参考为主，`or4nge19/NeuralNetworks` 先作为神经网络建模参考，不直接依赖。"
     },
     {
       "book": "StrictFormalization",
