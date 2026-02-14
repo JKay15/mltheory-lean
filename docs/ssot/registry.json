@@ -278,6 +278,12 @@
       "decision": "Theorem42 strict 入口从“精确表示 witness”升级为“闭包桥接 witness”（`A ⊆ closure(range F₂)`），并保留精确表示兼容包装器。",
       "status": "active",
       "impact": "降低对代数元素可精确表示的强假设，向课件“二层类稠密”目标更接近。"
+    },
+    {
+      "date": "2026-02-14",
+      "decision": "Theorem42 严格化推进：新增 `TwoLayerStoneRoutePrimitiveData`，并通过 `toClosureData` 自动把“witnessAlg 内稠密”降解为 strict final 所需的闭包见证接口。",
+      "status": "active",
+      "impact": "最终入口不再要求手工提供 `hWitnessInClosure`，Theorem42 向“仅保留原始前提”再前进一步。"
     }
   ],
   "modules": [
@@ -2239,9 +2245,9 @@
       "topic": "严格版 Theorem42：Stone 结果到二层类闭包桥接",
       "status": "partial",
       "last_search_date": "2026-02-14",
-      "sources_checked": "paper-template Theorem42.StoneRoute + mathlib StoneWeierstrass",
+      "sources_checked": "paper-template Theorem42.StoneRoute/StrictFinal/SmokeFinal；mathlib Stone-Weierstrass + DenseRange.exists_mem_open + Metric.mem_closure_iff",
       "candidate_repo": "leanprover-community/mathlib4",
-      "next_action": "继续下沉：从更原始两层网络生成条件自动构造 `hWitnessInClosure`，并最终消解该见证字段。"
+      "next_action": "继续下沉：把 `witnessAlg` 与 `hSep` 从最终接口外移，优先尝试以更原始的二层特征生成条件自动构造分离点与稠密链。"
     }
   ],
   "books": [

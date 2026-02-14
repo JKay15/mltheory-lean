@@ -47,3 +47,4 @@
 | 2026-02-14 | Theorem42 严格版主路线锁定为 Stone-Weierstrass：先用可分离点子代数建立 epsilon 逼近，再回灌到二层参数化接口。 | locked | 优先复用 mathlib 成熟定理，减少重复造轮子并提高证明稳定性。 |
 | 2026-02-14 | 外部库复用策略锁定为“先本地复刻后评估依赖”：候选声明先在本仓实现与验证，再决定是否引入 git 依赖。 | locked | 避免上游版本与许可证不确定性直接传导到主仓构建链。 |
 | 2026-02-14 | Theorem42 strict 入口从“精确表示 witness”升级为“闭包桥接 witness”（`A ⊆ closure(range F₂)`），并保留精确表示兼容包装器。 | active | 降低对代数元素可精确表示的强假设，向课件“二层类稠密”目标更接近。 |
+| 2026-02-14 | Theorem42 严格化推进：新增 `TwoLayerStoneRoutePrimitiveData`，并通过 `toClosureData` 自动把“witnessAlg 内稠密”降解为 strict final 所需的闭包见证接口。 | active | 最终入口不再要求手工提供 `hWitnessInClosure`，Theorem42 向“仅保留原始前提”再前进一步。 |
