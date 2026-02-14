@@ -32,7 +32,7 @@
 | Ch15 Dimensionality Reduction | `MLTheory.OR.StochasticMatrix`, `MLTheory.Learning.Capacity` | partial | MIT TOC PDF + Vershynin 覆盖文档 | KPCA/流形学习/JL 的统一接口不足 | 复用 JL 缺口条目并补 KPCA 占位。 |
 | Ch16 Learning Automata and Languages | `MLTheory.Learning.AutomataLanguage` | gap | MIT TOC PDF | 自动机学习主线在现有模块中缺失 | 新建 Automata/Language 占位模块并记录外部候选。 |
 | Ch17 Reinforcement Learning | `MLTheory.Bandits.RLBridge`, `MLTheory.AI.DecisionLearning` | gap | MIT TOC PDF + Bandit 覆盖文档 | MDP/TD/Q-learning 体系缺口 | 与 Bandit Part VII 统一 RL 桥接层。 |
-| Meta 概念层学习接口 | `MLTheory.Core.Learning`, `MLTheory.Core.Learning.PAC`, `MLTheory.Core.Learning.Capacity`, `MLTheory.Core.Learning.FunctionClass`, `MLTheory.Methods.Learning`, `MLTheory.Methods.Learning.Rademacher`, `MLTheory.Methods.Learning.Contraction`, `MLTheory.Methods.Learning.GeneralizationTools`, `MLTheory.Methods.Learning.ModelSelection`, `MLTheory.Methods.Learning.SVM`, `MLTheory.Methods.Learning.KernelMethods`, `MLTheory.Applications.Learning`, `MLTheory.AI` | partial | SSOT 架构对齐 | 概念层与适配层锚点。 | 保持与 ModuleCatalog 同步。 |
+| Meta 概念层学习接口 | `MLTheory.Core.Learning`, `MLTheory.Core.Learning.PAC`, `MLTheory.Core.Learning.Capacity`, `MLTheory.Core.Learning.FunctionClass`, `MLTheory.Methods.Learning`, `MLTheory.Methods.Learning.Rademacher`, `MLTheory.Methods.Learning.Contraction`, `MLTheory.Methods.Learning.GeneralizationTools`, `MLTheory.Methods.Learning.ModelSelection`, `MLTheory.Methods.Learning.SVM`, `MLTheory.Methods.Learning.KernelMethods`, `MLTheory.Applications.Learning`, `MLTheory.AI`, `MLTheory.Methods.Learning.StoneWeierstrassBridge`, `MLTheory.Methods.Learning.ConcentrationPackaging` | partial | SSOT 架构对齐 | 概念层与适配层锚点。 | 保持与 ModuleCatalog 同步。 |
 
 ## 与全局文档联动
 1. 模块路径以 `../ModuleCatalog.md` 为唯一模块清单来源。

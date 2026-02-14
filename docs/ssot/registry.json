@@ -254,6 +254,24 @@
       "decision": "确认 `banr1/tailored-lean-stat-learning-theory` 与 `YuanheZ/lean-stat-learning-theory` 当前提交一致（同 HEAD），按同一候选去重管理。",
       "status": "active",
       "impact": "减少候选重复记录，避免审计结果分叉。"
+    },
+    {
+      "date": "2026-02-14",
+      "decision": "锁定“完全形式化（严格版）”完成标准：Theorem42/43 最终入口不暴露中间桥接接口，且以 Lean 编译通过与签名门禁作为验收条件。",
+      "status": "locked",
+      "impact": "为后续实现提供统一的终态定义与自动化验收口径。"
+    },
+    {
+      "date": "2026-02-14",
+      "decision": "Theorem42 严格版主路线锁定为 Stone-Weierstrass：先用可分离点子代数建立 epsilon 逼近，再回灌到二层参数化接口。",
+      "status": "locked",
+      "impact": "优先复用 mathlib 成熟定理，减少重复造轮子并提高证明稳定性。"
+    },
+    {
+      "date": "2026-02-14",
+      "decision": "外部库复用策略锁定为“先本地复刻后评估依赖”：候选声明先在本仓实现与验证，再决定是否引入 git 依赖。",
+      "status": "locked",
+      "impact": "避免上游版本与许可证不确定性直接传导到主仓构建链。"
     }
   ],
   "modules": [
@@ -1666,6 +1684,26 @@
       "layer": "methods",
       "proof_status": "proved",
       "placeholder_policy_scope": "forbidden"
+    },
+    {
+      "module_path": "MLTheory.Methods.Learning.StoneWeierstrassBridge",
+      "domain": "learning",
+      "status": "covered",
+      "source": "mathlib",
+      "book_refs": "FoML2 Ch5-Ch6; strict-formalization Theorem42",
+      "layer": "methods",
+      "proof_status": "proved",
+      "placeholder_policy_scope": "forbidden"
+    },
+    {
+      "module_path": "MLTheory.Methods.Learning.ConcentrationPackaging",
+      "domain": "learning",
+      "status": "covered",
+      "source": "mathlib",
+      "book_refs": "FoML2 Ch2-Ch3; strict-formalization Theorem43",
+      "layer": "methods",
+      "proof_status": "proved",
+      "placeholder_policy_scope": "forbidden"
     }
   ],
   "gaps": [
@@ -2168,6 +2206,26 @@
       "sources_checked": "仓库克隆审计；Lean toolchain=4.25.0-rc2，核心内容偏优化算法，不含可直接对接的 Rademacher/PAC 主链声明。",
       "candidate_repo": "mahi97/ml-proofs-lean4",
       "next_action": "保留为低优先候选；仅在优化理论路线扩展时再评估是否抽取通用引理。"
+    },
+    {
+      "book": "StrictFormalization",
+      "chapter": "Phase1-MathlibAnchors",
+      "topic": "可复用声明映射：Stone-Weierstrass + subgaussian concentration",
+      "status": "covered",
+      "last_search_date": "2026-02-14",
+      "sources_checked": "mathlib 本地源码：ContinuousMap.StoneWeierstrass / Probability.Moments.SubGaussian",
+      "candidate_repo": "leanprover-community/mathlib4",
+      "next_action": "继续优先复用：`subalgebra_topologicalClosure_eq_top_of_separatesPoints`、`exists_mem_subalgebra_near_continuousMap_of_separatesPoints`、`hasSubgaussianMGF_of_mem_Icc_of_integral_eq_zero`、`measure_sum_range_ge_le_of_iIndepFun`。"
+    },
+    {
+      "book": "StrictFormalization",
+      "chapter": "Phase1-ExternalCandidates",
+      "topic": "外部候选声明级复刻清单（不直接加依赖）",
+      "status": "partial",
+      "last_search_date": "2026-02-14",
+      "sources_checked": "auto-res/lean-rademacher, YuanheZ/lean-stat-learning-theory（README/lakefile/toolchain）",
+      "candidate_repo": "auto-res/lean-rademacher; YuanheZ/lean-stat-learning-theory",
+      "next_action": "按声明级清单在本仓先复刻并回归验证；仅当 Lean 版本与 license 稳定后评估 git 依赖接入。"
     }
   ],
   "books": [
@@ -2721,7 +2779,7 @@
         },
         {
           "章节": "Meta 概念层学习接口",
-          "对应模块": "`MLTheory.Core.Learning`, `MLTheory.Core.Learning.PAC`, `MLTheory.Core.Learning.Capacity`, `MLTheory.Core.Learning.FunctionClass`, `MLTheory.Methods.Learning`, `MLTheory.Methods.Learning.Rademacher`, `MLTheory.Methods.Learning.Contraction`, `MLTheory.Methods.Learning.GeneralizationTools`, `MLTheory.Methods.Learning.ModelSelection`, `MLTheory.Methods.Learning.SVM`, `MLTheory.Methods.Learning.KernelMethods`, `MLTheory.Applications.Learning`, `MLTheory.AI`",
+          "对应模块": "`MLTheory.Core.Learning`, `MLTheory.Core.Learning.PAC`, `MLTheory.Core.Learning.Capacity`, `MLTheory.Core.Learning.FunctionClass`, `MLTheory.Methods.Learning`, `MLTheory.Methods.Learning.Rademacher`, `MLTheory.Methods.Learning.Contraction`, `MLTheory.Methods.Learning.GeneralizationTools`, `MLTheory.Methods.Learning.ModelSelection`, `MLTheory.Methods.Learning.SVM`, `MLTheory.Methods.Learning.KernelMethods`, `MLTheory.Applications.Learning`, `MLTheory.AI`, `MLTheory.Methods.Learning.StoneWeierstrassBridge`, `MLTheory.Methods.Learning.ConcentrationPackaging`",
           "覆盖状态": "partial",
           "证据链接": "SSOT 架构对齐",
           "缺口说明": "概念层与适配层锚点。",

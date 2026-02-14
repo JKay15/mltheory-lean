@@ -43,3 +43,6 @@
 | 2026-02-14 | 完成外部库审计：`auto-res/lean-rademacher`（Lean 4.27.0-rc1，MIT）可作为高优先参考；`YuanheZ/lean-stat-learning-theory`（Lean 4.27.0-rc1，license 未声明）暂不作为直接依赖。 | active | 形成“可复用声明名 + 许可证 + 直接依赖可行性”的审计基线，后续接入可追溯。 |
 | 2026-02-14 | 外部库二次审计补充：`google/formal-ml` 为 Lean3 体系（含 PAC/VC 文件但非 Lean4 toolchain），`mahi97/ml-proofs-lean4` 偏优化方向且与当前 Rademacher/PAC 工具主链不匹配，均暂不纳入直接依赖。 | active | 补全“优先现成库”审计覆盖面，并避免把版本/主题不匹配仓库误接入主链。 |
 | 2026-02-14 | 确认 `banr1/tailored-lean-stat-learning-theory` 与 `YuanheZ/lean-stat-learning-theory` 当前提交一致（同 HEAD），按同一候选去重管理。 | active | 减少候选重复记录，避免审计结果分叉。 |
+| 2026-02-14 | 锁定“完全形式化（严格版）”完成标准：Theorem42/43 最终入口不暴露中间桥接接口，且以 Lean 编译通过与签名门禁作为验收条件。 | locked | 为后续实现提供统一的终态定义与自动化验收口径。 |
+| 2026-02-14 | Theorem42 严格版主路线锁定为 Stone-Weierstrass：先用可分离点子代数建立 epsilon 逼近，再回灌到二层参数化接口。 | locked | 优先复用 mathlib 成熟定理，减少重复造轮子并提高证明稳定性。 |
+| 2026-02-14 | 外部库复用策略锁定为“先本地复刻后评估依赖”：候选声明先在本仓实现与验证，再决定是否引入 git 依赖。 | locked | 避免上游版本与许可证不确定性直接传导到主仓构建链。 |

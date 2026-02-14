@@ -102,12 +102,14 @@
 | MLTheory.Learning.Sequential | Learning | partial | mathlib | Vershynin Ch7; Durrett VII; FoML2 Ch8; SuttonBartoRL2 Ch6-8 | legacy | statement | allowed |
 | MLTheory.Methods | Architecture | partial | mathlib | FoML2 Ch4-6; SuttonBartoRL2 Ch4 | methods | statement | forbidden |
 | MLTheory.Methods.Learning | Architecture | partial | mathlib | FoML2 Ch4-6 | methods | statement | forbidden |
+| MLTheory.Methods.Learning.ConcentrationPackaging | learning | covered | mathlib | FoML2 Ch2-Ch3; strict-formalization Theorem43 | methods | proved | forbidden |
 | MLTheory.Methods.Learning.Contraction | Learning | partial | mathlib | FoML2 Ch3; Vershynin Ch6 | methods | proved | forbidden |
 | MLTheory.Methods.Learning.GeneralizationTools | Learning | partial | mathlib | FoML2 Ch2-Ch3; Vershynin Ch2 | methods | proved | forbidden |
 | MLTheory.Methods.Learning.KernelMethods | Learning | partial | mathlib | FoML2 Ch6 | methods | statement | forbidden |
 | MLTheory.Methods.Learning.ModelSelection | Learning | partial | mathlib | FoML2 Ch4 | methods | statement | forbidden |
 | MLTheory.Methods.Learning.Rademacher | Learning | partial | mathlib | FoML2 Ch3; Vershynin Ch6 | methods | proved | forbidden |
 | MLTheory.Methods.Learning.SVM | Learning | partial | mathlib | FoML2 Ch5 | methods | statement | forbidden |
+| MLTheory.Methods.Learning.StoneWeierstrassBridge | learning | covered | mathlib | FoML2 Ch5-Ch6; strict-formalization Theorem42 | methods | proved | forbidden |
 | MLTheory.Methods.RL | Architecture | partial | mathlib | SuttonBartoRL2 Ch4 | methods | statement | forbidden |
 | MLTheory.Methods.RL.DynamicProgramming | RL | partial | mathlib | SuttonBartoRL2 Ch4 | methods | statement | forbidden |
 | MLTheory.OCO | OCO | planned | mathlib | HazanOCO2 Ch1-13 | legacy | statement | allowed |
