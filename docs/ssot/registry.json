@@ -314,6 +314,12 @@
       "decision": "Theorem42 接口再下沉：新增 `TwoLayerStoneRouteAlgebraicExistsParamSepData`，仅需给出 const/add/mul 的存在性条件；通过 `Classical.choose` 自动生成 `TwoLayerRealizationAlgebraOps`，并新增 strict 包装器 `theorem42_strict_final_of_algebraic_exists_param_sep`。",
       "status": "active",
       "impact": "调用端可从“显式操作构造”降到“存在性证明”，进一步减少样板并保持 strict 路线可编译验证。"
+    },
+    {
+      "date": "2026-02-14",
+      "decision": "Theorem42 接口继续下沉：新增 `TwoLayerStoneRouteEvalExistsParamSepData`，仅要求在 `evalTwoLayerParams` 层给出 const/add/mul 闭包存在性；自动提升为函数层存在性并新增 strict 包装器 `theorem42_strict_final_of_eval_exists_param_sep`。",
+      "status": "active",
+      "impact": "调用端可只在网络公式级别证明闭包条件，不必手写 `C(UnitCube d, ℝ)` 等式，进一步降低接入成本。"
     }
   ],
   "modules": [
@@ -2277,7 +2283,7 @@
       "last_search_date": "2026-02-14",
       "sources_checked": "paper-template Theorem42.StoneRoute/StrictFinal/SmokeFinal；mathlib: Algebra.adjoin_induction, Set.SeparatesPoints, StoneWeierstrass",
       "candidate_repo": "leanprover-community/mathlib4",
-      "next_action": "继续下沉：从更自然的网络参数约束（如宽度拼接、零单元、激活闭包）推导 const/add/mul 存在性，减少人工提供存在性证明。"
+      "next_action": "继续下沉：从网络构造子（如宽度拼接、零网络、乘法闭包）自动推出 eval 层 `hConstEvalExists/hAddEvalExists/hMulEvalExists` 与 `hSepParam`，再自动接入 strict 入口。"
     }
   ],
   "books": [
