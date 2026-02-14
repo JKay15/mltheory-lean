@@ -290,6 +290,12 @@
       "decision": "Theorem42 严格化继续下沉：新增 `TwoLayerStoneRouteGeneratedData`，固定 `witnessAlg = adjoin(range realizeC)`，由 `hSepRange` 自动推出 `hSep`，并新增 strict 入口包装器 `theorem42_strict_final_of_generated`。",
       "status": "active",
       "impact": "最终接口进一步移除手工子代数字段，用户仅需提供“range 分离点 + 在 adjoin 子类型的稠密性”两类更原始条件。"
+    },
+    {
+      "date": "2026-02-14",
+      "decision": "Theorem42 再下沉：新增 `TwoLayerStoneRouteAlgebraClosedData`，用 `Algebra.adjoin_induction` 从“常数/加法/乘法可实现”自动推出 `adjoin(range)` 的精确可表示，并新增 `theorem42_strict_final_of_algebra_closed` 包装器。",
+      "status": "active",
+      "impact": "该分支不再要求 `hDenseInAdjoin`；strict final 可由更原始、可检验的代数闭包前提驱动。"
     }
   ],
   "modules": [
@@ -2251,9 +2257,9 @@
       "topic": "严格版 Theorem42：Stone 结果到二层类闭包桥接",
       "status": "partial",
       "last_search_date": "2026-02-14",
-      "sources_checked": "paper-template Theorem42.StoneRoute/StrictFinal/SmokeFinal；mathlib: Set.SeparatesPoints, ContinuousMap.Subalgebra.SeparatesPoints, Subalgebra.separatesPoints_monotone, StoneWeierstrass",
+      "sources_checked": "paper-template Theorem42.StoneRoute/StrictFinal/SmokeFinal；mathlib: Algebra.adjoin_induction, Set.SeparatesPoints, Subalgebra.separatesPoints_monotone, StoneWeierstrass",
       "candidate_repo": "leanprover-community/mathlib4",
-      "next_action": "继续下沉：尝试把 `hDenseInAdjoin` 也从更原始可检验条件自动推出，最终把 Theorem42 strict 入口收敛到课件层自然前提。"
+      "next_action": "继续下沉：优先尝试弱化/自动化 `hSepRange` 与代数闭包假设（例如从更自然的特征族构造条件推出），并保持 strict 最终签名不暴露中间桥接。"
     }
   ],
   "books": [

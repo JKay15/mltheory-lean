@@ -49,3 +49,4 @@
 | 2026-02-14 | Theorem42 strict 入口从“精确表示 witness”升级为“闭包桥接 witness”（`A ⊆ closure(range F₂)`），并保留精确表示兼容包装器。 | active | 降低对代数元素可精确表示的强假设，向课件“二层类稠密”目标更接近。 |
 | 2026-02-14 | Theorem42 严格化推进：新增 `TwoLayerStoneRoutePrimitiveData`，并通过 `toClosureData` 自动把“witnessAlg 内稠密”降解为 strict final 所需的闭包见证接口。 | active | 最终入口不再要求手工提供 `hWitnessInClosure`，Theorem42 向“仅保留原始前提”再前进一步。 |
 | 2026-02-14 | Theorem42 严格化继续下沉：新增 `TwoLayerStoneRouteGeneratedData`，固定 `witnessAlg = adjoin(range realizeC)`，由 `hSepRange` 自动推出 `hSep`，并新增 strict 入口包装器 `theorem42_strict_final_of_generated`。 | active | 最终接口进一步移除手工子代数字段，用户仅需提供“range 分离点 + 在 adjoin 子类型的稠密性”两类更原始条件。 |
+| 2026-02-14 | Theorem42 再下沉：新增 `TwoLayerStoneRouteAlgebraClosedData`，用 `Algebra.adjoin_induction` 从“常数/加法/乘法可实现”自动推出 `adjoin(range)` 的精确可表示，并新增 `theorem42_strict_final_of_algebra_closed` 包装器。 | active | 该分支不再要求 `hDenseInAdjoin`；strict final 可由更原始、可检验的代数闭包前提驱动。 |
