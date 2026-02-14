@@ -242,6 +242,18 @@
       "decision": "完成外部库审计：`auto-res/lean-rademacher`（Lean 4.27.0-rc1，MIT）可作为高优先参考；`YuanheZ/lean-stat-learning-theory`（Lean 4.27.0-rc1，license 未声明）暂不作为直接依赖。",
       "status": "active",
       "impact": "形成“可复用声明名 + 许可证 + 直接依赖可行性”的审计基线，后续接入可追溯。"
+    },
+    {
+      "date": "2026-02-14",
+      "decision": "外部库二次审计补充：`google/formal-ml` 为 Lean3 体系（含 PAC/VC 文件但非 Lean4 toolchain），`mahi97/ml-proofs-lean4` 偏优化方向且与当前 Rademacher/PAC 工具主链不匹配，均暂不纳入直接依赖。",
+      "status": "active",
+      "impact": "补全“优先现成库”审计覆盖面，并避免把版本/主题不匹配仓库误接入主链。"
+    },
+    {
+      "date": "2026-02-14",
+      "decision": "确认 `banr1/tailored-lean-stat-learning-theory` 与 `YuanheZ/lean-stat-learning-theory` 当前提交一致（同 HEAD），按同一候选去重管理。",
+      "status": "active",
+      "impact": "减少候选重复记录，避免审计结果分叉。"
     }
   ],
   "modules": [
@@ -2133,9 +2145,29 @@
       "topic": "经验过程/覆盖数/Dudley 工具可复用性审计",
       "status": "partial",
       "last_search_date": "2026-02-14",
-      "sources_checked": "GitHub API + README/lakefile/lean-toolchain；可复用声明名：`dudley`、`coveringNumber`、`coveringNumber_euclideanBall_le`；Lean 4.27.0-rc1；license=null",
+      "sources_checked": "GitHub API + README/lakefile/lean-toolchain；可复用声明名：`dudley`、`coveringNumber`、`coveringNumber_euclideanBall_le`；Lean 4.27.0-rc1；license=null；镜像候选：banr1/tailored-lean-stat-learning-theory（同 HEAD 7b82b13，license 仍未声明）",
       "candidate_repo": "YuanheZ/lean-stat-learning-theory",
       "next_action": "许可证未声明，暂不直接依赖；仅作为证明结构与术语参考，待 license 明确后再评估接入。"
+    },
+    {
+      "book": "ExternalAudit",
+      "chapter": "formal-ml",
+      "topic": "PAC/VC 工具仓库可复用性审计（Lean3）",
+      "status": "gap",
+      "last_search_date": "2026-02-14",
+      "sources_checked": "仓库克隆审计（README + src/formal_ml/*）；发现 `pac_bounds.lean`、`vcd.lean`，但无 Lean4 `lean-toolchain`，代码风格为 Lean3。",
+      "candidate_repo": "google/formal-ml",
+      "next_action": "仅作概念参考，不纳入 MLTheory 依赖；若未来出现官方 Lean4 迁移版本再评估接入。"
+    },
+    {
+      "book": "ExternalAudit",
+      "chapter": "ml-proofs-lean4",
+      "topic": "Lean4 ML 仓库可复用性审计（偏优化）",
+      "status": "partial",
+      "last_search_date": "2026-02-14",
+      "sources_checked": "仓库克隆审计；Lean toolchain=4.25.0-rc2，核心内容偏优化算法，不含可直接对接的 Rademacher/PAC 主链声明。",
+      "candidate_repo": "mahi97/ml-proofs-lean4",
+      "next_action": "保留为低优先候选；仅在优化理论路线扩展时再评估是否抽取通用引理。"
     }
   ],
   "books": [

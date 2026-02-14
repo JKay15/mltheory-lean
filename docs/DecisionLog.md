@@ -41,3 +41,5 @@
 | 2026-02-14 | 删除 `AGENT.md` 兼容入口并将唯一规范入口统一为 `AGENTS.md`；无语义损失，相关约束已并入主规范文件。 | locked | 减少重复入口与维护歧义，避免规范分叉。 |
 | 2026-02-14 | 执行“工具优先重排”：MLTheory 主库只承载通用学习理论工具（Rademacher/Contraction/PAC+Concentration），题目专用定理留在 paper-template。 | locked | 避免把单题建模污染共享库接口，提升跨论文复用性。 |
 | 2026-02-14 | 完成外部库审计：`auto-res/lean-rademacher`（Lean 4.27.0-rc1，MIT）可作为高优先参考；`YuanheZ/lean-stat-learning-theory`（Lean 4.27.0-rc1，license 未声明）暂不作为直接依赖。 | active | 形成“可复用声明名 + 许可证 + 直接依赖可行性”的审计基线，后续接入可追溯。 |
+| 2026-02-14 | 外部库二次审计补充：`google/formal-ml` 为 Lean3 体系（含 PAC/VC 文件但非 Lean4 toolchain），`mahi97/ml-proofs-lean4` 偏优化方向且与当前 Rademacher/PAC 工具主链不匹配，均暂不纳入直接依赖。 | active | 补全“优先现成库”审计覆盖面，并避免把版本/主题不匹配仓库误接入主链。 |
+| 2026-02-14 | 确认 `banr1/tailored-lean-stat-learning-theory` 与 `YuanheZ/lean-stat-learning-theory` 当前提交一致（同 HEAD），按同一候选去重管理。 | active | 减少候选重复记录，避免审计结果分叉。 |
