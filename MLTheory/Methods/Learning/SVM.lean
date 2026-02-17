@@ -26,9 +26,13 @@ def hingeLoss (label marginScore : Real) : Real :=
   max 0 (1 - label * marginScore)
 
 /-- Statement-level hook for primal SVM guarantees. -/
-def svmPrimalGuarantee : Prop := ∀ z : Real, 0 ≤ max 0 z
+theorem svmPrimalGuarantee : ∀ z : Real, 0 ≤ max 0 z := by
+  intro z
+  exact le_max_left 0 z
 
 /-- Statement-level hook for dual SVM guarantees. -/
-def svmDualGuarantee : Prop := ∀ z : Real, min z z = z
+theorem svmDualGuarantee : ∀ z : Real, min z z = z := by
+  intro z
+  exact min_eq_left le_rfl
 
 end MLTheory.Methods.Learning

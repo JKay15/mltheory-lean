@@ -1,0 +1,187 @@
+{
+  "date": "2026-02-17",
+  "mode": "augmented",
+  "score": "6/10",
+  "status": "ok",
+  "files": {
+    "skill": "/Users/xiongjiangkai/.codex/skills/lean4/SKILL.md",
+    "cycle": "/Users/xiongjiangkai/.codex/skills/lean4/references/cycle-engine.md",
+    "axiom": "/Users/xiongjiangkai/.codex/skills/lean4/references/axiom-elimination.md",
+    "lsp_api": "/Users/xiongjiangkai/.codex/skills/lean4/references/lean-lsp-tools-api.md"
+  },
+  "checks": [
+    {
+      "check_id": "build_gate",
+      "title": "构建门禁（lake build）",
+      "passed": true,
+      "hits": [
+        {
+          "file_key": "skill",
+          "path": "/Users/xiongjiangkai/.codex/skills/lean4/SKILL.md",
+          "line": 3,
+          "snippet": "description: \"Use when editing .lean files, seeing type mismatch/sorry/failed to synthesize instance/axiom warnings, lake build errors, or searching mathlib for theorem proofs.\"",
+          "pattern": "\\blake build\\b"
+        }
+      ]
+    },
+    {
+      "check_id": "sorry_zero_gate",
+      "title": "sorry 清零门禁",
+      "passed": true,
+      "hits": [
+        {
+          "file_key": "skill",
+          "path": "/Users/xiongjiangkai/.codex/skills/lean4/SKILL.md",
+          "line": 14,
+          "snippet": "**Build incrementally.** Lean's type checker is your test suite—if it compiles with no sorries and standard axioms only, the proof is sound.",
+          "pattern": "\\bZero sorries\\b|\\bno sorries\\b|\\bzero sorries\\b"
+        }
+      ]
+    },
+    {
+      "check_id": "axiom_whitelist_gate",
+      "title": "自定义 axiom 白名单门禁",
+      "passed": true,
+      "hits": [
+        {
+          "file_key": "skill",
+          "path": "/Users/xiongjiangkai/.codex/skills/lean4/SKILL.md",
+          "line": 14,
+          "snippet": "**Build incrementally.** Lean's type checker is your test suite—if it compiles with no sorries and standard axioms only, the proof is sound.",
+          "pattern": "standard axioms"
+        },
+        {
+          "file_key": "skill",
+          "path": "/Users/xiongjiangkai/.codex/skills/lean4/SKILL.md",
+          "line": 139,
+          "snippet": "- Only standard axioms (`propext`, `Classical.choice`, `Quot.sound`)",
+          "pattern": "Classical\\.choice"
+        },
+        {
+          "file_key": "skill",
+          "path": "/Users/xiongjiangkai/.codex/skills/lean4/SKILL.md",
+          "line": 139,
+          "snippet": "- Only standard axioms (`propext`, `Classical.choice`, `Quot.sound`)",
+          "pattern": "propext"
+        },
+        {
+          "file_key": "skill",
+          "path": "/Users/xiongjiangkai/.codex/skills/lean4/SKILL.md",
+          "line": 139,
+          "snippet": "- Only standard axioms (`propext`, `Classical.choice`, `Quot.sound`)",
+          "pattern": "Quot\\.sound"
+        }
+      ]
+    },
+    {
+      "check_id": "declaration_immutability",
+      "title": "定理声明不可私改规则",
+      "passed": true,
+      "hits": [
+        {
+          "file_key": "skill",
+          "path": "/Users/xiongjiangkai/.codex/skills/lean4/SKILL.md",
+          "line": 18,
+          "snippet": "**Never change statements or add axioms without explicit permission.** Theorem/lemma statements, type signatures, and docstrings are off-limits unless the user requests changes. In",
+          "pattern": "Never change statements"
+        }
+      ]
+    },
+    {
+      "check_id": "checkpoint_reproducible",
+      "title": "可复现 checkpoint 流程",
+      "passed": true,
+      "hits": [
+        {
+          "file_key": "skill",
+          "path": "/Users/xiongjiangkai/.codex/skills/lean4/SKILL.md",
+          "line": 26,
+          "snippet": "| `/lean4:checkpoint` | Verified save point (build + axiom check + commit) |",
+          "pattern": "/lean4:checkpoint"
+        },
+        {
+          "file_key": "skill",
+          "path": "/Users/xiongjiangkai/.codex/skills/lean4/SKILL.md",
+          "line": 26,
+          "snippet": "| `/lean4:checkpoint` | Verified save point (build + axiom check + commit) |",
+          "pattern": "build \\+ axiom check \\+ commit"
+        }
+      ]
+    },
+    {
+      "check_id": "canonical_signature_lock",
+      "title": "canonical 入口签名锁定",
+      "passed": false,
+      "hits": [
+        {
+          "file_key": "skill",
+          "path": "/Users/xiongjiangkai/.codex/skills/lean4/SKILL.md",
+          "line": 18,
+          "snippet": "**Never change statements or add axioms without explicit permission.** Theorem/lemma statements, type signatures, and docstrings are off-limits unless the user requests changes. In",
+          "pattern": "\\bsignature\\b|\\bsignatures\\b"
+        },
+        {
+          "file_key": "skill",
+          "path": "/Users/xiongjiangkai/.codex/skills/lean4/SKILL.md",
+          "line": 18,
+          "snippet": "**Never change statements or add axioms without explicit permission.** Theorem/lemma statements, type signatures, and docstrings are off-limits unless the user requests changes. In",
+          "pattern": "Never change statements|off-limits"
+        }
+      ]
+    },
+    {
+      "check_id": "dependency_closure_verifiable",
+      "title": "依赖闭包可验证（声明级）",
+      "passed": true,
+      "hits": [
+        {
+          "file_key": "axiom",
+          "path": "/Users/xiongjiangkai/.codex/skills/lean4/references/axiom-elimination.md",
+          "line": 26,
+          "snippet": "#print axioms theoremName",
+          "pattern": "#print axioms"
+        },
+        {
+          "file_key": "axiom",
+          "path": "/Users/xiongjiangkai/.codex/skills/lean4/references/axiom-elimination.md",
+          "line": 23,
+          "snippet": "**For individual theorems:**",
+          "pattern": "For individual theorems"
+        }
+      ]
+    },
+    {
+      "check_id": "intermediate_to_canonical_mapping",
+      "title": "中间概念到 canonical 映射约束",
+      "passed": false,
+      "hits": []
+    },
+    {
+      "check_id": "official_toolchain_mapping",
+      "title": "官方工具链映射约束（Loogle/LeanSearch/InfoView/REPL）",
+      "passed": false,
+      "hits": [
+        {
+          "file_key": "skill",
+          "path": "/Users/xiongjiangkai/.codex/skills/lean4/SKILL.md",
+          "line": 51,
+          "snippet": "Sub-second feedback and search tools (LeanSearch, Loogle, LeanFinder) via Lean LSP MCP:",
+          "pattern": "\\bloogle\\b"
+        },
+        {
+          "file_key": "skill",
+          "path": "/Users/xiongjiangkai/.codex/skills/lean4/SKILL.md",
+          "line": 51,
+          "snippet": "Sub-second feedback and search tools (LeanSearch, Loogle, LeanFinder) via Lean LSP MCP:",
+          "pattern": "\\bleansearch\\b"
+        }
+      ]
+    },
+    {
+      "check_id": "three_repo_boundary",
+      "title": "三仓边界约束",
+      "passed": false,
+      "hits": []
+    }
+  ]
+}

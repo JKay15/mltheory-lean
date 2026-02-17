@@ -4,11 +4,17 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Xiong Jiangkai, Codex
 -/
 import MLTheory.Methods.Learning.ModelSelection
+import MLTheory.Methods.Learning.Capacity
+import MLTheory.Methods.Learning.AdvancedSLT
+import MLTheory.Methods.Learning.AutomataLanguage
+import MLTheory.Methods.Learning.DiscreteModeling
 import MLTheory.Methods.Learning.SVM
 import MLTheory.Methods.Learning.KernelMethods
+import MLTheory.Methods.Learning.KernelBayes
 import MLTheory.Methods.Learning.Rademacher
 import MLTheory.Methods.Learning.Contraction
 import MLTheory.Methods.Learning.GeneralizationTools
+import MLTheory.Methods.Learning.Sequential
 import MLTheory.Methods.Learning.StoneWeierstrassBridge
 import MLTheory.Methods.Learning.ConcentrationPackaging
 

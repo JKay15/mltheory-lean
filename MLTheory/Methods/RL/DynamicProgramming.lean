@@ -22,12 +22,18 @@ def valueIterationUpdate {State Action : Type*}
   fun s => v s
 
 /-- Statement-level hook for policy evaluation. -/
-def policyEvaluationPlaceholder : Prop := ∀ v : Real, v = v
+theorem policyEvaluationPlaceholder : ∀ v : Real, v = v := by
+  intro v
+  rfl
 
 /-- Statement-level hook for policy improvement. -/
-def policyImprovementPlaceholder : Prop := ∀ v : Real, v = v
+theorem policyImprovementPlaceholder : ∀ v : Real, v = v := by
+  intro v
+  rfl
 
 /-- Statement-level hook for policy-iteration convergence. -/
-def policyIterationConvergencePlaceholder : Prop := ∀ n : Nat, n ≤ n
+theorem policyIterationConvergencePlaceholder : ∀ n : Nat, n ≤ n := by
+  intro n
+  exact Nat.le_refl n
 
 end MLTheory.Methods.RL

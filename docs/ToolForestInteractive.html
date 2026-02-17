@@ -1,0 +1,554 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tool Forest Interactive</title>
+  <style>
+    :root {
+      --bg: #f6f8fb;
+      --card: #ffffff;
+      --line: #d7deea;
+      --text: #0f172a;
+      --muted: #516078;
+      --accent: #0f766e;
+      --accent-soft: #e6f5f3;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "SF Pro Text", "PingFang SC", "Noto Sans CJK SC", sans-serif;
+      color: var(--text);
+      background: radial-gradient(1200px 700px at 10% -10%, #ebf4ff 0%, var(--bg) 45%);
+    }
+    .wrap {
+      max-width: 1500px;
+      margin: 0 auto;
+      padding: 20px 18px 24px;
+      display: grid;
+      gap: 14px;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px;
+    }
+    h1 {
+      margin: 0 0 6px;
+      font-size: 24px;
+    }
+    .muted {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .chip {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 12px;
+      background: #fff;
+    }
+    .controls {
+      display: grid;
+      grid-template-columns: 1.5fr repeat(7, minmax(110px, 1fr));
+      gap: 8px;
+      align-items: end;
+    }
+    .controls label {
+      display: block;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 8px 9px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--text);
+      font-size: 13px;
+    }
+    button {
+      cursor: pointer;
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+      font-weight: 600;
+    }
+    .qbtn {
+      width: auto;
+      min-width: 140px;
+      background: #fff;
+      color: var(--text);
+      border-color: var(--line);
+    }
+    .layout {
+      display: grid;
+      grid-template-columns: 34% 66%;
+      gap: 12px;
+      min-height: 640px;
+    }
+    .tree {
+      max-height: 700px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+    details {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 8px 10px;
+      margin-bottom: 8px;
+      background: #fff;
+    }
+    summary {
+      cursor: pointer;
+      font-weight: 600;
+      color: #16223a;
+    }
+    .mini {
+      margin-top: 6px;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    .group-list {
+      margin: 8px 0 0;
+      padding-left: 16px;
+      font-size: 12px;
+      color: #1f2a40;
+    }
+    .group-list li {
+      margin-bottom: 5px;
+    }
+    .table-wrap {
+      max-height: 450px;
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+    th, td {
+      border-bottom: 1px solid #edf1f7;
+      padding: 7px 8px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background: #f8fbff;
+      font-size: 11px;
+      color: #41516f;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+    }
+    tr:hover {
+      background: var(--accent-soft);
+      cursor: pointer;
+    }
+    .detail {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px;
+      min-height: 120px;
+      background: #fff;
+    }
+    .k {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 6px;
+    }
+    .v {
+      font-size: 13px;
+      margin-top: 2px;
+      word-break: break-word;
+    }
+    @media (max-width: 1024px) {
+      .controls {
+        grid-template-columns: 1fr 1fr;
+      }
+      .layout {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>Tool Forest Interactive</h1>
+      <div class="muted">
+        这个页面只读 `docs/ssot/registry.json` 派生数据。<br />
+        默认先看真实模块；只有需要排期时再切到规划模块视图。
+      </div>
+      <div class="chips" id="summary"></div>
+    </div>
+
+    <div class="card controls">
+      <div>
+        <label for="q">搜索</label>
+        <input id="q" placeholder="module/node/subdomain/key_problem/formal decl" />
+      </div>
+      <div>
+        <label for="f-dataset">Dataset</label>
+        <select id="f-dataset">
+          <option value="">全部</option>
+          <option value="real" selected>真实模块</option>
+          <option value="planned">规划模块</option>
+        </select>
+      </div>
+      <div>
+        <label for="f-node">Node</label>
+        <select id="f-node"></select>
+      </div>
+      <div>
+        <label for="f-layer">Layer</label>
+        <select id="f-layer"></select>
+      </div>
+      <div>
+        <label for="f-role">Role</label>
+        <select id="f-role"></select>
+      </div>
+      <div>
+        <label for="f-proof">Proof</label>
+        <select id="f-proof"></select>
+      </div>
+      <div>
+        <label for="f-plan-window">Plan Window</label>
+        <select id="f-plan-window"></select>
+      </div>
+      <div>
+        <label>&nbsp;</label>
+        <button id="reset">重置筛选</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="muted" style="margin-bottom:6px;">快速视图</div>
+      <div class="chips">
+        <button class="qbtn" id="preset-real">只看真实模块</button>
+        <button class="qbtn" id="preset-near">只看近期规划</button>
+        <button class="qbtn" id="preset-all">显示全部</button>
+      </div>
+    </div>
+
+    <div class="layout">
+      <div class="card">
+        <div class="muted" style="margin-bottom:8px;">领域结构（可折叠）</div>
+        <div class="tree" id="tree"></div>
+      </div>
+      <div class="card">
+        <div class="muted" style="margin-bottom:8px;">模块列表（点击行看详情）</div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>module_path</th>
+                <th>node</th>
+                <th>dataset</th>
+                <th>source_track</th>
+                <th>role</th>
+                <th>layer</th>
+                <th>proof</th>
+              </tr>
+            </thead>
+            <tbody id="tbody"></tbody>
+          </table>
+        </div>
+        <div class="detail" id="detail">
+          <div class="muted">点击上方任意模块行显示详情。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script id="tool-forest-data" type="application/json">{"meta": {"schema_version": "1.4.0", "language": "zh-CN", "toolchain": "v4.27.0", "last_updated": "2026-02-17", "policy": ["json_ssot_only", "markdown_generated_only", "concept_first_layout", "compatible_migration_with_aliases", "append_first_and_logged_deletions", "no_external_dependency_integration_phase", "single_source_truth_docs_ssot_registry", "derived_markdown_generated_via_sync_docs", "legacy_book_modules_as_compatibility_adapters", "three_repo_collaboration", "repo_scope_skills_first", "mcp_lean_lsp_uvx_enabled", "placeholder_policy_phase1_soft_then_phase2_hard", "official_workflow_alignment_required", "phase0_lean4_contract_audit", "canonical_spec_gate_enforced", "concept_forest_from_ssot", "taxonomy_v2_tree_first", "books_legacy_as_source_track", "modules_file_backed_only", "planned_modules_split", "structure_cleanup_candidates_ssot", "cleanup_batching_and_deprecation_first", "deprecated_import_allowlist_zero", "cleanup_ready_to_remove_gate", "cleanup_release_epoch_tracked", "cleanup_release_epoch_advanced_by_script", "cleanup_b1_physical_removed", "cleanup_candidates_pruned_after_removal", "cleanup_b2_physical_removed", "cleanup_b3_physical_removed", "cleanup_all_batches_completed", "namespace_layout_gate_enforced", "namespace_convergence_doc_enabled", "legacy_root_cleanup_candidates_added", "cleanup_batches_extended", "cleanup_b4_physical_removed", "cleanup_b5_physical_removed", "deprecated_alias_import_hard_gate", "planned_modules_namespace_converged", "planned_modules_legacy_source_track_retired", "planned_modules_source_track_hardened", "planned_modules_layout_gate_enforced", "migration_script_v2_idempotent", "ssot_migration_idempotence_gate_enforced", "structure_issue_ledger_generated", "phase1_structure_skeletons_added", "applications_placeholder_public_retired", "deprecated_alias_targets_reanchored", "active_alias_retirement_backlog_created", "active_aliases_zero", "cleanup_b6_physical_removed", "registry_reference_hygiene_gate_enforced", "cleanup_transient_tags_pruned", "execution_backlog_shortlist_enabled"], "cleanup_release_epoch": 9}, "nodes": [{"node_id": "ml_root", "name": "MLTheory Root", "tier": "support", "primary_parent_id": null, "status": "active", "order": 0}, {"node_id": "foundations", "name": "Foundations", "tier": "foundation", "primary_parent_id": "ml_root", "status": "active", "order": 10}, {"node_id": "methods_problems", "name": "Methods and Problems", "tier": "methods", "primary_parent_id": "ml_root", "status": "active", "order": 20}, {"node_id": "applications_systems", "name": "Applications and Systems", "tier": "application", "primary_parent_id": "ml_root", "status": "active", "order": 30}, {"node_id": "support_infrastructure", "name": "Support Infrastructure", "tier": "support", "primary_parent_id": "ml_root", "status": "active", "order": 40}, {"node_id": "probability", "name": "Probability", "tier": "foundation", "primary_parent_id": "foundations", "status": "active", "order": 100}, {"node_id": "statistics", "name": "Statistics", "tier": "foundation", "primary_parent_id": "foundations", "status": "active", "order": 110}, {"node_id": "learning", "name": "Learning", "tier": "methods", "primary_parent_id": "methods_problems", "status": "active", "order": 200}, {"node_id": "or", "name": "OR", "tier": "methods", "primary_parent_id": "methods_problems", "status": "active", "order": 210}, {"node_id": "rl", "name": "RL", "tier": "methods", "primary_parent_id": "learning", "status": "active", "order": 220}, {"node_id": "oco", "name": "OCO", "tier": "methods", "primary_parent_id": "or", "status": "active", "order": 230}, {"node_id": "bandits", "name": "Bandits", "tier": "methods", "primary_parent_id": "or", "status": "active", "order": 240}, {"node_id": "ai", "name": "AI", "tier": "application", "primary_parent_id": "learning", "status": "active", "order": 300}, {"node_id": "llm", "name": "LLM", "tier": "application", "primary_parent_id": "ai", "status": "active", "order": 310}, {"node_id": "architecture", "name": "Architecture", "tier": "support", "primary_parent_id": "support_infrastructure", "status": "active", "order": 400}], "relations": [{"from_node": "statistics", "to_node": "probability", "relation_type": "related", "strength": 0.8}, {"from_node": "rl", "to_node": "ai", "relation_type": "related", "strength": 0.6}, {"from_node": "bandits", "to_node": "rl", "relation_type": "related", "strength": 0.8}], "modules": [{"dataset": "real", "module_path": "MLTheory", "node_id": "architecture", "node_name": "Architecture", "source_track": "native", "status": "partial", "layer": "legacy", "role": "bridge", "proof_status": "statement", "formal_decl_refs": [], "subdomain": "Unknown", "key_problem": "(root)", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Applications.AI", "node_id": "ai", "node_name": "AI", "source_track": "native", "status": "partial", "layer": "applications", "role": "bridge", "proof_status": "statement", "formal_decl_refs": [], "subdomain": "Applications.AI", "key_problem": "(root)", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Applications.AI.DecisionLearning", "node_id": "ai", "node_name": "AI", "source_track": "native", "status": "partial", "layer": "applications", "role": "tool", "proof_status": "proved", "formal_decl_refs": ["DecisionLearningScenario", "policyImprovementGap", "policyImprovementGap_nonneg_of_le", "decisionLearning_from_onlineToBatch", "decisionLearning_td_error_after_update", "decisionLearning_capacity_bridge_exists", "decisionLearning_vc_witness", "decisionLearning_pac_constant_exists"], "subdomain": "Applications.AI", "key_problem": "DecisionLearning", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Applications.AI.Generalization", "node_id": "ai", "node_name": "AI", "source_track": "native", "status": "partial", "layer": "applications", "role": "tool", "proof_status": "proved", "formal_decl_refs": ["AIGeneralizationScenario", "deploymentGap", "deploymentGap_nonneg_of_le", "ai_generalization_from_onlineToBatch", "ai_pac_constant_exists"], "subdomain": "Applications.AI", "key_problem": "Generalization", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Applications.LLM", "node_id": "llm", "node_name": "LLM", "source_track": "native", "status": "partial", "layer": "applications", "role": "bridge", "proof_status": "statement", "formal_decl_refs": [], "subdomain": "Applications.LLM", "key_problem": "(root)", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Applications.LLM.AlignmentObjectives", "node_id": "llm", "node_name": "LLM", "source_track": "native", "status": "partial", "layer": "applications", "role": "tool", "proof_status": "proved", "formal_decl_refs": ["AlignmentObjective", "preferenceMargin", "preferenceMargin_nonneg_of_le", "alignmentPenalty", "alignedScore", "alignedScore_le_objectiveScore", "AlignmentScenario", "alignment_pac_constant_exists"], "subdomain": "Applications.LLM", "key_problem": "AlignmentObjectives", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Applications.LLM.Autoregressive", "node_id": "llm", "node_name": "LLM", "source_track": "native", "status": "partial", "layer": "applications", "role": "tool", "proof_status": "proved", "formal_decl_refs": ["AutoregressiveModel", "sequenceScore", "autoregressiveRiskGap", "AutoregressiveScenario", "autoregressive_pac_constant_exists"], "subdomain": "Applications.LLM", "key_problem": "Autoregressive", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Applications.LLM.Sampling", "node_id": "llm", "node_name": "LLM", "source_track": "native", "status": "partial", "layer": "applications", "role": "tool", "proof_status": "proved", "formal_decl_refs": ["SamplingPolicy", "sampledToken", "samplingStepScore", "sequenceScore_singleton_sampled", "samplingRiskGap", "samplingRiskGap_nonneg_of_le", "SamplingScenario", "sampling_pac_constant_exists"], "subdomain": "Applications.LLM", "key_problem": "Sampling", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Applications.Learning", "node_id": "learning", "node_name": "Learning", "source_track": "native", "status": "partial", "layer": "applications", "role": "bridge", "proof_status": "statement", "formal_decl_refs": [], "subdomain": "Applications.Learning", "key_problem": "(root)", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Applications.RL", "node_id": "rl", "node_name": "RL", "source_track": "native", "status": "partial", "layer": "applications", "role": "bridge", "proof_status": "statement", "formal_decl_refs": [], "subdomain": "Applications.RL", "key_problem": "(root)", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Books.FoML2", "node_id": "learning", "node_name": "Learning", "source_track": "books", "status": "partial", "layer": "books", "role": "compat", "proof_status": "statement", "formal_decl_refs": [], "subdomain": "Books.FoML2", "key_problem": "(root)", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Books.SuttonBartoRL2", "node_id": "rl", "node_name": "RL", "source_track": "books", "status": "partial", "layer": "books", "role": "compat", "proof_status": "statement", "formal_decl_refs": [], "subdomain": "Books.SuttonBartoRL2", "key_problem": "(root)", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Core", "node_id": "architecture", "node_name": "Architecture", "source_track": "native", "status": "partial", "layer": "core", "role": "bridge", "proof_status": "statement", "formal_decl_refs": [], "subdomain": "Core.General", "key_problem": "(root)", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Core.Learning", "node_id": "learning", "node_name": "Learning", "source_track": "native", "status": "partial", "layer": "core", "role": "bridge", "proof_status": "statement", "formal_decl_refs": [], "subdomain": "Core.Learning", "key_problem": "(root)", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Core.Learning.Capacity", "node_id": "learning", "node_name": "Learning", "source_track": "native", "status": "partial", "layer": "core", "role": "tool", "proof_status": "proved", "formal_decl_refs": ["CapacityBridge", "vcDimensionBound", "rademacherBound"], "subdomain": "Core.Learning", "key_problem": "Capacity", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Core.Learning.FunctionClass", "node_id": "learning", "node_name": "Learning", "source_track": "native", "status": "partial", "layer": "core", "role": "canonical", "proof_status": "proved", "formal_decl_refs": ["HypothesisClass"], "subdomain": "Core.Learning", "key_problem": "FunctionClass", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Core.Learning.PAC", "node_id": "learning", "node_name": "Learning", "source_track": "native", "status": "partial", "layer": "core", "role": "canonical", "proof_status": "proved", "formal_decl_refs": ["PACProblem"], "subdomain": "Core.Learning", "key_problem": "PAC", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Core.Probability", "node_id": "probability", "node_name": "Probability", "source_track": "native", "status": "partial", "layer": "core", "role": "bridge", "proof_status": "statement", "formal_decl_refs": [], "subdomain": "Core.Probability", "key_problem": "(root)", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Core.Probability.BasicMeasure", "node_id": "probability", "node_name": "Probability", "source_track": "native", "status": "partial", "layer": "core", "role": "tool", "proof_status": "proved", "formal_decl_refs": ["isMeasurableEvent", "eventMass", "eventMass_mono", "eventMass_union_le", "conditionedEvent_mass_le_left", "conditionedEvent_mass_le_right"], "subdomain": "Core.Probability", "key_problem": "BasicMeasure", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Core.Probability.Conditioning", "node_id": "probability", "node_name": "Probability", "source_track": "native", "status": "partial", "layer": "core", "role": "tool", "proof_status": "proved", "formal_decl_refs": ["conditionedEvent", "conditionedEvent_subset_left", "condWeight_nonneg"], "subdomain": "Core.Probability", "key_problem": "Conditioning", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Core.Probability.ProbIneq", "node_id": "probability", "node_name": "Probability", "source_track": "native", "status": "partial", "layer": "core", "role": "tool", "proof_status": "proved", "formal_decl_refs": ["tailUpperEnvelope", "tailUpperEnvelope_trans", "tailUpperEnvelope_add", "scale_nonneg"], "subdomain": "Core.Probability", "key_problem": "ProbIneq", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Core.RL", "node_id": "rl", "node_name": "RL", "source_track": "native", "status": "partial", "layer": "core", "role": "bridge", "proof_status": "statement", "formal_decl_refs": [], "subdomain": "Core.RL", "key_problem": "(root)", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Core.RL.MDP", "node_id": "rl", "node_name": "RL", "source_track": "native", "status": "partial", "layer": "core", "role": "tool", "proof_status": "proved", "formal_decl_refs": ["FiniteMDP", "DeterministicPolicy", "bellmanExpectationPlaceholder", "bellmanOptimalityPlaceholder"], "subdomain": "Core.RL", "key_problem": "MDP", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Core.Statistics", "node_id": "statistics", "node_name": "Statistics", "source_track": "native", "status": "partial", "layer": "core", "role": "bridge", "proof_status": "statement", "formal_decl_refs": [], "subdomain": "Core.Statistics", "key_problem": "(root)", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Core.Statistics.Information", "node_id": "statistics", "node_name": "Statistics", "source_track": "native", "status": "partial", "layer": "core", "role": "tool", "proof_status": "proved", "formal_decl_refs": ["InformationPair", "klSurrogate", "klSurrogate_nonneg_of_le", "MaxEntropyTemplate", "maxEntGap", "conditionalMaxEntGap"], "subdomain": "Core.Statistics", "key_problem": "Information", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Core.Statistics.Risk", "node_id": "statistics", "node_name": "Statistics", "source_track": "native", "status": "partial", "layer": "core", "role": "tool", "proof_status": "proved", "formal_decl_refs": ["RiskPair", "excessRisk", "excessRisk_nonneg_of_le", "excessRisk_add_empirical"], "subdomain": "Core.Statistics", "key_problem": "Risk", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Methods", "node_id": "architecture", "node_name": "Architecture", "source_track": "native", "status": "partial", "layer": "methods", "role": "bridge", "proof_status": "statement", "formal_decl_refs": [], "subdomain": "Methods.General", "key_problem": "(root)", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Methods.Bandits", "node_id": "bandits", "node_name": "Bandits", "source_track": "native", "status": "partial", "layer": "methods", "role": "bridge", "proof_status": "statement", "formal_decl_refs": [], "subdomain": "Methods.Bandits", "key_problem": "(root)", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Methods.Bandits.Adversarial", "node_id": "bandits", "node_name": "Bandits", "source_track": "native", "status": "partial", "layer": "methods", "role": "tool", "proof_status": "proved", "formal_decl_refs": ["AdversarialBanditModel", "adversarialRoundRegret", "adversarialRoundRegret_nonneg_of_le", "adversarialCumulativeRegret", "adversarialCumulativeRegret_nonneg", "exp3LearningRate", "exp3LearningRate_nonneg", "adversarialScalarCumulativeRegret", "adversarialScalarCumulativeRegret_eq_foundation"], "subdomain": "Methods.Bandits", "key_problem": "Adversarial", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Methods.Bandits.BestArmIdentification", "node_id": "bandits", "node_name": "Bandits", "source_track": "native", "status": "partial", "layer": "methods", "role": "tool", "proof_status": "proved", "formal_decl_refs": ["BAIProblem", "simpleRegret", "simpleRegret_nonneg_of_le", "simpleRegret_self", "cumulativeSimpleRegret", "cumulativeSimpleRegret_nonneg", "fixedConfidenceSampleComplexity", "fixedConfidenceSampleComplexity_nonneg"], "subdomain": "Methods.Bandits", "key_problem": "BestArmIdentification", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Methods.Bandits.ContextualLinear", "node_id": "bandits", "node_name": "Bandits", "source_track": "native", "status": "partial", "layer": "methods", "role": "tool", "proof_status": "proved", "formal_decl_refs": ["ContextualLinearBanditProblem", "LinearScorer", "predictedReward", "optimisticScore", "optimisticScore_ge_predicted", "contextualRoundRegret", "contextualRoundRegret_nonneg_of_le", "contextualCumulativeRegret", "contextualCumulativeRegret_nonneg", "confidenceRadius", "confidenceRadius_nonneg"], "subdomain": "Methods.Bandits", "key_problem": "ContextualLinear", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Methods.Bandits.Dueling", "node_id": "bandits", "node_name": "Bandits", "source_track": "native", "status": "partial", "layer": "methods", "role": "tool", "proof_status": "proved", "formal_decl_refs": ["DuelingBanditProblem", "duelAdvantage", "duelAdvantage_swap_neg", "duelingRegret", "duelingRegret_nonneg_of_le", "cumulativeDuelingRegret", "cumulativeDuelingRegret_nonneg", "preferenceMargin", "preferenceMargin_nonneg_of_le"], "subdomain": "Methods.Bandits", "key_problem": "Dueling", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Methods.Bandits.Foundations", "node_id": "bandits", "node_name": "Bandits", "source_track": "native", "status": "partial", "layer": "methods", "role": "canonical", "proof_status": "proved", "formal_decl_refs": ["BanditInstance", "regret", "regret_nonneg_of_le", "cumulativeRegret", "cumulativeRegret_nonneg"], "subdomain": "Methods.Bandits", "key_problem": "Foundations", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Methods.Bandits.InformationTheory", "node_id": "bandits", "node_name": "Bandits", "source_track": "native", "status": "partial", "layer": "methods", "role": "tool", "proof_status": "proved", "formal_decl_refs": ["InformationBanditModel", "klStyleBonus", "klStyleBonus_nonneg", "informationRegret", "informationRegret_nonneg_of_le", "informationCumulativeRegret", "informationCumulativeRegret_nonneg", "informationRegret_eq_stochasticPseudoRegret"], "subdomain": "Methods.Bandits", "key_problem": "InformationTheory", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Methods.Bandits.LargeActionSpaces", "node_id": "bandits", "node_name": "Bandits", "source_track": "native", "status": "partial", "layer": "methods", "role": "tool", "proof_status": "proved", "formal_decl_refs": ["LargeActionBanditProblem", "actionPoolSize", "actionPoolSize_nonneg", "explorationBudget", "candidateApproximationGap", "candidateApproximationGap_nonneg_of_le", "largeActionCumulativeRegret", "largeActionCumulativeRegret_nonneg"], "subdomain": "Methods.Bandits", "key_problem": "LargeActionSpaces", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Methods.Bandits.PureExplorationLinear", "node_id": "bandits", "node_name": "Bandits", "source_track": "native", "status": "partial", "layer": "methods", "role": "tool", "proof_status": "proved", "formal_decl_refs": ["PureExplorationLinearProblem", "estimationError", "estimationError_nonneg", "confidenceRadiusPE", "confidenceRadiusPE_nonneg", "pureExplorationSimpleRegret", "pureExplorationSimpleRegret_nonneg_of_le", "fixedConfidenceSampleComplexityPE", "fixedConfidenceSampleComplexityPE_nonneg"], "subdomain": "Methods.Bandits", "key_problem": "PureExplorationLinear", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Methods.Bandits.RLBridge", "node_id": "bandits", "node_name": "Bandits", "source_track": "native", "status": "partial", "layer": "methods", "role": "tool", "proof_status": "proved", "formal_decl_refs": ["BanditRLBridgeProblem", "banditValueGap", "tdErrorProxy", "banditValueGap_eq_tdErrorProxy", "banditToRLCumulativeGap", "banditToRLCumulativeGap_nonneg", "banditTdUpdate", "banditTdError_after_update"], "subdomain": "Methods.Bandits", "key_problem": "RLBridge", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Methods.Bandits.Stochastic", "node_id": "bandits", "node_name": "Bandits", "source_track": "native", "status": "partial", "layer": "methods", "role": "tool", "proof_status": "proved", "formal_decl_refs": ["StochasticBanditModel", "ucbBonus", "ucbScore", "ucbBonus_nonneg", "ucbScore_ge_empiricalMean", "etcExplorationRounds", "stochasticPseudoRegret", "stochasticPseudoRegret_nonneg"], "subdomain": "Methods.Bandits", "key_problem": "Stochastic", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Methods.Learning", "node_id": "learning", "node_name": "Learning", "source_track": "native", "status": "partial", "layer": "methods", "role": "bridge", "proof_status": "statement", "formal_decl_refs": [], "subdomain": "Methods.Learning", "key_problem": "(root)", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Methods.Learning.AdvancedSLT", "node_id": "learning", "node_name": "Learning", "source_track": "native", "status": "partial", "layer": "methods", "role": "tool", "proof_status": "proved", "formal_decl_refs": ["AdvancedSLTProblem", "advancedExcessRisk", "complexityPenalty", "advancedExcessRiskBound", "advancedExcessRisk_le_bound", "sampleComplexityProxy"], "subdomain": "Methods.Learning", "key_problem": "AdvancedSLT", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Methods.Learning.AutomataLanguage", "node_id": "learning", "node_name": "Learning", "source_track": "native", "status": "partial", "layer": "methods", "role": "tool", "proof_status": "proved", "formal_decl_refs": ["AutomataLanguageProblem", "runState", "accepts", "zeroOneLoss", "languageEmpiricalRisk", "languageRiskGap"], "subdomain": "Methods.Learning", "key_problem": "AutomataLanguage", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Methods.Learning.Capacity", "node_id": "learning", "node_name": "Learning", "source_track": "native", "status": "partial", "layer": "methods", "role": "tool", "proof_status": "proved", "formal_decl_refs": ["CapacityMethodBundle", "jlDistortionGap", "jlDistortionGap_nonneg_of_le", "method_vcDimensionBound", "method_rademacherBound", "capacity_tailUpperEnvelope_refl"], "subdomain": "Methods.Learning", "key_problem": "Capacity", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Methods.Learning.ConcentrationPackaging", "node_id": "learning", "node_name": "Learning", "source_track": "native", "status": "covered", "layer": "methods", "role": "canonical", "proof_status": "proved", "formal_decl_refs": ["FiniteClassConcentrationBundle", "subgaussianTailENN"], "subdomain": "Methods.Learning", "key_problem": "ConcentrationPackaging", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Methods.Learning.Contraction", "node_id": "learning", "node_name": "Learning", "source_track": "native", "status": "partial", "layer": "methods", "role": "tool", "proof_status": "proved", "formal_decl_refs": ["OneLipschitzAtZero", "lip_contraction_abs", "lip_contraction_std"], "subdomain": "Methods.Learning", "key_problem": "Contraction", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Methods.Learning.DiscreteModeling", "node_id": "learning", "node_name": "Learning", "source_track": "native", "status": "partial", "layer": "methods", "role": "tool", "proof_status": "proved", "formal_decl_refs": ["DiscreteModelingProblem", "discretePointLoss", "discreteEmpiricalRisk", "DiscreteComparator", "discreteRiskGap", "averageDiscreteRiskGap"], "subdomain": "Methods.Learning", "key_problem": "DiscreteModeling", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Methods.Learning.GeneralizationTools", "node_id": "learning", "node_name": "Learning", "source_track": "native", "status": "partial", "layer": "methods", "role": "canonical", "proof_status": "proved", "formal_decl_refs": ["pac_badEvent_uniform_bound", "pac_badEvent_union_bound"], "subdomain": "Methods.Learning", "key_problem": "GeneralizationTools", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Methods.Learning.KernelBayes", "node_id": "learning", "node_name": "Learning", "source_track": "native", "status": "partial", "layer": "methods", "role": "tool", "proof_status": "proved", "formal_decl_refs": ["KernelBayesProblem", "posteriorWeightUnnormalized", "posteriorNormalization", "posteriorWeight", "kernelBayesPredictiveMean", "kernelBayesRiskGap"], "subdomain": "Methods.Learning", "key_problem": "KernelBayes", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Methods.Learning.KernelMethods", "node_id": "learning", "node_name": "Learning", "source_track": "native", "status": "partial", "layer": "methods", "role": "tool", "proof_status": "proved", "formal_decl_refs": ["KernelFunction", "isPSDKernel", "KernelLearningProblem", "representerTheoremPlaceholder"], "subdomain": "Methods.Learning", "key_problem": "KernelMethods", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Methods.Learning.ModelSelection", "node_id": "learning", "node_name": "Learning", "source_track": "native", "status": "partial", "layer": "methods", "role": "tool", "proof_status": "proved", "formal_decl_refs": ["ModelSelectionProblem", "structuralRiskMinimizationBound"], "subdomain": "Methods.Learning", "key_problem": "ModelSelection", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Methods.Learning.Rademacher", "node_id": "learning", "node_name": "Learning", "source_track": "native", "status": "partial", "layer": "methods", "role": "canonical", "proof_status": "proved", "formal_decl_refs": ["radStd", "radAbs"], "subdomain": "Methods.Learning", "key_problem": "Rademacher", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Methods.Learning.SVM", "node_id": "learning", "node_name": "Learning", "source_track": "native", "status": "partial", "layer": "methods", "role": "tool", "proof_status": "proved", "formal_decl_refs": ["BinaryClassificationDataset", "boolLabelToSign", "hingeLoss", "svmPrimalGuarantee", "svmDualGuarantee"], "subdomain": "Methods.Learning", "key_problem": "SVM", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Methods.Learning.Sequential", "node_id": "learning", "node_name": "Learning", "source_track": "native", "status": "partial", "layer": "methods", "role": "tool", "proof_status": "proved", "formal_decl_refs": ["SequentialLearningProblem", "sequentialInstantLoss", "sequentialPrefixRegret", "averagePrefixRegret", "sequentialRegretFromOCO", "sequentialRegretFromOCO_eq_prefix"], "subdomain": "Methods.Learning", "key_problem": "Sequential", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Methods.Learning.StoneWeierstrassBridge", "node_id": "learning", "node_name": "Learning", "source_track": "native", "status": "covered", "layer": "methods", "role": "canonical", "proof_status": "proved", "formal_decl_refs": ["stone_exists_uniform_near", "stone_closure_eq_top"], "subdomain": "Methods.Learning", "key_problem": "StoneWeierstrassBridge", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Methods.OCO", "node_id": "oco", "node_name": "OCO", "source_track": "native", "status": "partial", "layer": "methods", "role": "bridge", "proof_status": "statement", "formal_decl_refs": [], "subdomain": "Methods.OCO", "key_problem": "(root)", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Methods.OCO.BanditConvex", "node_id": "oco", "node_name": "OCO", "source_track": "native", "status": "partial", "layer": "methods", "role": "tool", "proof_status": "proved", "formal_decl_refs": ["BanditConvexProblem", "estimationGap", "trueInstantRegret", "instantRegretGap", "cumulativeRegretGap", "banditCumulativeRegret_nonneg_of_le"], "subdomain": "Methods.OCO", "key_problem": "BanditConvex", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Methods.OCO.Boosting", "node_id": "oco", "node_name": "OCO", "source_track": "native", "status": "partial", "layer": "methods", "role": "tool", "proof_status": "proved", "formal_decl_refs": ["BoostingRound", "weightedExpertLoss", "boostingInstantRegret", "boostingCumulativeRegret", "expWeightUpdate", "boostingRegretFromOCO"], "subdomain": "Methods.OCO", "key_problem": "Boosting", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Methods.OCO.DynamicRegret", "node_id": "oco", "node_name": "OCO", "source_track": "native", "status": "partial", "layer": "methods", "role": "tool", "proof_status": "proved", "formal_decl_refs": ["DynamicComparator", "dynamicInstantRegret", "dynamicCumulativeRegret", "dynamicCumulativeRegret_nonneg_of_le", "staticToDynamicComparator", "dynamicCumulativeRegret_eq_static"], "subdomain": "Methods.OCO", "key_problem": "DynamicRegret", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Methods.OCO.GamesAndDuality", "node_id": "oco", "node_name": "OCO", "source_track": "native", "status": "partial", "layer": "methods", "role": "tool", "proof_status": "proved", "formal_decl_refs": ["GameProblem", "SaddleComparator", "gameInstantRegret", "gameCumulativeRegret", "dualityGap", "averageGameRegret"], "subdomain": "Methods.OCO", "key_problem": "GamesAndDuality", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Methods.OCO.Generalization", "node_id": "oco", "node_name": "OCO", "source_track": "native", "status": "partial", "layer": "methods", "role": "tool", "proof_status": "proved", "formal_decl_refs": ["averageRegret", "averageRegret_nonneg_of_le", "onlineToBatch_bridge_statement", "oco_pacSampleComplexityBound"], "subdomain": "Methods.OCO", "key_problem": "Generalization", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Methods.OCO.OptimizationCore", "node_id": "oco", "node_name": "OCO", "source_track": "native", "status": "partial", "layer": "methods", "role": "tool", "proof_status": "proved", "formal_decl_refs": ["OCOProblem", "Comparator", "OnlineUpdate", "instantRegret", "cumulativeRegret", "instantRegret_nonneg_of_le", "cumulativeRegret_nonneg_of_le", "instantRegret_eq_objectiveGap"], "subdomain": "Methods.OCO", "key_problem": "OptimizationCore", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Methods.OR", "node_id": "or", "node_name": "OR", "source_track": "native", "status": "partial", "layer": "methods", "role": "bridge", "proof_status": "statement", "formal_decl_refs": [], "subdomain": "Methods.OR", "key_problem": "(root)", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Methods.OR.ConvexCore", "node_id": "or", "node_name": "OR", "source_track": "native", "status": "partial", "layer": "methods", "role": "tool", "proof_status": "proved", "formal_decl_refs": ["ConvexObjective", "FeasibleSet", "objectiveGap", "objectiveGap_nonneg_of_le", "scaled_objectiveGap_nonneg"], "subdomain": "Methods.OR", "key_problem": "ConvexCore", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Methods.OR.DiscreteOptimization", "node_id": "or", "node_name": "OR", "source_track": "native", "status": "partial", "layer": "methods", "role": "tool", "proof_status": "proved", "formal_decl_refs": ["DiscreteOptimizationProblem", "feasibleCandidates", "discreteObjectiveGap", "discreteObjectiveGap_nonneg_of_le", "cumulativeDiscreteObjectiveGap", "cumulativeDiscreteObjectiveGap_nonneg"], "subdomain": "Methods.OR", "key_problem": "DiscreteOptimization", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Methods.OR.GraphOptimization", "node_id": "or", "node_name": "OR", "source_track": "native", "status": "partial", "layer": "methods", "role": "tool", "proof_status": "proved", "formal_decl_refs": ["GraphOptimizationProblem", "pathCost", "pathObjectiveGap", "pathObjectiveGap_nonneg_of_le", "cutObjectiveGap", "cumulativePathObjectiveGap_nonneg"], "subdomain": "Methods.OR", "key_problem": "GraphOptimization", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Methods.OR.StochasticMatrix", "node_id": "or", "node_name": "OR", "source_track": "native", "status": "partial", "layer": "methods", "role": "tool", "proof_status": "proved", "formal_decl_refs": ["StochasticMatrixProblem", "rowMass", "rowMassGap", "rowMassGap_nonneg_of_le", "entrywiseDeviation", "cumulativeRowMassGap_nonneg"], "subdomain": "Methods.OR", "key_problem": "StochasticMatrix", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Methods.RL", "node_id": "rl", "node_name": "RL", "source_track": "native", "status": "partial", "layer": "methods", "role": "bridge", "proof_status": "statement", "formal_decl_refs": [], "subdomain": "Methods.RL", "key_problem": "(root)", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Methods.RL.DynamicProgramming", "node_id": "rl", "node_name": "RL", "source_track": "native", "status": "partial", "layer": "methods", "role": "tool", "proof_status": "proved", "formal_decl_refs": ["valueIterationUpdate", "policyEvaluationPlaceholder", "policyImprovementPlaceholder", "policyIterationConvergencePlaceholder"], "subdomain": "Methods.RL", "key_problem": "DynamicProgramming", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Methods.RL.MDP", "node_id": "rl", "node_name": "RL", "source_track": "native", "status": "partial", "layer": "methods", "role": "tool", "proof_status": "proved", "formal_decl_refs": ["MDPMethodProblem", "bellmanOperator", "valueIterationUpdate_eq_bellmanOperator", "bellmanBridge_scalar"], "subdomain": "Methods.RL", "key_problem": "MDP", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "real", "module_path": "MLTheory.Methods.RL.TemporalDifference", "node_id": "rl", "node_name": "RL", "source_track": "native", "status": "partial", "layer": "methods", "role": "tool", "proof_status": "proved", "formal_decl_refs": ["TemporalDifferenceProblem", "tdTarget", "tdError", "tdUpdate", "tdError_after_update", "tdError_sq_nonneg"], "subdomain": "Methods.RL", "key_problem": "TemporalDifference", "reason": "", "execution_horizon": "", "execution_priority": "", "in_backlog": false}, {"dataset": "planned", "module_path": "MLTheory.Books.BanditAlgorithms", "node_id": "bandits", "node_name": "Bandits", "source_track": "books", "status": "planned", "layer": "planned", "role": "planned", "proof_status": "placeholder", "formal_decl_refs": [], "subdomain": "Books.BanditAlgorithms", "key_problem": "(root)", "reason": "No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder).", "execution_horizon": "unscheduled", "execution_priority": "", "in_backlog": false}, {"dataset": "planned", "module_path": "MLTheory.Books.BanditAlgorithms.PartIII_AdversarialBandits", "node_id": "bandits", "node_name": "Bandits", "source_track": "books", "status": "gap", "layer": "planned", "role": "planned", "proof_status": "placeholder", "formal_decl_refs": [], "subdomain": "Books.BanditAlgorithms", "key_problem": "PartIII_AdversarialBandits", "reason": "No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder).", "execution_horizon": "unscheduled", "execution_priority": "", "in_backlog": false}, {"dataset": "planned", "module_path": "MLTheory.Books.BanditAlgorithms.PartII_StochasticBandits", "node_id": "bandits", "node_name": "Bandits", "source_track": "books", "status": "planned", "layer": "planned", "role": "planned", "proof_status": "placeholder", "formal_decl_refs": [], "subdomain": "Books.BanditAlgorithms", "key_problem": "PartII_StochasticBandits", "reason": "No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder).", "execution_horizon": "unscheduled", "execution_priority": "", "in_backlog": false}, {"dataset": "planned", "module_path": "MLTheory.Books.BanditAlgorithms.PartIV_ContextualLinearBandits", "node_id": "bandits", "node_name": "Bandits", "source_track": "books", "status": "gap", "layer": "planned", "role": "planned", "proof_status": "placeholder", "formal_decl_refs": [], "subdomain": "Books.BanditAlgorithms", "key_problem": "PartIV_ContextualLinearBandits", "reason": "No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder).", "execution_horizon": "unscheduled", "execution_priority": "", "in_backlog": false}, {"dataset": "planned", "module_path": "MLTheory.Books.BanditAlgorithms.PartI_Foundations", "node_id": "bandits", "node_name": "Bandits", "source_track": "books", "status": "planned", "layer": "planned", "role": "planned", "proof_status": "placeholder", "formal_decl_refs": [], "subdomain": "Books.BanditAlgorithms", "key_problem": "PartI_Foundations", "reason": "No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder).", "execution_horizon": "unscheduled", "execution_priority": "", "in_backlog": false}, {"dataset": "planned", "module_path": "MLTheory.Books.BanditAlgorithms.PartVII_ReinforcementLearning", "node_id": "bandits", "node_name": "Bandits", "source_track": "books", "status": "gap", "layer": "planned", "role": "planned", "proof_status": "placeholder", "formal_decl_refs": [], "subdomain": "Books.BanditAlgorithms", "key_problem": "PartVII_ReinforcementLearning", "reason": "No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder).", "execution_horizon": "unscheduled", "execution_priority": "", "in_backlog": false}, {"dataset": "planned", "module_path": "MLTheory.Books.BanditAlgorithms.PartVI_PureExploration", "node_id": "bandits", "node_name": "Bandits", "source_track": "books", "status": "gap", "layer": "planned", "role": "planned", "proof_status": "placeholder", "formal_decl_refs": [], "subdomain": "Books.BanditAlgorithms", "key_problem": "PartVI_PureExploration", "reason": "No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder).", "execution_horizon": "unscheduled", "execution_priority": "", "in_backlog": false}, {"dataset": "planned", "module_path": "MLTheory.Books.BanditAlgorithms.PartV_LargeActionSpaces", "node_id": "bandits", "node_name": "Bandits", "source_track": "books", "status": "gap", "layer": "planned", "role": "planned", "proof_status": "placeholder", "formal_decl_refs": [], "subdomain": "Books.BanditAlgorithms", "key_problem": "PartV_LargeActionSpaces", "reason": "No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder).", "execution_horizon": "unscheduled", "execution_priority": "", "in_backlog": false}, {"dataset": "planned", "module_path": "MLTheory.Books.Durrett5", "node_id": "probability", "node_name": "Probability", "source_track": "books", "status": "planned", "layer": "planned", "role": "planned", "proof_status": "placeholder", "formal_decl_refs": [], "subdomain": "Books.Durrett5", "key_problem": "(root)", "reason": "No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder).", "execution_horizon": "unscheduled", "execution_priority": "", "in_backlog": false}, {"dataset": "planned", "module_path": "MLTheory.Books.Durrett5.Ch01_MeasureTheory", "node_id": "probability", "node_name": "Probability", "source_track": "books", "status": "planned", "layer": "planned", "role": "planned", "proof_status": "placeholder", "formal_decl_refs": [], "subdomain": "Books.Durrett5", "key_problem": "Ch01_MeasureTheory", "reason": "No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder).", "execution_horizon": "unscheduled", "execution_priority": "", "in_backlog": false}, {"dataset": "planned", "module_path": "MLTheory.Books.Durrett5.Ch02_ProbabilityTheory", "node_id": "probability", "node_name": "Probability", "source_track": "books", "status": "planned", "layer": "planned", "role": "planned", "proof_status": "placeholder", "formal_decl_refs": [], "subdomain": "Books.Durrett5", "key_problem": "Ch02_ProbabilityTheory", "reason": "No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder).", "execution_horizon": "unscheduled", "execution_priority": "", "in_backlog": false}, {"dataset": "planned", "module_path": "MLTheory.Books.Durrett5.Ch03_IndependenceExpectations", "node_id": "probability", "node_name": "Probability", "source_track": "books", "status": "planned", "layer": "planned", "role": "planned", "proof_status": "placeholder", "formal_decl_refs": [], "subdomain": "Books.Durrett5", "key_problem": "Ch03_IndependenceExpectations", "reason": "No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder).", "execution_horizon": "unscheduled", "execution_priority": "", "in_backlog": false}, {"dataset": "planned", "module_path": "MLTheory.Books.Durrett5.Ch04_LimitTheorems", "node_id": "probability", "node_name": "Probability", "source_track": "books", "status": "planned", "layer": "planned", "role": "planned", "proof_status": "placeholder", "formal_decl_refs": [], "subdomain": "Books.Durrett5", "key_problem": "Ch04_LimitTheorems", "reason": "No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder).", "execution_horizon": "unscheduled", "execution_priority": "", "in_backlog": false}, {"dataset": "planned", "module_path": "MLTheory.Books.Durrett5.Ch05_PoissonApproximation", "node_id": "probability", "node_name": "Probability", "source_track": "books", "status": "gap", "layer": "planned", "role": "planned", "proof_status": "placeholder", "formal_decl_refs": [], "subdomain": "Books.Durrett5", "key_problem": "Ch05_PoissonApproximation", "reason": "No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder).", "execution_horizon": "unscheduled", "execution_priority": "", "in_backlog": false}, {"dataset": "planned", "module_path": "MLTheory.Books.Durrett5.Ch06_MarkovChains", "node_id": "probability", "node_name": "Probability", "source_track": "books", "status": "planned", "layer": "planned", "role": "planned", "proof_status": "placeholder", "formal_decl_refs": [], "subdomain": "Books.Durrett5", "key_problem": "Ch06_MarkovChains", "reason": "No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder).", "execution_horizon": "unscheduled", "execution_priority": "", "in_backlog": false}, {"dataset": "planned", "module_path": "MLTheory.Books.Durrett5.Ch07_Martingales", "node_id": "probability", "node_name": "Probability", "source_track": "books", "status": "planned", "layer": "planned", "role": "planned", "proof_status": "placeholder", "formal_decl_refs": [], "subdomain": "Books.Durrett5", "key_problem": "Ch07_Martingales", "reason": "No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder).", "execution_horizon": "unscheduled", "execution_priority": "", "in_backlog": false}, {"dataset": "planned", "module_path": "MLTheory.Books.Durrett5.Ch08_BrownianMotion", "node_id": "probability", "node_name": "Probability", "source_track": "books", "status": "gap", "layer": "planned", "role": "planned", "proof_status": "placeholder", "formal_decl_refs": [], "subdomain": "Books.Durrett5", "key_problem": "Ch08_BrownianMotion", "reason": "No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder).", "execution_horizon": "unscheduled", "execution_priority": "", "in_backlog": false}, {"dataset": "planned", "module_path": "MLTheory.Books.Durrett5.Ch09_StationaryProcesses", "node_id": "probability", "node_name": "Probability", "source_track": "books", "status": "gap", "layer": "planned", "role": "planned", "proof_status": "placeholder", "formal_decl_refs": [], "subdomain": "Books.Durrett5", "key_problem": "Ch09_StationaryProcesses", "reason": "No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder).", "execution_horizon": "unscheduled", "execution_priority": "", "in_backlog": false}, {"dataset": "planned", "module_path": "MLTheory.Books.Durrett5.Ch10_CTMC", "node_id": "probability", "node_name": "Probability", "source_track": "books", "status": "gap", "layer": "planned", "role": "planned", "proof_status": "placeholder", "formal_decl_refs": [], "subdomain": "Books.Durrett5", "key_problem": "Ch10_CTMC", "reason": "No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder).", "execution_horizon": "unscheduled", "execution_priority": "", "in_backlog": false}, {"dataset": "planned", "module_path": "MLTheory.Books.Durrett5.Ch11_ErgodicTheorems", "node_id": "probability", "node_name": "Probability", "source_track": "books", "status": "planned", "layer": "planned", "role": "planned", "proof_status": "placeholder", "formal_decl_refs": [], "subdomain": "Books.Durrett5", "key_problem": "Ch11_ErgodicTheorems", "reason": "No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder).", "execution_horizon": "unscheduled", "execution_priority": "", "in_backlog": false}, {"dataset": "planned", "module_path": "MLTheory.Books.HazanOCO2", "node_id": "oco", "node_name": "OCO", "source_track": "books", "status": "planned", "layer": "planned", "role": "planned", "proof_status": "placeholder", "formal_decl_refs": [], "subdomain": "Books.HazanOCO2", "key_problem": "(root)", "reason": "No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder).", "execution_horizon": "unscheduled", "execution_priority": "", "in_backlog": false}, {"dataset": "planned", "module_path": "MLTheory.Books.HazanOCO2.PartIII_GeneralizationAndAdaptivity", "node_id": "oco", "node_name": "OCO", "source_track": "books", "status": "gap", "layer": "planned", "role": "planned", "proof_status": "placeholder", "formal_decl_refs": [], "subdomain": "Books.HazanOCO2", "key_problem": "PartIII_GeneralizationAndAdaptivity", "reason": "No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder).", "execution_horizon": "unscheduled", "execution_priority": "", "in_backlog": false}, {"dataset": "planned", "module_path": "MLTheory.Books.HazanOCO2.PartII_BanditAndGames", "node_id": "oco", "node_name": "OCO", "source_track": "books", "status": "gap", "layer": "planned", "role": "planned", "proof_status": "placeholder", "formal_decl_refs": [], "subdomain": "Books.HazanOCO2", "key_problem": "PartII_BanditAndGames", "reason": "No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder).", "execution_horizon": "unscheduled", "execution_priority": "", "in_backlog": false}, {"dataset": "planned", "module_path": "MLTheory.Books.HazanOCO2.PartIV_BoostingAndApproachability", "node_id": "oco", "node_name": "OCO", "source_track": "books", "status": "gap", "layer": "planned", "role": "planned", "proof_status": "placeholder", "formal_decl_refs": [], "subdomain": "Books.HazanOCO2", "key_problem": "PartIV_BoostingAndApproachability", "reason": "No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder).", "execution_horizon": "unscheduled", "execution_priority": "", "in_backlog": false}, {"dataset": "planned", "module_path": "MLTheory.Books.HazanOCO2.PartI_Core", "node_id": "oco", "node_name": "OCO", "source_track": "books", "status": "planned", "layer": "planned", "role": "planned", "proof_status": "placeholder", "formal_decl_refs": [], "subdomain": "Books.HazanOCO2", "key_problem": "PartI_Core", "reason": "No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder).", "execution_horizon": "unscheduled", "execution_priority": "", "in_backlog": false}, {"dataset": "planned", "module_path": "MLTheory.Books.SuttonBartoRL2.PartIII_LookingDeeper", "node_id": "rl", "node_name": "RL", "source_track": "books", "status": "gap", "layer": "planned", "role": "planned", "proof_status": "placeholder", "formal_decl_refs": [], "subdomain": "Books.SuttonBartoRL2", "key_problem": "PartIII_LookingDeeper", "reason": "No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder).", "execution_horizon": "unscheduled", "execution_priority": "", "in_backlog": false}, {"dataset": "planned", "module_path": "MLTheory.Books.SuttonBartoRL2.PartII_ApproximateMethods", "node_id": "rl", "node_name": "RL", "source_track": "books", "status": "gap", "layer": "planned", "role": "planned", "proof_status": "placeholder", "formal_decl_refs": [], "subdomain": "Books.SuttonBartoRL2", "key_problem": "PartII_ApproximateMethods", "reason": "No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder).", "execution_horizon": "unscheduled", "execution_priority": "", "in_backlog": false}, {"dataset": "planned", "module_path": "MLTheory.Books.SuttonBartoRL2.PartI_TabularMethods", "node_id": "rl", "node_name": "RL", "source_track": "books", "status": "gap", "layer": "planned", "role": "planned", "proof_status": "placeholder", "formal_decl_refs": [], "subdomain": "Books.SuttonBartoRL2", "key_problem": "PartI_TabularMethods", "reason": "No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder).", "execution_horizon": "unscheduled", "execution_priority": "", "in_backlog": false}, {"dataset": "planned", "module_path": "MLTheory.Books.VershyninHDP.Ch01_Refresher", "node_id": "probability", "node_name": "Probability", "source_track": "books", "status": "planned", "layer": "planned", "role": "planned", "proof_status": "placeholder", "formal_decl_refs": [], "subdomain": "Books.VershyninHDP", "key_problem": "Ch01_Refresher", "reason": "No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder).", "execution_horizon": "unscheduled", "execution_priority": "", "in_backlog": false}, {"dataset": "planned", "module_path": "MLTheory.Books.VershyninHDP.Ch02_IndependentSums", "node_id": "probability", "node_name": "Probability", "source_track": "books", "status": "planned", "layer": "planned", "role": "planned", "proof_status": "placeholder", "formal_decl_refs": [], "subdomain": "Books.VershyninHDP", "key_problem": "Ch02_IndependentSums", "reason": "No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder).", "execution_horizon": "unscheduled", "execution_priority": "", "in_backlog": false}, {"dataset": "planned", "module_path": "MLTheory.Books.VershyninHDP.Ch03_RandomVectors", "node_id": "probability", "node_name": "Probability", "source_track": "books", "status": "planned", "layer": "planned", "role": "planned", "proof_status": "placeholder", "formal_decl_refs": [], "subdomain": "Books.VershyninHDP", "key_problem": "Ch03_RandomVectors", "reason": "No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder).", "execution_horizon": "unscheduled", "execution_priority": "", "in_backlog": false}, {"dataset": "planned", "module_path": "MLTheory.Books.VershyninHDP.Ch04_RandomMatrices", "node_id": "probability", "node_name": "Probability", "source_track": "books", "status": "planned", "layer": "planned", "role": "planned", "proof_status": "placeholder", "formal_decl_refs": [], "subdomain": "Books.VershyninHDP", "key_problem": "Ch04_RandomMatrices", "reason": "No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder).", "execution_horizon": "unscheduled", "execution_priority": "", "in_backlog": false}, {"dataset": "planned", "module_path": "MLTheory.Books.VershyninHDP.Ch05_WithoutIndependence", "node_id": "probability", "node_name": "Probability", "source_track": "books", "status": "planned", "layer": "planned", "role": "planned", "proof_status": "placeholder", "formal_decl_refs": [], "subdomain": "Books.VershyninHDP", "key_problem": "Ch05_WithoutIndependence", "reason": "No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder).", "execution_horizon": "unscheduled", "execution_priority": "", "in_backlog": false}, {"dataset": "planned", "module_path": "MLTheory.Books.VershyninHDP.Ch06_QuadraticSymmContraction", "node_id": "probability", "node_name": "Probability", "source_track": "books", "status": "planned", "layer": "planned", "role": "planned", "proof_status": "placeholder", "formal_decl_refs": [], "subdomain": "Books.VershyninHDP", "key_problem": "Ch06_QuadraticSymmContraction", "reason": "No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder).", "execution_horizon": "unscheduled", "execution_priority": "", "in_backlog": false}, {"dataset": "planned", "module_path": "MLTheory.Books.VershyninHDP.Ch07_RandomProcesses", "node_id": "probability", "node_name": "Probability", "source_track": "books", "status": "planned", "layer": "planned", "role": "planned", "proof_status": "placeholder", "formal_decl_refs": [], "subdomain": "Books.VershyninHDP", "key_problem": "Ch07_RandomProcesses", "reason": "No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder).", "execution_horizon": "unscheduled", "execution_priority": "", "in_backlog": false}, {"dataset": "planned", "module_path": "MLTheory.Books.VershyninHDP.Ch08_Chaining", "node_id": "probability", "node_name": "Probability", "source_track": "books", "status": "planned", "layer": "planned", "role": "planned", "proof_status": "placeholder", "formal_decl_refs": [], "subdomain": "Books.VershyninHDP", "key_problem": "Ch08_Chaining", "reason": "No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder).", "execution_horizon": "unscheduled", "execution_priority": "", "in_backlog": false}, {"dataset": "planned", "module_path": "MLTheory.Books.VershyninHDP.Ch09_MatrixDeviations", "node_id": "probability", "node_name": "Probability", "source_track": "books", "status": "planned", "layer": "planned", "role": "planned", "proof_status": "placeholder", "formal_decl_refs": [], "subdomain": "Books.VershyninHDP", "key_problem": "Ch09_MatrixDeviations", "reason": "No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder).", "execution_horizon": "unscheduled", "execution_priority": "", "in_backlog": false}, {"dataset": "planned", "module_path": "MLTheory.Core.Probability.Brownian", "node_id": "probability", "node_name": "Probability", "source_track": "native", "status": "gap", "layer": "planned", "role": "planned", "proof_status": "placeholder", "formal_decl_refs": [], "subdomain": "Core.Probability", "key_problem": "Brownian", "reason": "No local .lean file yet; keep as roadmap/planned module (layer=core, role=placeholder, proof_status=placeholder).", "execution_horizon": "unscheduled", "execution_priority": "", "in_backlog": false}, {"dataset": "planned", "module_path": "MLTheory.Core.Probability.CLTBridge", "node_id": "probability", "node_name": "Probability", "source_track": "native", "status": "gap", "layer": "planned", "role": "planned", "proof_status": "placeholder", "formal_decl_refs": [], "subdomain": "Core.Probability", "key_problem": "CLTBridge", "reason": "No local .lean file yet; keep as roadmap/planned module (layer=core, role=placeholder, proof_status=placeholder).", "execution_horizon": "near", "execution_priority": "P3", "in_backlog": true}, {"dataset": "planned", "module_path": "MLTheory.Core.Probability.CTMC", "node_id": "probability", "node_name": "Probability", "source_track": "native", "status": "gap", "layer": "planned", "role": "planned", "proof_status": "placeholder", "formal_decl_refs": [], "subdomain": "Core.Probability", "key_problem": "CTMC", "reason": "No local .lean file yet; keep as roadmap/planned module (layer=core, role=placeholder, proof_status=placeholder).", "execution_horizon": "unscheduled", "execution_priority": "", "in_backlog": false}, {"dataset": "planned", "module_path": "MLTheory.Core.Probability.DensityCDF", "node_id": "probability", "node_name": "Probability", "source_track": "native", "status": "planned", "layer": "planned", "role": "planned", "proof_status": "placeholder", "formal_decl_refs": [], "subdomain": "Core.Probability", "key_problem": "DensityCDF", "reason": "No local .lean file yet; roadmap item pending file-backed implementation.", "execution_horizon": "unscheduled", "execution_priority": "", "in_backlog": false}, {"dataset": "planned", "module_path": "MLTheory.Core.Probability.Ergodic", "node_id": "probability", "node_name": "Probability", "source_track": "native", "status": "planned", "layer": "planned", "role": "planned", "proof_status": "placeholder", "formal_decl_refs": [], "subdomain": "Core.Probability", "key_problem": "Ergodic", "reason": "No local .lean file yet; roadmap item pending file-backed implementation.", "execution_horizon": "unscheduled", "execution_priority": "", "in_backlog": false}, {"dataset": "planned", "module_path": "MLTheory.Core.Probability.LimitLaws", "node_id": "probability", "node_name": "Probability", "source_track": "native", "status": "planned", "layer": "planned", "role": "planned", "proof_status": "placeholder", "formal_decl_refs": [], "subdomain": "Core.Probability", "key_problem": "LimitLaws", "reason": "No local .lean file yet; roadmap item pending file-backed implementation.", "execution_horizon": "unscheduled", "execution_priority": "", "in_backlog": false}, {"dataset": "planned", "module_path": "MLTheory.Core.Probability.MarkovKernels", "node_id": "probability", "node_name": "Probability", "source_track": "native", "status": "planned", "layer": "planned", "role": "planned", "proof_status": "placeholder", "formal_decl_refs": [], "subdomain": "Core.Probability", "key_problem": "MarkovKernels", "reason": "No local .lean file yet; roadmap item pending file-backed implementation.", "execution_horizon": "unscheduled", "execution_priority": "", "in_backlog": false}, {"dataset": "planned", "module_path": "MLTheory.Core.Probability.Martingales", "node_id": "probability", "node_name": "Probability", "source_track": "native", "status": "planned", "layer": "planned", "role": "planned", "proof_status": "placeholder", "formal_decl_refs": [], "subdomain": "Core.Probability", "key_problem": "Martingales", "reason": "No local .lean file yet; roadmap item pending file-backed implementation.", "execution_horizon": "unscheduled", "execution_priority": "", "in_backlog": false}, {"dataset": "planned", "module_path": "MLTheory.Core.Probability.Moments", "node_id": "probability", "node_name": "Probability", "source_track": "native", "status": "planned", "layer": "planned", "role": "planned", "proof_status": "placeholder", "formal_decl_refs": [], "subdomain": "Core.Probability", "key_problem": "Moments", "reason": "No local .lean file yet; roadmap item pending file-backed implementation.", "execution_horizon": "unscheduled", "execution_priority": "", "in_backlog": false}, {"dataset": "planned", "module_path": "MLTheory.Core.Probability.PoissonApprox", "node_id": "probability", "node_name": "Probability", "source_track": "native", "status": "gap", "layer": "planned", "role": "planned", "proof_status": "placeholder", "formal_decl_refs": [], "subdomain": "Core.Probability", "key_problem": "PoissonApprox", "reason": "No local .lean file yet; keep as roadmap/planned module (layer=core, role=placeholder, proof_status=placeholder).", "execution_horizon": "unscheduled", "execution_priority": "", "in_backlog": false}, {"dataset": "planned", "module_path": "MLTheory.Core.Probability.Stationary", "node_id": "probability", "node_name": "Probability", "source_track": "native", "status": "gap", "layer": "planned", "role": "planned", "proof_status": "placeholder", "formal_decl_refs": [], "subdomain": "Core.Probability", "key_problem": "Stationary", "reason": "No local .lean file yet; keep as roadmap/planned module (layer=core, role=placeholder, proof_status=placeholder).", "execution_horizon": "unscheduled", "execution_priority": "", "in_backlog": false}, {"dataset": "planned", "module_path": "MLTheory.Methods.RL.CaseStudies", "node_id": "rl", "node_name": "RL", "source_track": "native", "status": "gap", "layer": "planned", "role": "planned", "proof_status": "placeholder", "formal_decl_refs": [], "subdomain": "Methods.RL", "key_problem": "CaseStudies", "reason": "No local .lean file yet; keep as roadmap/planned module (layer=methods, role=placeholder, proof_status=placeholder).", "execution_horizon": "unscheduled", "execution_priority": "", "in_backlog": false}, {"dataset": "planned", "module_path": "MLTheory.Methods.RL.EligibilityTraces", "node_id": "rl", "node_name": "RL", "source_track": "native", "status": "gap", "layer": "planned", "role": "planned", "proof_status": "placeholder", "formal_decl_refs": [], "subdomain": "Methods.RL", "key_problem": "EligibilityTraces", "reason": "No local .lean file yet; keep as roadmap/planned module (layer=methods, role=placeholder, proof_status=placeholder).", "execution_horizon": "unscheduled", "execution_priority": "", "in_backlog": false}, {"dataset": "planned", "module_path": "MLTheory.Methods.RL.Frontiers", "node_id": "rl", "node_name": "RL", "source_track": "native", "status": "gap", "layer": "planned", "role": "planned", "proof_status": "placeholder", "formal_decl_refs": [], "subdomain": "Methods.RL", "key_problem": "Frontiers", "reason": "No local .lean file yet; keep as roadmap/planned module (layer=methods, role=placeholder, proof_status=placeholder).", "execution_horizon": "unscheduled", "execution_priority": "", "in_backlog": false}, {"dataset": "planned", "module_path": "MLTheory.Methods.RL.FunctionApproximation", "node_id": "rl", "node_name": "RL", "source_track": "native", "status": "gap", "layer": "planned", "role": "planned", "proof_status": "placeholder", "formal_decl_refs": [], "subdomain": "Methods.RL", "key_problem": "FunctionApproximation", "reason": "No local .lean file yet; keep as roadmap/planned module (layer=methods, role=placeholder, proof_status=placeholder).", "execution_horizon": "unscheduled", "execution_priority": "", "in_backlog": false}, {"dataset": "planned", "module_path": "MLTheory.Methods.RL.ModelBasedPlanning", "node_id": "rl", "node_name": "RL", "source_track": "native", "status": "gap", "layer": "planned", "role": "planned", "proof_status": "placeholder", "formal_decl_refs": [], "subdomain": "Methods.RL", "key_problem": "ModelBasedPlanning", "reason": "No local .lean file yet; keep as roadmap/planned module (layer=methods, role=placeholder, proof_status=placeholder).", "execution_horizon": "unscheduled", "execution_priority": "", "in_backlog": false}, {"dataset": "planned", "module_path": "MLTheory.Methods.RL.MonteCarlo", "node_id": "rl", "node_name": "RL", "source_track": "native", "status": "gap", "layer": "planned", "role": "planned", "proof_status": "placeholder", "formal_decl_refs": [], "subdomain": "Methods.RL", "key_problem": "MonteCarlo", "reason": "No local .lean file yet; keep as roadmap/planned module (layer=methods, role=placeholder, proof_status=placeholder).", "execution_horizon": "unscheduled", "execution_priority": "", "in_backlog": false}, {"dataset": "planned", "module_path": "MLTheory.Methods.RL.NeuroscienceBridge", "node_id": "rl", "node_name": "RL", "source_track": "native", "status": "gap", "layer": "planned", "role": "planned", "proof_status": "placeholder", "formal_decl_refs": [], "subdomain": "Methods.RL", "key_problem": "NeuroscienceBridge", "reason": "No local .lean file yet; keep as roadmap/planned module (layer=methods, role=placeholder, proof_status=placeholder).", "execution_horizon": "unscheduled", "execution_priority": "", "in_backlog": false}, {"dataset": "planned", "module_path": "MLTheory.Methods.RL.OffPolicy", "node_id": "rl", "node_name": "RL", "source_track": "native", "status": "gap", "layer": "planned", "role": "planned", "proof_status": "placeholder", "formal_decl_refs": [], "subdomain": "Methods.RL", "key_problem": "OffPolicy", "reason": "No local .lean file yet; keep as roadmap/planned module (layer=methods, role=placeholder, proof_status=placeholder).", "execution_horizon": "unscheduled", "execution_priority": "", "in_backlog": false}, {"dataset": "planned", "module_path": "MLTheory.Methods.RL.PolicyGradient", "node_id": "rl", "node_name": "RL", "source_track": "native", "status": "gap", "layer": "planned", "role": "planned", "proof_status": "placeholder", "formal_decl_refs": [], "subdomain": "Methods.RL", "key_problem": "PolicyGradient", "reason": "No local .lean file yet; keep as roadmap/planned module (layer=methods, role=placeholder, proof_status=placeholder).", "execution_horizon": "unscheduled", "execution_priority": "", "in_backlog": false}, {"dataset": "planned", "module_path": "MLTheory.Methods.RL.PsychologyBridge", "node_id": "rl", "node_name": "RL", "source_track": "native", "status": "gap", "layer": "planned", "role": "planned", "proof_status": "placeholder", "formal_decl_refs": [], "subdomain": "Methods.RL", "key_problem": "PsychologyBridge", "reason": "No local .lean file yet; keep as roadmap/planned module (layer=methods, role=placeholder, proof_status=placeholder).", "execution_horizon": "unscheduled", "execution_priority": "", "in_backlog": false}]}</script>
+  <script>
+    const raw = JSON.parse(document.getElementById("tool-forest-data").textContent);
+    const modules = raw.modules;
+    const MAX_ROWS = 120;
+
+    const dom = {
+      q: document.getElementById("q"),
+      dataset: document.getElementById("f-dataset"),
+      node: document.getElementById("f-node"),
+      layer: document.getElementById("f-layer"),
+      role: document.getElementById("f-role"),
+      proof: document.getElementById("f-proof"),
+      horizon: document.getElementById("f-plan-window"),
+      reset: document.getElementById("reset"),
+      presetReal: document.getElementById("preset-real"),
+      presetNear: document.getElementById("preset-near"),
+      presetAll: document.getElementById("preset-all"),
+      summary: document.getElementById("summary"),
+      tree: document.getElementById("tree"),
+      tbody: document.getElementById("tbody"),
+      detail: document.getElementById("detail"),
+    };
+
+    function uniq(values) {
+      return [...new Set(values)].sort((a, b) => a.localeCompare(b, "zh"));
+    }
+
+    function fillSelect(el, values) {
+      el.innerHTML = "";
+      const opt0 = document.createElement("option");
+      opt0.value = "";
+      opt0.textContent = "全部";
+      el.appendChild(opt0);
+      for (const v of values) {
+        const o = document.createElement("option");
+        o.value = v;
+        o.textContent = v;
+        el.appendChild(o);
+      }
+    }
+
+    fillSelect(dom.node, uniq(modules.map(m => m.node_name)));
+    fillSelect(dom.layer, uniq(modules.map(m => m.layer)));
+    fillSelect(dom.role, uniq(modules.map(m => m.role)));
+    fillSelect(dom.proof, uniq(modules.map(m => m.proof_status)));
+    fillSelect(
+      dom.horizon,
+      uniq(
+        modules
+          .filter(m => m.dataset === "planned")
+          .map(m => m.execution_horizon)
+      )
+    );
+
+    function filtered() {
+      const q = dom.q.value.trim().toLowerCase();
+      return modules.filter(m => {
+        if (dom.dataset.value && m.dataset !== dom.dataset.value) return false;
+        if (dom.node.value && m.node_name !== dom.node.value) return false;
+        if (dom.layer.value && m.layer !== dom.layer.value) return false;
+        if (dom.role.value && m.role !== dom.role.value) return false;
+        if (dom.proof.value && m.proof_status !== dom.proof.value) return false;
+        if (dom.horizon.value) {
+          if (m.dataset !== "planned") return false;
+          if (m.execution_horizon !== dom.horizon.value) return false;
+        }
+        if (!q) return true;
+        const blob = [
+          m.module_path, m.node_id, m.node_name, m.subdomain, m.key_problem, m.role, m.layer,
+          m.proof_status, m.dataset, m.source_track, m.reason, m.execution_horizon,
+          m.execution_priority, ...(m.formal_decl_refs || [])
+        ].join(" ").toLowerCase();
+        return blob.includes(q);
+      });
+    }
+
+    function countBy(list, keyFn) {
+      const m = new Map();
+      for (const x of list) {
+        const k = keyFn(x);
+        m.set(k, (m.get(k) || 0) + 1);
+      }
+      return m;
+    }
+
+    function renderSummary(list) {
+      const role = countBy(list, x => x.role);
+      const proof = countBy(list, x => x.proof_status);
+      const shortlist = list.filter(x => x.in_backlog).length;
+      const unscheduled = list.filter(x => x.execution_horizon === "unscheduled").length;
+      dom.summary.innerHTML = "";
+      const chips = [
+        `modules=${list.length}`,
+        `nodes=${new Set(list.map(x => x.node_name)).size}`,
+        `real=${list.filter(x => x.dataset === "real").length}`,
+        `planned=${list.filter(x => x.dataset === "planned").length}`,
+        `shortlist=${shortlist}`,
+        `unscheduled=${unscheduled}`,
+        `canonical=${role.get("canonical") || 0}`,
+        `tool=${role.get("tool") || 0}`,
+        `compat=${role.get("compat") || 0}`,
+        `planned-role=${role.get("planned") || 0}`,
+        `proved=${proof.get("proved") || 0}`,
+      ];
+      for (const t of chips) {
+        const c = document.createElement("span");
+        c.className = "chip";
+        c.textContent = t;
+        dom.summary.appendChild(c);
+      }
+    }
+
+    function renderTree(list) {
+      const byDomain = new Map();
+      for (const m of list) {
+        if (!byDomain.has(m.node_name)) byDomain.set(m.node_name, []);
+        byDomain.get(m.node_name).push(m);
+      }
+      const domains = [...byDomain.keys()].sort((a, b) => {
+        const da = byDomain.get(a).length;
+        const db = byDomain.get(b).length;
+        if (db !== da) return db - da;
+        return a.localeCompare(b, "zh");
+      });
+      dom.tree.innerHTML = "";
+
+      for (const domain of domains) {
+        const ds = byDomain.get(domain);
+        const subMap = new Map();
+        for (const m of ds) {
+          if (!subMap.has(m.subdomain)) subMap.set(m.subdomain, []);
+          subMap.get(m.subdomain).push(m);
+        }
+        const d = document.createElement("details");
+        d.open = ds.length <= 20;
+        const s = document.createElement("summary");
+        const canonical = ds.filter(x => x.role === "canonical").length;
+        const tool = ds.filter(x => x.role === "tool").length;
+        s.textContent = `${domain} (${ds.length}) | canonical:${canonical} tool:${tool}`;
+        d.appendChild(s);
+
+        const subs = [...subMap.keys()].sort((a, b) => {
+          const sa = subMap.get(a).length;
+          const sb = subMap.get(b).length;
+          if (sb !== sa) return sb - sa;
+          return a.localeCompare(b, "zh");
+        });
+        for (const sub of subs) {
+          const sMods = subMap.get(sub);
+          const sd = document.createElement("details");
+          sd.open = sMods.length <= 10;
+          const ss = document.createElement("summary");
+          ss.textContent = `${sub} (${sMods.length})`;
+          sd.appendChild(ss);
+
+          const pMap = new Map();
+        for (const m of sMods) {
+          if (!pMap.has(m.key_problem)) pMap.set(m.key_problem, []);
+          pMap.get(m.key_problem).push(m);
+        }
+          const ul = document.createElement("ul");
+          ul.className = "group-list";
+          for (const p of [...pMap.keys()].sort((a, b) => {
+            const pa = pMap.get(a).length;
+            const pb = pMap.get(b).length;
+            if (pb !== pa) return pb - pa;
+            return a.localeCompare(b, "zh");
+          })) {
+            const ms = pMap.get(p);
+            const li = document.createElement("li");
+            const c = ms.filter(x => x.role === "canonical").length;
+            const t = ms.filter(x => x.role === "tool").length;
+            li.textContent = `${p} (${ms.length})`;
+            const subline = document.createElement("div");
+            subline.className = "mini";
+            subline.textContent = `source=${[...new Set(ms.map(x => x.source_track))].join(", ")} | canonical:${c} tool:${t}`;
+            li.appendChild(subline);
+            ul.appendChild(li);
+          }
+          sd.appendChild(ul);
+          d.appendChild(sd);
+        }
+        dom.tree.appendChild(d);
+      }
+    }
+
+    function renderTable(list) {
+      dom.tbody.innerHTML = "";
+      const rows = list.slice(0, MAX_ROWS);
+      for (const m of rows) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${m.module_path}</td>
+          <td>${m.node_name}</td>
+          <td>${m.dataset}</td>
+          <td>${m.source_track}</td>
+          <td>${m.role}</td>
+          <td>${m.layer}</td>
+          <td>${m.proof_status}</td>
+        `;
+        tr.addEventListener("click", () => renderDetail(m));
+        dom.tbody.appendChild(tr);
+      }
+      if (list.length > MAX_ROWS) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td colspan="7" class="muted">已显示前 ${MAX_ROWS} 条，共 ${list.length} 条。请继续筛选或搜索。</td>`;
+        dom.tbody.appendChild(tr);
+      }
+    }
+
+    function renderDetail(m) {
+      dom.detail.innerHTML = `
+        <div class="k">module_path</div><div class="v">${m.module_path}</div>
+        <div class="k">node / subdomain / key_problem</div><div class="v">${m.node_name} / ${m.subdomain} / ${m.key_problem}</div>
+        <div class="k">dataset / source_track</div><div class="v">${m.dataset} / ${m.source_track}</div>
+        <div class="k">plan window / priority / shortlist</div><div class="v">${m.execution_horizon || "—"} / ${m.execution_priority || "—"} / ${m.in_backlog ? "yes" : "no"}</div>
+        <div class="k">layer / role / proof_status</div><div class="v">${m.layer} / ${m.role} / ${m.proof_status}</div>
+        <div class="k">formal_decl_refs</div><div class="v">${(m.formal_decl_refs || []).join(", ") || "—"}</div>
+        <div class="k">status</div><div class="v">${m.status || "—"}</div>
+        <div class="k">reason</div><div class="v">${m.reason || "—"}</div>
+      `;
+    }
+
+    function rerender() {
+      const list = filtered();
+      renderSummary(list);
+      renderTree(list);
+      renderTable(list);
+    }
+
+    dom.q.addEventListener("input", rerender);
+    dom.dataset.addEventListener("change", rerender);
+    dom.node.addEventListener("change", rerender);
+    dom.layer.addEventListener("change", rerender);
+    dom.role.addEventListener("change", rerender);
+    dom.proof.addEventListener("change", rerender);
+    dom.horizon.addEventListener("change", rerender);
+    dom.reset.addEventListener("click", () => {
+      dom.q.value = "";
+      dom.dataset.value = "real";
+      dom.node.value = "";
+      dom.layer.value = "";
+      dom.role.value = "";
+      dom.proof.value = "";
+      dom.horizon.value = "";
+      rerender();
+    });
+
+    dom.presetReal.addEventListener("click", () => {
+      dom.dataset.value = "real";
+      dom.horizon.value = "";
+      dom.q.value = "";
+      rerender();
+    });
+
+    dom.presetNear.addEventListener("click", () => {
+      dom.dataset.value = "planned";
+      dom.horizon.value = "near";
+      dom.q.value = "";
+      rerender();
+    });
+
+    dom.presetAll.addEventListener("click", () => {
+      dom.dataset.value = "";
+      dom.horizon.value = "";
+      dom.q.value = "";
+      rerender();
+    });
+
+    dom.dataset.value = "real";
+    rerender();
+  </script>
+</body>
+</html>

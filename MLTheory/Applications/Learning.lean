@@ -9,12 +9,5 @@ import MLTheory.Methods.Learning
 /-!
 # MLTheory.Applications.Learning
 
-Application-layer adapters and smoke-level integration hooks.
+Application-layer bridge module for learning integrations.
 -/
-
-namespace MLTheory.Applications.Learning
-
-/-- Applications layer placeholder for cross-book learning-theory glue. -/
-def learningApplicationsReady : Prop := True
-
-end MLTheory.Applications.Learning

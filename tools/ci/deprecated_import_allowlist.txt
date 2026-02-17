@@ -1,0 +1,2 @@
+# Format: repo_alias|path/to/File.lean|Module.Path
+# Keep this file minimal. Remove entries as soon as migration replaces imports.

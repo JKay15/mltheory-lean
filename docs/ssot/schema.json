@@ -7,7 +7,14 @@
   "required": [
     "meta",
     "decisions",
+    "taxonomy_nodes",
+    "taxonomy_relations",
+    "official_workflow_refs",
+    "canonical_specs",
     "modules",
+    "planned_modules",
+    "execution_backlog",
+    "structure_cleanup_candidates",
     "gaps",
     "books",
     "aliases"
@@ -21,6 +28,7 @@
         "language",
         "toolchain",
         "last_updated",
+        "cleanup_release_epoch",
         "policy"
       ],
       "properties": {
@@ -30,6 +38,10 @@
         "last_updated": {
           "type": "string",
           "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+        },
+        "cleanup_release_epoch": {
+          "type": "integer",
+          "minimum": 1
         },
         "policy": {
           "type": "array",
@@ -57,6 +69,114 @@
         }
       }
     },
+    "taxonomy_nodes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "node_id",
+          "name",
+          "tier",
+          "primary_parent_id",
+          "status",
+          "order"
+        ],
+        "properties": {
+          "node_id": { "type": "string" },
+          "name": { "type": "string" },
+          "tier": {
+            "type": "string",
+            "enum": ["foundation", "methods", "application", "support"]
+          },
+          "primary_parent_id": { "type": ["string", "null"] },
+          "status": {
+            "type": "string",
+            "enum": ["active", "planned", "deprecated"]
+          },
+          "order": { "type": "integer" }
+        }
+      }
+    },
+    "taxonomy_relations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["from_node", "to_node", "relation_type", "strength"],
+        "properties": {
+          "from_node": { "type": "string" },
+          "to_node": { "type": "string" },
+          "relation_type": {
+            "type": "string",
+            "enum": ["secondary_parent", "related"]
+          },
+          "strength": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        }
+      }
+    },
+    "official_workflow_refs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["source_url", "capability", "local_enforcement", "status"],
+        "properties": {
+          "source_url": { "type": "string" },
+          "capability": { "type": "string" },
+          "local_enforcement": { "type": "string" },
+          "status": {
+            "type": "string",
+            "enum": ["active", "planned", "deprecated"]
+          }
+        }
+      }
+    },
+    "canonical_specs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "spec_id",
+          "repo",
+          "entry_file",
+          "entry_decl",
+          "required_decl_refs",
+          "forbidden_tokens",
+          "axiom_policy",
+          "closure_policy",
+          "status"
+        ],
+        "properties": {
+          "spec_id": { "type": "string" },
+          "repo": { "type": "string" },
+          "entry_file": { "type": "string" },
+          "entry_decl": { "type": "string" },
+          "required_decl_refs": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "forbidden_tokens": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "axiom_policy": {
+            "type": "string",
+            "enum": ["standard_only", "allowlisted"]
+          },
+          "closure_policy": { "type": "string" },
+          "status": {
+            "type": "string",
+            "enum": ["active", "deprecated", "draft"]
+          }
+        }
+      }
+    },
     "modules": {
       "type": "array",
       "items": {
@@ -64,17 +184,25 @@
         "additionalProperties": false,
         "required": [
           "module_path",
-          "domain",
+          "primary_node_id",
+          "source_track",
           "status",
           "source",
           "book_refs",
           "layer",
           "proof_status",
-          "placeholder_policy_scope"
+          "placeholder_policy_scope",
+          "role",
+          "user_surface",
+          "formal_decl_refs"
         ],
         "properties": {
           "module_path": { "type": "string" },
-          "domain": { "type": "string" },
+          "primary_node_id": { "type": "string" },
+          "source_track": {
+            "type": "string",
+            "enum": ["native", "books", "legacy"]
+          },
           "status": {
             "type": "string",
             "enum": ["planned", "partial", "covered", "gap"]
@@ -95,7 +223,124 @@
           "placeholder_policy_scope": {
             "type": "string",
             "enum": ["allowed", "forbidden"]
+          },
+          "role": {
+            "type": "string",
+            "enum": ["canonical", "compat", "bridge", "tool", "placeholder"]
+          },
+          "user_surface": {
+            "type": "string",
+            "enum": ["public", "internal"]
+          },
+          "formal_decl_refs": {
+            "type": "array",
+            "items": { "type": "string" }
           }
+        }
+      }
+    },
+    "planned_modules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["module_path", "target_node_id", "source_track", "status", "reason"],
+        "properties": {
+          "module_path": { "type": "string" },
+          "target_node_id": { "type": "string" },
+          "source_track": {
+            "type": "string",
+            "enum": ["native", "books"]
+          },
+          "status": {
+            "type": "string",
+            "enum": ["planned", "partial", "covered", "gap"]
+          },
+          "reason": { "type": "string" }
+        }
+      }
+    },
+    "execution_backlog": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["module_path", "horizon", "priority", "why_now", "done_when"],
+        "properties": {
+          "module_path": { "type": "string" },
+          "horizon": {
+            "type": "string",
+            "enum": ["near", "mid", "far"]
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["P1", "P2", "P3"]
+          },
+          "why_now": { "type": "string" },
+          "done_when": { "type": "string" }
+        }
+      }
+    },
+    "structure_cleanup_candidates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "module_path",
+          "definition_file",
+          "imported_by",
+          "role",
+          "execution_state",
+          "priority",
+          "batch",
+          "compatibility_window",
+          "remove_after_releases",
+          "migration_started_epoch",
+          "replacement_imports",
+          "risk",
+          "suggested_action"
+        ],
+        "properties": {
+          "module_path": { "type": "string" },
+          "definition_file": { "type": "string" },
+          "imported_by": {
+            "type": "array",
+            "items": { "type": "string" },
+            "minItems": 1
+          },
+          "role": {
+            "type": "string",
+            "enum": ["canonical", "compat", "bridge", "tool", "placeholder"]
+          },
+          "execution_state": {
+            "type": "string",
+            "enum": ["pending", "deprecated_announced", "migrating", "ready_to_remove"]
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["P1", "P2", "P3"]
+          },
+          "batch": {
+            "type": "string",
+            "pattern": "^B[1-9][0-9]*$"
+          },
+          "compatibility_window": { "type": "string" },
+          "remove_after_releases": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "migration_started_epoch": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "replacement_imports": {
+            "type": "array",
+            "items": { "type": "string" },
+            "minItems": 1
+          },
+          "risk": { "type": "string" },
+          "suggested_action": { "type": "string" }
         }
       }
     },

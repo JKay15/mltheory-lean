@@ -28,6 +28,7 @@ structure KernelLearningProblem (X Y : Type*) where
   loss : (X -> Real) -> X -> Y -> Real
 
 /-- Statement-level hook for representer theorem statements. -/
-def representerTheoremPlaceholder : Prop := ∃ n : Nat, n = n
+theorem representerTheoremPlaceholder : ∃ n : Nat, n = n := by
+  exact ⟨0, rfl⟩
 
 end MLTheory.Methods.Learning

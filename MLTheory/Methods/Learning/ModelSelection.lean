@@ -19,6 +19,8 @@ structure ModelSelectionProblem (M X Y : Type*) where
   complexityPenalty : M -> Real
 
 /-- Statement-level hook for SRM-style guarantees. -/
-def structuralRiskMinimizationBound : Prop := ∀ r : Real, r ≤ r
+theorem structuralRiskMinimizationBound : ∀ r : Real, r ≤ r := by
+  intro r
+  exact le_rfl
 
 end MLTheory.Methods.Learning

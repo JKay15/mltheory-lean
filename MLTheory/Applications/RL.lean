@@ -9,12 +9,5 @@ import MLTheory.Methods.RL
 /-!
 # MLTheory.Applications.RL
 
-Application-layer adapters and smoke-level integration hooks.
+Application-layer bridge module for RL integrations.
 -/
-
-namespace MLTheory.Applications.RL
-
-/-- Applications layer placeholder for RL case-study adapters. -/
-def rlApplicationsReady : Prop := True
-
-end MLTheory.Applications.RL

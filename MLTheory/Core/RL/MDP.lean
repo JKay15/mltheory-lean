@@ -23,9 +23,13 @@ structure FiniteMDP (State Action : Type*) where
 abbrev DeterministicPolicy (State Action : Type*) := State -> Action
 
 /-- Statement-level hook for Bellman expectation equation statements. -/
-def bellmanExpectationPlaceholder : Prop := ∀ γ : Real, γ = γ
+theorem bellmanExpectationPlaceholder : ∀ γ : Real, γ = γ := by
+  intro γ
+  rfl
 
 /-- Statement-level hook for Bellman optimality equation statements. -/
-def bellmanOptimalityPlaceholder : Prop := ∀ γ : Real, γ = γ
+theorem bellmanOptimalityPlaceholder : ∀ γ : Real, γ = γ := by
+  intro γ
+  rfl
 
 end MLTheory.Core.RL

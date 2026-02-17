@@ -2,158 +2,159 @@
 
 <!-- GENERATED FROM docs/ssot/registry.json. DO NOT EDIT MANUALLY. -->
 
-字段约束：
+## 真实模块（file-backed）字段约束：
 - `module_path`
-- `domain`
+- `primary_node_id`
+- `source_track(native/books/legacy)`
 - `status(planned/partial/covered/gap)`
 - `source(mathlib/slt/external)`
 - `book_refs`
 - `layer(core/methods/applications/books/legacy)`
 - `proof_status(placeholder/statement/proved)`
 - `placeholder_policy_scope(allowed/forbidden)`
+- `role(canonical/compat/bridge/tool/placeholder)`
+- `user_surface(public/internal)`
+- `formal_decl_refs`
 
-| module_path | domain | status(planned/partial/covered/gap) | source(mathlib/slt/external) | book_refs | layer(core/methods/applications/books/legacy) | proof_status(placeholder/statement/proved) | placeholder_policy_scope(allowed/forbidden) |
+| module_path | primary_node_id | primary_node_name | source_track(native/books/legacy) | status(planned/partial/covered/gap) | source(mathlib/slt/external) | book_refs | layer(core/methods/applications/books/legacy) | proof_status(placeholder/statement/proved) | placeholder_policy_scope(allowed/forbidden) | role(canonical/compat/bridge/tool/placeholder) | user_surface(public/internal) | formal_decl_refs |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| MLTheory | architecture | Architecture | native | partial | mathlib | Vershynin Ch1-9; Durrett I-XI; BanditAlgorithms Part I-VII; HazanOCO2 Ch1-13; FoML2 Ch1-17; SuttonBartoRL2 Ch1-17 | legacy | statement | allowed | bridge | public |  |
+| MLTheory.Applications.AI | ai | AI | native | partial | mathlib | FoML2 Ch7-17 | applications | statement | allowed | bridge | public |  |
+| MLTheory.Applications.AI.DecisionLearning | ai | AI | native | partial | mathlib | FoML2 Ch17; SuttonBartoRL2 Ch13; HazanOCO2 Ch13 | applications | proved | allowed | tool | public | DecisionLearningScenario, policyImprovementGap, policyImprovementGap_nonneg_of_le, decisionLearning_from_onlineToBatch, decisionLearning_td_error_after_update, decisionLearning_capacity_bridge_exists, decisionLearning_vc_witness, decisionLearning_pac_constant_exists |
+| MLTheory.Applications.AI.Generalization | ai | AI | native | partial | mathlib | FoML2 Ch7-Ch17; HazanOCO2 Ch10-Ch13 | applications | proved | allowed | tool | public | AIGeneralizationScenario, deploymentGap, deploymentGap_nonneg_of_le, ai_generalization_from_onlineToBatch, ai_pac_constant_exists |
+| MLTheory.Applications.LLM | llm | LLM | native | partial | mathlib | FoML2 Ch7-17 | applications | statement | allowed | bridge | public |  |
+| MLTheory.Applications.LLM.AlignmentObjectives | llm | LLM | native | partial | mathlib | FoML2 Ch17; BanditAlgorithms Part I | applications | proved | allowed | tool | public | AlignmentObjective, preferenceMargin, preferenceMargin_nonneg_of_le, alignmentPenalty, alignedScore, alignedScore_le_objectiveScore, AlignmentScenario, alignment_pac_constant_exists |
+| MLTheory.Applications.LLM.Autoregressive | llm | LLM | native | partial | mathlib | FoML2 Ch16-Ch17 | applications | proved | allowed | tool | public | AutoregressiveModel, sequenceScore, autoregressiveRiskGap, AutoregressiveScenario, autoregressive_pac_constant_exists |
+| MLTheory.Applications.LLM.Sampling | llm | LLM | native | partial | mathlib | FoML2 Ch16-Ch17; SuttonBartoRL2 Ch9 | applications | proved | allowed | tool | public | SamplingPolicy, sampledToken, samplingStepScore, sequenceScore_singleton_sampled, samplingRiskGap, samplingRiskGap_nonneg_of_le, SamplingScenario, sampling_pac_constant_exists |
+| MLTheory.Applications.Learning | learning | Learning | native | partial | mathlib | FoML2 Ch7-17 | applications | statement | allowed | bridge | public |  |
+| MLTheory.Applications.RL | rl | RL | native | partial | mathlib | SuttonBartoRL2 Ch13-17 | applications | statement | allowed | bridge | public |  |
+| MLTheory.Books.FoML2 | learning | Learning | books | partial | mathlib | FoML2 Ch1-17 | books | statement | allowed | compat | public |  |
+| MLTheory.Books.SuttonBartoRL2 | rl | RL | books | partial | mathlib | SuttonBartoRL2 Ch1-17 | books | statement | allowed | compat | public |  |
+| MLTheory.Core | architecture | Architecture | native | partial | mathlib | FoML2 Ch2-6; SuttonBartoRL2 Ch3-4 | core | statement | forbidden | bridge | public |  |
+| MLTheory.Core.Learning | learning | Learning | native | partial | mathlib | FoML2 Ch2-3 | core | statement | forbidden | bridge | public |  |
+| MLTheory.Core.Learning.Capacity | learning | Learning | native | partial | mathlib | FoML2 Ch3; Vershynin Ch8 | core | proved | forbidden | tool | public | CapacityBridge, vcDimensionBound, rademacherBound |
+| MLTheory.Core.Learning.FunctionClass | learning | Learning | native | partial | mathlib | FoML2 Ch3; Vershynin Ch6 | core | proved | forbidden | canonical | public | HypothesisClass |
+| MLTheory.Core.Learning.PAC | learning | Learning | native | partial | mathlib | FoML2 Ch2 | core | proved | forbidden | canonical | public | PACProblem |
+| MLTheory.Core.Probability | probability | Probability | native | partial | mathlib | Vershynin Ch1-9; Durrett I-XI | core | statement | forbidden | bridge | public |  |
+| MLTheory.Core.Probability.BasicMeasure | probability | Probability | native | partial | mathlib | Durrett5 Ch1-Ch2; measure basics | core | proved | forbidden | tool | public | isMeasurableEvent, eventMass, eventMass_mono, eventMass_union_le, conditionedEvent_mass_le_left, conditionedEvent_mass_le_right |
+| MLTheory.Core.Probability.Conditioning | probability | Probability | native | partial | mathlib | Durrett Ch1-Ch2; Vershynin Ch2 | core | proved | forbidden | tool | public | conditionedEvent, conditionedEvent_subset_left, condWeight_nonneg |
+| MLTheory.Core.Probability.ProbIneq | probability | Probability | native | partial | mathlib | Durrett Ch3; FoML2 Ch3 | core | proved | forbidden | tool | public | tailUpperEnvelope, tailUpperEnvelope_trans, tailUpperEnvelope_add, scale_nonneg |
+| MLTheory.Core.RL | rl | RL | native | partial | mathlib | SuttonBartoRL2 Ch3-4 | core | statement | forbidden | bridge | public |  |
+| MLTheory.Core.RL.MDP | rl | RL | native | partial | mathlib | SuttonBartoRL2 Ch3 | core | proved | forbidden | tool | public | FiniteMDP, DeterministicPolicy, bellmanExpectationPlaceholder, bellmanOptimalityPlaceholder |
+| MLTheory.Core.Statistics | statistics | Statistics | native | partial | mathlib | Durrett I-XI; FoML2 Ch2-6 | core | statement | forbidden | bridge | public |  |
+| MLTheory.Core.Statistics.Information | statistics | Statistics | native | partial | mathlib | FoML2 Ch10-Ch12; Vershynin Ch8 | core | proved | forbidden | tool | public | InformationPair, klSurrogate, klSurrogate_nonneg_of_le, MaxEntropyTemplate, maxEntGap, conditionalMaxEntGap |
+| MLTheory.Core.Statistics.Risk | statistics | Statistics | native | partial | mathlib | FoML2 Ch1; FoML2 Ch17 | core | proved | forbidden | tool | public | RiskPair, excessRisk, excessRisk_nonneg_of_le, excessRisk_add_empirical |
+| MLTheory.Methods | architecture | Architecture | native | partial | mathlib | FoML2 Ch4-6; SuttonBartoRL2 Ch4 | methods | statement | forbidden | bridge | public |  |
+| MLTheory.Methods.Bandits | bandits | Bandits | native | partial | mathlib | BanditAlgorithms Part I-VII | methods | statement | forbidden | bridge | public |  |
+| MLTheory.Methods.Bandits.Adversarial | bandits | Bandits | native | partial | mathlib | BanditAlgorithms Ch6-Ch12 | methods | proved | forbidden | tool | public | AdversarialBanditModel, adversarialRoundRegret, adversarialRoundRegret_nonneg_of_le, adversarialCumulativeRegret, adversarialCumulativeRegret_nonneg, exp3LearningRate, exp3LearningRate_nonneg, adversarialScalarCumulativeRegret, adversarialScalarCumulativeRegret_eq_foundation |
+| MLTheory.Methods.Bandits.BestArmIdentification | bandits | Bandits | native | partial | mathlib | BanditAlgorithms Ch33-Ch34 | methods | proved | forbidden | tool | public | BAIProblem, simpleRegret, simpleRegret_nonneg_of_le, simpleRegret_self, cumulativeSimpleRegret, cumulativeSimpleRegret_nonneg, fixedConfidenceSampleComplexity, fixedConfidenceSampleComplexity_nonneg |
+| MLTheory.Methods.Bandits.ContextualLinear | bandits | Bandits | native | partial | mathlib | BanditAlgorithms Ch19-Ch22 | methods | proved | forbidden | tool | public | ContextualLinearBanditProblem, LinearScorer, predictedReward, optimisticScore, optimisticScore_ge_predicted, contextualRoundRegret, contextualRoundRegret_nonneg_of_le, contextualCumulativeRegret, contextualCumulativeRegret_nonneg, confidenceRadius, confidenceRadius_nonneg |
+| MLTheory.Methods.Bandits.Dueling | bandits | Bandits | native | partial | mathlib | BanditAlgorithms Ch9-Ch10 | methods | proved | forbidden | tool | public | DuelingBanditProblem, duelAdvantage, duelAdvantage_swap_neg, duelingRegret, duelingRegret_nonneg_of_le, cumulativeDuelingRegret, cumulativeDuelingRegret_nonneg, preferenceMargin, preferenceMargin_nonneg_of_le |
+| MLTheory.Methods.Bandits.Foundations | bandits | Bandits | native | partial | mathlib | BanditAlgorithms Part I-II; SuttonBartoRL2 Ch2 | methods | proved | forbidden | canonical | public | BanditInstance, regret, regret_nonneg_of_le, cumulativeRegret, cumulativeRegret_nonneg |
+| MLTheory.Methods.Bandits.InformationTheory | bandits | Bandits | native | partial | mathlib | BanditAlgorithms Ch15-Ch16 | methods | proved | forbidden | tool | public | InformationBanditModel, klStyleBonus, klStyleBonus_nonneg, informationRegret, informationRegret_nonneg_of_le, informationCumulativeRegret, informationCumulativeRegret_nonneg, informationRegret_eq_stochasticPseudoRegret |
+| MLTheory.Methods.Bandits.LargeActionSpaces | bandits | Bandits | native | partial | mathlib | BanditAlgorithms Ch27-Ch32 | methods | proved | forbidden | tool | public | LargeActionBanditProblem, actionPoolSize, actionPoolSize_nonneg, explorationBudget, candidateApproximationGap, candidateApproximationGap_nonneg_of_le, largeActionCumulativeRegret, largeActionCumulativeRegret_nonneg |
+| MLTheory.Methods.Bandits.PureExplorationLinear | bandits | Bandits | native | partial | mathlib | BanditAlgorithms Ch33-Ch34 | methods | proved | forbidden | tool | public | PureExplorationLinearProblem, estimationError, estimationError_nonneg, confidenceRadiusPE, confidenceRadiusPE_nonneg, pureExplorationSimpleRegret, pureExplorationSimpleRegret_nonneg_of_le, fixedConfidenceSampleComplexityPE, fixedConfidenceSampleComplexityPE_nonneg |
+| MLTheory.Methods.Bandits.RLBridge | bandits | Bandits | native | partial | mathlib | BanditAlgorithms Ch35; SuttonBartoRL2 Ch6 | methods | proved | forbidden | tool | public | BanditRLBridgeProblem, banditValueGap, tdErrorProxy, banditValueGap_eq_tdErrorProxy, banditToRLCumulativeGap, banditToRLCumulativeGap_nonneg, banditTdUpdate, banditTdError_after_update |
+| MLTheory.Methods.Bandits.Stochastic | bandits | Bandits | native | partial | mathlib | BanditAlgorithms Part II; HazanOCO2 Ch6 | methods | proved | forbidden | tool | public | StochasticBanditModel, ucbBonus, ucbScore, ucbBonus_nonneg, ucbScore_ge_empiricalMean, etcExplorationRounds, stochasticPseudoRegret, stochasticPseudoRegret_nonneg |
+| MLTheory.Methods.Learning | learning | Learning | native | partial | mathlib | FoML2 Ch4-6 | methods | statement | forbidden | bridge | public |  |
+| MLTheory.Methods.Learning.AdvancedSLT | learning | Learning | native | partial | mathlib | FoML2 Ch3-Ch5; SLT advanced notes | methods | proved | forbidden | tool | public | AdvancedSLTProblem, advancedExcessRisk, complexityPenalty, advancedExcessRiskBound, advancedExcessRisk_le_bound, sampleComplexityProxy |
+| MLTheory.Methods.Learning.AutomataLanguage | learning | Learning | native | partial | mathlib | discrete learning notes; automata language baseline | methods | proved | forbidden | tool | public | AutomataLanguageProblem, runState, accepts, zeroOneLoss, languageEmpiricalRisk, languageRiskGap |
+| MLTheory.Methods.Learning.Capacity | learning | Learning | native | partial | mathlib | FoML2 Ch3-Ch5; Vershynin Ch4-Ch5 | methods | proved | forbidden | tool | public | CapacityMethodBundle, jlDistortionGap, jlDistortionGap_nonneg_of_le, method_vcDimensionBound, method_rademacherBound, capacity_tailUpperEnvelope_refl |
+| MLTheory.Methods.Learning.ConcentrationPackaging | learning | Learning | native | covered | mathlib | FoML2 Ch2-Ch3; strict-formalization Theorem43 | methods | proved | forbidden | canonical | public | FiniteClassConcentrationBundle, subgaussianTailENN |
+| MLTheory.Methods.Learning.Contraction | learning | Learning | native | partial | mathlib | FoML2 Ch3; Vershynin Ch6 | methods | proved | forbidden | tool | public | OneLipschitzAtZero, lip_contraction_abs, lip_contraction_std |
+| MLTheory.Methods.Learning.DiscreteModeling | learning | Learning | native | partial | mathlib | discrete learning notes; automata/classification baseline | methods | proved | forbidden | tool | public | DiscreteModelingProblem, discretePointLoss, discreteEmpiricalRisk, DiscreteComparator, discreteRiskGap, averageDiscreteRiskGap |
+| MLTheory.Methods.Learning.GeneralizationTools | learning | Learning | native | partial | mathlib | FoML2 Ch2-Ch3; Vershynin Ch2 | methods | proved | forbidden | canonical | public | pac_badEvent_uniform_bound, pac_badEvent_union_bound |
+| MLTheory.Methods.Learning.KernelBayes | learning | Learning | native | partial | mathlib | FoML2 Ch6; kernel Bayes notes | methods | proved | forbidden | tool | public | KernelBayesProblem, posteriorWeightUnnormalized, posteriorNormalization, posteriorWeight, kernelBayesPredictiveMean, kernelBayesRiskGap |
+| MLTheory.Methods.Learning.KernelMethods | learning | Learning | native | partial | mathlib | FoML2 Ch6 | methods | proved | forbidden | tool | public | KernelFunction, isPSDKernel, KernelLearningProblem, representerTheoremPlaceholder |
+| MLTheory.Methods.Learning.ModelSelection | learning | Learning | native | partial | mathlib | FoML2 Ch4 | methods | proved | forbidden | tool | public | ModelSelectionProblem, structuralRiskMinimizationBound |
+| MLTheory.Methods.Learning.Rademacher | learning | Learning | native | partial | mathlib | FoML2 Ch3; Vershynin Ch6 | methods | proved | forbidden | canonical | public | radStd, radAbs |
+| MLTheory.Methods.Learning.SVM | learning | Learning | native | partial | mathlib | FoML2 Ch5 | methods | proved | forbidden | tool | public | BinaryClassificationDataset, boolLabelToSign, hingeLoss, svmPrimalGuarantee, svmDualGuarantee |
+| MLTheory.Methods.Learning.Sequential | learning | Learning | native | partial | mathlib | FoML2 Ch2-Ch3; sequential learning notes | methods | proved | forbidden | tool | public | SequentialLearningProblem, sequentialInstantLoss, sequentialPrefixRegret, averagePrefixRegret, sequentialRegretFromOCO, sequentialRegretFromOCO_eq_prefix |
+| MLTheory.Methods.Learning.StoneWeierstrassBridge | learning | Learning | native | covered | mathlib | FoML2 Ch5-Ch6; strict-formalization Theorem42 | methods | proved | forbidden | canonical | public | stone_exists_uniform_near, stone_closure_eq_top |
+| MLTheory.Methods.OCO | oco | OCO | native | partial | mathlib | HazanOCO2 Ch1-13 | methods | statement | forbidden | bridge | public |  |
+| MLTheory.Methods.OCO.BanditConvex | oco | OCO | native | partial | mathlib | HazanOCO2 Ch6-Ch7; FoML2 Ch14 | methods | proved | forbidden | tool | public | BanditConvexProblem, estimationGap, trueInstantRegret, instantRegretGap, cumulativeRegretGap, banditCumulativeRegret_nonneg_of_le |
+| MLTheory.Methods.OCO.Boosting | oco | OCO | native | partial | mathlib | HazanOCO2 Ch10-Ch12; FoML2 Ch10 | methods | proved | forbidden | tool | public | BoostingRound, weightedExpertLoss, boostingInstantRegret, boostingCumulativeRegret, expWeightUpdate, boostingRegretFromOCO |
+| MLTheory.Methods.OCO.DynamicRegret | oco | OCO | native | partial | mathlib | HazanOCO2 Ch3-Ch5; FoML2 Ch14 | methods | proved | forbidden | tool | public | DynamicComparator, dynamicInstantRegret, dynamicCumulativeRegret, dynamicCumulativeRegret_nonneg_of_le, staticToDynamicComparator, dynamicCumulativeRegret_eq_static |
+| MLTheory.Methods.OCO.GamesAndDuality | oco | OCO | native | partial | mathlib | HazanOCO2 Ch8-Ch9; FoML2 Ch14 | methods | proved | forbidden | tool | public | GameProblem, SaddleComparator, gameInstantRegret, gameCumulativeRegret, dualityGap, averageGameRegret |
+| MLTheory.Methods.OCO.Generalization | oco | OCO | native | partial | mathlib | HazanOCO2 Ch10-Ch13; FoML2 Ch2-Ch3 | methods | proved | forbidden | tool | public | averageRegret, averageRegret_nonneg_of_le, onlineToBatch_bridge_statement, oco_pacSampleComplexityBound |
+| MLTheory.Methods.OCO.OptimizationCore | oco | OCO | native | partial | mathlib | HazanOCO2 Ch2-Ch5 | methods | proved | forbidden | tool | public | OCOProblem, Comparator, OnlineUpdate, instantRegret, cumulativeRegret, instantRegret_nonneg_of_le, cumulativeRegret_nonneg_of_le, instantRegret_eq_objectiveGap |
+| MLTheory.Methods.OR | or | OR | native | partial | mathlib | HazanOCO2 Ch1-13; BanditAlgorithms Part I-VII | methods | statement | forbidden | bridge | public |  |
+| MLTheory.Methods.OR.ConvexCore | or | OR | native | partial | mathlib | HazanOCO2 Ch2; FoML2 Ch6 | methods | proved | forbidden | tool | public | ConvexObjective, FeasibleSet, objectiveGap, objectiveGap_nonneg_of_le, scaled_objectiveGap_nonneg |
+| MLTheory.Methods.OR.DiscreteOptimization | or | OR | native | partial | mathlib | HazanOCO2 Ch2-Ch3; FoML2 Ch6 | methods | proved | forbidden | tool | public | DiscreteOptimizationProblem, feasibleCandidates, discreteObjectiveGap, discreteObjectiveGap_nonneg_of_le, cumulativeDiscreteObjectiveGap, cumulativeDiscreteObjectiveGap_nonneg |
+| MLTheory.Methods.OR.GraphOptimization | or | OR | native | partial | mathlib | HazanOCO2 Ch2-Ch3; FoML2 Ch6 | methods | proved | forbidden | tool | public | GraphOptimizationProblem, pathCost, pathObjectiveGap, pathObjectiveGap_nonneg_of_le, cutObjectiveGap, cumulativePathObjectiveGap_nonneg |
+| MLTheory.Methods.OR.StochasticMatrix | or | OR | native | partial | mathlib | HazanOCO2 Ch2-Ch3; FoML2 Ch6 | methods | proved | forbidden | tool | public | StochasticMatrixProblem, rowMass, rowMassGap, rowMassGap_nonneg_of_le, entrywiseDeviation, cumulativeRowMassGap_nonneg |
+| MLTheory.Methods.RL | rl | RL | native | partial | mathlib | SuttonBartoRL2 Ch4 | methods | statement | forbidden | bridge | public |  |
+| MLTheory.Methods.RL.DynamicProgramming | rl | RL | native | partial | mathlib | SuttonBartoRL2 Ch4 | methods | proved | forbidden | tool | public | valueIterationUpdate, policyEvaluationPlaceholder, policyImprovementPlaceholder, policyIterationConvergencePlaceholder |
+| MLTheory.Methods.RL.MDP | rl | RL | native | partial | mathlib | SuttonBartoRL2 Ch3-Ch4 | methods | proved | forbidden | tool | public | MDPMethodProblem, bellmanOperator, valueIterationUpdate_eq_bellmanOperator, bellmanBridge_scalar |
+| MLTheory.Methods.RL.TemporalDifference | rl | RL | native | partial | mathlib | SuttonBartoRL2 Ch6-Ch7 | methods | proved | forbidden | tool | public | TemporalDifferenceProblem, tdTarget, tdError, tdUpdate, tdError_after_update, tdError_sq_nonneg |
+
+## 规划模块（non-file-backed）字段约束：
+- `module_path`
+- `target_node_id`
+- `source_track(native/books)`
+- `status(planned/partial/covered/gap)`
+- `execution_horizon(near/mid/far/unscheduled)`：来自 `execution_backlog`（未入短清单则为 unscheduled）
+- `execution_priority(P1/P2/P3)`：来自 `execution_backlog`（未入短清单则为 `—`）
+- `status=partial` 时，`reason` 必须包含可追溯证据（如 external/source_url/candidate_repo/证据）
+- `reason`
+
+| module_path | target_node_id | target_node_name | source_track(native/books) | status(planned/partial/covered/gap) | execution_horizon | execution_priority | reason |
 |---|---|---|---|---|---|---|---|
-| MLTheory | Root | planned | mathlib | Vershynin Ch1-9; Durrett I-XI; BanditAlgorithms Part I-VII; HazanOCO2 Ch1-13; FoML2 Ch1-17; SuttonBartoRL2 Ch1-17 | legacy | statement | allowed |
-| MLTheory.AI | AI Theory | planned | mathlib | Vershynin Ch8.4; HazanOCO2 Ch9-12; FoML2 Ch7/Ch9/Ch14/Ch17; SuttonBartoRL2 Ch13-17 | legacy | statement | allowed |
-| MLTheory.AI.DecisionLearning | AI | planned | mathlib | Vershynin Ch8.4; HazanOCO2 Ch8/Ch11; FoML2 Ch7/Ch9/Ch17; SuttonBartoRL2 Ch13/Ch16-17 | legacy | placeholder | allowed |
-| MLTheory.AI.Generalization | AI | planned | mathlib | Vershynin Ch8.4; HazanOCO2 Ch9; FoML2 Ch14 | legacy | placeholder | allowed |
-| MLTheory.Applications | Architecture | partial | mathlib | FoML2 Ch17; SuttonBartoRL2 Ch16-17 | applications | statement | allowed |
-| MLTheory.Applications.Learning | Applications | partial | mathlib | FoML2 Ch7-17 | applications | placeholder | allowed |
-| MLTheory.Applications.RL | Applications | partial | mathlib | SuttonBartoRL2 Ch13-17 | applications | placeholder | allowed |
-| MLTheory.Bandits | Bandits | planned | mathlib | BanditAlgorithms Part I-VII | legacy | statement | allowed |
-| MLTheory.Bandits.Adversarial | Bandits | gap | external | BanditAlgorithms Part III | legacy | placeholder | allowed |
-| MLTheory.Bandits.BestArmIdentification | Bandits | gap | external | BanditAlgorithms Ch25-27 | legacy | placeholder | allowed |
-| MLTheory.Bandits.ContextualLinear | Bandits | gap | external | BanditAlgorithms Part IV | legacy | placeholder | allowed |
-| MLTheory.Bandits.Dueling | Bandits | gap | external | BanditAlgorithms Ch28 | legacy | placeholder | allowed |
-| MLTheory.Bandits.Foundations | Bandits | planned | mathlib | BanditAlgorithms Part I; SuttonBartoRL2 Ch2 | legacy | placeholder | allowed |
-| MLTheory.Bandits.InformationTheory | Bandits | planned | mathlib | BanditAlgorithms Ch20-21 | legacy | placeholder | allowed |
-| MLTheory.Bandits.LargeActionSpaces | Bandits | gap | external | BanditAlgorithms Part V | legacy | placeholder | allowed |
-| MLTheory.Bandits.PureExplorationLinear | Bandits | gap | external | BanditAlgorithms Ch29 | legacy | placeholder | allowed |
-| MLTheory.Bandits.RLBridge | Bandits | gap | external | BanditAlgorithms Part VII; FoML2 Ch17; SuttonBartoRL2 Ch3/Ch8/Ch17 | legacy | placeholder | allowed |
-| MLTheory.Bandits.Stochastic | Bandits | planned | mathlib | BanditAlgorithms Part II; SuttonBartoRL2 Ch2 | legacy | placeholder | allowed |
-| MLTheory.Books | Book Index | partial | mathlib | Durrett I-XI; BanditAlgorithms Part I-VII; HazanOCO2 Ch1-13; FoML2 Ch1-17; SuttonBartoRL2 Ch1-17 | books | statement | allowed |
-| MLTheory.Books.BanditAlgorithms | Bandit Index | planned | mathlib | BanditAlgorithms Part I-VII | books | placeholder | allowed |
-| MLTheory.Books.BanditAlgorithms.PartIII_AdversarialBandits | Bandit Index | gap | external | BanditAlgorithms Part III | books | placeholder | allowed |
-| MLTheory.Books.BanditAlgorithms.PartII_StochasticBandits | Bandit Index | planned | mathlib | BanditAlgorithms Part II | books | placeholder | allowed |
-| MLTheory.Books.BanditAlgorithms.PartIV_ContextualLinearBandits | Bandit Index | gap | external | BanditAlgorithms Part IV | books | placeholder | allowed |
-| MLTheory.Books.BanditAlgorithms.PartI_Foundations | Bandit Index | planned | mathlib | BanditAlgorithms Part I | books | placeholder | allowed |
-| MLTheory.Books.BanditAlgorithms.PartVII_ReinforcementLearning | Bandit Index | gap | external | BanditAlgorithms Part VII | books | placeholder | allowed |
-| MLTheory.Books.BanditAlgorithms.PartVI_PureExploration | Bandit Index | gap | external | BanditAlgorithms Part VI | books | placeholder | allowed |
-| MLTheory.Books.BanditAlgorithms.PartV_LargeActionSpaces | Bandit Index | gap | external | BanditAlgorithms Part V | books | placeholder | allowed |
-| MLTheory.Books.Durrett5 | Durrett Index | planned | mathlib | Durrett I-XI | books | placeholder | allowed |
-| MLTheory.Books.Durrett5.Ch01_MeasureTheory | Durrett Index | planned | mathlib | Durrett I | books | placeholder | allowed |
-| MLTheory.Books.Durrett5.Ch02_ProbabilityTheory | Durrett Index | planned | mathlib | Durrett II | books | placeholder | allowed |
-| MLTheory.Books.Durrett5.Ch03_IndependenceExpectations | Durrett Index | planned | mathlib | Durrett III | books | placeholder | allowed |
-| MLTheory.Books.Durrett5.Ch04_LimitTheorems | Durrett Index | planned | external | Durrett IV | books | placeholder | allowed |
-| MLTheory.Books.Durrett5.Ch05_PoissonApproximation | Durrett Index | gap | external | Durrett V | books | placeholder | allowed |
-| MLTheory.Books.Durrett5.Ch06_MarkovChains | Durrett Index | planned | mathlib | Durrett VI | books | placeholder | allowed |
-| MLTheory.Books.Durrett5.Ch07_Martingales | Durrett Index | planned | mathlib | Durrett VII | books | placeholder | allowed |
-| MLTheory.Books.Durrett5.Ch08_BrownianMotion | Durrett Index | gap | external | Durrett VIII | books | placeholder | allowed |
-| MLTheory.Books.Durrett5.Ch09_StationaryProcesses | Durrett Index | gap | external | Durrett IX | books | placeholder | allowed |
-| MLTheory.Books.Durrett5.Ch10_CTMC | Durrett Index | gap | external | Durrett X | books | placeholder | allowed |
-| MLTheory.Books.Durrett5.Ch11_ErgodicTheorems | Durrett Index | planned | mathlib | Durrett XI | books | placeholder | allowed |
-| MLTheory.Books.FoML2 | FoML2 Index | partial | mathlib | FoML2 Ch1-17 | books | statement | allowed |
-| MLTheory.Books.FoML2.Ch02_PACLearning | FoML2 Index | partial | mathlib | FoML2 Ch2 | books | statement | allowed |
-| MLTheory.Books.FoML2.Ch03_RademacherVCDimension | FoML2 Index | partial | mathlib | FoML2 Ch3 | books | statement | allowed |
-| MLTheory.Books.FoML2.Ch04_ModelSelection | FoML2 Index | partial | mathlib | FoML2 Ch4 | books | statement | allowed |
-| MLTheory.Books.FoML2.Ch05_SupportVectorMachines | FoML2 Index | partial | mathlib | FoML2 Ch5 | books | statement | allowed |
-| MLTheory.Books.FoML2.Ch06_KernelMethods | FoML2 Index | partial | mathlib | FoML2 Ch6 | books | statement | allowed |
-| MLTheory.Books.HazanOCO2 | OCO Index | planned | mathlib | HazanOCO2 Ch1-13 | books | placeholder | allowed |
-| MLTheory.Books.HazanOCO2.PartIII_GeneralizationAndAdaptivity | OCO Index | gap | external | HazanOCO2 Ch9-10 | books | placeholder | allowed |
-| MLTheory.Books.HazanOCO2.PartII_BanditAndGames | OCO Index | gap | external | HazanOCO2 Ch6/Ch8 | books | placeholder | allowed |
-| MLTheory.Books.HazanOCO2.PartIV_BoostingAndApproachability | OCO Index | gap | external | HazanOCO2 Ch11-13 | books | placeholder | allowed |
-| MLTheory.Books.HazanOCO2.PartI_Core | OCO Index | planned | mathlib | HazanOCO2 Ch1-5/Ch7 | books | placeholder | allowed |
-| MLTheory.Books.SuttonBartoRL2 | RL2 Index | partial | mathlib | SuttonBartoRL2 Ch1-17 | books | statement | allowed |
-| MLTheory.Books.SuttonBartoRL2.Ch03_MDP | RL2 Index | partial | mathlib | SuttonBartoRL2 Ch3 | books | statement | allowed |
-| MLTheory.Books.SuttonBartoRL2.Ch04_DynamicProgramming | RL2 Index | partial | mathlib | SuttonBartoRL2 Ch4 | books | statement | allowed |
-| MLTheory.Books.SuttonBartoRL2.PartIII_LookingDeeper | RL2 Index | gap | external | SuttonBartoRL2 Ch14-17 | books | placeholder | allowed |
-| MLTheory.Books.SuttonBartoRL2.PartII_ApproximateMethods | RL2 Index | gap | external | SuttonBartoRL2 Ch9-13 | books | placeholder | allowed |
-| MLTheory.Books.SuttonBartoRL2.PartI_TabularMethods | RL2 Index | gap | external | SuttonBartoRL2 Ch2-8 | books | placeholder | allowed |
-| MLTheory.Concentration | Probability | partial | mathlib | Vershynin Ch2; Durrett II-IV; BanditAlgorithms Ch4/Ch16/Ch38 | legacy | statement | allowed |
-| MLTheory.Core | Architecture | partial | mathlib | FoML2 Ch2-6; SuttonBartoRL2 Ch3-4 | core | statement | forbidden |
-| MLTheory.Core.Learning | Architecture | partial | mathlib | FoML2 Ch2-3 | core | statement | forbidden |
-| MLTheory.Core.Learning.Capacity | Learning | partial | mathlib | FoML2 Ch3; Vershynin Ch8 | core | statement | forbidden |
-| MLTheory.Core.Learning.FunctionClass | Learning | partial | mathlib | FoML2 Ch3; Vershynin Ch6 | core | proved | forbidden |
-| MLTheory.Core.Learning.PAC | Learning | partial | mathlib | FoML2 Ch2 | core | statement | forbidden |
-| MLTheory.Core.RL | Architecture | partial | mathlib | SuttonBartoRL2 Ch3-4 | core | statement | forbidden |
-| MLTheory.Core.RL.MDP | RL | partial | mathlib | SuttonBartoRL2 Ch3 | core | statement | forbidden |
-| MLTheory.HDP | Book Index | planned | mathlib | Vershynin Ch1-9 | legacy | statement | allowed |
-| MLTheory.HDP.Ch01_Refresher | HDP Index | planned | mathlib | Vershynin Ch1 | legacy | placeholder | allowed |
-| MLTheory.HDP.Ch02_IndependentSums | HDP Index | planned | mathlib | Vershynin Ch2 | legacy | placeholder | allowed |
-| MLTheory.HDP.Ch03_RandomVectors | HDP Index | planned | mathlib | Vershynin Ch3 | legacy | placeholder | allowed |
-| MLTheory.HDP.Ch04_RandomMatrices | HDP Index | planned | mathlib | Vershynin Ch4 | legacy | placeholder | allowed |
-| MLTheory.HDP.Ch05_WithoutIndependence | HDP Index | planned | mathlib | Vershynin Ch5 | legacy | placeholder | allowed |
-| MLTheory.HDP.Ch06_QuadraticSymmContraction | HDP Index | planned | mathlib | Vershynin Ch6 | legacy | placeholder | allowed |
-| MLTheory.HDP.Ch07_RandomProcesses | HDP Index | planned | mathlib | Vershynin Ch7 | legacy | placeholder | allowed |
-| MLTheory.HDP.Ch08_Chaining | HDP Index | planned | slt | Vershynin Ch8 | legacy | placeholder | allowed |
-| MLTheory.HDP.Ch09_MatrixDeviations | HDP Index | planned | slt | Vershynin Ch9 | legacy | placeholder | allowed |
-| MLTheory.InfoTheory | Statistics | partial | mathlib | BanditAlgorithms Ch20-21; FoML2 Ch12-13; SuttonBartoRL2 Ch2/Ch13 | legacy | statement | allowed |
-| MLTheory.LLM | LLM Theory | planned | mathlib | Vershynin Ch8.4（扩展应用） | legacy | statement | allowed |
-| MLTheory.LLM.AlignmentObjectives | LLM | planned | mathlib | Vershynin Ch8.4（扩展） | legacy | placeholder | allowed |
-| MLTheory.LLM.Autoregressive | LLM | planned | mathlib | Vershynin Ch8.4（扩展） | legacy | placeholder | allowed |
-| MLTheory.LLM.Sampling | LLM | planned | mathlib | Vershynin Ch7-8（扩展） | legacy | placeholder | allowed |
-| MLTheory.Learning | ML Theory | planned | mathlib | Vershynin Ch7-9; BanditAlgorithms Part IV-VII; HazanOCO2 Ch9-13; FoML2 Ch1-11/Ch14-16; SuttonBartoRL2 Ch1/Ch6-13 | legacy | statement | allowed |
-| MLTheory.Learning.AdvancedSLT | Learning | planned | slt | Vershynin Ch8-9; FoML2 Ch3 | legacy | placeholder | allowed |
-| MLTheory.Learning.AutomataLanguage | Learning | gap | external | FoML2 Ch16 | legacy | placeholder | allowed |
-| MLTheory.Learning.Capacity | Learning | partial | mathlib | Vershynin Ch4.2/Ch8; FoML2 Ch2-5/Ch15 | legacy | statement | allowed |
-| MLTheory.Learning.DiscreteModeling | Learning | planned | mathlib | Vershynin Ch2/Ch8; FoML2 Ch9-11 | legacy | placeholder | allowed |
-| MLTheory.Learning.KernelBayes | Learning | partial | mathlib | Vershynin Ch7-8; Durrett VI; FoML2 Ch6 | legacy | statement | allowed |
-| MLTheory.Learning.Sequential | Learning | partial | mathlib | Vershynin Ch7; Durrett VII; FoML2 Ch8; SuttonBartoRL2 Ch6-8 | legacy | statement | allowed |
-| MLTheory.Methods | Architecture | partial | mathlib | FoML2 Ch4-6; SuttonBartoRL2 Ch4 | methods | statement | forbidden |
-| MLTheory.Methods.Learning | Architecture | partial | mathlib | FoML2 Ch4-6 | methods | statement | forbidden |
-| MLTheory.Methods.Learning.ConcentrationPackaging | learning | covered | mathlib | FoML2 Ch2-Ch3; strict-formalization Theorem43 | methods | proved | forbidden |
-| MLTheory.Methods.Learning.Contraction | Learning | partial | mathlib | FoML2 Ch3; Vershynin Ch6 | methods | proved | forbidden |
-| MLTheory.Methods.Learning.GeneralizationTools | Learning | partial | mathlib | FoML2 Ch2-Ch3; Vershynin Ch2 | methods | proved | forbidden |
-| MLTheory.Methods.Learning.KernelMethods | Learning | partial | mathlib | FoML2 Ch6 | methods | statement | forbidden |
-| MLTheory.Methods.Learning.ModelSelection | Learning | partial | mathlib | FoML2 Ch4 | methods | statement | forbidden |
-| MLTheory.Methods.Learning.Rademacher | Learning | partial | mathlib | FoML2 Ch3; Vershynin Ch6 | methods | proved | forbidden |
-| MLTheory.Methods.Learning.SVM | Learning | partial | mathlib | FoML2 Ch5 | methods | statement | forbidden |
-| MLTheory.Methods.Learning.StoneWeierstrassBridge | learning | covered | mathlib | FoML2 Ch5-Ch6; strict-formalization Theorem42 | methods | proved | forbidden |
-| MLTheory.Methods.RL | Architecture | partial | mathlib | SuttonBartoRL2 Ch4 | methods | statement | forbidden |
-| MLTheory.Methods.RL.DynamicProgramming | RL | partial | mathlib | SuttonBartoRL2 Ch4 | methods | statement | forbidden |
-| MLTheory.OCO | OCO | planned | mathlib | HazanOCO2 Ch1-13 | legacy | statement | allowed |
-| MLTheory.OCO.BanditConvex | OCO | gap | external | HazanOCO2 Ch6 | legacy | placeholder | allowed |
-| MLTheory.OCO.Boosting | OCO | gap | external | HazanOCO2 Ch11-12; FoML2 Ch7 | legacy | placeholder | allowed |
-| MLTheory.OCO.DynamicRegret | OCO | gap | external | HazanOCO2 Ch10 | legacy | placeholder | allowed |
-| MLTheory.OCO.GamesAndDuality | OCO | gap | external | HazanOCO2 Ch8/Ch13 | legacy | placeholder | allowed |
-| MLTheory.OCO.Generalization | OCO | planned | mathlib | HazanOCO2 Ch9 | legacy | placeholder | allowed |
-| MLTheory.OCO.OptimizationCore | OCO | planned | mathlib | HazanOCO2 Ch2-5/Ch7; FoML2 Ch8; SuttonBartoRL2 Ch13 | legacy | placeholder | allowed |
-| MLTheory.OR | Operations Research | planned | mathlib | Vershynin Ch3-4; HazanOCO2 Ch2-8; FoML2 Ch4-6/Ch12-13/Ch15 | legacy | statement | allowed |
-| MLTheory.OR.ConvexCore | OR | partial | mathlib | Vershynin Ch1.1/Ch3; FoML2 Ch4-5/Ch12-13 | legacy | statement | allowed |
-| MLTheory.OR.DiscreteOptimization | OR | partial | mathlib | Vershynin Ch3.6/Ch4.3 | legacy | statement | allowed |
-| MLTheory.OR.GraphOptimization | OR | partial | mathlib | Vershynin Ch3.6 | legacy | statement | allowed |
-| MLTheory.OR.StochasticMatrix | OR | partial | mathlib | Vershynin Ch3-4; FoML2 Ch15 | legacy | statement | allowed |
-| MLTheory.Optimization | Operations Research | partial | mathlib | Vershynin Ch3-4; HazanOCO2 Ch2-8; FoML2 Ch4-6/Ch12-13/Ch15 | legacy | statement | allowed |
-| MLTheory.Probability | Probability | planned | mathlib | Vershynin Ch1-2; Durrett I-VIII; BanditAlgorithms Part I-IV; HazanOCO2 Ch3-10; FoML2 Ch2-3/Ch11 | legacy | statement | allowed |
-| MLTheory.Probability.BasicMeasure | Probability | planned | mathlib | Durrett I-II | legacy | placeholder | allowed |
-| MLTheory.Probability.Brownian | Probability | gap | external | Durrett VIII | legacy | placeholder | allowed |
-| MLTheory.Probability.CLTBridge | Probability | gap | external | Durrett IV | legacy | placeholder | allowed |
-| MLTheory.Probability.CTMC | Probability | gap | external | Durrett X | legacy | placeholder | allowed |
-| MLTheory.Probability.Conditioning | Probability | partial | mathlib | Vershynin Ch1.5; Durrett II-III | legacy | statement | allowed |
-| MLTheory.Probability.DensityCDF | Probability | partial | mathlib | Vershynin Ch1.3/Ch2; Durrett II | legacy | statement | allowed |
-| MLTheory.Probability.Ergodic | Probability | partial | mathlib | Durrett XI | legacy | statement | allowed |
-| MLTheory.Probability.LimitLaws | Probability | partial | mathlib | Vershynin Ch1.7; Durrett IV | legacy | statement | allowed |
-| MLTheory.Probability.MarkovKernels | Probability | partial | mathlib | Durrett VI | legacy | statement | allowed |
-| MLTheory.Probability.Martingales | Probability | partial | mathlib | Durrett VII; BanditAlgorithms Ch31-38; HazanOCO2 Ch10 | legacy | statement | allowed |
-| MLTheory.Probability.Moments | Probability | partial | mathlib | Vershynin Ch2.6-2.9; Durrett III-IV | legacy | statement | allowed |
-| MLTheory.Probability.PoissonApprox | Probability | gap | external | Durrett V | legacy | placeholder | allowed |
-| MLTheory.Probability.ProbIneq | Probability | planned | mathlib | Vershynin Ch1.6/Ch2; Durrett II-IV; BanditAlgorithms Ch4/Ch16/Ch38; HazanOCO2 Ch3-4/Ch10; FoML2 Ch2/Ch11 | legacy | placeholder | allowed |
-| MLTheory.Probability.Stationary | Probability | gap | external | Durrett IX | legacy | placeholder | allowed |
-| MLTheory.RL | RL | planned | mathlib | SuttonBartoRL2 Ch1-17 | legacy | statement | allowed |
-| MLTheory.RL.CaseStudies | RL | gap | external | SuttonBartoRL2 Ch16 | legacy | placeholder | allowed |
-| MLTheory.RL.DynamicProgramming | RL | gap | external | SuttonBartoRL2 Ch4 | legacy | placeholder | allowed |
-| MLTheory.RL.EligibilityTraces | RL | gap | external | SuttonBartoRL2 Ch12 | legacy | placeholder | allowed |
-| MLTheory.RL.Frontiers | RL | gap | external | SuttonBartoRL2 Ch17 | legacy | placeholder | allowed |
-| MLTheory.RL.FunctionApproximation | RL | gap | external | SuttonBartoRL2 Ch9-10 | legacy | placeholder | allowed |
-| MLTheory.RL.MDP | RL | gap | external | SuttonBartoRL2 Ch3 | legacy | placeholder | allowed |
-| MLTheory.RL.ModelBasedPlanning | RL | gap | external | SuttonBartoRL2 Ch8 | legacy | placeholder | allowed |
-| MLTheory.RL.MonteCarlo | RL | gap | external | SuttonBartoRL2 Ch5 | legacy | placeholder | allowed |
-| MLTheory.RL.NeuroscienceBridge | RL | gap | external | SuttonBartoRL2 Ch15 | legacy | placeholder | allowed |
-| MLTheory.RL.OffPolicy | RL | gap | external | SuttonBartoRL2 Ch11 | legacy | placeholder | allowed |
-| MLTheory.RL.PolicyGradient | RL | gap | external | SuttonBartoRL2 Ch13 | legacy | placeholder | allowed |
-| MLTheory.RL.PsychologyBridge | RL | gap | external | SuttonBartoRL2 Ch14 | legacy | placeholder | allowed |
-| MLTheory.RL.TemporalDifference | RL | gap | external | SuttonBartoRL2 Ch6-7 | legacy | placeholder | allowed |
-| MLTheory.Statistics | Statistics | planned | mathlib | Vershynin Ch2/Ch8; Durrett III-IV; BanditAlgorithms Ch20-21; FoML2 Ch4/Ch10-13 | legacy | statement | allowed |
-| MLTheory.Statistics.Information | Statistics | partial | mathlib | Vershynin Ch8.4; BanditAlgorithms Ch20-21; FoML2 Ch12-13 | legacy | statement | allowed |
-| MLTheory.Statistics.Risk | Statistics | partial | mathlib | Vershynin Ch8.4; FoML2 Ch4/Ch10-11 | legacy | statement | allowed |
+| MLTheory.Books.BanditAlgorithms | bandits | Bandits | books | planned | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.BanditAlgorithms.PartIII_AdversarialBandits | bandits | Bandits | books | gap | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.BanditAlgorithms.PartII_StochasticBandits | bandits | Bandits | books | planned | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.BanditAlgorithms.PartIV_ContextualLinearBandits | bandits | Bandits | books | gap | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.BanditAlgorithms.PartI_Foundations | bandits | Bandits | books | planned | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.BanditAlgorithms.PartVII_ReinforcementLearning | bandits | Bandits | books | gap | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.BanditAlgorithms.PartVI_PureExploration | bandits | Bandits | books | gap | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.BanditAlgorithms.PartV_LargeActionSpaces | bandits | Bandits | books | gap | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.Durrett5 | probability | Probability | books | planned | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.Durrett5.Ch01_MeasureTheory | probability | Probability | books | planned | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.Durrett5.Ch02_ProbabilityTheory | probability | Probability | books | planned | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.Durrett5.Ch03_IndependenceExpectations | probability | Probability | books | planned | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.Durrett5.Ch04_LimitTheorems | probability | Probability | books | planned | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.Durrett5.Ch05_PoissonApproximation | probability | Probability | books | gap | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.Durrett5.Ch06_MarkovChains | probability | Probability | books | planned | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.Durrett5.Ch07_Martingales | probability | Probability | books | planned | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.Durrett5.Ch08_BrownianMotion | probability | Probability | books | gap | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.Durrett5.Ch09_StationaryProcesses | probability | Probability | books | gap | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.Durrett5.Ch10_CTMC | probability | Probability | books | gap | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.Durrett5.Ch11_ErgodicTheorems | probability | Probability | books | planned | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.HazanOCO2 | oco | OCO | books | planned | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.HazanOCO2.PartIII_GeneralizationAndAdaptivity | oco | OCO | books | gap | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.HazanOCO2.PartII_BanditAndGames | oco | OCO | books | gap | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.HazanOCO2.PartIV_BoostingAndApproachability | oco | OCO | books | gap | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.HazanOCO2.PartI_Core | oco | OCO | books | planned | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.SuttonBartoRL2.PartIII_LookingDeeper | rl | RL | books | gap | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.SuttonBartoRL2.PartII_ApproximateMethods | rl | RL | books | gap | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.SuttonBartoRL2.PartI_TabularMethods | rl | RL | books | gap | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.VershyninHDP.Ch01_Refresher | probability | Probability | books | planned | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.VershyninHDP.Ch02_IndependentSums | probability | Probability | books | planned | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.VershyninHDP.Ch03_RandomVectors | probability | Probability | books | planned | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.VershyninHDP.Ch04_RandomMatrices | probability | Probability | books | planned | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.VershyninHDP.Ch05_WithoutIndependence | probability | Probability | books | planned | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.VershyninHDP.Ch06_QuadraticSymmContraction | probability | Probability | books | planned | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.VershyninHDP.Ch07_RandomProcesses | probability | Probability | books | planned | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.VershyninHDP.Ch08_Chaining | probability | Probability | books | planned | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.VershyninHDP.Ch09_MatrixDeviations | probability | Probability | books | planned | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Core.Probability.Brownian | probability | Probability | native | gap | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=core, role=placeholder, proof_status=placeholder). |
+| MLTheory.Core.Probability.CLTBridge | probability | Probability | native | gap | near | P3 | No local .lean file yet; keep as roadmap/planned module (layer=core, role=placeholder, proof_status=placeholder). |
+| MLTheory.Core.Probability.CTMC | probability | Probability | native | gap | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=core, role=placeholder, proof_status=placeholder). |
+| MLTheory.Core.Probability.DensityCDF | probability | Probability | native | planned | unscheduled | — | No local .lean file yet; roadmap item pending file-backed implementation. |
+| MLTheory.Core.Probability.Ergodic | probability | Probability | native | planned | unscheduled | — | No local .lean file yet; roadmap item pending file-backed implementation. |
+| MLTheory.Core.Probability.LimitLaws | probability | Probability | native | planned | unscheduled | — | No local .lean file yet; roadmap item pending file-backed implementation. |
+| MLTheory.Core.Probability.MarkovKernels | probability | Probability | native | planned | unscheduled | — | No local .lean file yet; roadmap item pending file-backed implementation. |
+| MLTheory.Core.Probability.Martingales | probability | Probability | native | planned | unscheduled | — | No local .lean file yet; roadmap item pending file-backed implementation. |
+| MLTheory.Core.Probability.Moments | probability | Probability | native | planned | unscheduled | — | No local .lean file yet; roadmap item pending file-backed implementation. |
+| MLTheory.Core.Probability.PoissonApprox | probability | Probability | native | gap | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=core, role=placeholder, proof_status=placeholder). |
+| MLTheory.Core.Probability.Stationary | probability | Probability | native | gap | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=core, role=placeholder, proof_status=placeholder). |
+| MLTheory.Methods.RL.CaseStudies | rl | RL | native | gap | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=methods, role=placeholder, proof_status=placeholder). |
+| MLTheory.Methods.RL.EligibilityTraces | rl | RL | native | gap | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=methods, role=placeholder, proof_status=placeholder). |
+| MLTheory.Methods.RL.Frontiers | rl | RL | native | gap | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=methods, role=placeholder, proof_status=placeholder). |
+| MLTheory.Methods.RL.FunctionApproximation | rl | RL | native | gap | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=methods, role=placeholder, proof_status=placeholder). |
+| MLTheory.Methods.RL.ModelBasedPlanning | rl | RL | native | gap | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=methods, role=placeholder, proof_status=placeholder). |
+| MLTheory.Methods.RL.MonteCarlo | rl | RL | native | gap | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=methods, role=placeholder, proof_status=placeholder). |
+| MLTheory.Methods.RL.NeuroscienceBridge | rl | RL | native | gap | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=methods, role=placeholder, proof_status=placeholder). |
+| MLTheory.Methods.RL.OffPolicy | rl | RL | native | gap | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=methods, role=placeholder, proof_status=placeholder). |
+| MLTheory.Methods.RL.PolicyGradient | rl | RL | native | gap | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=methods, role=placeholder, proof_status=placeholder). |
+| MLTheory.Methods.RL.PsychologyBridge | rl | RL | native | gap | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=methods, role=placeholder, proof_status=placeholder). |

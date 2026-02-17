@@ -65,3 +65,104 @@
 | 2026-02-15 | Theorem42 接口再去前提化：新增 `TwoLayerStoneRouteEvalCoordinateOpsData` 与 `toEvalSeparationOpsData`，并提供 strict 包装器 `theorem42_strict_final_natural_of_eval_coordinate_ops`。 | active | 调用端只需给出坐标参数族 `coordParam` 与代数操作，即可自动合成点分离并接入自然 strict 入口。 |
 | 2026-02-15 | Theorem42 主接口收口：引入 `TwoLayerTheorem42FinalData`（最终对象）与 `theorem42_strict_final_final`/`theorem42_strict_final_class_dense`，并在最终对象上显式提供 const/add/mul/separatesPoints 能力定理。 | active | Theorem42 现在具备‘函数类本身稠密’的稳定最终入口，后续工作聚焦于具体激活函数实例化，不再扩展中间桥接层。 |
 | 2026-02-15 | 签名门禁升级：`check_final_signature.sh` 新增对 `theorem42_strict_final_final` 的禁止中间前提检查。 | active | 保证 canonical Theorem42 最终入口不回归到 `hDense/UniversalApprox.../SampleConcentration...` 等中间假设接口。 |
+| 2026-02-15 | 进入“架构反思与重构”阶段：Theorem42/43 不再扩展新中间桥接定理，后续仅允许 API 收敛、边界整理与门禁补强。 | locked | 将迭代重点从定理数量增长转向接口稳定性与维护成本收敛。 |
+| 2026-02-15 | 三仓职责边界细化：MLTheory 仅承载跨论文可复用的通用工具接口；paper-template 保留题目/讲义绑定对象（如 `TwoLayerTheorem42FinalData`、`theorem42_strict_final_*`、`Theorem43PrimitiveModel`）与实例化证明。 | locked | 避免题目专用命名污染公共库，降低跨仓升级时的耦合与回归风险。 |
+| 2026-02-15 | 下一阶段最小 canonical API 基线锁定为 `MLTheory.Core.Learning.{PACProblem,HypothesisClass}` 与 `MLTheory.Methods.Learning.{stone_exists_uniform_near,stone_closure_eq_top,FiniteClassConcentrationBundle,subgaussianTailENN,radStd,radAbs,pac_badEvent_uniform_bound}`。 | active | 为重构提供可验收的稳定符号集合，并明确“上移 MLTheory”范围。 |
+| 2026-02-15 | 新增架构门禁：`Eval/CanonicalAPISmoke.lean` 校验 canonical API 可见性，`tools/ci/check_layer_imports.sh` 校验 Core/Methods 分层边界并禁止 `import Paper.*` 泄漏。 | active | 重构过程可回滚且可验收，边界回归可在 CI 第一时间暴露。 |
+| 2026-02-15 | Phase 0 增加 `lean4` 外部基线审查门槛：先审 `/Users/xiongjiangkai/.codex/skills/lean4` 是否覆盖独立验证契约，再判定 native/augmented 模式。 | active | 保证不盲改外部复制 skill，同时把“是否补契约层”变成可复现判定。 |
+| 2026-02-15 | SSOT 升级到 schema v1.2.0：新增 `concepts`、`official_workflow_refs`、`canonical_specs`，并给 `modules` 增加 `concept_id/role/user_surface/formal_decl_refs`。 | locked | 从“模块台账”升级为“概念-工具-契约”统一数据源，支持森林可视化与独立验证门禁。 |
+| 2026-02-15 | 官方对齐策略锁定：工具组织与检索流程必须显式映射 Lean Learn 与 VSCode Lean4 Manual 推荐能力（Loogle/LeanSearch/InfoView+LoogleView/REPL）。 | locked | 避免仅基于本地工程经验定义流程，提升跨环境可解释性与一致性。 |
+| 2026-02-15 | skills 分流策略锁定：`lean4` skill 保持外部基线不修改；`ml-paper-workflow` 作为入口按审查结论分流 native/augmented，augmented 先执行 formalization-contract 再调用 lean4。 | active | 在不破坏现有 lean4 工作流的前提下补齐项目级独立验证约束。 |
+| 2026-02-16 | Taxonomy v2 重整：采用层级树主导 + 三层标签；modules 仅保留真实 file-backed 模块，无文件条目迁移到 planned_modules；Books/Legacy 改为 source_track 轴。 | active | 结构可视化与治理从扁平 domain 迁移到 taxonomy_nodes/taxonomy_relations，减少语义混杂并提升独立验证可追踪性。 |
+| 2026-02-16 | canonical_specs 三仓边界收敛：MLTheory SSOT 仅保留 repo=MLTheory 的通用 canonical 契约；paper-template 题目专属契约迁回论文仓脚本配置。 | active | 避免跨仓 canonical 规则混放，降低边界漂移风险。 |
+| 2026-02-16 | 结构重整 Phase E 采用“先证据清单、后删除”：新增 StructureCleanupCandidates 台账，记录定义文件/引用证据/风险/动作。 | active | 把删除讨论从主观判断改为可审计证据，避免误删兼容入口。 |
+| 2026-02-16 | 结构清理候选进入执行排期：按 B1/B2/B3 分批，统一先 deprecated 再删；每条候选明确 compatibility_window 与 replacement_imports。 | active | 把“是否删除”从讨论变成可执行排期，降低外部导入断裂风险。 |
+| 2026-02-16 | 执行结构清理 B1：在 MLTheory.Applications / MLTheory.LLM / MLTheory.OCO 落地 deprecated 标记与迁移提示，不做物理删除。 | active | B1 进入“已公告弃用”状态，兼容入口仍可用，调用方可按 replacement_imports 渐进迁移。 |
+| 2026-02-16 | 执行结构清理 B2：在 MLTheory.Bandits / MLTheory.HDP / MLTheory.RL 落地 deprecated 标记与迁移提示，不做物理删除。 | active | B2 进入“已公告弃用”状态，兼容入口仍可用，调用方可按 replacement_imports 渐进迁移。 |
+| 2026-02-16 | 执行结构清理 B3：在 MLTheory.Books 落地 deprecated 标记与迁移提示，不做物理删除。 | active | B3 进入“已公告弃用”状态，兼容入口仍可用，调用方可按 replacement_imports 渐进迁移。 |
+| 2026-02-16 | 迁移阶段启动：主入口 MLTheory.lean 已移除对 7 个弃用兼容模块的直接 import，deprecated_import allowlist 收敛为 0。 | active | 结构清理候选从 deprecated_announced 统一进入 migrating；后续仅保留防回流门禁并按窗口评估 ready_to_remove。 |
+| 2026-02-16 | 新增 release 窗口自动判定门禁：以 cleanup_release_epoch + remove_after_releases + migration_started_epoch 计算 ready_to_remove，禁止人工拍脑袋判定。 | active | ready_to_remove 进入机器可审计流程，迁移窗口到期会被 CI 主动提示。 |
+| 2026-02-16 | 推进 cleanup_release_epoch 到 2，并将到期候选切换为 ready_to_remove：MLTheory.Applications / MLTheory.LLM / MLTheory.OCO。 | active | release 窗口推进由脚本统一落地，ready_to_remove 转换可复现且可审计。 |
+| 2026-02-16 | 执行物理删除 B1：移除兼容入口文件 MLTheory.Applications / MLTheory.LLM / MLTheory.OCO，并在 aliases 保留迁移映射。 | active | B1 从 ready_to_remove 进入已落地删除；旧入口不再可 import，迁移路径由 aliases 与文档明确给出。 |
+| 2026-02-16 | 推进 cleanup_release_epoch 到 3，并将到期候选切换为 ready_to_remove：MLTheory.Bandits / MLTheory.HDP / MLTheory.RL。 | active | release 窗口推进由脚本统一落地，ready_to_remove 转换可复现且可审计。 |
+| 2026-02-16 | 执行物理删除 B2：移除兼容入口文件 MLTheory.Bandits / MLTheory.HDP / MLTheory.RL，并在 aliases 保留迁移映射。 | active | B2 从 ready_to_remove 进入已落地删除；旧入口不再可 import，迁移路径由 aliases 与文档明确给出。 |
+| 2026-02-16 | 推进 cleanup_release_epoch 到 4，并将到期候选切换为 ready_to_remove：MLTheory.Books。 | active | release 窗口推进由脚本统一落地，ready_to_remove 转换可复现且可审计。 |
+| 2026-02-16 | 执行物理删除 B3：移除兼容入口文件 MLTheory.Books，并在 aliases 保留迁移映射。 | active | B3 从 ready_to_remove 进入已落地删除；旧总入口不再可 import，迁移路径由 aliases 与文档明确给出。 |
+| 2026-02-16 | 进入命名空间收敛阶段：新增 check_namespace_layout 门禁，强制分层前缀与 alias 收敛规则。 | active | 后续结构调整不再依赖人工约定，模块路径/兼容映射漂移会被 CI 直接拦截。 |
+| 2026-02-16 | 新增 NamespaceConvergence 视图并纳入文档索引，用于展示分层前缀、legacy 入口与 alias 迁移关系。 | active | 使用者可直接看到“现在该 import 什么”，降低结构重整后的认知负担。 |
+| 2026-02-16 | 启动 legacy 顶层入口收敛排期：AI/Concentration/InfoTheory/Learning/OR/Optimization/Probability/Statistics 纳入 cleanup 候选（pending），先迁移后弃用。 | active | 顶层 legacy 入口进入证据化治理阶段；后续可按 batch/窗口推进，不再拍脑袋删。 |
+| 2026-02-16 | 执行结构清理 B4：在 MLTheory.AI / MLTheory.Concentration / MLTheory.InfoTheory / MLTheory.Optimization 落地 deprecated 标记与迁移提示，不做物理删除。 | active | B4 进入已公告弃用状态；兼容入口仍可导入，调用方可按 replacement_imports 渐进迁移。 |
+| 2026-02-16 | 执行结构清理 B4 迁移：MLTheory.AI / MLTheory.Concentration / MLTheory.InfoTheory / MLTheory.Optimization 已从主入口与 ImportSmoke 移除，状态切换为 migrating。 | active | B4 兼容入口已无仓内直接 import，后续按 release 窗口推进 ready_to_remove 与物理删除。 |
+| 2026-02-16 | 执行结构清理 B5：在 MLTheory.Learning / MLTheory.OR / MLTheory.Probability / MLTheory.Statistics 落地 deprecated 标记与迁移提示，不做物理删除。 | active | B5 进入已公告弃用状态；兼容入口仍可导入，调用方可按 replacement_imports 渐进迁移。 |
+| 2026-02-16 | 执行结构清理 B5 迁移：MLTheory.Learning / MLTheory.OR / MLTheory.Probability / MLTheory.Statistics 已从主入口与兼容链路移除，状态切换为 migrating。 | active | B5 兼容入口已无仓内直接 import，后续按 release 窗口推进 ready_to_remove 与物理删除。 |
+| 2026-02-16 | 推进 cleanup_release_epoch 到 5，本次无候选到期切换为 ready_to_remove。 | active | release 窗口推进由脚本统一落地，ready_to_remove 转换可复现且可审计。 |
+| 2026-02-16 | 推进 cleanup_release_epoch 到 6，并将到期候选切换为 ready_to_remove：MLTheory.AI / MLTheory.Concentration / MLTheory.InfoTheory / MLTheory.Optimization。 | active | release 窗口推进由脚本统一落地，ready_to_remove 转换可复现且可审计。 |
+| 2026-02-16 | 执行物理删除 B4：移除兼容入口文件 MLTheory.AI / MLTheory.Concentration / MLTheory.InfoTheory / MLTheory.Optimization，并在 aliases 保留迁移映射。 | active | B4 从 ready_to_remove 进入已落地删除；旧入口不再可 import，迁移路径由 aliases 与文档明确给出。 |
+| 2026-02-16 | 推进 cleanup_release_epoch 到 7，并将到期候选切换为 ready_to_remove：MLTheory.Learning / MLTheory.OR / MLTheory.Probability / MLTheory.Statistics。 | active | release 窗口推进由脚本统一落地，ready_to_remove 转换可复现且可审计。 |
+| 2026-02-16 | 执行物理删除 B5：移除兼容入口文件 MLTheory.Learning / MLTheory.OR / MLTheory.Probability / MLTheory.Statistics，并在 aliases 保留迁移映射。 | active | B5 从 ready_to_remove 进入已落地删除；旧入口不再可 import，迁移路径由 aliases 与文档明确给出。 |
+| 2026-02-16 | 结构清理批次收敛：B1/B2/B3/B4/B5 兼容入口已全部完成物理删除，后续仅保留 aliases 迁移映射与门禁防回流。 | active | 兼容层清理进入稳定态；结构治理重心转为 canonical API 与分层边界长期维护。 |
+| 2026-02-16 | 防回流门禁升级：check_no_new_deprecated_imports 从“仅候选期”扩展为“候选期 allowlist + 已删除入口硬禁止 import”。 | active | 结构清理完成后仍可持续拦截旧入口回流，不再出现“候选清零后门禁失效”的窗口。 |
+| 2026-02-16 | StrictFormalization Phase4 状态更新：ArchitectureRefactor 与 CanonicalAPIAndGates 已收敛为 covered，转入长期维护门禁。 | active | 架构重整从执行阶段进入维护阶段；后续新增能力必须先过 canonical/分层/官方对齐门禁。 |
+| 2026-02-16 | SSOT 质量收敛：纯重导出模块角色统一为 bridge，并为有声明的 tool 模块补齐 formal_decl_refs，清除 validate_ssot 噪声警告。 | active | 文档与门禁输出更干净，tool/bridge 语义边界更明确，后续审计不再被空声明提示干扰。 |
+| 2026-02-16 | planned_modules 命名空间收敛：legacy 规划项已迁移到 canonical 分层前缀（Core/Methods/Applications），并统一 source_track= native。 | active | 规划层不再使用 MLTheory.Probability/OR/RL 等旧根命名；主树和分层语义在“未落地模块”上也保持一致。 |
+| 2026-02-16 | book 规划命名修复：`MLTheory.HDP.*` 规划项迁移到 `MLTheory.Books.VershyninHDP.*`，并同步覆盖台账/缺口中的旧路径文本。 | active | Books 轴命名统一到 `MLTheory.Books.*`，避免 source_track=books 与模块路径不一致。 |
+| 2026-02-16 | 去重收敛：移除与现有真实模块重复的规划项 `MLTheory.RL.DynamicProgramming`。 | active | 避免 modules 与 planned_modules 语义重叠，减少结构台账噪声。 |
+| 2026-02-16 | SSOT 契约硬化：planned_modules 的 source_track 收敛为 {native, books}，legacy 仅保留给已落地兼容模块。 | active | 规划层与兼容层语义彻底分离；legacy 命名不再通过 schema/validator。 |
+| 2026-02-16 | 迁移脚本收敛：migrate_ssot_to_taxonomy_v2 对 v2 registry 保持幂等，并遵守 planned_modules 的 canonical 前缀与 source_track 契约。 | active | 重复执行迁移不会清空或重排现有规划数据，迁移工具与门禁/SSOT 契约保持一致。 |
+| 2026-02-16 | 新增门禁 check_ssot_migration_idempotent：CI + formalization_preflight 强制校验迁移脚本幂等，防止 SSOT 工具回归。 | active | 任何会改写现有 registry 的迁移脚本变更都会被立即拦截，独立验证链路更完整。 |
+| 2026-02-16 | 新增 StructureIssues 派生文档：从当前 SSOT 自动提取结构问题证据，并给出分批整改顺序与回滚点。 | active | 结构重整从“看图主观判断”升级为“问题台账驱动”，用户可直接看到先后顺序和验收门禁。 |
+| 2026-02-16 | 执行结构重整 Phase-1：新增 Probability/Statistics/OR/OCO/Bandits/AI/LLM 的 file-backed 骨架根模块。 | active | 主树空心节点显著减少，用户可从分层根模块直接定位对应领域入口。 |
+| 2026-02-16 | Applications 层占位入口收敛：`MLTheory.Applications.Learning` 与 `MLTheory.Applications.RL` 从 placeholder 角色升级为 bridge。 | active | 公开入口不再以 placeholder 语义暴露，结构文档与用户直觉更一致。 |
+| 2026-02-16 | deprecated alias 目标重锚：Bandits/OCO/OR/Probability/Statistics/AI/LLM 等旧入口改指向对应分层根模块。 | active | 旧入口迁移路径从“泛化指向”变为“领域对位指向”，降低迁移歧义。 |
+| 2026-02-16 | Phase-2 启动：将 7 条 active alias 纳入 `structure_cleanup_candidates`（B6, pending），先迁移导入再退役。 | active | active alias 进入可审计迁移队列；后续可按 release 窗口推进到 deprecated_announced/migrating。 |
+| 2026-02-16 | B6 候选窗口策略：compatibility_window=2 releases，migration_started_epoch=7。 | active | 为 FoML2/SB2 章节 alias 设定统一退役节奏，保证可回滚且可验证。 |
+| 2026-02-16 | 执行 Phase-2/B6 第一批：FoML2 五个章节 alias 完成导入迁移，候选状态切换为 deprecated_announced。 | active | active alias 从 7 降到 2；旧章节入口进入公告退役期并受防回流门禁约束。 |
+| 2026-02-16 | 执行 Phase-2/B6 第二批：SuttonBartoRL2 两个章节 alias 完成导入迁移，候选状态切换为 deprecated_announced。 | active | active alias 清零；章节兼容入口全部进入公告退役期。 |
+| 2026-02-16 | 执行结构重整 Phase-3 第一批：将 7 个 canonical/tool 的 statement hook 升级为可检查 theorem 证明，并把对应模块 proof_status 从 statement 收敛为 proved。 | active | S4（关键入口仍是 statement）进入收敛状态；后续可在不改接口名的前提下继续补强真实理论命题。 |
+| 2026-02-16 | 执行结构重整 Phase-4：清理 planned_modules 状态语义，将无外部可复用证据的 partial 统一收敛为 planned，并建立 partial 需证据的校验规则。 | active | S5（规划模块状态混杂）收敛；路线图状态更直观且可由 validate_ssot 自动门禁。 |
+| 2026-02-16 | 推进 cleanup_release_epoch 到 8，本次无候选到期切换为 ready_to_remove。 | active | release 窗口推进由脚本统一落地，ready_to_remove 转换可复现且可审计。 |
+| 2026-02-16 | 推进 cleanup_release_epoch 到 9，并将到期候选切换为 ready_to_remove：MLTheory.Books.FoML2.Ch02_PACLearning / MLTheory.Books.FoML2.Ch03_RademacherVCDimension / MLTheory.Books.FoML2.Ch04_ModelSelection / MLTheory.Books.FoML2.Ch05_SupportVectorMachines / MLTheory.Books.FoML2.Ch06_KernelMethods / MLTheory.Books.SuttonBartoRL2.Ch03_MDP / MLTheory.Books.SuttonBartoRL2.Ch04_DynamicProgramming。 | active | release 窗口推进由脚本统一落地，ready_to_remove 转换可复现且可审计。 |
+| 2026-02-16 | 执行物理删除 B6：移除兼容入口文件 MLTheory.Books.FoML2.Ch02_PACLearning / MLTheory.Books.FoML2.Ch03_RademacherVCDimension / MLTheory.Books.FoML2.Ch04_ModelSelection / MLTheory.Books.FoML2.Ch05_SupportVectorMachines / MLTheory.Books.FoML2.Ch06_KernelMethods / MLTheory.Books.SuttonBartoRL2.Ch03_MDP / MLTheory.Books.SuttonBartoRL2.Ch04_DynamicProgramming，并在 aliases 保留迁移映射。 | active | B6 从 ready_to_remove 进入已落地删除；FoML2/SB2 章节兼容入口不再可 import，迁移路径由 aliases 与文档明确给出。 |
+| 2026-02-16 | 维护态数据清洁：覆盖映射与缺口台账移除 deprecated alias 引用，并去重 coverage_rows 中重复模块引用。 | active | 文档层面不再回流旧入口名；覆盖表可读性提升，后续可由新增引用卫生门禁持续约束。 |
+| 2026-02-16 | 新增引用卫生门禁 `check_registry_reference_hygiene.py` 并接入 CI 与 formalization_preflight，禁止 books/gaps 引用 deprecated alias，禁止 coverage 行重复模块引用。 | active | 维护态下文档引用不再回流旧入口；覆盖映射文本质量可持续由门禁自动校验。 |
+| 2026-02-16 | 维护态收口：清理 meta.policy 中已过期的 cleanup 瞬时状态标签，并在 validate_ssot 增加一致性校验（cleanup 候选清零后禁止保留 pending/migrating/ready_to_remove 标签）。 | active | 避免“实际已完成但策略标签仍显示进行中”的误导，确保结构状态可被机器与人一致解读。 |
+| 2026-02-16 | 结构语义修正：`MLTheory` 根入口模块在 SSOT 中从 `legacy/compat` 收敛为 `native/bridge`，仅调整结构标注，不改变任何导入与定理行为。 | active | 根入口在可视化与台账中不再被误判为历史兼容层，分层解释更直观。 |
+| 2026-02-16 | 规划收敛：新增 `execution_backlog`（near/mid/far）短清单，把 96 条 planned_modules 收敛为可执行队列；ToolForestInteractive 默认先显示真实模块。 | active | 用户查看结构时先看真实层、再看短清单，减少信息噪声并提升执行节奏。 |
+| 2026-02-16 | 执行 backlog 近期批次：`MLTheory.Core.Probability.Conditioning` 与 `MLTheory.Core.Probability.ProbIneq` 已从 planned_modules 提升为真实 file-backed modules，并接入 ImportSmoke。 | active | 概率核心层新增可复用 conditioning/inequality 入口，execution_backlog 的 near 项开始实质消化。 |
+| 2026-02-16 | 执行 backlog 近期批次追加：`MLTheory.Core.Statistics.Risk` 已从 planned_modules 提升为真实 file-backed module，并接入 ImportSmoke。 | active | 统计核心层新增 risk 语义壳层，near 短清单进一步收敛。 |
+| 2026-02-16 | 执行 backlog 近期批次追加：`MLTheory.Methods.OR.ConvexCore` 已从 planned_modules 提升为真实 file-backed module，并接入 ImportSmoke。 | active | OR 方法层新增凸优化核心抽象，near backlog 继续收敛。 |
+| 2026-02-16 | 执行 backlog 近期批次追加：`MLTheory.Methods.Bandits.Foundations` 已从 planned_modules 提升为真实 file-backed module，并接入 ImportSmoke。 | active | Bandits 方法层形成统一 foundations 入口，near backlog 继续缩短。 |
+| 2026-02-16 | 执行 backlog 近期批次追加：`MLTheory.Methods.OCO.OptimizationCore` 已从 planned_modules 提升为真实 file-backed module，并接入 ImportSmoke。 | active | OCO 主线补齐问题定义/comparator/update 抽象，execution_backlog 近期项完成并进入下一轮中期队列。 |
+| 2026-02-16 | 执行 backlog 近期批次追加：`MLTheory.Methods.Bandits.Stochastic` 已从 planned_modules 提升为真实 file-backed module，并接入 ImportSmoke。 | active | Bandits 主线补齐 UCB/ETC 最小声明壳并复用 Foundations regret 接口，近期队列继续向 OCO/RL 中期项推进。 |
+| 2026-02-16 | 执行 backlog 近期批次追加：`MLTheory.Methods.OCO.Generalization` 已从 planned_modules 提升为真实 file-backed module，并接入 ImportSmoke。 | active | OCO->Learning 的 online-to-batch 最小桥接接口落地，execution_backlog 近期焦点顺延至 RL.MDP。 |
+| 2026-02-16 | 执行 backlog 近期批次追加：`MLTheory.Methods.RL.MDP` 已从 planned_modules 提升为真实 file-backed module，并接入 ImportSmoke。 | active | RL 方法层补齐 MDP 入口壳并对齐 Core/DP 接口，execution_backlog 近期焦点顺延至 TemporalDifference。 |
+| 2026-02-16 | 执行 backlog 近期批次追加：`MLTheory.Methods.RL.TemporalDifference` 已从 planned_modules 提升为真实 file-backed module，并接入 ImportSmoke。 | active | RL 主线补齐 TD 更新与误差递推接口；execution_backlog 近期焦点顺延至 Applications.AI.Generalization。 |
+| 2026-02-16 | 执行 backlog 近期批次追加：`MLTheory.Applications.AI.Generalization` 已从 planned_modules 提升为真实 file-backed module，并接入 ImportSmoke。 | active | 应用层 AI 泛化桥接入口落地且不新增底层概念；execution_backlog 近期焦点顺延至 Applications.LLM.Autoregressive。 |
+| 2026-02-16 | 执行 backlog 近期批次追加：`MLTheory.Applications.LLM.Autoregressive` 已从 planned_modules 提升为真实 file-backed module，并接入 ImportSmoke。 | active | 应用层 LLM 自回归入口落地并复用 AI 泛化契约；当前 execution_backlog 清空，后续需人工确定下一批 near 队列。 |
+| 2026-02-16 | 执行短清单复位：重建 execution_backlog 为 Capacity(near) / AI.DecisionLearning(mid) / LLM.Sampling(far)。 | active | 恢复“近期-中期-远期”可执行队列，避免 backlog 为空导致推进失焦。 |
+| 2026-02-16 | 执行 backlog 近期批次追加：`MLTheory.Core.Statistics.Information` 已从 planned_modules 提升为真实 file-backed module，并接入 ImportSmoke。 | active | 统计信息论主线新增 KL/maxent/conditional-gap 最小接口，近期焦点顺延至 Methods.Learning.Capacity。 |
+| 2026-02-16 | 执行 backlog 近期批次追加：`MLTheory.Methods.Learning.Capacity` 已从 planned_modules 提升为真实 file-backed module，并接入 ImportSmoke。 | active | Learning 方法层补齐 capacity/JL 占位接口并连通概率尾界桥接；近期焦点顺延至 Applications.AI.DecisionLearning。 |
+| 2026-02-16 | 执行 backlog 近期批次追加：`MLTheory.Applications.AI.DecisionLearning` 已从 planned_modules 提升为真实 file-backed module，并接入 ImportSmoke。 | active | AI 应用层补齐 decision-learning 场景入口并复用 Learning/OCO/RL 接口；近期焦点顺延至 Applications.LLM.Sampling。 |
+| 2026-02-16 | 执行 backlog 近期批次追加：`MLTheory.Applications.LLM.Sampling` 已从 planned_modules 提升为真实 file-backed module，并接入 ImportSmoke。 | active | LLM 应用层补齐 sampling 策略最小接口并与 autoregressive 契约对齐；近期焦点顺延至 Applications.LLM.AlignmentObjectives。 |
+| 2026-02-16 | 执行 backlog 近期批次追加：`MLTheory.Applications.LLM.AlignmentObjectives` 已从 planned_modules 提升为真实 file-backed module，并接入 ImportSmoke。 | active | LLM 应用层补齐 alignment objective 入口并与 sampling/autoregressive 契约打通；近期焦点切换到 Methods.Bandits.InformationTheory。 |
+| 2026-02-16 | 执行 backlog 近期批次追加：`MLTheory.Methods.Bandits.InformationTheory` 已从 planned_modules 提升为真实 file-backed module，并接入 ImportSmoke。 | active | Bandits 方法层补齐 information-theoretic bonus/regret 入口并复用 cumulativeRegret；近期焦点切换到 Methods.Bandits.Adversarial。 |
+| 2026-02-16 | 执行 backlog 近期批次追加：`MLTheory.Methods.Bandits.Adversarial` 已从 planned_modules 提升为真实 file-backed module，并接入 ImportSmoke。 | active | Bandits 方法层补齐 adversarial regret/EXP3 入口并与共享 cumulativeRegret 对齐；近期焦点切换到 Methods.Bandits.BestArmIdentification。 |
+| 2026-02-16 | 执行 backlog 近期批次追加：`MLTheory.Methods.Bandits.BestArmIdentification` 已从 planned_modules 提升为真实 file-backed module，并接入 ImportSmoke。 | active | Bandits 方法层补齐 BAI/simple-regret/sample-complexity 最小接口；近期焦点切换到 Methods.Bandits.ContextualLinear。 |
+| 2026-02-16 | 执行 backlog 近期批次追加：`MLTheory.Methods.Bandits.ContextualLinear` 已从 planned_modules 提升为真实 file-backed module，并接入 ImportSmoke。 | active | Bandits 方法层补齐 contextual-linear 问题定义/置信半径/regret 入口；近期焦点切换到 Methods.Bandits.Dueling。 |
+| 2026-02-17 | 执行 backlog 近期批次追加：`MLTheory.Methods.Bandits.Dueling` 已从 planned_modules 提升为真实 file-backed module，并接入 ImportSmoke。 | active | Bandits 方法层补齐 dueling 偏好反馈与 regret 入口；近期焦点切换到 Methods.Bandits.LargeActionSpaces。 |
+| 2026-02-17 | 执行 backlog 近期批次追加：`MLTheory.Methods.Bandits.LargeActionSpaces` 已从 planned_modules 提升为真实 file-backed module，并接入 ImportSmoke。 | active | Bandits 方法层补齐大动作空间候选池规模与 regret 入口；近期焦点切换到 Methods.Bandits.PureExplorationLinear。 |
+| 2026-02-17 | 执行 backlog 近期批次追加：`MLTheory.Methods.Bandits.PureExplorationLinear` 已从 planned_modules 提升为真实 file-backed module，并接入 ImportSmoke。 | active | Bandits 方法层补齐 pure-exploration-linear 的误差半径与 simple-regret 接口；近期焦点切换到 Methods.Bandits.RLBridge。 |
+| 2026-02-17 | 执行 backlog 近期批次追加：`MLTheory.Methods.Bandits.RLBridge` 已从 planned_modules 提升为真实 file-backed module，并接入 ImportSmoke。 | active | Bandits 方法层补齐与 RL.TD 的桥接接口；近期焦点切换到 Methods.OR.DiscreteOptimization。 |
+| 2026-02-17 | 执行 backlog 近期批次追加：`MLTheory.Methods.OR.DiscreteOptimization` 已从 planned_modules 提升为真实 file-backed module，并接入 ImportSmoke。 | active | Methods.OR 形成离散优化最小接口并复用 ConvexCore.objectiveGap；近期焦点切换到 Methods.OR.GraphOptimization。 |
+| 2026-02-17 | 执行 backlog 近期批次追加：`MLTheory.Methods.OR.GraphOptimization` 已从 planned_modules 提升为真实 file-backed module，并接入 ImportSmoke。 | active | Methods.OR 补齐图优化最小接口（路径/割差距）并复用 ConvexCore.objectiveGap；近期焦点切换到 Methods.OR.StochasticMatrix。 |
+| 2026-02-17 | 执行 backlog 近期批次追加：`MLTheory.Methods.OR.StochasticMatrix` 已从 planned_modules 提升为真实 file-backed module，并接入 ImportSmoke。 | active | Methods.OR 随机矩阵最小接口落地并复用 ConvexCore.objectiveGap；OR 近期三项完成，近期焦点切换到 Methods.OCO.BanditConvex。 |
+| 2026-02-17 | 执行 backlog 近期批次追加：`MLTheory.Methods.OCO.BanditConvex` 已从 planned_modules 提升为真实 file-backed module，并接入 ImportSmoke。 | active | Methods.OCO 增加 bandit-convex 估计/遗憾差距接口并复用 OCO regret 核心；近期焦点切换到 Methods.OCO.DynamicRegret。 |
+| 2026-02-17 | 执行 backlog 近期批次追加：`MLTheory.Methods.OCO.DynamicRegret` 已从 planned_modules 提升为真实 file-backed module，并接入 ImportSmoke。 | active | Methods.OCO 增加动态比较器与动态遗憾最小接口；近期焦点切换到 Methods.OCO.GamesAndDuality。 |
+| 2026-02-17 | 执行 backlog 近期批次追加：`MLTheory.Methods.OCO.GamesAndDuality` 已从 planned_modules 提升为真实 file-backed module，并接入 ImportSmoke。 | active | Methods.OCO 补齐 games/duality 最小接口（博弈遗憾与对偶差距）；近期焦点切换到 Methods.OCO.Boosting。 |
+| 2026-02-17 | 执行 backlog 近期批次追加：`MLTheory.Methods.OCO.Boosting` 已从 planned_modules 提升为真实 file-backed module，并接入 ImportSmoke。 | active | Methods.OCO 近期待办全部收口完成；近期焦点切换到 Methods.Learning.AdvancedSLT。 |
+| 2026-02-17 | 执行 backlog 近期批次追加：`MLTheory.Methods.Learning.AdvancedSLT` 已从 planned_modules 提升为真实 file-backed module，并接入 ImportSmoke。 | active | Methods.Learning 补齐 advanced SLT 最小接口；近期焦点切换到 Methods.Learning.Sequential。 |
+| 2026-02-17 | 执行 backlog 近期批次追加：`MLTheory.Methods.Learning.Sequential` 已从 planned_modules 提升为真实 file-backed module，并接入 ImportSmoke。 | active | Methods.Learning 补齐 sequential 学习最小接口并连通 OCO 遗憾定义；近期焦点切换到 Methods.Learning.KernelBayes。 |
+| 2026-02-17 | 执行 backlog 近期批次追加：`MLTheory.Methods.Learning.KernelBayes` 已从 planned_modules 提升为真实 file-backed module，并接入 ImportSmoke。 | locked | Learning 主线补齐 kernel-Bayes 后验更新与风险差距最小接口，execution_backlog 近期焦点顺延至 AutomataLanguage。 |
+| 2026-02-17 | 执行 backlog 近期批次追加：`MLTheory.Methods.Learning.AutomataLanguage` 已从 planned_modules 提升为真实 file-backed module，并接入 ImportSmoke。 | locked | Learning 子线新增离散自动机语言风险接口，execution_backlog 近期焦点顺延至 DiscreteModeling。 |
+| 2026-02-17 | 执行 backlog 近期批次追加：`MLTheory.Methods.Learning.DiscreteModeling` 已从 planned_modules 提升为真实 file-backed module，并接入 ImportSmoke。 | locked | Learning 近期短清单三项（KernelBayes/AutomataLanguage/DiscreteModeling）已全部落地，execution_backlog 转入概率基础补齐。 |
+| 2026-02-17 | 执行 backlog 近期批次追加：`MLTheory.Core.Probability.BasicMeasure` 已从 planned_modules 提升为真实 file-backed module，并接入 ImportSmoke。 | locked | foundations 概率层补齐测度基础入口，execution_backlog 近期焦点顺延至 CLTBridge。 |

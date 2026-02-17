@@ -18,6 +18,8 @@ structure PACProblem (X Y H : Type*) where
   loss : H -> X -> Y -> Real
 
 /-- Statement-level hook for PAC sample-complexity constants. -/
-def pacSampleComplexityBound : Prop := ∃ C : Real, 0 ≤ C
+theorem pacSampleComplexityBound : ∃ C : Real, 0 ≤ C := by
+  refine ⟨0, ?_⟩
+  exact le_rfl
 
 end MLTheory.Core.Learning

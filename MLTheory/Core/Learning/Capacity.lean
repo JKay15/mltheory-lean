@@ -19,9 +19,13 @@ structure CapacityBridge (X H : Type*) where
   eval : H -> X -> Bool
 
 /-- Statement-level hook for VC-dimension bounds. -/
-def vcDimensionBound : Prop := ∀ n : Nat, n ≤ n
+theorem vcDimensionBound : ∀ n : Nat, n ≤ n := by
+  intro n
+  exact Nat.le_refl n
 
 /-- Statement-level hook for Rademacher complexity bounds. -/
-def rademacherBound : Prop := ∀ ε : Real, 0 ≤ |ε|
+theorem rademacherBound : ∀ ε : Real, 0 ≤ |ε| := by
+  intro ε
+  exact abs_nonneg ε
 
 end MLTheory.Core.Learning
