@@ -3,7 +3,7 @@
 <!-- GENERATED FROM docs/ssot/registry.json. DO NOT EDIT MANUALLY. -->
 
 ## Look at these four things first
-1. real module:`69`
+1. real module:`74`
 2. planning module:`58`
 3. Current short list:`1`
 4. Recently promoted(planned -> file-backed):`10`
@@ -36,8 +36,8 @@
 | OCO | oco | 7 | 5 |
 | Applications and Systems | applications_systems | 0 | 0 |
 | Foundations | foundations | 0 | 0 |
-| MLTheory Root | ml_root | 0 | 0 |
 | Methods and Problems | methods_problems | 0 | 0 |
+| Support Infrastructure | support_infrastructure | 0 | 0 |
 
 ## One-click acceptance command
 pass standard:All the above commands `PASS` / `Build completed successfully`.

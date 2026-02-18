@@ -55,6 +55,9 @@ jobs:
       - name: Generate MLTheory index artifacts (non-blocking)
         run: tools/index/gen_mltheory_index.sh
 
+      - name: Check registry legacy modules mirror
+        run: python3 tools/docs/sync_registry_modules_legacy.py --check
+
       - name: Generate graph/usage artifacts (non-blocking)
         run: tools/index/gen_graph_artifacts.sh
 

@@ -11,7 +11,7 @@
 - SSOT schema_version:`1.4.0`
 - last_updated:`2026-02-18`
 - Total number of decisions:`167`
-- real module(file-backed)total:`69`
+- real module(file-backed)total:`74`
 - planning module(non-file-backed)total:`58`
 - Execute short list(execution_backlog)number of items:`1`
 - aliases total:`22`
@@ -132,9 +132,12 @@
 | MLTheory.Applications.LLM.Sampling | MLTheory/Applications/LLM/Sampling.lean | LLM | native | applications | tool | proved | SamplingPolicy, sampledToken, samplingStepScore, sequenceScore_singleton_sampled, samplingRiskGap, samplingRiskGap_nonneg_of_le, SamplingScenario, sampling_pac_constant_exists |
 | MLTheory.Applications.Learning | MLTheory/Applications/Learning.lean | Learning | native | applications | bridge | statement |  |
 | MLTheory.Applications.RL | MLTheory/Applications/RL.lean | RL | native | applications | bridge | statement |  |
+| MLTheory.Basic | MLTheory/Basic.lean | MLTheory Root | native | legacy | tool | statement |  |
 | MLTheory.Books.FoML2 | MLTheory/Books/FoML2.lean | Learning | books | books | compat | statement |  |
 | MLTheory.Books.SuttonBartoRL2 | MLTheory/Books/SuttonBartoRL2.lean | RL | books | books | compat | statement |  |
 | MLTheory.Core | MLTheory/Core.lean | Architecture | native | core | bridge | statement |  |
+| MLTheory.Core.Compat | MLTheory/Core/Compat.lean | Architecture | native | core | compat | statement |  |
+| MLTheory.Core.Compat.Mathlib | MLTheory/Core/Compat/Mathlib.lean | Architecture | native | core | compat | statement |  |
 | MLTheory.Core.Learning | MLTheory/Core/Learning.lean | Learning | native | core | bridge | statement |  |
 | MLTheory.Core.Learning.Capacity | MLTheory/Core/Learning/Capacity.lean | Learning | native | core | tool | proved | CapacityBridge, vcDimensionBound, rademacherBound |
 | MLTheory.Core.Learning.FunctionClass | MLTheory/Core/Learning/FunctionClass.lean | Learning | native | core | canonical | proved | HypothesisClass |
@@ -160,6 +163,8 @@
 | MLTheory.Methods.Bandits.PureExplorationLinear | MLTheory/Methods/Bandits/PureExplorationLinear.lean | Bandits | native | methods | tool | proved | PureExplorationLinearProblem, estimationError, estimationError_nonneg, confidenceRadiusPE, confidenceRadiusPE_nonneg, pureExplorationSimpleRegret, pureExplorationSimpleRegret_nonneg_of_le, fixedConfidenceSampleComplexityPE, fixedConfidenceSampleComplexityPE_nonneg |
 | MLTheory.Methods.Bandits.RLBridge | MLTheory/Methods/Bandits/RLBridge.lean | Bandits | native | methods | tool | proved | BanditRLBridgeProblem, banditValueGap, tdErrorProxy, banditValueGap_eq_tdErrorProxy, banditToRLCumulativeGap, banditToRLCumulativeGap_nonneg, banditTdUpdate, banditTdError_after_update |
 | MLTheory.Methods.Bandits.Stochastic | MLTheory/Methods/Bandits/Stochastic.lean | Bandits | native | methods | tool | proved | StochasticBanditModel, ucbBonus, ucbScore, ucbBonus_nonneg, ucbScore_ge_empiricalMean, etcExplorationRounds, stochasticPseudoRegret, stochasticPseudoRegret_nonneg |
+| MLTheory.Methods.Compat | MLTheory/Methods/Compat.lean | Architecture | native | methods | compat | statement |  |
+| MLTheory.Methods.Compat.Mathlib | MLTheory/Methods/Compat/Mathlib.lean | Architecture | native | methods | compat | statement |  |
 | MLTheory.Methods.Learning | MLTheory/Methods/Learning.lean | Learning | native | methods | bridge | statement |  |
 | MLTheory.Methods.Learning.AdvancedSLT | MLTheory/Methods/Learning/AdvancedSLT.lean | Learning | native | methods | tool | proved | AdvancedSLTProblem, advancedExcessRisk, complexityPenalty, advancedExcessRiskBound, advancedExcessRisk_le_bound, sampleComplexityProxy |
 | MLTheory.Methods.Learning.AutomataLanguage | MLTheory/Methods/Learning/AutomataLanguage.lean | Learning | native | methods | tool | proved | AutomataLanguageProblem, runState, accepts, zeroOneLoss, languageEmpiricalRisk, languageRiskGap |
@@ -257,7 +262,7 @@
 ## Structural Risks and Refactoring Priorities(automatic recognition)
 | issue_id | severity | title | evidence | action | acceptance_gate |
 |---|---|---|---|---|---|
-| S4 | P2 | The key entry statement is already in,But the proof status is still statement | 3 modules;Example:MLTheory.Core.RL.MDP, MLTheory.Methods.Learning.KernelMethods, MLTheory.Methods.RL.DynamicProgramming | according to canonical_specs Prioritize statement The entrance is advanced in batches to proved;First complement dependency closure shortest link. | canonical/tool of proved Ratio increases by batch,and canonical_contract keep passing. |
+| S4 | P2 | The key entry statement is already in,But the proof status is still statement | 4 modules;Example:MLTheory.Basic, MLTheory.Core.RL.MDP, MLTheory.Methods.Learning.KernelMethods, MLTheory.Methods.RL.DynamicProgramming | according to canonical_specs Prioritize statement The entrance is advanced in batches to proved;First complement dependency closure shortest link. | canonical/tool of proved Ratio increases by batch,and canonical_contract keep passing. |
 
 ## Reproducible acceptance command(After refactoring, run at least these)
 ```bash

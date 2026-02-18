@@ -28,9 +28,12 @@
 | MLTheory.Applications.LLM.Sampling | llm | LLM | native | partial | mathlib | FoML2 Ch16-Ch17; SuttonBartoRL2 Ch9 | applications | proved | allowed | tool | public | SamplingPolicy, sampledToken, samplingStepScore, sequenceScore_singleton_sampled, samplingRiskGap, samplingRiskGap_nonneg_of_le, SamplingScenario, sampling_pac_constant_exists |
 | MLTheory.Applications.Learning | learning | Learning | native | partial | mathlib | FoML2 Ch7-17 | applications | statement | allowed | bridge | public |  |
 | MLTheory.Applications.RL | rl | RL | native | partial | mathlib | SuttonBartoRL2 Ch13-17 | applications | statement | allowed | bridge | public |  |
+| MLTheory.Basic | ml_root | MLTheory Root | native | partial | mathlib | [] | legacy | statement | allowed | tool | public |  |
 | MLTheory.Books.FoML2 | learning | Learning | books | partial | mathlib | FoML2 Ch1-17 | books | statement | allowed | compat | public |  |
 | MLTheory.Books.SuttonBartoRL2 | rl | RL | books | partial | mathlib | SuttonBartoRL2 Ch1-17 | books | statement | allowed | compat | public |  |
 | MLTheory.Core | architecture | Architecture | native | partial | mathlib | FoML2 Ch2-6; SuttonBartoRL2 Ch3-4 | core | statement | forbidden | bridge | public |  |
+| MLTheory.Core.Compat | architecture | Architecture | native | partial | mathlib | [] | core | statement | forbidden | compat | internal |  |
+| MLTheory.Core.Compat.Mathlib | architecture | Architecture | native | partial | mathlib | [] | core | statement | forbidden | compat | internal |  |
 | MLTheory.Core.Learning | learning | Learning | native | partial | mathlib | FoML2 Ch2-3 | core | statement | forbidden | bridge | public |  |
 | MLTheory.Core.Learning.Capacity | learning | Learning | native | partial | mathlib | FoML2 Ch3; Vershynin Ch8 | core | proved | forbidden | tool | public | CapacityBridge, vcDimensionBound, rademacherBound |
 | MLTheory.Core.Learning.FunctionClass | learning | Learning | native | partial | mathlib | FoML2 Ch3; Vershynin Ch6 | core | proved | forbidden | canonical | public | HypothesisClass |
@@ -56,6 +59,8 @@
 | MLTheory.Methods.Bandits.PureExplorationLinear | bandits | Bandits | native | partial | mathlib | BanditAlgorithms Ch33-Ch34 | methods | proved | forbidden | tool | public | PureExplorationLinearProblem, estimationError, estimationError_nonneg, confidenceRadiusPE, confidenceRadiusPE_nonneg, pureExplorationSimpleRegret, pureExplorationSimpleRegret_nonneg_of_le, fixedConfidenceSampleComplexityPE, fixedConfidenceSampleComplexityPE_nonneg |
 | MLTheory.Methods.Bandits.RLBridge | bandits | Bandits | native | partial | mathlib | BanditAlgorithms Ch35; SuttonBartoRL2 Ch6 | methods | proved | forbidden | tool | public | BanditRLBridgeProblem, banditValueGap, tdErrorProxy, banditValueGap_eq_tdErrorProxy, banditToRLCumulativeGap, banditToRLCumulativeGap_nonneg, banditTdUpdate, banditTdError_after_update |
 | MLTheory.Methods.Bandits.Stochastic | bandits | Bandits | native | partial | mathlib | BanditAlgorithms Part II; HazanOCO2 Ch6 | methods | proved | forbidden | tool | public | StochasticBanditModel, ucbBonus, ucbScore, ucbBonus_nonneg, ucbScore_ge_empiricalMean, etcExplorationRounds, stochasticPseudoRegret, stochasticPseudoRegret_nonneg |
+| MLTheory.Methods.Compat | architecture | Architecture | native | partial | mathlib | [] | methods | statement | forbidden | compat | internal |  |
+| MLTheory.Methods.Compat.Mathlib | architecture | Architecture | native | partial | mathlib | [] | methods | statement | forbidden | compat | internal |  |
 | MLTheory.Methods.Learning | learning | Learning | native | partial | mathlib | FoML2 Ch4-6 | methods | statement | forbidden | bridge | public |  |
 | MLTheory.Methods.Learning.AdvancedSLT | learning | Learning | native | partial | mathlib | FoML2 Ch3-Ch5; SLT advanced notes | methods | proved | forbidden | tool | public | AdvancedSLTProblem, advancedExcessRisk, complexityPenalty, advancedExcessRiskBound, advancedExcessRisk_le_bound, sampleComplexityProxy |
 | MLTheory.Methods.Learning.AutomataLanguage | learning | Learning | native | partial | mathlib | discrete learning notes; automata language baseline | methods | proved | forbidden | tool | public | AutomataLanguageProblem, runState, accepts, zeroOneLoss, languageEmpiricalRisk, languageRiskGap |

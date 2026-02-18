@@ -61,7 +61,9 @@
       "cleanup_transient_tags_pruned",
       "execution_backlog_shortlist_enabled"
     ],
-    "cleanup_release_epoch": 9
+    "cleanup_release_epoch": 9,
+    "module_catalog_source": "artifacts/index/modules.json",
+    "module_catalog_mode": "legacy_mirror_auto_synced"
   },
   "decisions": [
     {
@@ -1453,6 +1455,20 @@
       "formal_decl_refs": []
     },
     {
+      "module_path": "MLTheory.Basic",
+      "primary_node_id": "ml_root",
+      "source_track": "native",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": [],
+      "layer": "legacy",
+      "proof_status": "statement",
+      "placeholder_policy_scope": "allowed",
+      "role": "tool",
+      "user_surface": "public",
+      "formal_decl_refs": []
+    },
+    {
       "module_path": "MLTheory.Books.FoML2",
       "primary_node_id": "learning",
       "source_track": "books",
@@ -1492,6 +1508,34 @@
       "placeholder_policy_scope": "forbidden",
       "role": "bridge",
       "user_surface": "public",
+      "formal_decl_refs": []
+    },
+    {
+      "module_path": "MLTheory.Core.Compat",
+      "primary_node_id": "architecture",
+      "source_track": "native",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": [],
+      "layer": "core",
+      "proof_status": "statement",
+      "placeholder_policy_scope": "forbidden",
+      "role": "compat",
+      "user_surface": "internal",
+      "formal_decl_refs": []
+    },
+    {
+      "module_path": "MLTheory.Core.Compat.Mathlib",
+      "primary_node_id": "architecture",
+      "source_track": "native",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": [],
+      "layer": "core",
+      "proof_status": "statement",
+      "placeholder_policy_scope": "forbidden",
+      "role": "compat",
+      "user_surface": "internal",
       "formal_decl_refs": []
     },
     {
@@ -1571,6 +1615,27 @@
       "role": "bridge",
       "user_surface": "public",
       "formal_decl_refs": []
+    },
+    {
+      "module_path": "MLTheory.Core.Probability.BasicMeasure",
+      "primary_node_id": "probability",
+      "source_track": "native",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "Durrett5 Ch1-Ch2; measure basics",
+      "layer": "core",
+      "proof_status": "proved",
+      "placeholder_policy_scope": "forbidden",
+      "role": "tool",
+      "user_surface": "public",
+      "formal_decl_refs": [
+        "isMeasurableEvent",
+        "eventMass",
+        "eventMass_mono",
+        "eventMass_union_le",
+        "conditionedEvent_mass_le_left",
+        "conditionedEvent_mass_le_right"
+      ]
     },
     {
       "module_path": "MLTheory.Core.Probability.Conditioning",
@@ -1958,6 +2023,34 @@
       ]
     },
     {
+      "module_path": "MLTheory.Methods.Compat",
+      "primary_node_id": "architecture",
+      "source_track": "native",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": [],
+      "layer": "methods",
+      "proof_status": "statement",
+      "placeholder_policy_scope": "forbidden",
+      "role": "compat",
+      "user_surface": "internal",
+      "formal_decl_refs": []
+    },
+    {
+      "module_path": "MLTheory.Methods.Compat.Mathlib",
+      "primary_node_id": "architecture",
+      "source_track": "native",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": [],
+      "layer": "methods",
+      "proof_status": "statement",
+      "placeholder_policy_scope": "forbidden",
+      "role": "compat",
+      "user_surface": "internal",
+      "formal_decl_refs": []
+    },
+    {
       "module_path": "MLTheory.Methods.Learning",
       "primary_node_id": "learning",
       "source_track": "native",
@@ -1970,6 +2063,48 @@
       "role": "bridge",
       "user_surface": "public",
       "formal_decl_refs": []
+    },
+    {
+      "module_path": "MLTheory.Methods.Learning.AdvancedSLT",
+      "primary_node_id": "learning",
+      "source_track": "native",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "FoML2 Ch3-Ch5; SLT advanced notes",
+      "layer": "methods",
+      "proof_status": "proved",
+      "placeholder_policy_scope": "forbidden",
+      "role": "tool",
+      "user_surface": "public",
+      "formal_decl_refs": [
+        "AdvancedSLTProblem",
+        "advancedExcessRisk",
+        "complexityPenalty",
+        "advancedExcessRiskBound",
+        "advancedExcessRisk_le_bound",
+        "sampleComplexityProxy"
+      ]
+    },
+    {
+      "module_path": "MLTheory.Methods.Learning.AutomataLanguage",
+      "primary_node_id": "learning",
+      "source_track": "native",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "discrete learning notes; automata language baseline",
+      "layer": "methods",
+      "proof_status": "proved",
+      "placeholder_policy_scope": "forbidden",
+      "role": "tool",
+      "user_surface": "public",
+      "formal_decl_refs": [
+        "AutomataLanguageProblem",
+        "runState",
+        "accepts",
+        "zeroOneLoss",
+        "languageEmpiricalRisk",
+        "languageRiskGap"
+      ]
     },
     {
       "module_path": "MLTheory.Methods.Learning.Capacity",
@@ -2028,6 +2163,27 @@
       ]
     },
     {
+      "module_path": "MLTheory.Methods.Learning.DiscreteModeling",
+      "primary_node_id": "learning",
+      "source_track": "native",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "discrete learning notes; automata/classification baseline",
+      "layer": "methods",
+      "proof_status": "proved",
+      "placeholder_policy_scope": "forbidden",
+      "role": "tool",
+      "user_surface": "public",
+      "formal_decl_refs": [
+        "DiscreteModelingProblem",
+        "discretePointLoss",
+        "discreteEmpiricalRisk",
+        "DiscreteComparator",
+        "discreteRiskGap",
+        "averageDiscreteRiskGap"
+      ]
+    },
+    {
       "module_path": "MLTheory.Methods.Learning.GeneralizationTools",
       "primary_node_id": "learning",
       "source_track": "native",
@@ -2042,6 +2198,27 @@
       "formal_decl_refs": [
         "pac_badEvent_uniform_bound",
         "pac_badEvent_union_bound"
+      ]
+    },
+    {
+      "module_path": "MLTheory.Methods.Learning.KernelBayes",
+      "primary_node_id": "learning",
+      "source_track": "native",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "FoML2 Ch6; kernel Bayes notes",
+      "layer": "methods",
+      "proof_status": "proved",
+      "placeholder_policy_scope": "forbidden",
+      "role": "tool",
+      "user_surface": "public",
+      "formal_decl_refs": [
+        "KernelBayesProblem",
+        "posteriorWeightUnnormalized",
+        "posteriorNormalization",
+        "posteriorWeight",
+        "kernelBayesPredictiveMean",
+        "kernelBayesRiskGap"
       ]
     },
     {
@@ -2118,6 +2295,27 @@
       ]
     },
     {
+      "module_path": "MLTheory.Methods.Learning.Sequential",
+      "primary_node_id": "learning",
+      "source_track": "native",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "FoML2 Ch2-Ch3; sequential learning notes",
+      "layer": "methods",
+      "proof_status": "proved",
+      "placeholder_policy_scope": "forbidden",
+      "role": "tool",
+      "user_surface": "public",
+      "formal_decl_refs": [
+        "SequentialLearningProblem",
+        "sequentialInstantLoss",
+        "sequentialPrefixRegret",
+        "averagePrefixRegret",
+        "sequentialRegretFromOCO",
+        "sequentialRegretFromOCO_eq_prefix"
+      ]
+    },
+    {
       "module_path": "MLTheory.Methods.Learning.StoneWeierstrassBridge",
       "primary_node_id": "learning",
       "source_track": "native",
@@ -2147,6 +2345,90 @@
       "role": "bridge",
       "user_surface": "public",
       "formal_decl_refs": []
+    },
+    {
+      "module_path": "MLTheory.Methods.OCO.BanditConvex",
+      "primary_node_id": "oco",
+      "source_track": "native",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "HazanOCO2 Ch6-Ch7; FoML2 Ch14",
+      "layer": "methods",
+      "proof_status": "proved",
+      "placeholder_policy_scope": "forbidden",
+      "role": "tool",
+      "user_surface": "public",
+      "formal_decl_refs": [
+        "BanditConvexProblem",
+        "estimationGap",
+        "trueInstantRegret",
+        "instantRegretGap",
+        "cumulativeRegretGap",
+        "banditCumulativeRegret_nonneg_of_le"
+      ]
+    },
+    {
+      "module_path": "MLTheory.Methods.OCO.Boosting",
+      "primary_node_id": "oco",
+      "source_track": "native",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "HazanOCO2 Ch10-Ch12; FoML2 Ch10",
+      "layer": "methods",
+      "proof_status": "proved",
+      "placeholder_policy_scope": "forbidden",
+      "role": "tool",
+      "user_surface": "public",
+      "formal_decl_refs": [
+        "BoostingRound",
+        "weightedExpertLoss",
+        "boostingInstantRegret",
+        "boostingCumulativeRegret",
+        "expWeightUpdate",
+        "boostingRegretFromOCO"
+      ]
+    },
+    {
+      "module_path": "MLTheory.Methods.OCO.DynamicRegret",
+      "primary_node_id": "oco",
+      "source_track": "native",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "HazanOCO2 Ch3-Ch5; FoML2 Ch14",
+      "layer": "methods",
+      "proof_status": "proved",
+      "placeholder_policy_scope": "forbidden",
+      "role": "tool",
+      "user_surface": "public",
+      "formal_decl_refs": [
+        "DynamicComparator",
+        "dynamicInstantRegret",
+        "dynamicCumulativeRegret",
+        "dynamicCumulativeRegret_nonneg_of_le",
+        "staticToDynamicComparator",
+        "dynamicCumulativeRegret_eq_static"
+      ]
+    },
+    {
+      "module_path": "MLTheory.Methods.OCO.GamesAndDuality",
+      "primary_node_id": "oco",
+      "source_track": "native",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "HazanOCO2 Ch8-Ch9; FoML2 Ch14",
+      "layer": "methods",
+      "proof_status": "proved",
+      "placeholder_policy_scope": "forbidden",
+      "role": "tool",
+      "user_surface": "public",
+      "formal_decl_refs": [
+        "GameProblem",
+        "SaddleComparator",
+        "gameInstantRegret",
+        "gameCumulativeRegret",
+        "dualityGap",
+        "averageGameRegret"
+      ]
     },
     {
       "module_path": "MLTheory.Methods.OCO.Generalization",
@@ -2225,6 +2507,69 @@
       ]
     },
     {
+      "module_path": "MLTheory.Methods.OR.DiscreteOptimization",
+      "primary_node_id": "or",
+      "source_track": "native",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "HazanOCO2 Ch2-Ch3; FoML2 Ch6",
+      "layer": "methods",
+      "proof_status": "proved",
+      "placeholder_policy_scope": "forbidden",
+      "role": "tool",
+      "user_surface": "public",
+      "formal_decl_refs": [
+        "DiscreteOptimizationProblem",
+        "feasibleCandidates",
+        "discreteObjectiveGap",
+        "discreteObjectiveGap_nonneg_of_le",
+        "cumulativeDiscreteObjectiveGap",
+        "cumulativeDiscreteObjectiveGap_nonneg"
+      ]
+    },
+    {
+      "module_path": "MLTheory.Methods.OR.GraphOptimization",
+      "primary_node_id": "or",
+      "source_track": "native",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "HazanOCO2 Ch2-Ch3; FoML2 Ch6",
+      "layer": "methods",
+      "proof_status": "proved",
+      "placeholder_policy_scope": "forbidden",
+      "role": "tool",
+      "user_surface": "public",
+      "formal_decl_refs": [
+        "GraphOptimizationProblem",
+        "pathCost",
+        "pathObjectiveGap",
+        "pathObjectiveGap_nonneg_of_le",
+        "cutObjectiveGap",
+        "cumulativePathObjectiveGap_nonneg"
+      ]
+    },
+    {
+      "module_path": "MLTheory.Methods.OR.StochasticMatrix",
+      "primary_node_id": "or",
+      "source_track": "native",
+      "status": "partial",
+      "source": "mathlib",
+      "book_refs": "HazanOCO2 Ch2-Ch3; FoML2 Ch6",
+      "layer": "methods",
+      "proof_status": "proved",
+      "placeholder_policy_scope": "forbidden",
+      "role": "tool",
+      "user_surface": "public",
+      "formal_decl_refs": [
+        "StochasticMatrixProblem",
+        "rowMass",
+        "rowMassGap",
+        "rowMassGap_nonneg_of_le",
+        "entrywiseDeviation",
+        "cumulativeRowMassGap_nonneg"
+      ]
+    },
+    {
       "module_path": "MLTheory.Methods.RL",
       "primary_node_id": "rl",
       "source_track": "native",
@@ -2295,279 +2640,6 @@
         "tdUpdate",
         "tdError_after_update",
         "tdError_sq_nonneg"
-      ]
-    },
-    {
-      "module_path": "MLTheory.Methods.OR.DiscreteOptimization",
-      "primary_node_id": "or",
-      "source_track": "native",
-      "status": "partial",
-      "source": "mathlib",
-      "book_refs": "HazanOCO2 Ch2-Ch3; FoML2 Ch6",
-      "layer": "methods",
-      "proof_status": "proved",
-      "placeholder_policy_scope": "forbidden",
-      "role": "tool",
-      "user_surface": "public",
-      "formal_decl_refs": [
-        "DiscreteOptimizationProblem",
-        "feasibleCandidates",
-        "discreteObjectiveGap",
-        "discreteObjectiveGap_nonneg_of_le",
-        "cumulativeDiscreteObjectiveGap",
-        "cumulativeDiscreteObjectiveGap_nonneg"
-      ]
-    },
-    {
-      "module_path": "MLTheory.Methods.OR.GraphOptimization",
-      "primary_node_id": "or",
-      "source_track": "native",
-      "status": "partial",
-      "source": "mathlib",
-      "book_refs": "HazanOCO2 Ch2-Ch3; FoML2 Ch6",
-      "layer": "methods",
-      "proof_status": "proved",
-      "placeholder_policy_scope": "forbidden",
-      "role": "tool",
-      "user_surface": "public",
-      "formal_decl_refs": [
-        "GraphOptimizationProblem",
-        "pathCost",
-        "pathObjectiveGap",
-        "pathObjectiveGap_nonneg_of_le",
-        "cutObjectiveGap",
-        "cumulativePathObjectiveGap_nonneg"
-      ]
-    },
-    {
-      "module_path": "MLTheory.Methods.OR.StochasticMatrix",
-      "primary_node_id": "or",
-      "source_track": "native",
-      "status": "partial",
-      "source": "mathlib",
-      "book_refs": "HazanOCO2 Ch2-Ch3; FoML2 Ch6",
-      "layer": "methods",
-      "proof_status": "proved",
-      "placeholder_policy_scope": "forbidden",
-      "role": "tool",
-      "user_surface": "public",
-      "formal_decl_refs": [
-        "StochasticMatrixProblem",
-        "rowMass",
-        "rowMassGap",
-        "rowMassGap_nonneg_of_le",
-        "entrywiseDeviation",
-        "cumulativeRowMassGap_nonneg"
-      ]
-    },
-    {
-      "module_path": "MLTheory.Methods.OCO.BanditConvex",
-      "primary_node_id": "oco",
-      "source_track": "native",
-      "status": "partial",
-      "source": "mathlib",
-      "book_refs": "HazanOCO2 Ch6-Ch7; FoML2 Ch14",
-      "layer": "methods",
-      "proof_status": "proved",
-      "placeholder_policy_scope": "forbidden",
-      "role": "tool",
-      "user_surface": "public",
-      "formal_decl_refs": [
-        "BanditConvexProblem",
-        "estimationGap",
-        "trueInstantRegret",
-        "instantRegretGap",
-        "cumulativeRegretGap",
-        "banditCumulativeRegret_nonneg_of_le"
-      ]
-    },
-    {
-      "module_path": "MLTheory.Methods.OCO.DynamicRegret",
-      "primary_node_id": "oco",
-      "source_track": "native",
-      "status": "partial",
-      "source": "mathlib",
-      "book_refs": "HazanOCO2 Ch3-Ch5; FoML2 Ch14",
-      "layer": "methods",
-      "proof_status": "proved",
-      "placeholder_policy_scope": "forbidden",
-      "role": "tool",
-      "user_surface": "public",
-      "formal_decl_refs": [
-        "DynamicComparator",
-        "dynamicInstantRegret",
-        "dynamicCumulativeRegret",
-        "dynamicCumulativeRegret_nonneg_of_le",
-        "staticToDynamicComparator",
-        "dynamicCumulativeRegret_eq_static"
-      ]
-    },
-    {
-      "module_path": "MLTheory.Methods.OCO.GamesAndDuality",
-      "primary_node_id": "oco",
-      "source_track": "native",
-      "status": "partial",
-      "source": "mathlib",
-      "book_refs": "HazanOCO2 Ch8-Ch9; FoML2 Ch14",
-      "layer": "methods",
-      "proof_status": "proved",
-      "placeholder_policy_scope": "forbidden",
-      "role": "tool",
-      "user_surface": "public",
-      "formal_decl_refs": [
-        "GameProblem",
-        "SaddleComparator",
-        "gameInstantRegret",
-        "gameCumulativeRegret",
-        "dualityGap",
-        "averageGameRegret"
-      ]
-    },
-    {
-      "module_path": "MLTheory.Methods.OCO.Boosting",
-      "primary_node_id": "oco",
-      "source_track": "native",
-      "status": "partial",
-      "source": "mathlib",
-      "book_refs": "HazanOCO2 Ch10-Ch12; FoML2 Ch10",
-      "layer": "methods",
-      "proof_status": "proved",
-      "placeholder_policy_scope": "forbidden",
-      "role": "tool",
-      "user_surface": "public",
-      "formal_decl_refs": [
-        "BoostingRound",
-        "weightedExpertLoss",
-        "boostingInstantRegret",
-        "boostingCumulativeRegret",
-        "expWeightUpdate",
-        "boostingRegretFromOCO"
-      ]
-    },
-    {
-      "module_path": "MLTheory.Methods.Learning.AdvancedSLT",
-      "primary_node_id": "learning",
-      "source_track": "native",
-      "status": "partial",
-      "source": "mathlib",
-      "book_refs": "FoML2 Ch3-Ch5; SLT advanced notes",
-      "layer": "methods",
-      "proof_status": "proved",
-      "placeholder_policy_scope": "forbidden",
-      "role": "tool",
-      "user_surface": "public",
-      "formal_decl_refs": [
-        "AdvancedSLTProblem",
-        "advancedExcessRisk",
-        "complexityPenalty",
-        "advancedExcessRiskBound",
-        "advancedExcessRisk_le_bound",
-        "sampleComplexityProxy"
-      ]
-    },
-    {
-      "module_path": "MLTheory.Methods.Learning.Sequential",
-      "primary_node_id": "learning",
-      "source_track": "native",
-      "status": "partial",
-      "source": "mathlib",
-      "book_refs": "FoML2 Ch2-Ch3; sequential learning notes",
-      "layer": "methods",
-      "proof_status": "proved",
-      "placeholder_policy_scope": "forbidden",
-      "role": "tool",
-      "user_surface": "public",
-      "formal_decl_refs": [
-        "SequentialLearningProblem",
-        "sequentialInstantLoss",
-        "sequentialPrefixRegret",
-        "averagePrefixRegret",
-        "sequentialRegretFromOCO",
-        "sequentialRegretFromOCO_eq_prefix"
-      ]
-    },
-    {
-      "module_path": "MLTheory.Methods.Learning.KernelBayes",
-      "primary_node_id": "learning",
-      "source_track": "native",
-      "status": "partial",
-      "source": "mathlib",
-      "book_refs": "FoML2 Ch6; kernel Bayes notes",
-      "layer": "methods",
-      "proof_status": "proved",
-      "placeholder_policy_scope": "forbidden",
-      "role": "tool",
-      "user_surface": "public",
-      "formal_decl_refs": [
-        "KernelBayesProblem",
-        "posteriorWeightUnnormalized",
-        "posteriorNormalization",
-        "posteriorWeight",
-        "kernelBayesPredictiveMean",
-        "kernelBayesRiskGap"
-      ]
-    },
-    {
-      "module_path": "MLTheory.Methods.Learning.AutomataLanguage",
-      "primary_node_id": "learning",
-      "source_track": "native",
-      "status": "partial",
-      "source": "mathlib",
-      "book_refs": "discrete learning notes; automata language baseline",
-      "layer": "methods",
-      "proof_status": "proved",
-      "placeholder_policy_scope": "forbidden",
-      "role": "tool",
-      "user_surface": "public",
-      "formal_decl_refs": [
-        "AutomataLanguageProblem",
-        "runState",
-        "accepts",
-        "zeroOneLoss",
-        "languageEmpiricalRisk",
-        "languageRiskGap"
-      ]
-    },
-    {
-      "module_path": "MLTheory.Methods.Learning.DiscreteModeling",
-      "primary_node_id": "learning",
-      "source_track": "native",
-      "status": "partial",
-      "source": "mathlib",
-      "book_refs": "discrete learning notes; automata/classification baseline",
-      "layer": "methods",
-      "proof_status": "proved",
-      "placeholder_policy_scope": "forbidden",
-      "role": "tool",
-      "user_surface": "public",
-      "formal_decl_refs": [
-        "DiscreteModelingProblem",
-        "discretePointLoss",
-        "discreteEmpiricalRisk",
-        "DiscreteComparator",
-        "discreteRiskGap",
-        "averageDiscreteRiskGap"
-      ]
-    },
-    {
-      "module_path": "MLTheory.Core.Probability.BasicMeasure",
-      "primary_node_id": "probability",
-      "source_track": "native",
-      "status": "partial",
-      "source": "mathlib",
-      "book_refs": "Durrett5 Ch1-Ch2; measure basics",
-      "layer": "core",
-      "proof_status": "proved",
-      "placeholder_policy_scope": "forbidden",
-      "role": "tool",
-      "user_surface": "public",
-      "formal_decl_refs": [
-        "isMeasurableEvent",
-        "eventMass",
-        "eventMass_mono",
-        "eventMass_union_le",
-        "conditionedEvent_mass_le_left",
-        "conditionedEvent_mass_le_right"
       ]
     }
   ],

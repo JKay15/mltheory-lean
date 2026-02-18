@@ -10,7 +10,7 @@
 ## Current automatically identified issues
 | issue_id | severity | title | evidence | scope | action | acceptance_gate | rollback_point |
 |---|---|---|---|---|---|---|---|
-| S4 | P2 | The key entry statement is already in,But the proof status is still statement | 3 modules;Example:MLTheory.Core.RL.MDP, MLTheory.Methods.Learning.KernelMethods, MLTheory.Methods.RL.DynamicProgramming | canonical/tool Credibility | according to canonical_specs Prioritize statement The entrance is advanced in batches to proved;First complement dependency closure shortest link. | canonical/tool of proved Ratio increases by batch,and canonical_contract keep passing. | When the proof of a single batch fails, only the batch will be rolled back. theorem change,Do not roll back passed batches. |
+| S4 | P2 | The key entry statement is already in,But the proof status is still statement | 4 modules;Example:MLTheory.Basic, MLTheory.Core.RL.MDP, MLTheory.Methods.Learning.KernelMethods, MLTheory.Methods.RL.DynamicProgramming | canonical/tool Credibility | according to canonical_specs Prioritize statement The entrance is advanced in batches to proved;First complement dependency closure shortest link. | canonical/tool of proved Ratio increases by batch,and canonical_contract keep passing. | When the proof of a single batch fails, only the batch will be rolled back. theorem change,Do not roll back passed batches. |
 
 ## batch reordering(Can be rolled back)
 | phase | status | focus_issues | goal | gates | rollback |

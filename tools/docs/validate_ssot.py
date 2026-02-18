@@ -155,6 +155,8 @@ def validate_registry(data: object) -> tuple[list[str], list[str]]:
             "last_updated",
             "cleanup_release_epoch",
             "policy",
+            "module_catalog_source",
+            "module_catalog_mode",
         }
         _check_keys_exact(meta, meta_keys, "meta", errors)
         if isinstance(meta.get("last_updated"), str):

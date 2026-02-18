@@ -46,7 +46,9 @@
         "policy": {
           "type": "array",
           "items": { "type": "string" }
-        }
+        },
+        "module_catalog_source": { "type": "string" },
+        "module_catalog_mode": { "type": "string" }
       }
     },
     "decisions": {

@@ -9,20 +9,21 @@
 
 ## Current convergence status
 - current `structure_cleanup_candidates = 0`,Batch deletion of compatible portals has been completed.
-- Total number of real modules:69
+- Total number of real modules:74
 - alias total:22(deprecated=22 / active=0)
 
 ## Hierarchical prefix constraints(real module)
 | layer | required_prefix | module_count | examples |
 |---|---|---|---|
-| core | MLTheory.Core | 14 | MLTheory.Core<br>MLTheory.Core.Learning<br>MLTheory.Core.Learning.Capacity |
-| methods | MLTheory.Methods | 43 | MLTheory.Methods<br>MLTheory.Methods.Bandits<br>MLTheory.Methods.Bandits.Adversarial |
+| core | MLTheory.Core | 16 | MLTheory.Core<br>MLTheory.Core.Compat<br>MLTheory.Core.Compat.Mathlib |
+| methods | MLTheory.Methods | 45 | MLTheory.Methods<br>MLTheory.Methods.Bandits<br>MLTheory.Methods.Bandits.Adversarial |
 | applications | MLTheory.Applications | 9 | MLTheory.Applications.AI<br>MLTheory.Applications.AI.DecisionLearning<br>MLTheory.Applications.AI.Generalization |
 | books | MLTheory.Books | 2 | MLTheory.Books.FoML2<br>MLTheory.Books.SuttonBartoRL2 |
 
 ## Remaining top layer legacy Entrance(Keep compatible)
 | module_path | source_track | role | status | proof_status |
 |---|---|---|---|---|
+| MLTheory.Basic | native | tool | partial | statement |
 
 ## Deprecated Alias(old entrance -> new entrance)
 | legacy_module | canonical_module | status |
