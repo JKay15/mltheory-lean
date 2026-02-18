@@ -25,6 +25,18 @@ python3 tools/index/generate_mathlib_slice.py --repo-root . --out-dir artifacts/
 - `artifacts/index/mathlib_slice.json`
 - `artifacts/index/mltheory_to_mathlib.json`
 
+## Decl graph (Phase 4)
+
+Generate declaration-level dependency edges:
+
+```bash
+tools/index/gen_decl_graph.sh
+```
+
+Output:
+
+- `artifacts/graphs/decl_graph.json` (`uses_type` + `uses_value`)
+
 
 ## Notes
 
