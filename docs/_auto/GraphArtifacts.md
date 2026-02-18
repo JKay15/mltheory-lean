@@ -10,6 +10,101 @@
 - usage edges: `0`
 - telemetry status: `empty (run record_usage.py first)`
 
+## Node Kind Distribution
+| kind | count |
+|---|---|
+| decl | 1102 |
+| module | 293 |
+| concept | 5 |
+
+## Edge Type Distribution
+| edge_type | count |
+|---|---|
+| uses_value | 2178 |
+| uses_type | 1924 |
+| decl_in_module | 1102 |
+| imports | 649 |
+| binds | 3 |
+
+## Module Layer Distribution
+| layer | module_count |
+|---|---|
+| mathlib | 220 |
+| methods | 44 |
+| core | 15 |
+| applications | 9 |
+| other | 3 |
+| books | 2 |
+
+## Package Distribution
+| package | node_count |
+|---|---|
+| MLTheory | 1180 |
+| mathlib | 220 |
+
+## Spine Coverage
+| kind | spine_nodes |
+|---|---|
+| module | 50 |
+| concept | 3 |
+
+## Structural Hub Modules (MLTheory, Top 15 by degree)
+| title | module_id | layer | degree | out | in |
+|---|---|---|---|---|---|
+| MLTheory.Methods.Learning | MLTheory.Methods.Learning | methods | 115 | 14 | 101 |
+| MLTheory.Methods.Bandits | MLTheory.Methods.Bandits | methods | 97 | 11 | 86 |
+| MLTheory.Methods.OCO | MLTheory.Methods.OCO | methods | 72 | 7 | 65 |
+| MLTheory.Methods.OR | MLTheory.Methods.OR | methods | 41 | 4 | 37 |
+| MLTheory.Methods.Compat.Mathlib | MLTheory.Methods.Compat.Mathlib | methods | 34 | 1 | 33 |
+| MLTheory.Applications.LLM | MLTheory.Applications.LLM | applications | 28 | 4 | 24 |
+| MLTheory.Methods.RL | MLTheory.Methods.RL | methods | 23 | 3 | 20 |
+| MLTheory.Core.Probability | MLTheory.Core.Probability | core | 20 | 3 | 17 |
+| MLTheory.Applications.AI | MLTheory.Applications.AI | applications | 17 | 3 | 14 |
+| MLTheory.Core.Statistics | MLTheory.Core.Statistics | core | 17 | 2 | 15 |
+| MLTheory.Core.Learning | MLTheory.Core.Learning | core | 16 | 3 | 13 |
+| MLTheory.Core.Compat.Mathlib | MLTheory.Core.Compat.Mathlib | core | 12 | 1 | 11 |
+| MLTheory.Methods.Bandits.Foundations | MLTheory.Methods.Bandits.Foundations | methods | 10 | 1 | 9 |
+| MLTheory.Methods.OR.ConvexCore | MLTheory.Methods.OR.ConvexCore | methods | 10 | 1 | 9 |
+| MLTheory.Methods.OCO.OptimizationCore | MLTheory.Methods.OCO.OptimizationCore | methods | 9 | 2 | 7 |
+
+## Structural Hub Modules (mathlib slice, Top 15 by degree)
+| title | module_id | layer | degree | out | in |
+|---|---|---|---|---|---|
+| Mathlib | Mathlib | mathlib | 219 | 218 | 1 |
+| Mathlib.Tactic | Mathlib.Tactic | mathlib | 14 | 13 | 1 |
+| Mathlib.Algebra.BigOperators.Group.Finset.Basic | Mathlib.Algebra.BigOperators.Group.Finset.Basic | mathlib | 12 | 1 | 11 |
+| Mathlib.Algebra.BigOperators.Ring.Finset | Mathlib.Algebra.BigOperators.Ring.Finset | mathlib | 11 | 4 | 7 |
+| Mathlib.Algebra.Algebra.Subalgebra.Lattice | Mathlib.Algebra.Algebra.Subalgebra.Lattice | mathlib | 11 | 2 | 9 |
+| Mathlib.Algebra.BigOperators.Pi | Mathlib.Algebra.BigOperators.Pi | mathlib | 10 | 4 | 6 |
+| Mathlib.Algebra.Algebra.Subalgebra.Basic | Mathlib.Algebra.Algebra.Subalgebra.Basic | mathlib | 9 | 2 | 7 |
+| Mathlib.Algebra.Algebra.Pi | Mathlib.Algebra.Algebra.Pi | mathlib | 8 | 3 | 5 |
+| Mathlib.Algebra.Algebra.Tower | Mathlib.Algebra.Algebra.Tower | mathlib | 8 | 2 | 6 |
+| Mathlib.Algebra.Algebra.Equiv | Mathlib.Algebra.Algebra.Equiv | mathlib | 8 | 1 | 7 |
+| Mathlib.Algebra.Algebra.Defs | Mathlib.Algebra.Algebra.Defs | mathlib | 8 | 0 | 8 |
+| Mathlib.Init | Mathlib.Init | mathlib | 8 | 0 | 8 |
+| Mathlib.Combinatorics.SetFamily.AhlswedeZhang | Mathlib.Combinatorics.SetFamily.AhlswedeZhang | mathlib | 7 | 6 | 1 |
+| Mathlib.Algebra.BigOperators.Group.List.Basic | Mathlib.Algebra.BigOperators.Group.List.Basic | mathlib | 7 | 4 | 3 |
+| Mathlib.Algebra.Algebra.Spectrum.Quasispectrum | Mathlib.Algebra.Algebra.Spectrum.Quasispectrum | mathlib | 7 | 3 | 4 |
+
+## Structural Hub Declarations (MLTheory, Top 15 by degree)
+| title | decl_id | layer | degree | out | in |
+|---|---|---|---|---|---|
+| Comparator | MLTheory.Methods.OCO.Comparator | methods | 117 | 1 | 116 |
+| FiniteMDP | MLTheory.Core.RL.FiniteMDP | core | 88 | 1 | 87 |
+| BanditInstance | MLTheory.Methods.Bandits.BanditInstance | methods | 81 | 1 | 80 |
+| AIGeneralizationScenario | MLTheory.Applications.AI.AIGeneralizationScenario | applications | 71 | 1 | 70 |
+| CapacityMethodBundle | MLTheory.Methods.Learning.CapacityMethodBundle | methods | 67 | 1 | 66 |
+| AutoregressiveModel | MLTheory.Applications.LLM.AutoregressiveModel | applications | 63 | 1 | 62 |
+| KernelBayesProblem | MLTheory.Methods.Learning.KernelBayesProblem | methods | 61 | 1 | 60 |
+| SamplingPolicy | MLTheory.Applications.LLM.SamplingPolicy | applications | 60 | 1 | 59 |
+| SequentialLearningProblem | MLTheory.Methods.Learning.SequentialLearningProblem | methods | 60 | 1 | 59 |
+| BanditConvexProblem | MLTheory.Methods.OCO.BanditConvexProblem | methods | 59 | 1 | 58 |
+| DiscreteModelingProblem | MLTheory.Methods.Learning.DiscreteModelingProblem | methods | 56 | 1 | 55 |
+| AutomataLanguageProblem | MLTheory.Methods.Learning.AutomataLanguageProblem | methods | 55 | 1 | 54 |
+| DiscreteOptimizationProblem | MLTheory.Methods.OR.DiscreteOptimizationProblem | methods | 54 | 1 | 53 |
+| StochasticBanditModel | MLTheory.Methods.Bandits.StochasticBanditModel | methods | 53 | 1 | 52 |
+| FiniteClassConcentrationBundle | MLTheory.Methods.Learning.FiniteClassConcentrationBundle | methods | 53 | 1 | 52 |
+
 ## Telemetry driven spine candidate(Top 15)
 | decl |
 |---|

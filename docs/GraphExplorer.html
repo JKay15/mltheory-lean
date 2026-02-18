@@ -1,221 +1,446 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>MLTheory Graph Explorer</title>
   <style>
     :root {
-      --bg: #f3f5ef;
-      --panel: #fbfcf8;
-      --ink: #1d2a1f;
-      --muted: #5a6c5d;
-      --accent: #0e8a73;
-      --edge: #c5d3c8;
-      --module: #20639b;
-      --decl: #e07a2f;
-      --concept: #2a9d4b;
-      --spine: #b3261e;
+      --bg-a: #f6f3e8;
+      --bg-b: #dbe7da;
+      --panel: #fffdf7;
+      --ink: #14211a;
+      --muted: #4f6356;
+      --stroke: #c6d4c5;
+      --accent: #0f8b6f;
+      --concept: #2f8f46;
+      --module: #1d5f8a;
+      --decl: #cb6a1c;
+      --spine: #b83b22;
+      --imports: #1f7a8c;
+      --uses-type: #2a9d8f;
+      --uses-value: #d1495b;
+      --decl-in-module: #52796f;
+      --binds: #8c5a3c;
+      --alias-of: #6c757d;
+      --used-recently: #e09f3e;
     }
+
     * { box-sizing: border-box; }
     body {
       margin: 0;
-      font-family: "Space Grotesk", "IBM Plex Sans", "Segoe UI", sans-serif;
+      font-family: "Sora", "Space Grotesk", "Avenir Next", "Segoe UI", sans-serif;
       color: var(--ink);
       background:
-        radial-gradient(circle at 10% 10%, #ffffff 0%, #f3f5ef 45%, #e9eee2 100%);
+        radial-gradient(circle at 15% 15%, #ffffff 0%, var(--bg-a) 43%, var(--bg-b) 100%);
     }
+
     header {
-      padding: 18px 22px 8px;
-      border-bottom: 1px solid #d9e2d4;
+      padding: 14px 20px 12px;
+      border-bottom: 1px solid #cedace;
+      background: linear-gradient(110deg, rgba(255, 255, 255, 0.86), rgba(248, 252, 246, 0.8));
+      backdrop-filter: blur(3px);
     }
     h1 {
-      margin: 0 0 8px;
+      margin: 0;
       font-size: 24px;
       letter-spacing: 0.4px;
     }
     .subtitle {
-      margin: 0 0 10px;
+      margin: 6px 0 10px;
       color: var(--muted);
       font-size: 13px;
+      line-height: 1.45;
     }
+
     .controls {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      align-items: center;
-      font-size: 13px;
+      display: grid;
+      grid-template-columns: repeat(6, minmax(120px, 1fr));
+      gap: 8px;
+      align-items: start;
+      font-size: 12px;
     }
-    .controls input[type="text"], .controls select {
-      border: 1px solid #c8d4c8;
-      background: white;
-      padding: 6px 8px;
+    .controls .block {
+      border: 1px solid #d7e0d3;
+      border-radius: 11px;
+      background: #ffffffdd;
+      padding: 7px 8px;
+      min-height: 64px;
+    }
+    .controls .title {
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: #30463a;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .controls label {
+      display: block;
+      margin: 3px 0;
+      white-space: nowrap;
+    }
+    .controls input[type="text"],
+    .controls select,
+    .controls button {
+      width: 100%;
+      border: 1px solid #c5d2c3;
       border-radius: 8px;
-      min-width: 170px;
+      background: #fff;
+      padding: 6px 8px;
+      font-size: 12px;
+      color: var(--ink);
     }
     .controls button {
-      border: 1px solid var(--accent);
-      color: var(--accent);
-      background: white;
-      padding: 6px 10px;
-      border-radius: 8px;
       cursor: pointer;
       font-weight: 600;
+      border-color: #7cb8a5;
+      color: #0c6d5a;
+      margin-top: 4px;
     }
+    .controls .tiny {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 3px;
+      display: block;
+    }
+
     main {
       display: grid;
-      grid-template-columns: 360px 1fr;
-      gap: 14px;
-      padding: 14px;
-      min-height: calc(100vh - 110px);
+      grid-template-columns: 430px 1fr;
+      gap: 12px;
+      padding: 12px;
+      min-height: calc(100vh - 220px);
     }
+
     .panel {
+      border: 1px solid var(--stroke);
       background: var(--panel);
-      border: 1px solid #d8e2d2;
       border-radius: 14px;
       overflow: hidden;
+      box-shadow: 0 8px 24px rgba(21, 37, 27, 0.08);
       display: flex;
       flex-direction: column;
     }
     .panel h2 {
       margin: 0;
-      padding: 12px 14px;
-      font-size: 15px;
-      border-bottom: 1px solid #e2eadf;
-      background: #f7faf2;
+      padding: 11px 12px;
+      font-size: 14px;
+      border-bottom: 1px solid #e0e8de;
+      background: linear-gradient(180deg, #f9fcf5, #f3f8ef);
     }
+    .stats {
+      padding: 10px 12px;
+      border-bottom: 1px solid #e3ebe1;
+      font-size: 12px;
+      color: #243328;
+      line-height: 1.5;
+      background: #f6fbf3;
+    }
+    .stats code { font-family: "JetBrains Mono", monospace; }
+
     .node-list {
+      max-height: 35vh;
       overflow: auto;
       padding: 8px;
-      max-height: 42vh;
+      border-bottom: 1px solid #e4ece2;
+      background: #fff;
     }
     .node-item {
-      border: 1px solid #dde5da;
-      border-radius: 9px;
-      margin-bottom: 6px;
-      padding: 7px 8px;
-      cursor: pointer;
+      border: 1px solid #d8e3d6;
+      border-radius: 10px;
       background: #fff;
+      padding: 7px 8px;
+      margin-bottom: 7px;
+      cursor: pointer;
       font-size: 12px;
     }
-    .node-item:hover { border-color: #b7c7ba; }
+    .node-item:hover { border-color: #9ab7a4; }
     .node-item.active {
       border-color: var(--accent);
       box-shadow: 0 0 0 1px var(--accent) inset;
+      background: #f2fbf7;
     }
-    .node-item .meta {
+    .node-item .line2 {
+      margin-top: 4px;
       color: var(--muted);
-      margin-top: 3px;
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      flex-wrap: wrap;
     }
+    .badge {
+      border: 1px solid #d2ded2;
+      border-radius: 999px;
+      padding: 1px 6px;
+      font-size: 10px;
+      font-weight: 600;
+      background: #f8fbf7;
+      color: #355042;
+    }
+    .badge.edge { border-color: #c8d8db; background: #f3fbfc; }
+
     .details {
-      border-top: 1px solid #e2eadf;
-      padding: 10px;
-      font-size: 13px;
+      padding: 10px 12px;
+      font-size: 12px;
+      line-height: 1.5;
       overflow: auto;
-      line-height: 1.45;
+      flex: 1;
     }
-    .details button {
-      margin-right: 8px;
-      margin-top: 6px;
-      border: 1px solid #b3c4b8;
-      background: white;
-      border-radius: 7px;
-      padding: 4px 8px;
+    .details .neighbors {
+      margin-top: 10px;
+      border: 1px solid #dbe6d9;
+      border-radius: 9px;
+      overflow: hidden;
+      background: #fcfefb;
+    }
+    .details .neighbors h3 {
+      margin: 0;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.45px;
+      padding: 6px 8px;
+      background: #f1f7ef;
+      border-bottom: 1px solid #dfebdd;
+    }
+    .neighbor-row {
+      padding: 6px 8px;
+      border-bottom: 1px solid #edf3eb;
       cursor: pointer;
     }
+    .neighbor-row:hover { background: #f2f8f2; }
+    .neighbor-row:last-child { border-bottom: 0; }
+    .neighbor-row code { font-size: 11px; }
+
     #canvas-wrap {
-      background: var(--panel);
-      border: 1px solid #d8e2d2;
+      position: relative;
+      border: 1px solid var(--stroke);
       border-radius: 14px;
       overflow: hidden;
-      position: relative;
+      background:
+        radial-gradient(circle at 70% 30%, #ffffff 0%, #f6fbf2 38%, #e8efe4 100%);
+      box-shadow: 0 8px 24px rgba(21, 37, 27, 0.08);
     }
-    #stats {
+    #statsOverlay {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 2;
+      border: 1px solid #d4dfd2;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 6px 9px;
+      font-size: 12px;
+      color: #294034;
+      line-height: 1.35;
+      min-width: 240px;
+    }
+    #legend {
       position: absolute;
       right: 10px;
-      top: 8px;
-      font-size: 12px;
-      color: var(--muted);
+      top: 10px;
       z-index: 2;
-      background: rgba(255, 255, 255, 0.9);
-      border: 1px solid #e0e7de;
-      border-radius: 8px;
-      padding: 4px 8px;
+      border: 1px solid #d4dfd2;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.92);
+      padding: 7px 9px;
+      font-size: 11px;
+      color: #31483a;
+      max-width: 300px;
     }
+    #legend .row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin: 3px 0;
+      white-space: nowrap;
+    }
+    .sw {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      flex: 0 0 auto;
+    }
+    .ln {
+      width: 16px;
+      height: 0;
+      border-top: 3px solid #aaa;
+      flex: 0 0 auto;
+    }
+
     svg { width: 100%; height: 100%; display: block; }
-    @media (max-width: 980px) {
+    .node-label {
+      font-size: 11px;
+      fill: #1b2e24;
+      pointer-events: none;
+      paint-order: stroke;
+      stroke: #ffffff;
+      stroke-width: 3px;
+      stroke-linejoin: round;
+      font-weight: 600;
+    }
+
+    @media (max-width: 1220px) {
+      .controls { grid-template-columns: repeat(3, minmax(140px, 1fr)); }
       main { grid-template-columns: 1fr; }
-      .node-list { max-height: 26vh; }
-      #canvas-wrap { min-height: 58vh; }
+      .node-list { max-height: 28vh; }
+      #canvas-wrap { min-height: 62vh; }
+      #legend { max-width: 220px; }
     }
   </style>
 </head>
 <body>
   <header>
     <h1>MLTheory Graph Explorer</h1>
-    <p class="subtitle">Default display spine,Click on the node to expand it by one jump,Supports hierarchical filtering and source code path tracing.</p>
+    <p class="subtitle">
+      Spine-first map with edge-type filters, degree-scaled nodes, and clickable neighborhood expansion.
+      Click to select, double-click to expand outgoing, shift-click to expand incoming.
+    </p>
+
     <div class="controls">
-      <label><input id="spineOnly" type="checkbox" checked /> spine only</label>
-      <label>scope
-        <select id="scope">
-          <option value="all">all</option>
-          <option value="mltheory">MLTheory only</option>
-          <option value="mathlib-slice">mathlib slice only</option>
-        </select>
-      </label>
-      <label>layer
-        <select id="layerFilter">
-          <option value="all">all</option>
-          <option value="core">core</option>
-          <option value="methods">methods</option>
-          <option value="applications">applications</option>
-          <option value="books">books</option>
-          <option value="mathlib">mathlib</option>
-        </select>
-      </label>
-      <label><input id="kindModule" type="checkbox" checked /> module</label>
-      <label><input id="kindDecl" type="checkbox" checked /> decl</label>
-      <label><input id="kindConcept" type="checkbox" checked /> concept</label>
-      <input id="search" type="text" placeholder="search node id/title" />
-      <button id="resetView">reset spine</button>
-      <button id="clearView">clear</button>
-      <span id="sourceHint"></span>
+      <div class="block">
+        <div class="title">Scope</div>
+        <label>Package scope
+          <select id="scope">
+            <option value="all">all</option>
+            <option value="mltheory">MLTheory only</option>
+            <option value="mathlib-slice">mathlib slice only</option>
+          </select>
+        </label>
+        <label>Layer
+          <select id="layerFilter">
+            <option value="all">all</option>
+            <option value="core">core</option>
+            <option value="methods">methods</option>
+            <option value="applications">applications</option>
+            <option value="books">books</option>
+            <option value="mathlib">mathlib</option>
+            <option value="other">other</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="block">
+        <div class="title">Node Types</div>
+        <label><input id="kindModule" type="checkbox" checked /> modules</label>
+        <label><input id="kindDecl" type="checkbox" checked /> declarations</label>
+        <label><input id="kindConcept" type="checkbox" checked /> concepts</label>
+        <label><input id="spineOnly" type="checkbox" checked /> spine only</label>
+      </div>
+
+      <div class="block">
+        <div class="title">Edge Types</div>
+        <label><input id="edge_imports" type="checkbox" checked /> imports <span id="count_imports" class="tiny"></span></label>
+        <label><input id="edge_uses_type" type="checkbox" checked /> uses_type <span id="count_uses_type" class="tiny"></span></label>
+        <label><input id="edge_uses_value" type="checkbox" checked /> uses_value <span id="count_uses_value" class="tiny"></span></label>
+        <label><input id="edge_decl_in_module" type="checkbox" checked /> decl_in_module <span id="count_decl_in_module" class="tiny"></span></label>
+        <label><input id="edge_binds" type="checkbox" checked /> binds <span id="count_binds" class="tiny"></span></label>
+      </div>
+
+      <div class="block">
+        <div class="title">Labels & Density</div>
+        <label>Label density
+          <select id="labelDensity">
+            <option value="lite">lite</option>
+            <option value="normal" selected>normal</option>
+            <option value="full">full</option>
+          </select>
+        </label>
+        <label>Max nodes on canvas
+          <select id="maxNodes">
+            <option value="250">250</option>
+            <option value="450" selected>450</option>
+            <option value="700">700</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="block">
+        <div class="title">Search</div>
+        <input id="search" type="text" placeholder="id/title/module/path" />
+        <span id="sourceHint" class="tiny">source: loading...</span>
+      </div>
+
+      <div class="block">
+        <div class="title">Actions</div>
+        <button id="resetView">reset spine</button>
+        <button id="expandOutBtn">expand selected outgoing</button>
+        <button id="expandInBtn">expand selected incoming</button>
+        <button id="clearView">clear visible</button>
+      </div>
     </div>
   </header>
 
   <main>
     <section class="panel">
-      <h2>Nodes</h2>
+      <h2>Selection & Neighborhood</h2>
+      <div id="statsBox" class="stats">loading…</div>
       <div id="nodeList" class="node-list"></div>
       <div id="details" class="details">Please select a node.</div>
     </section>
+
     <section id="canvas-wrap">
-      <div id="stats">loading...</div>
-      <svg id="graph" viewBox="0 0 1200 760" preserveAspectRatio="xMidYMid meet"></svg>
+      <div id="statsOverlay">loading…</div>
+      <div id="legend">
+        <div class="row"><strong>Node Kind</strong></div>
+        <div class="row"><span class="sw" style="background: var(--concept)"></span> concept</div>
+        <div class="row"><span class="sw" style="background: var(--module)"></span> module</div>
+        <div class="row"><span class="sw" style="background: var(--decl)"></span> declaration</div>
+        <div class="row"><span class="sw" style="background: var(--spine)"></span> spine-highlight</div>
+        <div class="row" style="margin-top: 7px;"><strong>Edge Type</strong></div>
+        <div class="row"><span class="ln" style="border-top-color: var(--imports)"></span> imports</div>
+        <div class="row"><span class="ln" style="border-top-color: var(--uses-type)"></span> uses_type</div>
+        <div class="row"><span class="ln" style="border-top-color: var(--uses-value)"></span> uses_value</div>
+        <div class="row"><span class="ln" style="border-top-color: var(--decl-in-module)"></span> decl_in_module</div>
+        <div class="row"><span class="ln" style="border-top-color: var(--binds)"></span> binds</div>
+      </div>
+      <svg id="graph" viewBox="0 0 1600 980" preserveAspectRatio="xMidYMid meet"></svg>
     </section>
   </main>
 
   <script src="./_auto/subgraph.js"></script>
   <script>
     const dataCandidates = ["./_auto/subgraph.json", "../artifacts/graphs/subgraph.json"];
+    const EDGE_COLORS = {
+      imports: "var(--imports)",
+      uses_type: "var(--uses-type)",
+      uses_value: "var(--uses-value)",
+      decl_in_module: "var(--decl-in-module)",
+      binds: "var(--binds)",
+      alias_of: "var(--alias-of)",
+      used_recently: "var(--used-recently)",
+    };
+    const KIND_ORDER = { concept: 0, module: 1, decl: 2 };
+    const svg = document.getElementById("graph");
+
     const state = {
       graph: null,
-      visible: new Set(),
-      selected: null,
+      nodesById: new Map(),
+      edges: [],
       outgoing: new Map(),
       incoming: new Map(),
-      nodesById: new Map(),
-      edges: []
+      degree: new Map(),
+      visible: new Set(),
+      selected: null,
+      renderedNodeIds: [],
     };
 
-    const byId = id => document.getElementById(id);
-    const svg = byId("graph");
+    const byId = (id) => document.getElementById(id);
+
+    function edgeColor(type) {
+      return EDGE_COLORS[type] || "#9aa8a0";
+    }
+
+    function degreeOf(id) {
+      return state.degree.get(id) || 0;
+    }
 
     function nodeColor(node) {
       if (node.spine) return "var(--spine)";
+      if (node.kind === "concept") return "var(--concept)";
       if (node.kind === "module") return "var(--module)";
-      if (node.kind === "decl") return "var(--decl)";
-      return "var(--concept)";
+      return "var(--decl)";
     }
 
     async function loadData() {
@@ -234,11 +459,51 @@
         } catch (_) {}
       }
       if (window.location.protocol === "file:") {
-        throw new Error(
-          "no graph data available in file:// mode. run `cd /Users/xiongjiangkai/xjk_papers/MLTheory && tools/index/gen_graph_artifacts.sh` and reopen GraphExplorer.html"
-        );
+        throw new Error("No graph data in file:// mode. Run `tools/index/gen_graph_artifacts.sh` and reopen this page.");
       }
-      throw new Error("no graph data available");
+      throw new Error("No graph data available.");
+    }
+
+    function buildIndex() {
+      state.nodesById.clear();
+      state.outgoing.clear();
+      state.incoming.clear();
+      state.degree.clear();
+      state.edges = [];
+
+      for (const node of state.graph.nodes || []) {
+        if (!node || !node.id) continue;
+        state.nodesById.set(node.id, node);
+        state.degree.set(node.id, 0);
+      }
+
+      for (const edge of state.graph.edges || []) {
+        if (!edge || !edge.src || !edge.dst) continue;
+        if (!state.nodesById.has(edge.src) || !state.nodesById.has(edge.dst)) continue;
+        state.edges.push(edge);
+        if (!state.outgoing.has(edge.src)) state.outgoing.set(edge.src, []);
+        if (!state.incoming.has(edge.dst)) state.incoming.set(edge.dst, []);
+        state.outgoing.get(edge.src).push(edge);
+        state.incoming.get(edge.dst).push(edge);
+        state.degree.set(edge.src, degreeOf(edge.src) + 1);
+        state.degree.set(edge.dst, degreeOf(edge.dst) + 1);
+      }
+
+      const edgeTypeCount = new Map();
+      for (const e of state.edges) {
+        edgeTypeCount.set(e.type, (edgeTypeCount.get(e.type) || 0) + 1);
+      }
+      for (const key of ["imports", "uses_type", "uses_value", "decl_in_module", "binds"]) {
+        const count = edgeTypeCount.get(key) || 0;
+        const slot = byId(`count_${key}`);
+        if (slot) slot.textContent = `(${count})`;
+      }
+    }
+
+    function isEdgeTypeEnabled(type) {
+      const el = byId(`edge_${type}`);
+      if (!el) return true;
+      return el.checked;
     }
 
     function isInScope(node) {
@@ -256,202 +521,464 @@
     }
 
     function isNodeVisibleByFilters(node) {
-      if (!isKindEnabled(node)) return false;
       if (!isInScope(node)) return false;
-      const layerFilter = byId("layerFilter").value;
-      if (layerFilter !== "all" && String(node.layer || "") !== layerFilter) return false;
+      if (!isKindEnabled(node)) return false;
+      const layer = byId("layerFilter").value;
+      if (layer !== "all" && String(node.layer || "") !== layer) return false;
       if (byId("spineOnly").checked && !node.spine) return false;
       const q = byId("search").value.trim().toLowerCase();
       if (!q) return true;
-      return node.id.toLowerCase().includes(q) || String(node.title || "").toLowerCase().includes(q);
+      const hay = [
+        node.id,
+        String(node.title || ""),
+        String(node.module || ""),
+        String(node.path || ""),
+      ].join(" ").toLowerCase();
+      return hay.includes(q);
+    }
+
+    function rankedNodesFromVisible() {
+      const selected = state.selected;
+      const selectedNeighbors = new Set();
+      if (selected) {
+        selectedNeighbors.add(selected);
+        for (const e of state.outgoing.get(selected) || []) selectedNeighbors.add(e.dst);
+        for (const e of state.incoming.get(selected) || []) selectedNeighbors.add(e.src);
+      }
+
+      const rows = [];
+      for (const id of state.visible) {
+        const node = state.nodesById.get(id);
+        if (!node || !isNodeVisibleByFilters(node)) continue;
+        const priority = selectedNeighbors.has(id) ? 0 : (node.spine ? 1 : 2);
+        rows.push({
+          node,
+          priority,
+          kindRank: KIND_ORDER[node.kind] ?? 9,
+          degree: degreeOf(id),
+        });
+      }
+
+      rows.sort((a, b) =>
+        a.priority - b.priority ||
+        a.kindRank - b.kindRank ||
+        b.degree - a.degree ||
+        a.node.id.localeCompare(b.node.id)
+      );
+      return rows.map(r => r.node);
     }
 
     function setInitialVisible() {
       state.visible.clear();
-      for (const node of state.graph.nodes) {
-        if (node.spine) state.visible.add(node.id);
-      }
-      if (state.visible.size === 0) {
-        for (const node of state.graph.nodes.slice(0, 120)) state.visible.add(node.id);
-      }
-    }
+      const nodes = Array.from(state.nodesById.values());
 
-    function buildAdjacency() {
-      state.outgoing.clear();
-      state.incoming.clear();
-      state.edges = [];
-      state.nodesById.clear();
-      for (const n of state.graph.nodes) state.nodesById.set(n.id, n);
-      for (const e of state.graph.edges) {
-        if (!state.nodesById.has(e.src) || !state.nodesById.has(e.dst)) continue;
-        state.edges.push(e);
-        if (!state.outgoing.has(e.src)) state.outgoing.set(e.src, []);
-        if (!state.incoming.has(e.dst)) state.incoming.set(e.dst, []);
-        state.outgoing.get(e.src).push(e);
-        state.incoming.get(e.dst).push(e);
+      for (const n of nodes) {
+        if (n.kind === "concept") state.visible.add(n.id);
+        if (n.spine) state.visible.add(n.id);
+      }
+
+      if (state.visible.size < 80) {
+        const modules = nodes.filter(n => n.kind === "module")
+          .sort((a, b) => degreeOf(b.id) - degreeOf(a.id));
+        for (const m of modules.slice(0, 80)) state.visible.add(m.id);
+      }
+
+      if (state.visible.size < 180) {
+        const decls = nodes.filter(n => n.kind === "decl")
+          .sort((a, b) => degreeOf(b.id) - degreeOf(a.id));
+        for (const d of decls.slice(0, 120)) state.visible.add(d.id);
+      }
+
+      if (state.visible.size === 0) {
+        for (const n of nodes.slice(0, 140)) state.visible.add(n.id);
       }
     }
 
     function expandOneHop(nodeId, dir) {
+      if (!nodeId) return;
       const edges = dir === "out" ? (state.outgoing.get(nodeId) || []) : (state.incoming.get(nodeId) || []);
       for (const e of edges) {
+        if (!isEdgeTypeEnabled(e.type)) continue;
         state.visible.add(dir === "out" ? e.dst : e.src);
       }
       renderAll();
     }
 
-    function renderNodeList() {
-      const wrap = byId("nodeList");
-      const rows = [];
-      for (const id of state.visible) {
-        const node = state.nodesById.get(id);
-        if (!node || !isNodeVisibleByFilters(node)) continue;
-        rows.push(node);
+    function edgeCountsByType(edges) {
+      const map = new Map();
+      for (const e of edges) {
+        map.set(e.type, (map.get(e.type) || 0) + 1);
       }
-      rows.sort((a, b) => {
-        const sa = a.spine ? 0 : 1;
-        const sb = b.spine ? 0 : 1;
-        return sa - sb || a.kind.localeCompare(b.kind) || a.id.localeCompare(b.id);
-      });
-      wrap.innerHTML = "";
-      for (const n of rows.slice(0, 400)) {
+      return map;
+    }
+
+    function renderStatsBox(displayNodes, displayEdges) {
+      const totalNodes = state.nodesById.size;
+      const totalEdges = state.edges.length;
+      const selected = state.selected ? `<code>${state.selected}</code>` : "(none)";
+      byId("statsBox").innerHTML = [
+        `<div>Selected: ${selected}</div>`,
+        `<div>Visible nodes: <code>${displayNodes.length}</code> / total <code>${totalNodes}</code></div>`,
+        `<div>Visible edges: <code>${displayEdges.length}</code> / total <code>${totalEdges}</code></div>`,
+      ].join("");
+    }
+
+    function renderNodeList(displayNodes) {
+      const list = byId("nodeList");
+      list.innerHTML = "";
+
+      for (const node of displayNodes.slice(0, 450)) {
         const div = document.createElement("div");
-        div.className = "node-item" + (state.selected === n.id ? " active" : "");
-        div.innerHTML = `<div><strong>${n.title || n.id}</strong></div><div class="meta">${n.kind} | ${n.id}</div>`;
-        div.onclick = () => { state.selected = n.id; renderAll(); };
-        wrap.appendChild(div);
+        div.className = "node-item" + (state.selected === node.id ? " active" : "");
+        div.innerHTML = `
+          <div><strong>${node.title || node.id}</strong></div>
+          <div class="line2">
+            <span class="badge">${node.kind}</span>
+            <span class="badge">deg ${degreeOf(node.id)}</span>
+            <span class="badge">${node.layer || "-"}</span>
+            ${node.spine ? '<span class="badge">spine</span>' : ''}
+          </div>
+          <div class="line2"><code>${node.id}</code></div>
+        `;
+        div.onclick = () => {
+          state.selected = node.id;
+          state.visible.add(node.id);
+          renderAll();
+        };
+        div.ondblclick = () => expandOneHop(node.id, "out");
+        list.appendChild(div);
       }
     }
 
-    function renderDetails() {
+    function neighborRows(edges, dirLabel, limit = 18) {
+      const rows = [];
+      for (const e of edges) {
+        const targetId = dirLabel === "out" ? e.dst : e.src;
+        const node = state.nodesById.get(targetId);
+        if (!node) continue;
+        rows.push({ edge: e, node, degree: degreeOf(targetId) });
+      }
+      rows.sort((a, b) =>
+        (b.node.spine ? 1 : 0) - (a.node.spine ? 1 : 0) ||
+        b.degree - a.degree ||
+        a.node.id.localeCompare(b.node.id)
+      );
+      return rows.slice(0, limit);
+    }
+
+    function renderDetails(displayEdges) {
       const box = byId("details");
-      const node = state.nodesById.get(state.selected);
+      const node = state.selected ? state.nodesById.get(state.selected) : null;
       if (!node) {
-        box.textContent = "Please select a node.";
+        box.textContent = "Please select a node. Double-click a node in the list/graph to expand outgoing neighbors.";
         return;
       }
-      const outgoing = state.outgoing.get(node.id) || [];
-      const incoming = state.incoming.get(node.id) || [];
-      const outCount = outgoing.length;
-      const inCount = incoming.length;
-      let internalDeps = 0;
-      let mathlibDeps = 0;
-      for (const e of outgoing) {
-        const n = state.nodesById.get(e.dst);
-        if (!n) continue;
-        if (n.package === "mathlib") mathlibDeps += 1;
-        else internalDeps += 1;
+
+      const outAll = (state.outgoing.get(node.id) || []).filter(e => isEdgeTypeEnabled(e.type));
+      const inAll = (state.incoming.get(node.id) || []).filter(e => isEdgeTypeEnabled(e.type));
+      const byTypeOut = edgeCountsByType(outAll);
+      const byTypeIn = edgeCountsByType(inAll);
+      const outRows = neighborRows(outAll, "out");
+      const inRows = neighborRows(inAll, "in");
+
+      function renderTypeSummary(counter) {
+        if (!counter.size) return "none";
+        return [...counter.entries()]
+          .sort((a, b) => b[1] - a[1])
+          .map(([k, v]) => `${k}:${v}`)
+          .join(" | ");
       }
+
+      function renderNeighborBlock(title, rows) {
+        if (!rows.length) {
+          return `<div class="neighbors"><h3>${title}</h3><div class="neighbor-row">No neighbors under current filters.</div></div>`;
+        }
+        return `
+          <div class="neighbors">
+            <h3>${title}</h3>
+            ${rows.map(r => `
+              <div class="neighbor-row" data-jump="${r.node.id}">
+                <div><strong>${r.node.title || r.node.id}</strong></div>
+                <div>
+                  <span class="badge edge">${r.edge.type}</span>
+                  <span class="badge">${r.node.kind}</span>
+                  <span class="badge">deg ${r.degree}</span>
+                </div>
+                <div><code>${r.node.id}</code></div>
+              </div>
+            `).join("")}
+          </div>
+        `;
+      }
+
       box.innerHTML = `
         <div><strong>${node.title || node.id}</strong></div>
         <div>id: <code>${node.id}</code></div>
         <div>kind: <code>${node.kind}</code> | layer: <code>${node.layer || "-"}</code> | spine: <code>${String(Boolean(node.spine))}</code></div>
         <div>module: <code>${node.module || "-"}</code></div>
         <div>path: <code>${node.path || "-"}</code></div>
-        <div>outgoing: <code>${outCount}</code>, incoming: <code>${inCount}</code></div>
-        <div>dependency source: MLTheory/internal <code>${internalDeps}</code> | mathlib slice <code>${mathlibDeps}</code></div>
-        <button id="expandOut">expand outgoing 1-hop</button>
-        <button id="expandIn">expand incoming 1-hop</button>
-        <button id="focusNode">focus neighborhood</button>
+        <div>degree: <code>${degreeOf(node.id)}</code></div>
+        <div>outgoing: <code>${outAll.length}</code> (${renderTypeSummary(byTypeOut)})</div>
+        <div>incoming: <code>${inAll.length}</code> (${renderTypeSummary(byTypeIn)})</div>
+        <div style="margin-top:8px;">
+          <button id="detailExpandOut">expand outgoing 1-hop</button>
+          <button id="detailExpandIn">expand incoming 1-hop</button>
+        </div>
+        ${renderNeighborBlock("Outgoing neighbors", outRows)}
+        ${renderNeighborBlock("Incoming neighbors", inRows)}
       `;
-      byId("expandOut").onclick = () => expandOneHop(node.id, "out");
-      byId("expandIn").onclick = () => expandOneHop(node.id, "in");
-      byId("focusNode").onclick = () => {
-        const keep = new Set([node.id]);
-        for (const e of state.outgoing.get(node.id) || []) keep.add(e.dst);
-        for (const e of state.incoming.get(node.id) || []) keep.add(e.src);
-        state.visible = keep;
-        renderAll();
-      };
+
+      byId("detailExpandOut").onclick = () => expandOneHop(node.id, "out");
+      byId("detailExpandIn").onclick = () => expandOneHop(node.id, "in");
+      box.querySelectorAll("[data-jump]").forEach(el => {
+        el.onclick = () => {
+          const id = el.getAttribute("data-jump");
+          if (!id) return;
+          state.visible.add(id);
+          state.selected = id;
+          renderAll();
+        };
+      });
     }
 
-    function renderSvg() {
-      svg.innerHTML = "";
-      const visibleNodes = [];
-      for (const id of state.visible) {
-        const node = state.nodesById.get(id);
-        if (node && isNodeVisibleByFilters(node)) visibleNodes.push(node);
-      }
-      const visibleIds = new Set(visibleNodes.map(n => n.id));
-      const visibleEdges = state.edges.filter(e => visibleIds.has(e.src) && visibleIds.has(e.dst)).slice(0, 2200);
+    function layerKey(node) {
+      const layer = String(node.layer || "other");
+      if (layer === "core") return "core";
+      if (layer === "methods") return "methods";
+      if (layer === "applications") return "applications";
+      if (layer === "books") return "books";
+      if (layer === "mathlib") return "mathlib";
+      return "other";
+    }
 
-      const W = 1200, H = 760, cx = W / 2, cy = H / 2;
-      const groups = { concept: [], module: [], decl: [] };
-      for (const n of visibleNodes) groups[n.kind] ? groups[n.kind].push(n) : groups.decl.push(n);
+    function computeLayout(displayNodes) {
+      const W = 1600;
+      const H = 980;
+      const columns = ["core", "methods", "applications", "books", "other", "mathlib"];
+      const xForColumn = new Map();
+      columns.forEach((c, i) => xForColumn.set(c, (i + 1) * (W / (columns.length + 1))));
+      const yForKind = { concept: 150, module: 430, decl: 760 };
+
+      const buckets = new Map();
+      for (const n of displayNodes) {
+        const kind = n.kind || "decl";
+        const layer = layerKey(n);
+        const key = `${kind}:${layer}`;
+        if (!buckets.has(key)) buckets.set(key, []);
+        buckets.get(key).push(n);
+      }
 
       const pos = new Map();
-      function place(nodes, radius, jitter = 0) {
-        const N = Math.max(nodes.length, 1);
-        nodes.forEach((n, i) => {
-          const ang = (2 * Math.PI * i) / N;
-          const r = radius + (jitter ? ((i % 7) - 3) * jitter : 0);
-          pos.set(n.id, [cx + Math.cos(ang) * r, cy + Math.sin(ang) * r]);
+      for (const [key, nodes] of buckets.entries()) {
+        const [kind, layer] = key.split(":");
+        const cx = xForColumn.get(layer) || xForColumn.get("other");
+        const cy = yForKind[kind] || yForKind.decl;
+
+        nodes.sort((a, b) =>
+          (b.spine ? 1 : 0) - (a.spine ? 1 : 0) ||
+          degreeOf(b.id) - degreeOf(a.id) ||
+          a.id.localeCompare(b.id)
+        );
+
+        const width = kind === "decl" ? 220 : 170;
+        const height = kind === "decl" ? 170 : 120;
+        const cols = Math.max(1, Math.ceil(Math.sqrt(nodes.length)));
+        const rows = Math.max(1, Math.ceil(nodes.length / cols));
+
+        nodes.forEach((node, idx) => {
+          const row = Math.floor(idx / cols);
+          const col = idx % cols;
+          const x = cx + ((col + 0.5) / cols - 0.5) * width;
+          const y = cy + ((row + 0.5) / rows - 0.5) * height;
+          pos.set(node.id, [x, y]);
         });
       }
-      place(groups.concept, 120, 5);
-      place(groups.module, 255, 10);
-      place(groups.decl, 370, 14);
 
+      return { pos, width: W, height: H };
+    }
+
+    function shouldLabel(node, displayNodes, labelDensity, highlighted) {
+      if (highlighted.has(node.id)) return true;
+      if (node.kind === "concept") return true;
+      if (labelDensity === "lite") return node.kind === "module" && node.spine;
+      if (labelDensity === "normal") return node.kind === "module";
+      if (labelDensity === "full") {
+        if (node.kind !== "decl") return true;
+        if (displayNodes.length <= 250) return true;
+        return degreeOf(node.id) >= 8 || node.spine;
+      }
+      return false;
+    }
+
+    function renderSvg(displayNodes, displayEdges) {
+      svg.innerHTML = "";
+      const { pos, width, height } = computeLayout(displayNodes);
+      svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+
+      const displayedIds = new Set(displayNodes.map(n => n.id));
+      const selected = state.selected;
+      const highlighted = new Set();
+      if (selected) {
+        highlighted.add(selected);
+        for (const e of state.outgoing.get(selected) || []) if (displayedIds.has(e.dst)) highlighted.add(e.dst);
+        for (const e of state.incoming.get(selected) || []) if (displayedIds.has(e.src)) highlighted.add(e.src);
+      }
+
+      const edges = displayEdges.filter(e => displayedIds.has(e.src) && displayedIds.has(e.dst));
       const edgeG = document.createElementNS("http://www.w3.org/2000/svg", "g");
-      edgeG.setAttribute("stroke", "var(--edge)");
-      edgeG.setAttribute("stroke-width", "1.1");
-      edgeG.setAttribute("stroke-opacity", "0.78");
-      for (const e of visibleEdges) {
-        const a = pos.get(e.src), b = pos.get(e.dst);
+
+      for (const e of edges.slice(0, 6000)) {
+        const a = pos.get(e.src);
+        const b = pos.get(e.dst);
         if (!a || !b) continue;
         const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-        line.setAttribute("x1", a[0]); line.setAttribute("y1", a[1]);
-        line.setAttribute("x2", b[0]); line.setAttribute("y2", b[1]);
+        line.setAttribute("x1", String(a[0]));
+        line.setAttribute("y1", String(a[1]));
+        line.setAttribute("x2", String(b[0]));
+        line.setAttribute("y2", String(b[1]));
+        line.setAttribute("stroke", edgeColor(e.type));
+        const focus = selected && (e.src === selected || e.dst === selected);
+        line.setAttribute("stroke-opacity", focus ? "0.92" : "0.34");
+        line.setAttribute("stroke-width", focus ? "2.1" : "1.05");
         edgeG.appendChild(line);
       }
       svg.appendChild(edgeG);
 
       const nodeG = document.createElementNS("http://www.w3.org/2000/svg", "g");
-      for (const n of visibleNodes) {
-        const [x, y] = pos.get(n.id);
-        const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
-        g.style.cursor = "pointer";
-        const c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-        c.setAttribute("cx", x); c.setAttribute("cy", y);
-        c.setAttribute("r", n.kind === "decl" ? 4.6 : 6.3);
-        c.setAttribute("fill", nodeColor(n));
+      for (const n of displayNodes) {
+        const p = pos.get(n.id);
+        if (!p) continue;
+        const [x, y] = p;
+        const deg = degreeOf(n.id);
+        const base = n.kind === "module" ? 6.2 : (n.kind === "concept" ? 7.2 : 4.2);
+        const r = Math.min(13, base + Math.log2(deg + 1) * 1.2);
+
+        const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        group.style.cursor = "pointer";
+        const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        circle.setAttribute("cx", String(x));
+        circle.setAttribute("cy", String(y));
+        circle.setAttribute("r", String(r));
+        circle.setAttribute("fill", nodeColor(n));
+        circle.setAttribute("fill-opacity", highlighted.has(n.id) ? "1" : "0.92");
+
         if (state.selected === n.id) {
-          c.setAttribute("stroke", "#000");
-          c.setAttribute("stroke-width", "1.3");
+          circle.setAttribute("stroke", "#0f271d");
+          circle.setAttribute("stroke-width", "2.3");
+        } else if (highlighted.has(n.id)) {
+          circle.setAttribute("stroke", "#2a3b32");
+          circle.setAttribute("stroke-width", "1.2");
         }
-        const t = document.createElementNS("http://www.w3.org/2000/svg", "title");
-        t.textContent = `${n.id} (${n.kind})`;
-        g.appendChild(c);
-        g.appendChild(t);
-        g.onclick = () => { state.selected = n.id; renderAll(); };
-        nodeG.appendChild(g);
+
+        const title = document.createElementNS("http://www.w3.org/2000/svg", "title");
+        title.textContent = `${n.id}\nkind=${n.kind} layer=${n.layer || '-'} degree=${deg}`;
+        group.appendChild(circle);
+        group.appendChild(title);
+
+        group.onclick = (ev) => {
+          if (ev.shiftKey) {
+            expandOneHop(n.id, "in");
+            return;
+          }
+          state.selected = n.id;
+          state.visible.add(n.id);
+          renderAll();
+        };
+        group.ondblclick = (ev) => {
+          ev.preventDefault();
+          expandOneHop(n.id, "out");
+        };
+
+        nodeG.appendChild(group);
       }
       svg.appendChild(nodeG);
-      byId("stats").textContent = `nodes ${visibleNodes.length} | edges ${visibleEdges.length}`;
+
+      const labelDensity = byId("labelDensity").value;
+      const labelG = document.createElementNS("http://www.w3.org/2000/svg", "g");
+      for (const n of displayNodes) {
+        if (!shouldLabel(n, displayNodes, labelDensity, highlighted)) continue;
+        const p = pos.get(n.id);
+        if (!p) continue;
+        const [x, y] = p;
+        const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        text.setAttribute("x", String(x + 8));
+        text.setAttribute("y", String(y - 7));
+        text.setAttribute("class", "node-label");
+        text.textContent = n.kind === "module" ? (n.id.replace("MLTheory.", "")) : (n.title || n.id.split(".").pop());
+        labelG.appendChild(text);
+      }
+      svg.appendChild(labelG);
+
+      byId("statsOverlay").innerHTML = [
+        `<div><strong>canvas</strong> nodes: <code>${displayNodes.length}</code>, edges: <code>${edges.length}</code></div>`,
+        `<div>selected: <code>${state.selected || '(none)'}</code></div>`,
+        `<div>interaction: click select | double-click expand out | shift-click expand in</div>`,
+      ].join("");
+    }
+
+    function collectDisplayGraph() {
+      const maxNodes = Number(byId("maxNodes").value || "450");
+      const ranked = rankedNodesFromVisible();
+      const displayNodes = ranked.slice(0, maxNodes);
+      state.renderedNodeIds = displayNodes.map(n => n.id);
+
+      const nodeSet = new Set(state.renderedNodeIds);
+      const displayEdges = [];
+      for (const e of state.edges) {
+        if (!isEdgeTypeEnabled(e.type)) continue;
+        if (!nodeSet.has(e.src) || !nodeSet.has(e.dst)) continue;
+        displayEdges.push(e);
+      }
+      return { displayNodes, displayEdges };
     }
 
     function renderAll() {
-      renderNodeList();
-      renderDetails();
-      renderSvg();
+      const { displayNodes, displayEdges } = collectDisplayGraph();
+      renderStatsBox(displayNodes, displayEdges);
+      renderNodeList(displayNodes);
+      renderDetails(displayEdges);
+      renderSvg(displayNodes, displayEdges);
+    }
+
+    function wireControls() {
+      const ids = [
+        "scope", "layerFilter", "kindModule", "kindDecl", "kindConcept",
+        "spineOnly", "search", "labelDensity", "maxNodes",
+        "edge_imports", "edge_uses_type", "edge_uses_value", "edge_decl_in_module", "edge_binds",
+      ];
+      ids.forEach(id => {
+        const el = byId(id);
+        if (!el) return;
+        const evt = el.tagName === "INPUT" && el.type === "text" ? "input" : "change";
+        el.addEventListener(evt, () => renderAll());
+      });
+
+      byId("resetView").onclick = () => {
+        setInitialVisible();
+        renderAll();
+      };
+      byId("clearView").onclick = () => {
+        state.visible.clear();
+        renderAll();
+      };
+      byId("expandOutBtn").onclick = () => expandOneHop(state.selected, "out");
+      byId("expandInBtn").onclick = () => expandOneHop(state.selected, "in");
     }
 
     async function boot() {
       try {
         state.graph = await loadData();
-        buildAdjacency();
+        buildIndex();
         setInitialVisible();
-        for (const id of ["spineOnly", "scope", "layerFilter", "kindModule", "kindDecl", "kindConcept", "search"]) {
-          byId(id).addEventListener("input", () => renderAll());
-        }
-        byId("resetView").onclick = () => { setInitialVisible(); renderAll(); };
-        byId("clearView").onclick = () => { state.visible.clear(); renderAll(); };
+        wireControls();
         renderAll();
       } catch (err) {
+        byId("statsBox").textContent = String(err);
+        byId("statsOverlay").textContent = "failed to load graph";
         byId("details").textContent = String(err);
-        byId("stats").textContent = "failed to load graph data";
       }
     }
+
     boot();
   </script>
 </body>

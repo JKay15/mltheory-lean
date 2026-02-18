@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+from collections import Counter
 import json
 from pathlib import Path
 
@@ -22,6 +23,24 @@ def table(headers: list[str], rows: list[list[str]]) -> str:
     return "\n".join(lines)
 
 
+def fmt_counter_rows(counter: Counter, top: int | None = None) -> list[list[str]]:
+    items = counter.most_common(top)
+    return [[str(k), str(v)] for k, v in items]
+
+
+def degree_maps(edges: list[dict]) -> tuple[Counter, Counter]:
+    out_deg: Counter = Counter()
+    in_deg: Counter = Counter()
+    for edge in edges:
+        src = edge.get("src")
+        dst = edge.get("dst")
+        if isinstance(src, str):
+            out_deg[src] += 1
+        if isinstance(dst, str):
+            in_deg[dst] += 1
+    return out_deg, in_deg
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--subgraph", type=Path, required=True, help="subgraph.json path")
@@ -34,9 +53,61 @@ def main() -> int:
     usage_graph = load_json(args.usage_graph.resolve())
     usage_suggestions = load_json(args.usage_suggestions.resolve())
 
+    nodes = subgraph.get("nodes", [])
+    edges = subgraph.get("edges", [])
+    node_map = {n.get("id"): n for n in nodes if isinstance(n, dict) and isinstance(n.get("id"), str)}
+    out_deg, in_deg = degree_maps([e for e in edges if isinstance(e, dict)])
+
     top_spine = usage_suggestions.get("spine_candidates", [])[:15]
     top_modules = usage_suggestions.get("entry_module_candidates", [])[:15]
     has_telemetry = bool(usage_graph.get("event_count", 0))
+
+    node_kind_counter: Counter = Counter()
+    module_layer_counter: Counter = Counter()
+    package_counter: Counter = Counter()
+    spine_kind_counter: Counter = Counter()
+    edge_type_counter: Counter = Counter()
+
+    for node in nodes:
+        if not isinstance(node, dict):
+            continue
+        kind = str(node.get("kind", "unknown"))
+        node_kind_counter[kind] += 1
+        package_counter[str(node.get("package", "unknown"))] += 1
+        if bool(node.get("spine", False)):
+            spine_kind_counter[kind] += 1
+        if kind == "module":
+            module_layer_counter[str(node.get("layer", "unknown"))] += 1
+
+    for edge in edges:
+        if not isinstance(edge, dict):
+            continue
+        edge_type_counter[str(edge.get("type", "unknown"))] += 1
+
+    def top_hubs(kind: str, package: str | None, top: int = 15) -> list[list[str]]:
+        rows: list[tuple[str, int, int, int, str, str]] = []
+        for node_id, node in node_map.items():
+            nk = str(node.get("kind", ""))
+            if nk != kind:
+                continue
+            np = str(node.get("package", ""))
+            if package is not None and np != package:
+                continue
+            o = out_deg[node_id]
+            i = in_deg[node_id]
+            t = o + i
+            if t == 0:
+                continue
+            rows.append((node_id, t, o, i, str(node.get("layer", "-")), str(node.get("title", node_id))))
+        rows.sort(key=lambda r: (-r[1], -r[2], -r[3], r[0]))
+        return [
+            [row[5], row[0], row[4], str(row[1]), str(row[2]), str(row[3])]
+            for row in rows[:top]
+        ] or [["No hubs found", "-", "-", "0", "0", "0"]]
+
+    hub_modules_ml = top_hubs(kind="module", package="MLTheory", top=15)
+    hub_modules_math = top_hubs(kind="module", package="mathlib", top=15)
+    hub_decls_ml = top_hubs(kind="decl", package="MLTheory", top=15)
 
     lines = [
         "# Graph Artifacts(Automatically generated)",
@@ -50,6 +121,30 @@ def main() -> int:
         f"- usage nodes: `{usage_graph.get('node_count', 0)}`",
         f"- usage edges: `{usage_graph.get('edge_count', 0)}`",
         f"- telemetry status: `{'active' if has_telemetry else 'empty (run record_usage.py first)'}`",
+        "",
+        "## Node Kind Distribution",
+        table(["kind", "count"], fmt_counter_rows(node_kind_counter)),
+        "",
+        "## Edge Type Distribution",
+        table(["edge_type", "count"], fmt_counter_rows(edge_type_counter)),
+        "",
+        "## Module Layer Distribution",
+        table(["layer", "module_count"], fmt_counter_rows(module_layer_counter)),
+        "",
+        "## Package Distribution",
+        table(["package", "node_count"], fmt_counter_rows(package_counter)),
+        "",
+        "## Spine Coverage",
+        table(["kind", "spine_nodes"], fmt_counter_rows(spine_kind_counter) or [["none", "0"]]),
+        "",
+        "## Structural Hub Modules (MLTheory, Top 15 by degree)",
+        table(["title", "module_id", "layer", "degree", "out", "in"], hub_modules_ml),
+        "",
+        "## Structural Hub Modules (mathlib slice, Top 15 by degree)",
+        table(["title", "module_id", "layer", "degree", "out", "in"], hub_modules_math),
+        "",
+        "## Structural Hub Declarations (MLTheory, Top 15 by degree)",
+        table(["title", "decl_id", "layer", "degree", "out", "in"], hub_decls_ml),
         "",
         "## Telemetry driven spine candidate(Top 15)",
         table(["decl"], [[d] for d in top_spine] or [["No telemetry candidates yet"]]),
