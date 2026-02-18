@@ -350,7 +350,8 @@
         <label>Max nodes on canvas
           <select id="maxNodes">
             <option value="250">250</option>
-            <option value="450" selected>450</option>
+            <option value="350" selected>350</option>
+            <option value="500">500</option>
             <option value="700">700</option>
           </select>
         </label>
@@ -751,47 +752,129 @@
       return "other";
     }
 
-    function computeLayout(displayNodes) {
-      const W = 1600;
-      const H = 980;
-      const columns = ["core", "methods", "applications", "books", "other", "mathlib"];
-      const xForColumn = new Map();
-      columns.forEach((c, i) => xForColumn.set(c, (i + 1) * (W / (columns.length + 1))));
-      const yForKind = { concept: 150, module: 430, decl: 760 };
+    function clamp(v, lo, hi) {
+      return Math.max(lo, Math.min(hi, v));
+    }
 
-      const buckets = new Map();
-      for (const n of displayNodes) {
-        const kind = n.kind || "decl";
-        const layer = layerKey(n);
-        const key = `${kind}:${layer}`;
-        if (!buckets.has(key)) buckets.set(key, []);
-        buckets.get(key).push(n);
+    function hashInt(s) {
+      let h = 2166136261;
+      for (let i = 0; i < s.length; i++) {
+        h ^= s.charCodeAt(i);
+        h = (h * 16777619) >>> 0;
       }
+      return h >>> 0;
+    }
+
+    function computeLayout(displayNodes) {
+      const W = 2200;
+      const H = 1320;
+      const M = 44;
+
+      const layerRegions = {
+        core:         { x0: 70,   x1: 420,  y0: 230, y1: 680 },
+        methods:      { x0: 460,  x1: 1270, y0: 230, y1: 680 },
+        applications: { x0: 1310, x1: 1600, y0: 230, y1: 680 },
+        books:        { x0: 1640, x1: 1780, y0: 230, y1: 680 },
+        other:        { x0: 1810, x1: 1940, y0: 230, y1: 680 },
+        mathlib:      { x0: 1960, x1: 2140, y0: 180, y1: 1230 },
+      };
+
+      const declFallbackRegion = {
+        core:         { x0: 80,   x1: 430,  y0: 760, y1: 1240 },
+        methods:      { x0: 460,  x1: 1290, y0: 760, y1: 1240 },
+        applications: { x0: 1310, x1: 1600, y0: 760, y1: 1240 },
+        books:        { x0: 1640, x1: 1780, y0: 760, y1: 1240 },
+        other:        { x0: 1810, x1: 1940, y0: 760, y1: 1240 },
+        mathlib:      { x0: 1960, x1: 2140, y0: 760, y1: 1240 },
+      };
 
       const pos = new Map();
-      for (const [key, nodes] of buckets.entries()) {
-        const [kind, layer] = key.split(":");
-        const cx = xForColumn.get(layer) || xForColumn.get("other");
-        const cy = yForKind[kind] || yForKind.decl;
+      const modulePos = new Map();
 
-        nodes.sort((a, b) =>
+      const concepts = displayNodes
+        .filter(n => n.kind === "concept")
+        .sort((a, b) => a.id.localeCompare(b.id));
+      concepts.forEach((node, i) => {
+        const x = 140 + (i + 1) * ((W - 280) / (concepts.length + 1));
+        const y = 96 + (i % 2) * 16;
+        pos.set(node.id, [x, y]);
+      });
+
+      const modulesByLayer = new Map();
+      for (const n of displayNodes) {
+        if (n.kind !== "module") continue;
+        const lk = layerKey(n);
+        if (!modulesByLayer.has(lk)) modulesByLayer.set(lk, []);
+        modulesByLayer.get(lk).push(n);
+      }
+
+      for (const [layer, modules] of modulesByLayer.entries()) {
+        const region = layerRegions[layer] || layerRegions.other;
+        modules.sort((a, b) =>
+          (b.spine ? 1 : 0) - (a.spine ? 1 : 0) ||
+          degreeOf(b.id) - degreeOf(a.id) ||
+          a.id.localeCompare(b.id)
+        );
+        const w = region.x1 - region.x0;
+        const h = region.y1 - region.y0;
+        const cols = Math.max(1, Math.ceil(Math.sqrt((modules.length * w) / Math.max(1, h))));
+        const rows = Math.max(1, Math.ceil(modules.length / cols));
+        modules.forEach((node, idx) => {
+          const row = Math.floor(idx / cols);
+          const col = idx % cols;
+          const x = region.x0 + ((col + 1) * w) / (cols + 1);
+          const y = region.y0 + ((row + 1) * h) / (rows + 1);
+          pos.set(node.id, [x, y]);
+          modulePos.set(node.id, [x, y]);
+        });
+      }
+
+      const declGroups = new Map();
+      for (const n of displayNodes) {
+        if (n.kind !== "decl") continue;
+        const mod = typeof n.module === "string" && n.module.length ? n.module : `@layer:${layerKey(n)}`;
+        if (!declGroups.has(mod)) declGroups.set(mod, []);
+        declGroups.get(mod).push(n);
+      }
+
+      for (const [moduleId, decls] of declGroups.entries()) {
+        decls.sort((a, b) =>
           (b.spine ? 1 : 0) - (a.spine ? 1 : 0) ||
           degreeOf(b.id) - degreeOf(a.id) ||
           a.id.localeCompare(b.id)
         );
 
-        const width = kind === "decl" ? 220 : 170;
-        const height = kind === "decl" ? 170 : 120;
-        const cols = Math.max(1, Math.ceil(Math.sqrt(nodes.length)));
-        const rows = Math.max(1, Math.ceil(nodes.length / cols));
+        let anchor = modulePos.get(moduleId);
+        if (!anchor) {
+          const layer = layerKey(decls[0]);
+          const region = declFallbackRegion[layer] || declFallbackRegion.other;
+          const h = hashInt(moduleId);
+          const x = region.x0 + (h % 1000) / 1000 * (region.x1 - region.x0);
+          const y = region.y0 + ((h >>> 10) % 1000) / 1000 * (region.y1 - region.y0);
+          anchor = [x, y];
+        }
 
-        nodes.forEach((node, idx) => {
-          const row = Math.floor(idx / cols);
-          const col = idx % cols;
-          const x = cx + ((col + 0.5) / cols - 0.5) * width;
-          const y = cy + ((row + 0.5) / rows - 0.5) * height;
-          pos.set(node.id, [x, y]);
+        const seed = (hashInt(moduleId) % 360) * Math.PI / 180;
+        const slots = 14;
+        decls.forEach((node, idx) => {
+          const ring = Math.floor(idx / slots);
+          const slot = idx % slots;
+          const r = 26 + ring * 18 + (slot % 2 ? 4 : 0);
+          const angle = seed + (2 * Math.PI * slot) / slots + ring * 0.15;
+          const x = clamp(anchor[0] + Math.cos(angle) * r, M, W - M);
+          const y = clamp(anchor[1] + Math.sin(angle) * r * 0.84, M, H - M);
+          if (!pos.has(node.id)) pos.set(node.id, [x, y]);
         });
+      }
+
+      for (const node of displayNodes) {
+        if (pos.has(node.id)) continue;
+        const layer = layerKey(node);
+        const region = declFallbackRegion[layer] || declFallbackRegion.other;
+        const h = hashInt(node.id);
+        const x = region.x0 + (h % 1000) / 1000 * (region.x1 - region.x0);
+        const y = region.y0 + ((h >>> 10) % 1000) / 1000 * (region.y1 - region.y0);
+        pos.set(node.id, [x, y]);
       }
 
       return { pos, width: W, height: H };
@@ -917,7 +1000,7 @@
     }
 
     function collectDisplayGraph() {
-      const maxNodes = Number(byId("maxNodes").value || "450");
+      const maxNodes = Number(byId("maxNodes").value || "350");
       const ranked = rankedNodesFromVisible();
       const displayNodes = ranked.slice(0, maxNodes);
       state.renderedNodeIds = displayNodes.map(n => n.id);
