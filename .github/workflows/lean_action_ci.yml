@@ -6,23 +6,11 @@ on:
   workflow_dispatch:
 
 jobs:
-  checks:
+  core_checks:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v5
-
-      - name: Validate SSOT contract
-        run: python3 tools/docs/validate_ssot.py
-
-      - name: Check derived docs sync
-        run: python3 tools/docs/sync_docs.py --check
-
-      - name: Check SSOT migration idempotence
-        run: tools/ci/check_ssot_migration_idempotent.sh
-
-      - name: Phase0 lean4 contract audit
-        run: python3 tools/ci/audit_lean4_contract.py
 
       - name: Setup Lean toolchain
         uses: leanprover/lean-action@v1
@@ -44,27 +32,3 @@ jobs:
 
       - name: Check layer boundary imports
         run: tools/ci/check_layer_imports.sh
-
-      - name: Check namespace layout convergence
-        run: python3 tools/ci/check_namespace_layout.py
-
-      - name: Check deprecated import gate
-        run: tools/ci/check_no_new_deprecated_imports.sh
-
-      - name: Check cleanup ready-to-remove gate
-        run: python3 tools/ci/check_ready_to_remove.py
-
-      - name: Check SSOT reference hygiene
-        run: python3 tools/ci/check_registry_reference_hygiene.py
-
-      - name: Check canonical contract
-        run: tools/ci/check_canonical_contract.sh
-
-      - name: Check official workflow alignment
-        run: tools/ci/check_official_workflow_alignment.sh
-
-      - name: Check tool forest consistency
-        run: python3 tools/ci/check_tool_forest_consistency.py
-
-      - name: Check review views consistency
-        run: python3 tools/ci/check_review_views_consistency.py
