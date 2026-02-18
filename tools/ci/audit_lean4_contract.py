@@ -37,38 +37,38 @@ DEFAULT_FILES = {
 CHECKS: tuple[AuditCheck, ...] = (
     AuditCheck(
         "build_gate",
-        "构建门禁（lake build）",
+        "Build access control(lake build)",
         (r"\blake build\b",),
         ("skill", "cycle"),
     ),
     AuditCheck(
         "sorry_zero_gate",
-        "sorry 清零门禁",
+        "sorry Clear access control",
         (r"\bZero sorries\b|\bno sorries\b|\bzero sorries\b",),
         ("skill",),
         all_patterns_required=False,
     ),
     AuditCheck(
         "axiom_whitelist_gate",
-        "自定义 axiom 白名单门禁",
+        "Customize axiom Whitelist access control",
         (r"standard axioms", r"Classical\.choice", r"propext", r"Quot\.sound"),
         ("skill", "axiom"),
     ),
     AuditCheck(
         "declaration_immutability",
-        "定理声明不可私改规则",
+        "Theorem states that rules cannot be changed privately",
         (r"Never change statements",),
         ("skill",),
     ),
     AuditCheck(
         "checkpoint_reproducible",
-        "可复现 checkpoint 流程",
+        "Reproducible checkpoint process",
         (r"/lean4:checkpoint", r"build \+ axiom check \+ commit"),
         ("skill",),
     ),
     AuditCheck(
         "canonical_signature_lock",
-        "canonical 入口签名锁定",
+        "canonical Entry signature lock",
         (
             r"\bcanonical\b",
             r"\bsignature\b|\bsignatures\b",
@@ -78,19 +78,19 @@ CHECKS: tuple[AuditCheck, ...] = (
     ),
     AuditCheck(
         "dependency_closure_verifiable",
-        "依赖闭包可验证（声明级）",
+        "Dependency closure is verifiable(Declarative level)",
         (r"#print axioms", r"For individual theorems"),
         ("axiom",),
     ),
     AuditCheck(
         "intermediate_to_canonical_mapping",
-        "中间概念到 canonical 映射约束",
+        "intermediate concept to canonical Mapping constraints",
         (r"\bintermediate\b", r"\bcanonical\b", r"mapping|bridge|traceability"),
         ("skill", "cycle"),
     ),
     AuditCheck(
         "official_toolchain_mapping",
-        "官方工具链映射约束（Loogle/LeanSearch/InfoView/REPL）",
+        "Official toolchain mapping constraints(Loogle/LeanSearch/InfoView/REPL)",
         (
             r"\bloogle\b",
             r"\bleansearch\b",
@@ -101,7 +101,7 @@ CHECKS: tuple[AuditCheck, ...] = (
     ),
     AuditCheck(
         "three_repo_boundary",
-        "三仓边界约束",
+        "Three warehouse boundary constraints",
         (
             r"paper-template",
             r"\bMLTheory\b",

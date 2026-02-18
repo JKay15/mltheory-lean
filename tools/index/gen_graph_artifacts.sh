@@ -37,6 +37,12 @@ python3 tools/index/gen_subgraph.py \
   --modules "${ROOT_DIR}/artifacts/index/modules.json" \
   --taxonomy "${ROOT_DIR}/docs/meta/taxonomy.yaml" \
   --canon "${ROOT_DIR}/docs/meta/canon.yaml" \
+  --mathlib-slice "${ROOT_DIR}/artifacts/index/mathlib_slice.json" \
+  --mathlib-imports "${ROOT_DIR}/artifacts/index/mathlib_imports.json" \
+  --mathlib-hubs "${ROOT_DIR}/artifacts/index/mathlib_hubs.json" \
+  --mathlib-aggregators "${ROOT_DIR}/artifacts/index/mathlib_aggregators.json" \
+  --mltheory-to-mathlib "${ROOT_DIR}/artifacts/index/mltheory_to_mathlib.json" \
+  --max-mathlib-modules 220 \
   --out "${ROOT_DIR}/artifacts/graphs/subgraph.json" \
   --export-docs-data "${ROOT_DIR}/docs/_auto/subgraph.json"
 

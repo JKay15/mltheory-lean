@@ -1,18 +1,18 @@
-# 命名空间收敛视图（Namespace Convergence）
+# Namespace convergence view(Namespace Convergence)
 
 <!-- GENERATED FROM docs/ssot/registry.json. DO NOT EDIT MANUALLY. -->
 
-## 目标（人话）
-1. 新模块必须落在分层前缀下（`Core/Methods/Applications/Books`）。
-2. `legacy` 层仅保留顶层兼容入口（`MLTheory.X`），不再新增深层 legacy 路径。
-3. 旧入口统一通过 `aliases` 映射到新入口，避免“看起来还能 import，但不知道该改到哪里”。
+## Target(human language)
+1. New modules must fall under the hierarchical prefix(`Core/Methods/Applications/Books`).
+2. `legacy` Layers retain only top-level compatible entries(`MLTheory.X`),No more new depths legacy path.
+3. Map old entry paths to new entry paths via `aliases` to avoid 'imports still work, but migration targets are unclear'.
 
-## 当前收敛状态
-- 当前 `structure_cleanup_candidates = 0`，兼容入口分批删除已完成。
-- 真实模块总数：69
-- alias 总数：22（deprecated=22 / active=0）
+## Current convergence status
+- current `structure_cleanup_candidates = 0`,Batch deletion of compatible portals has been completed.
+- Total number of real modules:69
+- alias total:22(deprecated=22 / active=0)
 
-## 分层前缀约束（真实模块）
+## Hierarchical prefix constraints(real module)
 | layer | required_prefix | module_count | examples |
 |---|---|---|---|
 | core | MLTheory.Core | 14 | MLTheory.Core<br>MLTheory.Core.Learning<br>MLTheory.Core.Learning.Capacity |
@@ -20,11 +20,11 @@
 | applications | MLTheory.Applications | 9 | MLTheory.Applications.AI<br>MLTheory.Applications.AI.DecisionLearning<br>MLTheory.Applications.AI.Generalization |
 | books | MLTheory.Books | 2 | MLTheory.Books.FoML2<br>MLTheory.Books.SuttonBartoRL2 |
 
-## 剩余顶层 legacy 入口（保留兼容）
+## Remaining top layer legacy Entrance(Keep compatible)
 | module_path | source_track | role | status | proof_status |
 |---|---|---|---|---|
 
-## Deprecated Alias（旧入口 -> 新入口）
+## Deprecated Alias(old entrance -> new entrance)
 | legacy_module | canonical_module | status |
 |---|---|---|
 | MLTheory.AI | MLTheory.Applications.AI | deprecated |
@@ -50,6 +50,6 @@
 | MLTheory.RL | MLTheory.Core.RL | deprecated |
 | MLTheory.Statistics | MLTheory.Core.Statistics | deprecated |
 
-## Active Alias（仍处于兼容映射）
+## Active Alias(Still in compatibility mapping)
 | legacy_module | canonical_module | status |
 |---|---|---|

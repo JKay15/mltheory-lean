@@ -1,7 +1,7 @@
 {
   "generated_at": "2026-02-18",
   "package": "MLTheory",
-  "module_count": 69,
+  "module_count": 73,
   "modules": [
     {
       "module": "MLTheory.Applications.AI.DecisionLearning",
@@ -128,11 +128,29 @@
       "package": "MLTheory"
     },
     {
+      "module": "MLTheory.Core.Compat.Mathlib",
+      "path": "MLTheory/Core/Compat/Mathlib.lean",
+      "layer": "core",
+      "imports": [
+        "Mathlib"
+      ],
+      "package": "MLTheory"
+    },
+    {
+      "module": "MLTheory.Core.Compat",
+      "path": "MLTheory/Core/Compat.lean",
+      "layer": "core",
+      "imports": [
+        "MLTheory.Core.Compat.Mathlib"
+      ],
+      "package": "MLTheory"
+    },
+    {
       "module": "MLTheory.Core.Learning.Capacity",
       "path": "MLTheory/Core/Learning/Capacity.lean",
       "layer": "core",
       "imports": [
-        "Mathlib"
+        "MLTheory.Core.Compat.Mathlib"
       ],
       "package": "MLTheory"
     },
@@ -141,7 +159,7 @@
       "path": "MLTheory/Core/Learning/FunctionClass.lean",
       "layer": "core",
       "imports": [
-        "Mathlib"
+        "MLTheory.Core.Compat.Mathlib"
       ],
       "package": "MLTheory"
     },
@@ -150,7 +168,7 @@
       "path": "MLTheory/Core/Learning/PAC.lean",
       "layer": "core",
       "imports": [
-        "Mathlib"
+        "MLTheory.Core.Compat.Mathlib"
       ],
       "package": "MLTheory"
     },
@@ -170,8 +188,8 @@
       "path": "MLTheory/Core/Probability/BasicMeasure.lean",
       "layer": "core",
       "imports": [
-        "MLTheory.Core.Probability.Conditioning",
-        "Mathlib"
+        "MLTheory.Core.Compat.Mathlib",
+        "MLTheory.Core.Probability.Conditioning"
       ],
       "package": "MLTheory"
     },
@@ -180,7 +198,7 @@
       "path": "MLTheory/Core/Probability/Conditioning.lean",
       "layer": "core",
       "imports": [
-        "Mathlib"
+        "MLTheory.Core.Compat.Mathlib"
       ],
       "package": "MLTheory"
     },
@@ -189,7 +207,7 @@
       "path": "MLTheory/Core/Probability/ProbIneq.lean",
       "layer": "core",
       "imports": [
-        "Mathlib"
+        "MLTheory.Core.Compat.Mathlib"
       ],
       "package": "MLTheory"
     },
@@ -209,7 +227,7 @@
       "path": "MLTheory/Core/RL/MDP.lean",
       "layer": "core",
       "imports": [
-        "Mathlib"
+        "MLTheory.Core.Compat.Mathlib"
       ],
       "package": "MLTheory"
     },
@@ -227,7 +245,7 @@
       "path": "MLTheory/Core/Statistics/Information.lean",
       "layer": "core",
       "imports": [
-        "Mathlib"
+        "MLTheory.Core.Compat.Mathlib"
       ],
       "package": "MLTheory"
     },
@@ -236,7 +254,7 @@
       "path": "MLTheory/Core/Statistics/Risk.lean",
       "layer": "core",
       "imports": [
-        "Mathlib"
+        "MLTheory.Core.Compat.Mathlib"
       ],
       "package": "MLTheory"
     },
@@ -255,6 +273,7 @@
       "path": "MLTheory/Core.lean",
       "layer": "other",
       "imports": [
+        "MLTheory.Core.Compat",
         "MLTheory.Core.Learning",
         "MLTheory.Core.Probability",
         "MLTheory.Core.RL",
@@ -268,7 +287,7 @@
       "layer": "methods",
       "imports": [
         "MLTheory.Methods.Bandits.Foundations",
-        "Mathlib"
+        "MLTheory.Methods.Compat.Mathlib"
       ],
       "package": "MLTheory"
     },
@@ -278,7 +297,7 @@
       "layer": "methods",
       "imports": [
         "MLTheory.Methods.Bandits.Foundations",
-        "Mathlib"
+        "MLTheory.Methods.Compat.Mathlib"
       ],
       "package": "MLTheory"
     },
@@ -288,7 +307,7 @@
       "layer": "methods",
       "imports": [
         "MLTheory.Methods.Bandits.Foundations",
-        "Mathlib"
+        "MLTheory.Methods.Compat.Mathlib"
       ],
       "package": "MLTheory"
     },
@@ -298,7 +317,7 @@
       "layer": "methods",
       "imports": [
         "MLTheory.Methods.Bandits.Foundations",
-        "Mathlib"
+        "MLTheory.Methods.Compat.Mathlib"
       ],
       "package": "MLTheory"
     },
@@ -307,7 +326,7 @@
       "path": "MLTheory/Methods/Bandits/Foundations.lean",
       "layer": "methods",
       "imports": [
-        "Mathlib"
+        "MLTheory.Methods.Compat.Mathlib"
       ],
       "package": "MLTheory"
     },
@@ -317,7 +336,7 @@
       "layer": "methods",
       "imports": [
         "MLTheory.Methods.Bandits.Stochastic",
-        "Mathlib"
+        "MLTheory.Methods.Compat.Mathlib"
       ],
       "package": "MLTheory"
     },
@@ -327,7 +346,7 @@
       "layer": "methods",
       "imports": [
         "MLTheory.Methods.Bandits.Foundations",
-        "Mathlib"
+        "MLTheory.Methods.Compat.Mathlib"
       ],
       "package": "MLTheory"
     },
@@ -337,7 +356,7 @@
       "layer": "methods",
       "imports": [
         "MLTheory.Methods.Bandits.Foundations",
-        "Mathlib"
+        "MLTheory.Methods.Compat.Mathlib"
       ],
       "package": "MLTheory"
     },
@@ -347,8 +366,8 @@
       "layer": "methods",
       "imports": [
         "MLTheory.Methods.Bandits.Foundations",
-        "MLTheory.Methods.RL.TemporalDifference",
-        "Mathlib"
+        "MLTheory.Methods.Compat.Mathlib",
+        "MLTheory.Methods.RL.TemporalDifference"
       ],
       "package": "MLTheory"
     },
@@ -358,7 +377,7 @@
       "layer": "methods",
       "imports": [
         "MLTheory.Methods.Bandits.Foundations",
-        "Mathlib"
+        "MLTheory.Methods.Compat.Mathlib"
       ],
       "package": "MLTheory"
     },
@@ -382,12 +401,30 @@
       "package": "MLTheory"
     },
     {
+      "module": "MLTheory.Methods.Compat.Mathlib",
+      "path": "MLTheory/Methods/Compat/Mathlib.lean",
+      "layer": "methods",
+      "imports": [
+        "MLTheory.Core.Compat.Mathlib"
+      ],
+      "package": "MLTheory"
+    },
+    {
+      "module": "MLTheory.Methods.Compat",
+      "path": "MLTheory/Methods/Compat.lean",
+      "layer": "methods",
+      "imports": [
+        "MLTheory.Methods.Compat.Mathlib"
+      ],
+      "package": "MLTheory"
+    },
+    {
       "module": "MLTheory.Methods.Learning.AdvancedSLT",
       "path": "MLTheory/Methods/Learning/AdvancedSLT.lean",
       "layer": "methods",
       "imports": [
-        "MLTheory.Methods.Learning.Capacity",
-        "Mathlib"
+        "MLTheory.Methods.Compat.Mathlib",
+        "MLTheory.Methods.Learning.Capacity"
       ],
       "package": "MLTheory"
     },
@@ -396,7 +433,7 @@
       "path": "MLTheory/Methods/Learning/AutomataLanguage.lean",
       "layer": "methods",
       "imports": [
-        "Mathlib"
+        "MLTheory.Methods.Compat.Mathlib"
       ],
       "package": "MLTheory"
     },
@@ -407,7 +444,7 @@
       "imports": [
         "MLTheory.Core.Learning.Capacity",
         "MLTheory.Core.Probability.ProbIneq",
-        "Mathlib"
+        "MLTheory.Methods.Compat.Mathlib"
       ],
       "package": "MLTheory"
     },
@@ -416,8 +453,8 @@
       "path": "MLTheory/Methods/Learning/ConcentrationPackaging.lean",
       "layer": "methods",
       "imports": [
-        "MLTheory.Methods.Learning.GeneralizationTools",
-        "Mathlib"
+        "MLTheory.Methods.Compat.Mathlib",
+        "MLTheory.Methods.Learning.GeneralizationTools"
       ],
       "package": "MLTheory"
     },
@@ -435,8 +472,8 @@
       "path": "MLTheory/Methods/Learning/DiscreteModeling.lean",
       "layer": "methods",
       "imports": [
-        "MLTheory.Methods.Learning.AutomataLanguage",
-        "Mathlib"
+        "MLTheory.Methods.Compat.Mathlib",
+        "MLTheory.Methods.Learning.AutomataLanguage"
       ],
       "package": "MLTheory"
     },
@@ -455,8 +492,8 @@
       "path": "MLTheory/Methods/Learning/KernelBayes.lean",
       "layer": "methods",
       "imports": [
-        "MLTheory.Methods.Learning.KernelMethods",
-        "Mathlib"
+        "MLTheory.Methods.Compat.Mathlib",
+        "MLTheory.Methods.Learning.KernelMethods"
       ],
       "package": "MLTheory"
     },
@@ -465,7 +502,7 @@
       "path": "MLTheory/Methods/Learning/KernelMethods.lean",
       "layer": "methods",
       "imports": [
-        "Mathlib"
+        "MLTheory.Methods.Compat.Mathlib"
       ],
       "package": "MLTheory"
     },
@@ -474,7 +511,7 @@
       "path": "MLTheory/Methods/Learning/ModelSelection.lean",
       "layer": "methods",
       "imports": [
-        "Mathlib"
+        "MLTheory.Methods.Compat.Mathlib"
       ],
       "package": "MLTheory"
     },
@@ -492,7 +529,7 @@
       "path": "MLTheory/Methods/Learning/SVM.lean",
       "layer": "methods",
       "imports": [
-        "Mathlib"
+        "MLTheory.Methods.Compat.Mathlib"
       ],
       "package": "MLTheory"
     },
@@ -501,8 +538,8 @@
       "path": "MLTheory/Methods/Learning/Sequential.lean",
       "layer": "methods",
       "imports": [
-        "MLTheory.Methods.OCO.OptimizationCore",
-        "Mathlib"
+        "MLTheory.Methods.Compat.Mathlib",
+        "MLTheory.Methods.OCO.OptimizationCore"
       ],
       "package": "MLTheory"
     },
@@ -511,7 +548,7 @@
       "path": "MLTheory/Methods/Learning/StoneWeierstrassBridge.lean",
       "layer": "methods",
       "imports": [
-        "Mathlib"
+        "MLTheory.Methods.Compat.Mathlib"
       ],
       "package": "MLTheory"
     },
@@ -542,9 +579,9 @@
       "path": "MLTheory/Methods/OCO/BanditConvex.lean",
       "layer": "methods",
       "imports": [
+        "MLTheory.Methods.Compat.Mathlib",
         "MLTheory.Methods.OCO.OptimizationCore",
-        "MLTheory.Methods.OR.ConvexCore",
-        "Mathlib"
+        "MLTheory.Methods.OR.ConvexCore"
       ],
       "package": "MLTheory"
     },
@@ -553,9 +590,9 @@
       "path": "MLTheory/Methods/OCO/Boosting.lean",
       "layer": "methods",
       "imports": [
+        "MLTheory.Methods.Compat.Mathlib",
         "MLTheory.Methods.OCO.OptimizationCore",
-        "MLTheory.Methods.OR.ConvexCore",
-        "Mathlib"
+        "MLTheory.Methods.OR.ConvexCore"
       ],
       "package": "MLTheory"
     },
@@ -564,9 +601,9 @@
       "path": "MLTheory/Methods/OCO/DynamicRegret.lean",
       "layer": "methods",
       "imports": [
+        "MLTheory.Methods.Compat.Mathlib",
         "MLTheory.Methods.OCO.OptimizationCore",
-        "MLTheory.Methods.OR.ConvexCore",
-        "Mathlib"
+        "MLTheory.Methods.OR.ConvexCore"
       ],
       "package": "MLTheory"
     },
@@ -575,9 +612,9 @@
       "path": "MLTheory/Methods/OCO/GamesAndDuality.lean",
       "layer": "methods",
       "imports": [
+        "MLTheory.Methods.Compat.Mathlib",
         "MLTheory.Methods.OCO.OptimizationCore",
-        "MLTheory.Methods.OR.ConvexCore",
-        "Mathlib"
+        "MLTheory.Methods.OR.ConvexCore"
       ],
       "package": "MLTheory"
     },
@@ -596,8 +633,8 @@
       "path": "MLTheory/Methods/OCO/OptimizationCore.lean",
       "layer": "methods",
       "imports": [
-        "MLTheory.Methods.OR.ConvexCore",
-        "Mathlib"
+        "MLTheory.Methods.Compat.Mathlib",
+        "MLTheory.Methods.OR.ConvexCore"
       ],
       "package": "MLTheory"
     },
@@ -621,7 +658,7 @@
       "path": "MLTheory/Methods/OR/ConvexCore.lean",
       "layer": "methods",
       "imports": [
-        "Mathlib"
+        "MLTheory.Methods.Compat.Mathlib"
       ],
       "package": "MLTheory"
     },
@@ -630,8 +667,8 @@
       "path": "MLTheory/Methods/OR/DiscreteOptimization.lean",
       "layer": "methods",
       "imports": [
-        "MLTheory.Methods.OR.ConvexCore",
-        "Mathlib"
+        "MLTheory.Methods.Compat.Mathlib",
+        "MLTheory.Methods.OR.ConvexCore"
       ],
       "package": "MLTheory"
     },
@@ -640,8 +677,8 @@
       "path": "MLTheory/Methods/OR/GraphOptimization.lean",
       "layer": "methods",
       "imports": [
-        "MLTheory.Methods.OR.ConvexCore",
-        "Mathlib"
+        "MLTheory.Methods.Compat.Mathlib",
+        "MLTheory.Methods.OR.ConvexCore"
       ],
       "package": "MLTheory"
     },
@@ -650,8 +687,8 @@
       "path": "MLTheory/Methods/OR/StochasticMatrix.lean",
       "layer": "methods",
       "imports": [
-        "MLTheory.Methods.OR.ConvexCore",
-        "Mathlib"
+        "MLTheory.Methods.Compat.Mathlib",
+        "MLTheory.Methods.OR.ConvexCore"
       ],
       "package": "MLTheory"
     },
@@ -673,7 +710,7 @@
       "layer": "methods",
       "imports": [
         "MLTheory.Core.RL.MDP",
-        "Mathlib"
+        "MLTheory.Methods.Compat.Mathlib"
       ],
       "package": "MLTheory"
     },
@@ -692,8 +729,8 @@
       "path": "MLTheory/Methods/RL/TemporalDifference.lean",
       "layer": "methods",
       "imports": [
-        "MLTheory.Methods.RL.MDP",
-        "Mathlib"
+        "MLTheory.Methods.Compat.Mathlib",
+        "MLTheory.Methods.RL.MDP"
       ],
       "package": "MLTheory"
     },
@@ -714,6 +751,7 @@
       "layer": "other",
       "imports": [
         "MLTheory.Methods.Bandits",
+        "MLTheory.Methods.Compat",
         "MLTheory.Methods.Learning",
         "MLTheory.Methods.OCO",
         "MLTheory.Methods.OR",

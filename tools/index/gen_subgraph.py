@@ -124,6 +124,42 @@ def main() -> int:
     ap.add_argument("--modules", type=Path, required=True, help="modules.json path")
     ap.add_argument("--taxonomy", type=Path, required=True, help="docs/meta/taxonomy.yaml path")
     ap.add_argument("--canon", type=Path, required=True, help="docs/meta/canon.yaml path")
+    ap.add_argument(
+        "--mathlib-slice",
+        type=Path,
+        default=Path("artifacts/index/mathlib_slice.json"),
+        help="mathlib_slice.json path",
+    )
+    ap.add_argument(
+        "--mathlib-imports",
+        type=Path,
+        default=Path("artifacts/index/mathlib_imports.json"),
+        help="mathlib_imports.json path",
+    )
+    ap.add_argument(
+        "--mathlib-hubs",
+        type=Path,
+        default=Path("artifacts/index/mathlib_hubs.json"),
+        help="mathlib_hubs.json path",
+    )
+    ap.add_argument(
+        "--mathlib-aggregators",
+        type=Path,
+        default=Path("artifacts/index/mathlib_aggregators.json"),
+        help="mathlib_aggregators.json path",
+    )
+    ap.add_argument(
+        "--mltheory-to-mathlib",
+        type=Path,
+        default=Path("artifacts/index/mltheory_to_mathlib.json"),
+        help="mltheory_to_mathlib.json path",
+    )
+    ap.add_argument(
+        "--max-mathlib-modules",
+        type=int,
+        default=220,
+        help="max number of mathlib module nodes injected into subgraph",
+    )
     ap.add_argument("--out", type=Path, required=True, help="subgraph.json output path")
     ap.add_argument(
         "--export-docs-data",
@@ -139,6 +175,22 @@ def main() -> int:
     modules = load_json(args.modules.resolve())
     taxonomy = parse_simple_yaml(args.taxonomy.resolve())
     canon_modules, canon_decls = load_canon(args.canon.resolve())
+
+    def load_optional(path: Path) -> dict:
+        p = path.resolve()
+        if not p.exists():
+            return {}
+        try:
+            data = load_json(p)
+            return data if isinstance(data, dict) else {}
+        except json.JSONDecodeError:
+            return {}
+
+    mathlib_slice = load_optional(args.mathlib_slice)
+    mathlib_imports = load_optional(args.mathlib_imports)
+    mathlib_hubs = load_optional(args.mathlib_hubs)
+    mathlib_aggregators = load_optional(args.mathlib_aggregators)
+    mltheory_to_mathlib = load_optional(args.mltheory_to_mathlib)
 
     module_to_path = {}
     module_to_layer = {}
@@ -178,6 +230,49 @@ def main() -> int:
                 "spine": module_id in canon_modules,
                 "path": module_to_path.get(module_id, ""),
                 "package": "mathlib" if module_id.startswith("Mathlib.") else "MLTheory",
+            }
+        )
+
+    max_mathlib = max(0, int(args.max_mathlib_modules))
+    selected_mathlib: set[str] = set()
+    roots = [m for m in mathlib_slice.get("root_direct_imports", []) if isinstance(m, str)]
+    selected_mathlib.update(m for m in roots if m.startswith("Mathlib"))
+
+    agg_modules = [
+        r.get("module")
+        for r in mathlib_aggregators.get("aggregators", [])
+        if isinstance(r, dict) and isinstance(r.get("module"), str)
+    ]
+    hub_modules = [
+        r.get("module")
+        for r in mathlib_hubs.get("top_by_fan_in", []) + mathlib_hubs.get("top_by_fan_out", [])
+        if isinstance(r, dict) and isinstance(r.get("module"), str)
+    ]
+    selected_mathlib.update(m for m in agg_modules[:80] if m.startswith("Mathlib"))
+    selected_mathlib.update(m for m in hub_modules[:120] if m.startswith("Mathlib"))
+
+    slice_modules = [m for m in mathlib_slice.get("slice", []) if isinstance(m, str)]
+    slice_modules = [m for m in slice_modules if m.startswith("Mathlib")]
+    for m in slice_modules:
+        if len(selected_mathlib) >= max_mathlib:
+            break
+        selected_mathlib.add(m)
+
+    agg_set = set(m for m in agg_modules if isinstance(m, str))
+    root_set = set(roots)
+    for module_id in sorted(selected_mathlib):
+        if module_id in seen_nodes:
+            continue
+        seen_nodes.add(module_id)
+        nodes.append(
+            {
+                "id": module_id,
+                "kind": "module",
+                "title": module_id,
+                "layer": "mathlib",
+                "spine": module_id in agg_set or module_id in root_set,
+                "path": "",
+                "package": "mathlib",
             }
         )
 
@@ -249,6 +344,15 @@ def main() -> int:
         if isinstance(src, str) and isinstance(dst, str):
             add_edge(src, dst, "imports", row.get("weight"))
 
+    for row in mathlib_imports.get("edges", []):
+        if not isinstance(row, dict):
+            continue
+        src = row.get("src")
+        dst = row.get("dst")
+        if isinstance(src, str) and isinstance(dst, str):
+            if src in selected_mathlib and dst in selected_mathlib:
+                add_edge(src, dst, "imports", row.get("weight"))
+
     for row in decl_graph.get("edges", []):
         if not isinstance(row, dict):
             continue
@@ -283,6 +387,20 @@ def main() -> int:
         w = row.get("weight", 1.0)
         if isinstance(src, str) and isinstance(dst, str):
             add_edge(src, dst, "used_recently", float(w))
+
+    mapping = mltheory_to_mathlib.get("mapping") or mltheory_to_mathlib.get("module_mappings") or {}
+    if isinstance(mapping, dict):
+        for module_id, row in mapping.items():
+            if not isinstance(module_id, str) or module_id not in seen_nodes:
+                continue
+            if not isinstance(row, dict):
+                continue
+            direct = row.get("direct", [])
+            if not isinstance(direct, list):
+                continue
+            for dep in direct:
+                if isinstance(dep, str) and dep in seen_nodes:
+                    add_edge(module_id, dep, "imports", 1.0)
 
     payload = {
         "generated_at": str(date.today()),

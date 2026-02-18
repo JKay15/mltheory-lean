@@ -1,7 +1,7 @@
 {
   "generated_at": "2026-02-18",
-  "node_count": 1176,
-  "edge_count": 5333,
+  "node_count": 1400,
+  "edge_count": 5896,
   "nodes": [
     {
       "id": "concept:applications",
@@ -11176,6 +11176,24 @@
       "package": "MLTheory"
     },
     {
+      "id": "MLTheory.Core.Compat",
+      "kind": "module",
+      "title": "MLTheory.Core.Compat",
+      "layer": "core",
+      "spine": false,
+      "path": "MLTheory/Core/Compat.lean",
+      "package": "MLTheory"
+    },
+    {
+      "id": "MLTheory.Core.Compat.Mathlib",
+      "kind": "module",
+      "title": "MLTheory.Core.Compat.Mathlib",
+      "layer": "core",
+      "spine": false,
+      "path": "MLTheory/Core/Compat/Mathlib.lean",
+      "package": "MLTheory"
+    },
+    {
       "id": "MLTheory.Core.Learning",
       "kind": "module",
       "title": "MLTheory.Core.Learning",
@@ -11398,6 +11416,24 @@
       "layer": "methods",
       "spine": false,
       "path": "MLTheory/Methods/Bandits/Stochastic.lean",
+      "package": "MLTheory"
+    },
+    {
+      "id": "MLTheory.Methods.Compat",
+      "kind": "module",
+      "title": "MLTheory.Methods.Compat",
+      "layer": "methods",
+      "spine": false,
+      "path": "MLTheory/Methods/Compat.lean",
+      "package": "MLTheory"
+    },
+    {
+      "id": "MLTheory.Methods.Compat.Mathlib",
+      "kind": "module",
+      "title": "MLTheory.Methods.Compat.Mathlib",
+      "layer": "methods",
+      "spine": false,
+      "path": "MLTheory/Methods/Compat/Mathlib.lean",
       "package": "MLTheory"
     },
     {
@@ -11678,6 +11714,1986 @@
       "spine": false,
       "path": "MLTheory/Methods/RL/TemporalDifference.lean",
       "package": "MLTheory"
+    },
+    {
+      "id": "Mathlib",
+      "kind": "module",
+      "title": "Mathlib",
+      "layer": "mathlib",
+      "spine": true,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.",
+      "kind": "module",
+      "title": "Mathlib.",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.AddConstMap.Basic",
+      "kind": "module",
+      "title": "Mathlib.Algebra.AddConstMap.Basic",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.AddConstMap.Equiv",
+      "kind": "module",
+      "title": "Mathlib.Algebra.AddConstMap.Equiv",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.AddTorsor.Basic",
+      "kind": "module",
+      "title": "Mathlib.Algebra.AddTorsor.Basic",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.AddTorsor.Defs",
+      "kind": "module",
+      "title": "Mathlib.Algebra.AddTorsor.Defs",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.AffineMonoid.Basic",
+      "kind": "module",
+      "title": "Mathlib.Algebra.AffineMonoid.Basic",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.AffineMonoid.Embedding",
+      "kind": "module",
+      "title": "Mathlib.Algebra.AffineMonoid.Embedding",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.AffineMonoid.Irreducible",
+      "kind": "module",
+      "title": "Mathlib.Algebra.AffineMonoid.Irreducible",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.AffineMonoid.UniqueSums",
+      "kind": "module",
+      "title": "Mathlib.Algebra.AffineMonoid.UniqueSums",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Algebra.Basic",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Algebra.Basic",
+      "layer": "mathlib",
+      "spine": true,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Algebra.Bilinear",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Algebra.Bilinear",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Algebra.Defs",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Algebra.Defs",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Algebra.Epi",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Algebra.Epi",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Algebra.Equiv",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Algebra.Equiv",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Algebra.Field",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Algebra.Field",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Algebra.Hom",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Algebra.Hom",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Algebra.Hom.Rat",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Algebra.Hom.Rat",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Algebra.IsSimpleRing",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Algebra.IsSimpleRing",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Algebra.NonUnitalHom",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Algebra.NonUnitalHom",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Algebra.NonUnitalSubalgebra",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Algebra.NonUnitalSubalgebra",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Algebra.Operations",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Algebra.Operations",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Algebra.Opposite",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Algebra.Opposite",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Algebra.Pi",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Algebra.Pi",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Algebra.Prod",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Algebra.Prod",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Algebra.Rat",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Algebra.Rat",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Algebra.RestrictScalars",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Algebra.RestrictScalars",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Algebra.Shrink",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Algebra.Shrink",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Algebra.Spectrum.Basic",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Algebra.Spectrum.Basic",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Algebra.Spectrum.Pi",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Algebra.Spectrum.Pi",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Algebra.Spectrum.Quasispectrum",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Algebra.Spectrum.Quasispectrum",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Algebra.StrictPositivity",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Algebra.StrictPositivity",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Algebra.Subalgebra.Basic",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Algebra.Subalgebra.Basic",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Algebra.Subalgebra.Centralizer",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Algebra.Subalgebra.Centralizer",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Algebra.Subalgebra.Directed",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Algebra.Subalgebra.Directed",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Algebra.Subalgebra.IsSimpleOrder",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Algebra.Subalgebra.IsSimpleOrder",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Algebra.Subalgebra.Lattice",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Algebra.Subalgebra.Lattice",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Algebra.Subalgebra.Matrix",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Algebra.Subalgebra.Matrix",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Algebra.Subalgebra.MulOpposite",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Algebra.Subalgebra.MulOpposite",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Algebra.Subalgebra.Operations",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Algebra.Subalgebra.Operations",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Algebra.Subalgebra.Order",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Algebra.Subalgebra.Order",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Algebra.Subalgebra.Pi",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Algebra.Subalgebra.Pi",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Algebra.Subalgebra.Pointwise",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Algebra.Subalgebra.Pointwise",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Algebra.Subalgebra.Prod",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Algebra.Subalgebra.Prod",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Algebra.Subalgebra.Rank",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Algebra.Subalgebra.Rank",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Algebra.Subalgebra.Tower",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Algebra.Subalgebra.Tower",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Algebra.Subalgebra.Unitization",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Algebra.Subalgebra.Unitization",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Algebra.Tower",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Algebra.Tower",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Algebra.TransferInstance",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Algebra.TransferInstance",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Algebra.Unitization",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Algebra.Unitization",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Algebra.ZMod",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Algebra.ZMod",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.AlgebraicCard",
+      "kind": "module",
+      "title": "Mathlib.Algebra.AlgebraicCard",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.ArithmeticGeometric",
+      "kind": "module",
+      "title": "Mathlib.Algebra.ArithmeticGeometric",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Azumaya.Basic",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Azumaya.Basic",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Azumaya.Defs",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Azumaya.Defs",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Azumaya.Matrix",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Azumaya.Matrix",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.BigOperators.Associated",
+      "kind": "module",
+      "title": "Mathlib.Algebra.BigOperators.Associated",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.BigOperators.Balance",
+      "kind": "module",
+      "title": "Mathlib.Algebra.BigOperators.Balance",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.BigOperators.Expect",
+      "kind": "module",
+      "title": "Mathlib.Algebra.BigOperators.Expect",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.BigOperators.Field",
+      "kind": "module",
+      "title": "Mathlib.Algebra.BigOperators.Field",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.BigOperators.Fin",
+      "kind": "module",
+      "title": "Mathlib.Algebra.BigOperators.Fin",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.BigOperators.Finprod",
+      "kind": "module",
+      "title": "Mathlib.Algebra.BigOperators.Finprod",
+      "layer": "mathlib",
+      "spine": true,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.BigOperators.Finsupp.Basic",
+      "kind": "module",
+      "title": "Mathlib.Algebra.BigOperators.Finsupp.Basic",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.BigOperators.Finsupp.Fin",
+      "kind": "module",
+      "title": "Mathlib.Algebra.BigOperators.Finsupp.Fin",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.BigOperators.Group.Finset.Basic",
+      "kind": "module",
+      "title": "Mathlib.Algebra.BigOperators.Group.Finset.Basic",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.BigOperators.Group.Finset.Defs",
+      "kind": "module",
+      "title": "Mathlib.Algebra.BigOperators.Group.Finset.Defs",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.BigOperators.Group.Finset.Indicator",
+      "kind": "module",
+      "title": "Mathlib.Algebra.BigOperators.Group.Finset.Indicator",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.BigOperators.Group.Finset.Interval",
+      "kind": "module",
+      "title": "Mathlib.Algebra.BigOperators.Group.Finset.Interval",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.BigOperators.Group.Finset.Lemmas",
+      "kind": "module",
+      "title": "Mathlib.Algebra.BigOperators.Group.Finset.Lemmas",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.BigOperators.Group.Finset.Pi",
+      "kind": "module",
+      "title": "Mathlib.Algebra.BigOperators.Group.Finset.Pi",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.BigOperators.Group.Finset.Piecewise",
+      "kind": "module",
+      "title": "Mathlib.Algebra.BigOperators.Group.Finset.Piecewise",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.BigOperators.Group.Finset.Powerset",
+      "kind": "module",
+      "title": "Mathlib.Algebra.BigOperators.Group.Finset.Powerset",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.BigOperators.Group.Finset.Preimage",
+      "kind": "module",
+      "title": "Mathlib.Algebra.BigOperators.Group.Finset.Preimage",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.BigOperators.Group.Finset.Sigma",
+      "kind": "module",
+      "title": "Mathlib.Algebra.BigOperators.Group.Finset.Sigma",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.BigOperators.Group.List.Basic",
+      "kind": "module",
+      "title": "Mathlib.Algebra.BigOperators.Group.List.Basic",
+      "layer": "mathlib",
+      "spine": true,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.BigOperators.Group.List.Defs",
+      "kind": "module",
+      "title": "Mathlib.Algebra.BigOperators.Group.List.Defs",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.BigOperators.Group.List.Lemmas",
+      "kind": "module",
+      "title": "Mathlib.Algebra.BigOperators.Group.List.Lemmas",
+      "layer": "mathlib",
+      "spine": true,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.BigOperators.Group.Multiset.Basic",
+      "kind": "module",
+      "title": "Mathlib.Algebra.BigOperators.Group.Multiset.Basic",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.BigOperators.Group.Multiset.Defs",
+      "kind": "module",
+      "title": "Mathlib.Algebra.BigOperators.Group.Multiset.Defs",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.BigOperators.GroupWithZero.Action",
+      "kind": "module",
+      "title": "Mathlib.Algebra.BigOperators.GroupWithZero.Action",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.BigOperators.GroupWithZero.Finset",
+      "kind": "module",
+      "title": "Mathlib.Algebra.BigOperators.GroupWithZero.Finset",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.BigOperators.Intervals",
+      "kind": "module",
+      "title": "Mathlib.Algebra.BigOperators.Intervals",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.BigOperators.ModEq",
+      "kind": "module",
+      "title": "Mathlib.Algebra.BigOperators.ModEq",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.BigOperators.Module",
+      "kind": "module",
+      "title": "Mathlib.Algebra.BigOperators.Module",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.BigOperators.NatAntidiagonal",
+      "kind": "module",
+      "title": "Mathlib.Algebra.BigOperators.NatAntidiagonal",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.BigOperators.Option",
+      "kind": "module",
+      "title": "Mathlib.Algebra.BigOperators.Option",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.BigOperators.Pi",
+      "kind": "module",
+      "title": "Mathlib.Algebra.BigOperators.Pi",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.BigOperators.Ring.Finset",
+      "kind": "module",
+      "title": "Mathlib.Algebra.BigOperators.Ring.Finset",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.BigOperators.Ring.List",
+      "kind": "module",
+      "title": "Mathlib.Algebra.BigOperators.Ring.List",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.BigOperators.Ring.Multiset",
+      "kind": "module",
+      "title": "Mathlib.Algebra.BigOperators.Ring.Multiset",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.BigOperators.Ring.Nat",
+      "kind": "module",
+      "title": "Mathlib.Algebra.BigOperators.Ring.Nat",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.BigOperators.RingEquiv",
+      "kind": "module",
+      "title": "Mathlib.Algebra.BigOperators.RingEquiv",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.BigOperators.Sym",
+      "kind": "module",
+      "title": "Mathlib.Algebra.BigOperators.Sym",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.BigOperators.WithTop",
+      "kind": "module",
+      "title": "Mathlib.Algebra.BigOperators.WithTop",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.BrauerGroup.Defs",
+      "kind": "module",
+      "title": "Mathlib.Algebra.BrauerGroup.Defs",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Category.AlgCat.Basic",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Category.AlgCat.Basic",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Category.AlgCat.Limits",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Category.AlgCat.Limits",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Category.AlgCat.Monoidal",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Category.AlgCat.Monoidal",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Category.AlgCat.Symmetric",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Category.AlgCat.Symmetric",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Category.BialgCat.Basic",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Category.BialgCat.Basic",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Category.BialgCat.Monoidal",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Category.BialgCat.Monoidal",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Category.BoolRing",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Category.BoolRing",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Category.CoalgCat.Basic",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Category.CoalgCat.Basic",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Category.CoalgCat.ComonEquivalence",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Category.CoalgCat.ComonEquivalence",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Category.CoalgCat.Monoidal",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Category.CoalgCat.Monoidal",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Category.CommAlgCat.Basic",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Category.CommAlgCat.Basic",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Category.CommAlgCat.FiniteType",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Category.CommAlgCat.FiniteType",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Category.CommAlgCat.Monoidal",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Category.CommAlgCat.Monoidal",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Category.CommBialgCat",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Category.CommBialgCat",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Category.ContinuousCohomology.Basic",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Category.ContinuousCohomology.Basic",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Category.FGModuleCat.Abelian",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Category.FGModuleCat.Abelian",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Category.FGModuleCat.Basic",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Category.FGModuleCat.Basic",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Category.FGModuleCat.Colimits",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Category.FGModuleCat.Colimits",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Category.FGModuleCat.EssentiallySmall",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Category.FGModuleCat.EssentiallySmall",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Category.FGModuleCat.Limits",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Category.FGModuleCat.Limits",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Category.Grp.AB",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Category.Grp.AB",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Category.Grp.Abelian",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Category.Grp.Abelian",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Category.Grp.Adjunctions",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Category.Grp.Adjunctions",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Category.Grp.Basic",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Category.Grp.Basic",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Category.Grp.Biproducts",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Category.Grp.Biproducts",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Category.Grp.CartesianMonoidal",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Category.Grp.CartesianMonoidal",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Category.Grp.Colimits",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Category.Grp.Colimits",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Category.Grp.EnoughInjectives",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Category.Grp.EnoughInjectives",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Category.Grp.EpiMono",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Category.Grp.EpiMono",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Category.Grp.EquivalenceGroupAddGroup",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Category.Grp.EquivalenceGroupAddGroup",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Category.Grp.FilteredColimits",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Category.Grp.FilteredColimits",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Category.Grp.FiniteGrp",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Category.Grp.FiniteGrp",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Category.Grp.ForgetCorepresentable",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Category.Grp.ForgetCorepresentable",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Category.Grp.Images",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Category.Grp.Images",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Category.Grp.Injective",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Category.Grp.Injective",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Category.Grp.IsFinite",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Category.Grp.IsFinite",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Category.Grp.Kernels",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Category.Grp.Kernels",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Field.Defs",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Field.Defs",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Group.Basic",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Group.Basic",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Group.Defs",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Group.Defs",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Group.Equiv.Defs",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Group.Equiv.Defs",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Group.Hom.Defs",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Group.Hom.Defs",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Group.Nat.Defs",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Group.Nat.Defs",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Group.Pointwise.Set.Basic",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Group.Pointwise.Set.Basic",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Group.UniqueProds.Basic",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Group.UniqueProds.Basic",
+      "layer": "mathlib",
+      "spine": true,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Module.Torsion.Basic",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Module.Torsion.Basic",
+      "layer": "mathlib",
+      "spine": true,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.MvPolynomial.Basic",
+      "kind": "module",
+      "title": "Mathlib.Algebra.MvPolynomial.Basic",
+      "layer": "mathlib",
+      "spine": true,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Order.Algebra",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Order.Algebra",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Order.BigOperators.Group.Finset",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Order.BigOperators.Group.Finset",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Order.Group.Nat",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Order.Group.Nat",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Order.GroupWithZero.Canonical",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Order.GroupWithZero.Canonical",
+      "layer": "mathlib",
+      "spine": true,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Order.Ring.Defs",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Order.Ring.Defs",
+      "layer": "mathlib",
+      "spine": true,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Polynomial.AlgebraMap",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Polynomial.AlgebraMap",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Algebra.Ring.Defs",
+      "kind": "module",
+      "title": "Mathlib.Algebra.Ring.Defs",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Analysis.Normed.Algebra.Spectrum",
+      "kind": "module",
+      "title": "Mathlib.Analysis.Normed.Algebra.Spectrum",
+      "layer": "mathlib",
+      "spine": true,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Analysis.Normed.Group.Basic",
+      "kind": "module",
+      "title": "Mathlib.Analysis.Normed.Group.Basic",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Analysis.Normed.Module.FiniteDimension",
+      "kind": "module",
+      "title": "Mathlib.Analysis.Normed.Module.FiniteDimension",
+      "layer": "mathlib",
+      "spine": true,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Analysis.NormedSpace.HahnBanach.Extension",
+      "kind": "module",
+      "title": "Mathlib.Analysis.NormedSpace.HahnBanach.Extension",
+      "layer": "mathlib",
+      "spine": true,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Analysis.RCLike.Basic",
+      "kind": "module",
+      "title": "Mathlib.Analysis.RCLike.Basic",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Analysis.SpecificLimits.Basic",
+      "kind": "module",
+      "title": "Mathlib.Analysis.SpecificLimits.Basic",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Analysis.SpecificLimits.Normed",
+      "kind": "module",
+      "title": "Mathlib.Analysis.SpecificLimits.Normed",
+      "layer": "mathlib",
+      "spine": true,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.CategoryTheory.Category.Init",
+      "kind": "module",
+      "title": "Mathlib.CategoryTheory.Category.Init",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.CategoryTheory.Extensive",
+      "kind": "module",
+      "title": "Mathlib.CategoryTheory.Extensive",
+      "layer": "mathlib",
+      "spine": true,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.CategoryTheory.Limits.Final",
+      "kind": "module",
+      "title": "Mathlib.CategoryTheory.Limits.Final",
+      "layer": "mathlib",
+      "spine": true,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.CategoryTheory.Limits.FunctorCategory.Basic",
+      "kind": "module",
+      "title": "Mathlib.CategoryTheory.Limits.FunctorCategory.Basic",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.CategoryTheory.Limits.Preserves.Finite",
+      "kind": "module",
+      "title": "Mathlib.CategoryTheory.Limits.Preserves.Finite",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.CategoryTheory.Limits.Shapes.Preorder.WellOrderContinuous",
+      "kind": "module",
+      "title": "Mathlib.CategoryTheory.Limits.Shapes.Preorder.WellOrderContinuous",
+      "layer": "mathlib",
+      "spine": true,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.CategoryTheory.Limits.Shapes.Pullback.IsPullback.BicartesianSq",
+      "kind": "module",
+      "title": "Mathlib.CategoryTheory.Limits.Shapes.Pullback.IsPullback.BicartesianSq",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.CategoryTheory.Preadditive.AdditiveFunctor",
+      "kind": "module",
+      "title": "Mathlib.CategoryTheory.Preadditive.AdditiveFunctor",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.CategoryTheory.Preadditive.Mat",
+      "kind": "module",
+      "title": "Mathlib.CategoryTheory.Preadditive.Mat",
+      "layer": "mathlib",
+      "spine": true,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Combinatorics.Enumerative.Schroder",
+      "kind": "module",
+      "title": "Mathlib.Combinatorics.Enumerative.Schroder",
+      "layer": "mathlib",
+      "spine": true,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Combinatorics.SetFamily.AhlswedeZhang",
+      "kind": "module",
+      "title": "Mathlib.Combinatorics.SetFamily.AhlswedeZhang",
+      "layer": "mathlib",
+      "spine": true,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Combinatorics.SetFamily.FourFunctions",
+      "kind": "module",
+      "title": "Mathlib.Combinatorics.SetFamily.FourFunctions",
+      "layer": "mathlib",
+      "spine": true,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Data.EReal.Inv",
+      "kind": "module",
+      "title": "Mathlib.Data.EReal.Inv",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Data.Finset.Attr",
+      "kind": "module",
+      "title": "Mathlib.Data.Finset.Attr",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Data.Finset.Basic",
+      "kind": "module",
+      "title": "Mathlib.Data.Finset.Basic",
+      "layer": "mathlib",
+      "spine": true,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Data.Fintype.Basic",
+      "kind": "module",
+      "title": "Mathlib.Data.Fintype.Basic",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Data.List.Basic",
+      "kind": "module",
+      "title": "Mathlib.Data.List.Basic",
+      "layer": "mathlib",
+      "spine": true,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Data.Nat.Bitwise",
+      "kind": "module",
+      "title": "Mathlib.Data.Nat.Bitwise",
+      "layer": "mathlib",
+      "spine": true,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Data.Real.Sqrt",
+      "kind": "module",
+      "title": "Mathlib.Data.Real.Sqrt",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Data.Set.Card",
+      "kind": "module",
+      "title": "Mathlib.Data.Set.Card",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Data.Set.Finite.Basic",
+      "kind": "module",
+      "title": "Mathlib.Data.Set.Finite.Basic",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Data.Set.Lattice",
+      "kind": "module",
+      "title": "Mathlib.Data.Set.Lattice",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.FieldTheory.Finite.Basic",
+      "kind": "module",
+      "title": "Mathlib.FieldTheory.Finite.Basic",
+      "layer": "mathlib",
+      "spine": true,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Geometry.Manifold.Instances.Sphere",
+      "kind": "module",
+      "title": "Mathlib.Geometry.Manifold.Instances.Sphere",
+      "layer": "mathlib",
+      "spine": true,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.GroupTheory.OrderOfElement",
+      "kind": "module",
+      "title": "Mathlib.GroupTheory.OrderOfElement",
+      "layer": "mathlib",
+      "spine": true,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.GroupTheory.Perm.Sign",
+      "kind": "module",
+      "title": "Mathlib.GroupTheory.Perm.Sign",
+      "layer": "mathlib",
+      "spine": true,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Init",
+      "kind": "module",
+      "title": "Mathlib.Init",
+      "layer": "mathlib",
+      "spine": true,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.LinearAlgebra.Determinant",
+      "kind": "module",
+      "title": "Mathlib.LinearAlgebra.Determinant",
+      "layer": "mathlib",
+      "spine": true,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.LinearAlgebra.Dual.Lemmas",
+      "kind": "module",
+      "title": "Mathlib.LinearAlgebra.Dual.Lemmas",
+      "layer": "mathlib",
+      "spine": true,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.LinearAlgebra.LinearIndependent.Lemmas",
+      "kind": "module",
+      "title": "Mathlib.LinearAlgebra.LinearIndependent.Lemmas",
+      "layer": "mathlib",
+      "spine": true,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.LinearAlgebra.Matrix.ToLin",
+      "kind": "module",
+      "title": "Mathlib.LinearAlgebra.Matrix.ToLin",
+      "layer": "mathlib",
+      "spine": true,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.LinearAlgebra.Pi",
+      "kind": "module",
+      "title": "Mathlib.LinearAlgebra.Pi",
+      "layer": "mathlib",
+      "spine": true,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.LinearAlgebra.Span.Basic",
+      "kind": "module",
+      "title": "Mathlib.LinearAlgebra.Span.Basic",
+      "layer": "mathlib",
+      "spine": true,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Logic.Equiv.Defs",
+      "kind": "module",
+      "title": "Mathlib.Logic.Equiv.Defs",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.ModelTheory.Arithmetic.Presburger.Semilinear.Basic",
+      "kind": "module",
+      "title": "Mathlib.ModelTheory.Arithmetic.Presburger.Semilinear.Basic",
+      "layer": "mathlib",
+      "spine": true,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Order.CompactlyGenerated.Basic",
+      "kind": "module",
+      "title": "Mathlib.Order.CompactlyGenerated.Basic",
+      "layer": "mathlib",
+      "spine": true,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Order.Hom.Basic",
+      "kind": "module",
+      "title": "Mathlib.Order.Hom.Basic",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.RingTheory.AdjoinRoot",
+      "kind": "module",
+      "title": "Mathlib.RingTheory.AdjoinRoot",
+      "layer": "mathlib",
+      "spine": true,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.RingTheory.Artinian.Module",
+      "kind": "module",
+      "title": "Mathlib.RingTheory.Artinian.Module",
+      "layer": "mathlib",
+      "spine": true,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.RingTheory.Ideal.Maps",
+      "kind": "module",
+      "title": "Mathlib.RingTheory.Ideal.Maps",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.RingTheory.Ideal.Quotient.Operations",
+      "kind": "module",
+      "title": "Mathlib.RingTheory.Ideal.Quotient.Operations",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.RingTheory.LinearDisjoint",
+      "kind": "module",
+      "title": "Mathlib.RingTheory.LinearDisjoint",
+      "layer": "mathlib",
+      "spine": true,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.RingTheory.LocalRing.Module",
+      "kind": "module",
+      "title": "Mathlib.RingTheory.LocalRing.Module",
+      "layer": "mathlib",
+      "spine": true,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.RingTheory.MvPowerSeries.PiTopology",
+      "kind": "module",
+      "title": "Mathlib.RingTheory.MvPowerSeries.PiTopology",
+      "layer": "mathlib",
+      "spine": true,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.RingTheory.NonUnitalSubsemiring.Basic",
+      "kind": "module",
+      "title": "Mathlib.RingTheory.NonUnitalSubsemiring.Basic",
+      "layer": "mathlib",
+      "spine": true,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.RingTheory.SimpleModule.Basic",
+      "kind": "module",
+      "title": "Mathlib.RingTheory.SimpleModule.Basic",
+      "layer": "mathlib",
+      "spine": true,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.RingTheory.Spectrum.Prime.Topology",
+      "kind": "module",
+      "title": "Mathlib.RingTheory.Spectrum.Prime.Topology",
+      "layer": "mathlib",
+      "spine": true,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Tactic",
+      "kind": "module",
+      "title": "Mathlib.Tactic",
+      "layer": "mathlib",
+      "spine": true,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Tactic.Abel",
+      "kind": "module",
+      "title": "Mathlib.Tactic.Abel",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Tactic.Basic",
+      "kind": "module",
+      "title": "Mathlib.Tactic.Basic",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Tactic.Common",
+      "kind": "module",
+      "title": "Mathlib.Tactic.Common",
+      "layer": "mathlib",
+      "spine": true,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Tactic.FieldSimp",
+      "kind": "module",
+      "title": "Mathlib.Tactic.FieldSimp",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Tactic.Finiteness.Attr",
+      "kind": "module",
+      "title": "Mathlib.Tactic.Finiteness.Attr",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Tactic.FunProp",
+      "kind": "module",
+      "title": "Mathlib.Tactic.FunProp",
+      "layer": "mathlib",
+      "spine": true,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Tactic.Linter.DeprecatedModule",
+      "kind": "module",
+      "title": "Mathlib.Tactic.Linter.DeprecatedModule",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Tactic.Linter.UpstreamableDecl",
+      "kind": "module",
+      "title": "Mathlib.Tactic.Linter.UpstreamableDecl",
+      "layer": "mathlib",
+      "spine": true,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Tactic.NormNum",
+      "kind": "module",
+      "title": "Mathlib.Tactic.NormNum",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Tactic.Positivity",
+      "kind": "module",
+      "title": "Mathlib.Tactic.Positivity",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Tactic.Ring",
+      "kind": "module",
+      "title": "Mathlib.Tactic.Ring",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Tactic.SetLike",
+      "kind": "module",
+      "title": "Mathlib.Tactic.SetLike",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Tactic.TypeStar",
+      "kind": "module",
+      "title": "Mathlib.Tactic.TypeStar",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Topology.Algebra.Ring.Compact",
+      "kind": "module",
+      "title": "Mathlib.Topology.Algebra.Ring.Compact",
+      "layer": "mathlib",
+      "spine": true,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Topology.MetricSpace.Bounded",
+      "kind": "module",
+      "title": "Mathlib.Topology.MetricSpace.Bounded",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
+    },
+    {
+      "id": "Mathlib.Util.CompileInductive",
+      "kind": "module",
+      "title": "Mathlib.Util.CompileInductive",
+      "layer": "mathlib",
+      "spine": false,
+      "path": "",
+      "package": "mathlib"
     }
   ],
   "edges": [
@@ -17382,6 +19398,12 @@
     },
     {
       "src": "MLTheory.Core",
+      "dst": "MLTheory.Core.Compat",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Core",
       "dst": "MLTheory.Core.Learning",
       "type": "imports",
       "weight": 1.0
@@ -17405,6 +19427,12 @@
       "weight": 1.0
     },
     {
+      "src": "MLTheory.Core.Compat",
+      "dst": "MLTheory.Core.Compat.Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
       "src": "MLTheory.Core.Learning",
       "dst": "MLTheory.Core.Learning.Capacity",
       "type": "imports",
@@ -17419,6 +19447,42 @@
     {
       "src": "MLTheory.Core.Learning",
       "dst": "MLTheory.Core.Learning.PAC",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Core.Learning.Capacity",
+      "dst": "MLTheory.Core.Compat.Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Core.Learning.Capacity",
+      "dst": "Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Core.Learning.FunctionClass",
+      "dst": "MLTheory.Core.Compat.Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Core.Learning.FunctionClass",
+      "dst": "Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Core.Learning.PAC",
+      "dst": "MLTheory.Core.Compat.Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Core.Learning.PAC",
+      "dst": "Mathlib",
       "type": "imports",
       "weight": 1.0
     },
@@ -17442,13 +19506,61 @@
     },
     {
       "src": "MLTheory.Core.Probability.BasicMeasure",
+      "dst": "MLTheory.Core.Compat.Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Core.Probability.BasicMeasure",
       "dst": "MLTheory.Core.Probability.Conditioning",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Core.Probability.BasicMeasure",
+      "dst": "Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Core.Probability.Conditioning",
+      "dst": "MLTheory.Core.Compat.Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Core.Probability.Conditioning",
+      "dst": "Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Core.Probability.ProbIneq",
+      "dst": "MLTheory.Core.Compat.Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Core.Probability.ProbIneq",
+      "dst": "Mathlib",
       "type": "imports",
       "weight": 1.0
     },
     {
       "src": "MLTheory.Core.RL",
       "dst": "MLTheory.Core.RL.MDP",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Core.RL.MDP",
+      "dst": "MLTheory.Core.Compat.Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Core.RL.MDP",
+      "dst": "Mathlib",
       "type": "imports",
       "weight": 1.0
     },
@@ -17465,8 +19577,38 @@
       "weight": 1.0
     },
     {
+      "src": "MLTheory.Core.Statistics.Information",
+      "dst": "MLTheory.Core.Compat.Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Core.Statistics.Information",
+      "dst": "Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Core.Statistics.Risk",
+      "dst": "MLTheory.Core.Compat.Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Core.Statistics.Risk",
+      "dst": "Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
       "src": "MLTheory.Methods",
       "dst": "MLTheory.Methods.Bandits",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Methods",
+      "dst": "MLTheory.Methods.Compat",
       "type": "imports",
       "weight": 1.0
     },
@@ -17567,8 +19709,32 @@
       "weight": 1.0
     },
     {
+      "src": "MLTheory.Methods.Bandits.Adversarial",
+      "dst": "MLTheory.Methods.Compat.Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Methods.Bandits.Adversarial",
+      "dst": "Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
       "src": "MLTheory.Methods.Bandits.BestArmIdentification",
       "dst": "MLTheory.Methods.Bandits.Foundations",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Methods.Bandits.BestArmIdentification",
+      "dst": "MLTheory.Methods.Compat.Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Methods.Bandits.BestArmIdentification",
+      "dst": "Mathlib",
       "type": "imports",
       "weight": 1.0
     },
@@ -17579,8 +19745,44 @@
       "weight": 1.0
     },
     {
+      "src": "MLTheory.Methods.Bandits.ContextualLinear",
+      "dst": "MLTheory.Methods.Compat.Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Methods.Bandits.ContextualLinear",
+      "dst": "Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
       "src": "MLTheory.Methods.Bandits.Dueling",
       "dst": "MLTheory.Methods.Bandits.Foundations",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Methods.Bandits.Dueling",
+      "dst": "MLTheory.Methods.Compat.Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Methods.Bandits.Dueling",
+      "dst": "Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Methods.Bandits.Foundations",
+      "dst": "MLTheory.Methods.Compat.Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Methods.Bandits.Foundations",
+      "dst": "Mathlib",
       "type": "imports",
       "weight": 1.0
     },
@@ -17591,8 +19793,32 @@
       "weight": 1.0
     },
     {
+      "src": "MLTheory.Methods.Bandits.InformationTheory",
+      "dst": "MLTheory.Methods.Compat.Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Methods.Bandits.InformationTheory",
+      "dst": "Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
       "src": "MLTheory.Methods.Bandits.LargeActionSpaces",
       "dst": "MLTheory.Methods.Bandits.Foundations",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Methods.Bandits.LargeActionSpaces",
+      "dst": "MLTheory.Methods.Compat.Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Methods.Bandits.LargeActionSpaces",
+      "dst": "Mathlib",
       "type": "imports",
       "weight": 1.0
     },
@@ -17603,8 +19829,26 @@
       "weight": 1.0
     },
     {
+      "src": "MLTheory.Methods.Bandits.PureExplorationLinear",
+      "dst": "MLTheory.Methods.Compat.Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Methods.Bandits.PureExplorationLinear",
+      "dst": "Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
       "src": "MLTheory.Methods.Bandits.RLBridge",
       "dst": "MLTheory.Methods.Bandits.Foundations",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Methods.Bandits.RLBridge",
+      "dst": "MLTheory.Methods.Compat.Mathlib",
       "type": "imports",
       "weight": 1.0
     },
@@ -17615,8 +19859,38 @@
       "weight": 1.0
     },
     {
+      "src": "MLTheory.Methods.Bandits.RLBridge",
+      "dst": "Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
       "src": "MLTheory.Methods.Bandits.Stochastic",
       "dst": "MLTheory.Methods.Bandits.Foundations",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Methods.Bandits.Stochastic",
+      "dst": "MLTheory.Methods.Compat.Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Methods.Bandits.Stochastic",
+      "dst": "Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Methods.Compat",
+      "dst": "MLTheory.Methods.Compat.Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Methods.Compat.Mathlib",
+      "dst": "MLTheory.Core.Compat.Mathlib",
       "type": "imports",
       "weight": 1.0
     },
@@ -17706,7 +19980,31 @@
     },
     {
       "src": "MLTheory.Methods.Learning.AdvancedSLT",
+      "dst": "MLTheory.Methods.Compat.Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Methods.Learning.AdvancedSLT",
       "dst": "MLTheory.Methods.Learning.Capacity",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Methods.Learning.AdvancedSLT",
+      "dst": "Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Methods.Learning.AutomataLanguage",
+      "dst": "MLTheory.Methods.Compat.Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Methods.Learning.AutomataLanguage",
+      "dst": "Mathlib",
       "type": "imports",
       "weight": 1.0
     },
@@ -17723,8 +20021,32 @@
       "weight": 1.0
     },
     {
+      "src": "MLTheory.Methods.Learning.Capacity",
+      "dst": "MLTheory.Methods.Compat.Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Methods.Learning.Capacity",
+      "dst": "Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Methods.Learning.ConcentrationPackaging",
+      "dst": "MLTheory.Methods.Compat.Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
       "src": "MLTheory.Methods.Learning.ConcentrationPackaging",
       "dst": "MLTheory.Methods.Learning.GeneralizationTools",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Methods.Learning.ConcentrationPackaging",
+      "dst": "Mathlib",
       "type": "imports",
       "weight": 1.0
     },
@@ -17736,7 +20058,19 @@
     },
     {
       "src": "MLTheory.Methods.Learning.DiscreteModeling",
+      "dst": "MLTheory.Methods.Compat.Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Methods.Learning.DiscreteModeling",
       "dst": "MLTheory.Methods.Learning.AutomataLanguage",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Methods.Learning.DiscreteModeling",
+      "dst": "Mathlib",
       "type": "imports",
       "weight": 1.0
     },
@@ -17754,7 +20088,43 @@
     },
     {
       "src": "MLTheory.Methods.Learning.KernelBayes",
+      "dst": "MLTheory.Methods.Compat.Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Methods.Learning.KernelBayes",
       "dst": "MLTheory.Methods.Learning.KernelMethods",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Methods.Learning.KernelBayes",
+      "dst": "Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Methods.Learning.KernelMethods",
+      "dst": "MLTheory.Methods.Compat.Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Methods.Learning.KernelMethods",
+      "dst": "Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Methods.Learning.ModelSelection",
+      "dst": "MLTheory.Methods.Compat.Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Methods.Learning.ModelSelection",
+      "dst": "Mathlib",
       "type": "imports",
       "weight": 1.0
     },
@@ -17765,8 +20135,44 @@
       "weight": 1.0
     },
     {
+      "src": "MLTheory.Methods.Learning.SVM",
+      "dst": "MLTheory.Methods.Compat.Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Methods.Learning.SVM",
+      "dst": "Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Methods.Learning.Sequential",
+      "dst": "MLTheory.Methods.Compat.Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
       "src": "MLTheory.Methods.Learning.Sequential",
       "dst": "MLTheory.Methods.OCO.OptimizationCore",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Methods.Learning.Sequential",
+      "dst": "Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Methods.Learning.StoneWeierstrassBridge",
+      "dst": "MLTheory.Methods.Compat.Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Methods.Learning.StoneWeierstrassBridge",
+      "dst": "Mathlib",
       "type": "imports",
       "weight": 1.0
     },
@@ -17814,6 +20220,12 @@
     },
     {
       "src": "MLTheory.Methods.OCO.BanditConvex",
+      "dst": "MLTheory.Methods.Compat.Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Methods.OCO.BanditConvex",
       "dst": "MLTheory.Methods.OCO.OptimizationCore",
       "type": "imports",
       "weight": 1.0
@@ -17825,6 +20237,18 @@
       "weight": 1.0
     },
     {
+      "src": "MLTheory.Methods.OCO.BanditConvex",
+      "dst": "Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Methods.OCO.Boosting",
+      "dst": "MLTheory.Methods.Compat.Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
       "src": "MLTheory.Methods.OCO.Boosting",
       "dst": "MLTheory.Methods.OCO.OptimizationCore",
       "type": "imports",
@@ -17833,6 +20257,18 @@
     {
       "src": "MLTheory.Methods.OCO.Boosting",
       "dst": "MLTheory.Methods.OR.ConvexCore",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Methods.OCO.Boosting",
+      "dst": "Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Methods.OCO.DynamicRegret",
+      "dst": "MLTheory.Methods.Compat.Mathlib",
       "type": "imports",
       "weight": 1.0
     },
@@ -17849,6 +20285,18 @@
       "weight": 1.0
     },
     {
+      "src": "MLTheory.Methods.OCO.DynamicRegret",
+      "dst": "Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Methods.OCO.GamesAndDuality",
+      "dst": "MLTheory.Methods.Compat.Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
       "src": "MLTheory.Methods.OCO.GamesAndDuality",
       "dst": "MLTheory.Methods.OCO.OptimizationCore",
       "type": "imports",
@@ -17857,6 +20305,12 @@
     {
       "src": "MLTheory.Methods.OCO.GamesAndDuality",
       "dst": "MLTheory.Methods.OR.ConvexCore",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Methods.OCO.GamesAndDuality",
+      "dst": "Mathlib",
       "type": "imports",
       "weight": 1.0
     },
@@ -17874,7 +20328,19 @@
     },
     {
       "src": "MLTheory.Methods.OCO.OptimizationCore",
+      "dst": "MLTheory.Methods.Compat.Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Methods.OCO.OptimizationCore",
       "dst": "MLTheory.Methods.OR.ConvexCore",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Methods.OCO.OptimizationCore",
+      "dst": "Mathlib",
       "type": "imports",
       "weight": 1.0
     },
@@ -17903,8 +20369,38 @@
       "weight": 1.0
     },
     {
+      "src": "MLTheory.Methods.OR.ConvexCore",
+      "dst": "MLTheory.Methods.Compat.Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Methods.OR.ConvexCore",
+      "dst": "Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Methods.OR.DiscreteOptimization",
+      "dst": "MLTheory.Methods.Compat.Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
       "src": "MLTheory.Methods.OR.DiscreteOptimization",
       "dst": "MLTheory.Methods.OR.ConvexCore",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Methods.OR.DiscreteOptimization",
+      "dst": "Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Methods.OR.GraphOptimization",
+      "dst": "MLTheory.Methods.Compat.Mathlib",
       "type": "imports",
       "weight": 1.0
     },
@@ -17915,8 +20411,26 @@
       "weight": 1.0
     },
     {
+      "src": "MLTheory.Methods.OR.GraphOptimization",
+      "dst": "Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Methods.OR.StochasticMatrix",
+      "dst": "MLTheory.Methods.Compat.Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
       "src": "MLTheory.Methods.OR.StochasticMatrix",
       "dst": "MLTheory.Methods.OR.ConvexCore",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Methods.OR.StochasticMatrix",
+      "dst": "Mathlib",
       "type": "imports",
       "weight": 1.0
     },
@@ -17945,6 +20459,18 @@
       "weight": 1.0
     },
     {
+      "src": "MLTheory.Methods.RL.DynamicProgramming",
+      "dst": "MLTheory.Methods.Compat.Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Methods.RL.DynamicProgramming",
+      "dst": "Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
       "src": "MLTheory.Methods.RL.MDP",
       "dst": "MLTheory.Core.RL.MDP",
       "type": "imports",
@@ -17958,9 +20484,2401 @@
     },
     {
       "src": "MLTheory.Methods.RL.TemporalDifference",
+      "dst": "MLTheory.Methods.Compat.Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Methods.RL.TemporalDifference",
       "dst": "MLTheory.Methods.RL.MDP",
       "type": "imports",
       "weight": 1.0
+    },
+    {
+      "src": "MLTheory.Methods.RL.TemporalDifference",
+      "dst": "Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.AddConstMap.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.AddConstMap.Equiv",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.AddTorsor.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.AddTorsor.Defs",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.AffineMonoid.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.AffineMonoid.Embedding",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.AffineMonoid.Irreducible",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.AffineMonoid.UniqueSums",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Algebra.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Algebra.Bilinear",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Algebra.Defs",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Algebra.Epi",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Algebra.Equiv",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Algebra.Field",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Algebra.Hom",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Algebra.Hom.Rat",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Algebra.IsSimpleRing",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Algebra.NonUnitalHom",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Algebra.NonUnitalSubalgebra",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Algebra.Operations",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Algebra.Opposite",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Algebra.Pi",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Algebra.Prod",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Algebra.Rat",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Algebra.RestrictScalars",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Algebra.Shrink",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Algebra.Spectrum.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Algebra.Spectrum.Pi",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Algebra.Spectrum.Quasispectrum",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Algebra.StrictPositivity",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Algebra.Subalgebra.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Algebra.Subalgebra.Centralizer",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Algebra.Subalgebra.Directed",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Algebra.Subalgebra.IsSimpleOrder",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Algebra.Subalgebra.Lattice",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Algebra.Subalgebra.Matrix",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Algebra.Subalgebra.MulOpposite",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Algebra.Subalgebra.Operations",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Algebra.Subalgebra.Order",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Algebra.Subalgebra.Pi",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Algebra.Subalgebra.Pointwise",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Algebra.Subalgebra.Prod",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Algebra.Subalgebra.Rank",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Algebra.Subalgebra.Tower",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Algebra.Subalgebra.Unitization",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Algebra.Tower",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Algebra.TransferInstance",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Algebra.Unitization",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Algebra.ZMod",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.AlgebraicCard",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.ArithmeticGeometric",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Azumaya.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Azumaya.Defs",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Azumaya.Matrix",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.BigOperators.Associated",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.BigOperators.Balance",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.BigOperators.Expect",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.BigOperators.Field",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.BigOperators.Fin",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.BigOperators.Finprod",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.BigOperators.Finsupp.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.BigOperators.Finsupp.Fin",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.BigOperators.Group.Finset.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.BigOperators.Group.Finset.Defs",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.BigOperators.Group.Finset.Indicator",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.BigOperators.Group.Finset.Interval",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.BigOperators.Group.Finset.Lemmas",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.BigOperators.Group.Finset.Pi",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.BigOperators.Group.Finset.Piecewise",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.BigOperators.Group.Finset.Powerset",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.BigOperators.Group.Finset.Preimage",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.BigOperators.Group.Finset.Sigma",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.BigOperators.Group.List.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.BigOperators.Group.List.Defs",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.BigOperators.Group.List.Lemmas",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.BigOperators.Group.Multiset.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.BigOperators.Group.Multiset.Defs",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.BigOperators.GroupWithZero.Action",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.BigOperators.GroupWithZero.Finset",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.BigOperators.Intervals",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.BigOperators.ModEq",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.BigOperators.Module",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.BigOperators.NatAntidiagonal",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.BigOperators.Option",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.BigOperators.Pi",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.BigOperators.Ring.Finset",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.BigOperators.Ring.List",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.BigOperators.Ring.Multiset",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.BigOperators.Ring.Nat",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.BigOperators.RingEquiv",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.BigOperators.Sym",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.BigOperators.WithTop",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.BrauerGroup.Defs",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Category.AlgCat.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Category.AlgCat.Limits",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Category.AlgCat.Monoidal",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Category.AlgCat.Symmetric",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Category.BialgCat.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Category.BialgCat.Monoidal",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Category.BoolRing",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Category.CoalgCat.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Category.CoalgCat.ComonEquivalence",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Category.CoalgCat.Monoidal",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Category.CommAlgCat.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Category.CommAlgCat.FiniteType",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Category.CommAlgCat.Monoidal",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Category.CommBialgCat",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Category.ContinuousCohomology.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Category.FGModuleCat.Abelian",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Category.FGModuleCat.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Category.FGModuleCat.Colimits",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Category.FGModuleCat.EssentiallySmall",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Category.FGModuleCat.Limits",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Category.Grp.AB",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Category.Grp.Abelian",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Category.Grp.Adjunctions",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Category.Grp.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Category.Grp.Biproducts",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Category.Grp.CartesianMonoidal",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Category.Grp.Colimits",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Category.Grp.EnoughInjectives",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Category.Grp.EpiMono",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Category.Grp.EquivalenceGroupAddGroup",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Category.Grp.FilteredColimits",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Category.Grp.FiniteGrp",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Category.Grp.ForgetCorepresentable",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Category.Grp.Images",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Category.Grp.Injective",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Category.Grp.IsFinite",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Category.Grp.Kernels",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Field.Defs",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Group.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Group.Defs",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Group.Equiv.Defs",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Group.Hom.Defs",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Group.Nat.Defs",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Group.Pointwise.Set.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Group.UniqueProds.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Module.Torsion.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.MvPolynomial.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Order.Algebra",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Order.BigOperators.Group.Finset",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Order.Group.Nat",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Order.GroupWithZero.Canonical",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Order.Ring.Defs",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Polynomial.AlgebraMap",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Algebra.Ring.Defs",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Analysis.Normed.Algebra.Spectrum",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Analysis.Normed.Group.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Analysis.Normed.Module.FiniteDimension",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Analysis.NormedSpace.HahnBanach.Extension",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Analysis.RCLike.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Analysis.SpecificLimits.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Analysis.SpecificLimits.Normed",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.CategoryTheory.Category.Init",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.CategoryTheory.Extensive",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.CategoryTheory.Limits.Final",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.CategoryTheory.Limits.FunctorCategory.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.CategoryTheory.Limits.Preserves.Finite",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.CategoryTheory.Limits.Shapes.Preorder.WellOrderContinuous",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.CategoryTheory.Limits.Shapes.Pullback.IsPullback.BicartesianSq",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.CategoryTheory.Preadditive.AdditiveFunctor",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.CategoryTheory.Preadditive.Mat",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Combinatorics.Enumerative.Schroder",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Combinatorics.SetFamily.AhlswedeZhang",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Combinatorics.SetFamily.FourFunctions",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Data.EReal.Inv",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Data.Finset.Attr",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Data.Finset.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Data.Fintype.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Data.List.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Data.Nat.Bitwise",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Data.Real.Sqrt",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Data.Set.Card",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Data.Set.Finite.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Data.Set.Lattice",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.FieldTheory.Finite.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Geometry.Manifold.Instances.Sphere",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.GroupTheory.OrderOfElement",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.GroupTheory.Perm.Sign",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Init",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.LinearAlgebra.Determinant",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.LinearAlgebra.Dual.Lemmas",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.LinearAlgebra.LinearIndependent.Lemmas",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.LinearAlgebra.Matrix.ToLin",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.LinearAlgebra.Pi",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.LinearAlgebra.Span.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Logic.Equiv.Defs",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.ModelTheory.Arithmetic.Presburger.Semilinear.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Order.CompactlyGenerated.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Order.Hom.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.RingTheory.AdjoinRoot",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.RingTheory.Artinian.Module",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.RingTheory.Ideal.Maps",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.RingTheory.Ideal.Quotient.Operations",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.RingTheory.LinearDisjoint",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.RingTheory.LocalRing.Module",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.RingTheory.MvPowerSeries.PiTopology",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.RingTheory.NonUnitalSubsemiring.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.RingTheory.SimpleModule.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.RingTheory.Spectrum.Prime.Topology",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Tactic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Tactic.Abel",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Tactic.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Tactic.Common",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Tactic.FieldSimp",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Tactic.Finiteness.Attr",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Tactic.FunProp",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Tactic.Linter.DeprecatedModule",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Tactic.Linter.UpstreamableDecl",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Tactic.NormNum",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Tactic.Positivity",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Tactic.Ring",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Tactic.SetLike",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Tactic.TypeStar",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Topology.Algebra.Ring.Compact",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Topology.MetricSpace.Bounded",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib",
+      "dst": "Mathlib.Util.CompileInductive",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.AddConstMap.Equiv",
+      "dst": "Mathlib.Algebra.AddConstMap.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.AddTorsor.Basic",
+      "dst": "Mathlib.Algebra.AddTorsor.Defs",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.AffineMonoid.UniqueSums",
+      "dst": "Mathlib.Algebra.AffineMonoid.Embedding",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.AffineMonoid.UniqueSums",
+      "dst": "Mathlib.Algebra.Group.UniqueProds.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Algebra.Basic",
+      "dst": "Mathlib.Algebra.Algebra.Defs",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Algebra.Bilinear",
+      "dst": "Mathlib.Algebra.Algebra.NonUnitalHom",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Algebra.Epi",
+      "dst": "Mathlib.Algebra.Algebra.Bilinear",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Algebra.Equiv",
+      "dst": "Mathlib.Algebra.Algebra.Hom",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Algebra.Field",
+      "dst": "Mathlib.Algebra.Algebra.Defs",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Algebra.Hom",
+      "dst": "Mathlib.Algebra.Algebra.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Algebra.Hom.Rat",
+      "dst": "Mathlib.Algebra.Algebra.Hom",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Algebra.Hom.Rat",
+      "dst": "Mathlib.Algebra.Algebra.Rat",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Algebra.IsSimpleRing",
+      "dst": "Mathlib.Algebra.Algebra.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Algebra.NonUnitalHom",
+      "dst": "Mathlib.Algebra.Algebra.Hom",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Algebra.NonUnitalSubalgebra",
+      "dst": "Mathlib.Algebra.Algebra.NonUnitalHom",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Algebra.NonUnitalSubalgebra",
+      "dst": "Mathlib.LinearAlgebra.Span.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Algebra.Operations",
+      "dst": "Mathlib.Algebra.Algebra.Bilinear",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Algebra.Operations",
+      "dst": "Mathlib.Algebra.Algebra.Opposite",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Algebra.Opposite",
+      "dst": "Mathlib.Algebra.Algebra.Equiv",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Algebra.Pi",
+      "dst": "Mathlib.Algebra.Algebra.Equiv",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Algebra.Pi",
+      "dst": "Mathlib.Algebra.Algebra.Opposite",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Algebra.Pi",
+      "dst": "Mathlib.Algebra.Algebra.Prod",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Algebra.Prod",
+      "dst": "Mathlib.Algebra.Algebra.Equiv",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Algebra.Prod",
+      "dst": "Mathlib.Algebra.Algebra.Hom",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Algebra.Rat",
+      "dst": "Mathlib.Algebra.Algebra.Defs",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Algebra.RestrictScalars",
+      "dst": "Mathlib.Algebra.Algebra.Tower",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Algebra.Shrink",
+      "dst": "Mathlib.Algebra.Algebra.TransferInstance",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Algebra.Spectrum.Basic",
+      "dst": "Mathlib.Algebra.Algebra.Subalgebra.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Algebra.Spectrum.Basic",
+      "dst": "Mathlib.RingTheory.Ideal.Maps",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Algebra.Spectrum.Pi",
+      "dst": "Mathlib.Algebra.Algebra.Pi",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Algebra.Spectrum.Pi",
+      "dst": "Mathlib.Algebra.Algebra.Prod",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Algebra.Spectrum.Pi",
+      "dst": "Mathlib.Algebra.Algebra.Spectrum.Quasispectrum",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Algebra.Spectrum.Quasispectrum",
+      "dst": "Mathlib.Algebra.Algebra.Spectrum.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Algebra.Spectrum.Quasispectrum",
+      "dst": "Mathlib.Algebra.Algebra.Tower",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Algebra.Spectrum.Quasispectrum",
+      "dst": "Mathlib.Algebra.Algebra.Unitization",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Algebra.StrictPositivity",
+      "dst": "Mathlib.Algebra.Algebra.Spectrum.Quasispectrum",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Algebra.Subalgebra.Basic",
+      "dst": "Mathlib.Algebra.Algebra.Equiv",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Algebra.Subalgebra.Basic",
+      "dst": "Mathlib.Algebra.Algebra.NonUnitalSubalgebra",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Algebra.Subalgebra.Directed",
+      "dst": "Mathlib.Algebra.Algebra.Subalgebra.Lattice",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Algebra.Subalgebra.Lattice",
+      "dst": "Mathlib.Algebra.Algebra.Operations",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Algebra.Subalgebra.Lattice",
+      "dst": "Mathlib.Algebra.Algebra.Subalgebra.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Algebra.Subalgebra.Matrix",
+      "dst": "Mathlib.Algebra.Algebra.Subalgebra.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Algebra.Subalgebra.MulOpposite",
+      "dst": "Mathlib.Algebra.Algebra.Subalgebra.Lattice",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Algebra.Subalgebra.Operations",
+      "dst": "Mathlib.Algebra.Algebra.Subalgebra.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Algebra.Subalgebra.Operations",
+      "dst": "Mathlib.RingTheory.Ideal.Maps",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Algebra.Subalgebra.Order",
+      "dst": "Mathlib.Algebra.Algebra.Subalgebra.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Algebra.Subalgebra.Pi",
+      "dst": "Mathlib.Algebra.Algebra.Pi",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Algebra.Subalgebra.Pi",
+      "dst": "Mathlib.Algebra.Algebra.Subalgebra.Lattice",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Algebra.Subalgebra.Pi",
+      "dst": "Mathlib.LinearAlgebra.Pi",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Algebra.Subalgebra.Pointwise",
+      "dst": "Mathlib.Algebra.Algebra.Subalgebra.Lattice",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Algebra.Subalgebra.Prod",
+      "dst": "Mathlib.Algebra.Algebra.Prod",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Algebra.Subalgebra.Prod",
+      "dst": "Mathlib.Algebra.Algebra.Subalgebra.Lattice",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Algebra.Subalgebra.Tower",
+      "dst": "Mathlib.Algebra.Algebra.Subalgebra.Lattice",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Algebra.Subalgebra.Tower",
+      "dst": "Mathlib.Algebra.Algebra.Tower",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Algebra.Subalgebra.Unitization",
+      "dst": "Mathlib.Algebra.Algebra.Unitization",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Algebra.Tower",
+      "dst": "Mathlib.Algebra.Algebra.Equiv",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Algebra.Tower",
+      "dst": "Mathlib.LinearAlgebra.Span.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Algebra.TransferInstance",
+      "dst": "Mathlib.Algebra.Algebra.Equiv",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Algebra.Unitization",
+      "dst": "Mathlib.Algebra.Algebra.Defs",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Algebra.Unitization",
+      "dst": "Mathlib.Algebra.Algebra.NonUnitalHom",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Algebra.Unitization",
+      "dst": "Mathlib.Tactic.Abel",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Algebra.ZMod",
+      "dst": "Mathlib.Algebra.Algebra.Defs",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.ArithmeticGeometric",
+      "dst": "Mathlib.Data.EReal.Inv",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.ArithmeticGeometric",
+      "dst": "Mathlib.Topology.MetricSpace.Bounded",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Azumaya.Basic",
+      "dst": "Mathlib.Algebra.Azumaya.Defs",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Azumaya.Matrix",
+      "dst": "Mathlib.Algebra.Azumaya.Defs",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BigOperators.Associated",
+      "dst": "Mathlib.Algebra.BigOperators.Finsupp.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BigOperators.Balance",
+      "dst": "Mathlib.Algebra.BigOperators.Expect",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BigOperators.Expect",
+      "dst": "Mathlib.Algebra.Algebra.Rat",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BigOperators.Expect",
+      "dst": "Mathlib.Algebra.BigOperators.GroupWithZero.Action",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BigOperators.Expect",
+      "dst": "Mathlib.Algebra.BigOperators.Pi",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BigOperators.Expect",
+      "dst": "Mathlib.Algebra.BigOperators.Ring.Finset",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BigOperators.Field",
+      "dst": "Mathlib.Algebra.BigOperators.Ring.Finset",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BigOperators.Field",
+      "dst": "Mathlib.Algebra.Field.Defs",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BigOperators.Fin",
+      "dst": "Mathlib.Algebra.BigOperators.Ring.Finset",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BigOperators.Finprod",
+      "dst": "Mathlib.Algebra.BigOperators.Pi",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BigOperators.Finprod",
+      "dst": "Mathlib.Algebra.Order.BigOperators.Group.Finset",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BigOperators.Finprod",
+      "dst": "Mathlib.Algebra.Order.Ring.Defs",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BigOperators.Finsupp.Basic",
+      "dst": "Mathlib.Algebra.BigOperators.Group.Finset.Sigma",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BigOperators.Finsupp.Basic",
+      "dst": "Mathlib.Algebra.BigOperators.Pi",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BigOperators.Finsupp.Basic",
+      "dst": "Mathlib.Algebra.BigOperators.Ring.Finset",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BigOperators.Finsupp.Fin",
+      "dst": "Mathlib.Algebra.BigOperators.Fin",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BigOperators.Finsupp.Fin",
+      "dst": "Mathlib.Algebra.BigOperators.Finsupp.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BigOperators.Group.Finset.Basic",
+      "dst": "Mathlib.Algebra.BigOperators.Group.Finset.Defs",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BigOperators.Group.Finset.Defs",
+      "dst": "Mathlib.Algebra.BigOperators.Group.Multiset.Defs",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BigOperators.Group.Finset.Indicator",
+      "dst": "Mathlib.Algebra.BigOperators.Group.Finset.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BigOperators.Group.Finset.Lemmas",
+      "dst": "Mathlib.Algebra.BigOperators.Group.Finset.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BigOperators.Group.Finset.Pi",
+      "dst": "Mathlib.Algebra.BigOperators.Group.Finset.Defs",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BigOperators.Group.Finset.Piecewise",
+      "dst": "Mathlib.Algebra.BigOperators.Group.Finset.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BigOperators.Group.Finset.Powerset",
+      "dst": "Mathlib.Algebra.BigOperators.Group.Finset.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BigOperators.Group.Finset.Preimage",
+      "dst": "Mathlib.Algebra.BigOperators.Group.Finset.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BigOperators.Group.Finset.Sigma",
+      "dst": "Mathlib.Algebra.BigOperators.Group.Finset.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BigOperators.Group.List.Basic",
+      "dst": "Mathlib.Algebra.BigOperators.Group.List.Defs",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BigOperators.Group.List.Basic",
+      "dst": "Mathlib.Algebra.Group.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BigOperators.Group.List.Basic",
+      "dst": "Mathlib.Algebra.Group.Hom.Defs",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BigOperators.Group.List.Basic",
+      "dst": "Mathlib.Algebra.Group.Nat.Defs",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BigOperators.Group.List.Defs",
+      "dst": "Mathlib.Algebra.Group.Defs",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BigOperators.Group.List.Lemmas",
+      "dst": "Mathlib.Algebra.BigOperators.Group.List.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BigOperators.Group.Multiset.Basic",
+      "dst": "Mathlib.Algebra.BigOperators.Group.List.Lemmas",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BigOperators.Group.Multiset.Basic",
+      "dst": "Mathlib.Algebra.BigOperators.Group.Multiset.Defs",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BigOperators.Group.Multiset.Defs",
+      "dst": "Mathlib.Algebra.BigOperators.Group.List.Defs",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BigOperators.Group.Multiset.Defs",
+      "dst": "Mathlib.Algebra.Group.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BigOperators.GroupWithZero.Action",
+      "dst": "Mathlib.Algebra.BigOperators.Finprod",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BigOperators.GroupWithZero.Action",
+      "dst": "Mathlib.Data.Finset.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BigOperators.GroupWithZero.Finset",
+      "dst": "Mathlib.Algebra.BigOperators.Group.Finset.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BigOperators.GroupWithZero.Finset",
+      "dst": "Mathlib.Data.Set.Lattice",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BigOperators.ModEq",
+      "dst": "Mathlib.Algebra.BigOperators.Ring.Finset",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BigOperators.Module",
+      "dst": "Mathlib.Algebra.BigOperators.Intervals",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BigOperators.Module",
+      "dst": "Mathlib.Tactic.Abel",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BigOperators.NatAntidiagonal",
+      "dst": "Mathlib.Algebra.BigOperators.Group.Finset.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BigOperators.Option",
+      "dst": "Mathlib.Algebra.BigOperators.Group.Finset.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BigOperators.Pi",
+      "dst": "Mathlib.Algebra.BigOperators.Group.Finset.Lemmas",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BigOperators.Pi",
+      "dst": "Mathlib.Algebra.BigOperators.Group.Finset.Piecewise",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BigOperators.Pi",
+      "dst": "Mathlib.Algebra.BigOperators.GroupWithZero.Finset",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BigOperators.Pi",
+      "dst": "Mathlib.Data.Fintype.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BigOperators.Ring.Finset",
+      "dst": "Mathlib.Algebra.BigOperators.Group.Finset.Pi",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BigOperators.Ring.Finset",
+      "dst": "Mathlib.Algebra.BigOperators.Group.Finset.Piecewise",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BigOperators.Ring.Finset",
+      "dst": "Mathlib.Algebra.BigOperators.GroupWithZero.Finset",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BigOperators.Ring.Finset",
+      "dst": "Mathlib.Algebra.BigOperators.Ring.Multiset",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BigOperators.Ring.List",
+      "dst": "Mathlib.Algebra.BigOperators.Group.List.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BigOperators.Ring.Multiset",
+      "dst": "Mathlib.Algebra.BigOperators.Group.Multiset.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BigOperators.Ring.Multiset",
+      "dst": "Mathlib.Algebra.BigOperators.Ring.List",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BigOperators.Ring.Nat",
+      "dst": "Mathlib.Algebra.BigOperators.Group.Finset.Lemmas",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BigOperators.RingEquiv",
+      "dst": "Mathlib.Algebra.BigOperators.Group.Finset.Defs",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BigOperators.Sym",
+      "dst": "Mathlib.Algebra.BigOperators.Group.Finset.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BigOperators.WithTop",
+      "dst": "Mathlib.Algebra.BigOperators.GroupWithZero.Finset",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.BrauerGroup.Defs",
+      "dst": "Mathlib.Algebra.Category.AlgCat.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Category.AlgCat.Basic",
+      "dst": "Mathlib.Algebra.Algebra.Subalgebra.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Category.AlgCat.Limits",
+      "dst": "Mathlib.Algebra.Algebra.Pi",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Category.AlgCat.Limits",
+      "dst": "Mathlib.Algebra.Algebra.Shrink",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Category.AlgCat.Limits",
+      "dst": "Mathlib.Algebra.Category.AlgCat.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Category.AlgCat.Monoidal",
+      "dst": "Mathlib.Algebra.Category.AlgCat.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Category.AlgCat.Symmetric",
+      "dst": "Mathlib.Algebra.Category.AlgCat.Monoidal",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Category.BialgCat.Basic",
+      "dst": "Mathlib.Algebra.Category.AlgCat.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Category.BialgCat.Basic",
+      "dst": "Mathlib.Algebra.Category.CoalgCat.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Category.BialgCat.Monoidal",
+      "dst": "Mathlib.Algebra.Category.AlgCat.Monoidal",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Category.BialgCat.Monoidal",
+      "dst": "Mathlib.Algebra.Category.BialgCat.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Category.BialgCat.Monoidal",
+      "dst": "Mathlib.Algebra.Category.CoalgCat.Monoidal",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Category.CoalgCat.ComonEquivalence",
+      "dst": "Mathlib.Algebra.Category.CoalgCat.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Category.CoalgCat.Monoidal",
+      "dst": "Mathlib.Algebra.Category.CoalgCat.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Category.CommAlgCat.Basic",
+      "dst": "Mathlib.Algebra.Category.AlgCat.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Category.CommAlgCat.FiniteType",
+      "dst": "Mathlib.Algebra.Category.CommAlgCat.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Category.CommAlgCat.Monoidal",
+      "dst": "Mathlib.Algebra.Category.CommAlgCat.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Category.CommBialgCat",
+      "dst": "Mathlib.Algebra.Category.CommAlgCat.Monoidal",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Category.FGModuleCat.Abelian",
+      "dst": "Mathlib.Algebra.Category.FGModuleCat.Colimits",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Category.FGModuleCat.Abelian",
+      "dst": "Mathlib.Algebra.Category.FGModuleCat.Limits",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Category.FGModuleCat.Colimits",
+      "dst": "Mathlib.Algebra.Category.FGModuleCat.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Category.FGModuleCat.EssentiallySmall",
+      "dst": "Mathlib.Algebra.Category.FGModuleCat.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Category.FGModuleCat.Limits",
+      "dst": "Mathlib.Algebra.Category.FGModuleCat.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Category.Grp.AB",
+      "dst": "Mathlib.Algebra.Category.Grp.Biproducts",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Category.Grp.AB",
+      "dst": "Mathlib.Algebra.Category.Grp.FilteredColimits",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Category.Grp.Abelian",
+      "dst": "Mathlib.Algebra.Category.Grp.Colimits",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Category.Grp.CartesianMonoidal",
+      "dst": "Mathlib.Algebra.Category.Grp.Biproducts",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Category.Grp.EnoughInjectives",
+      "dst": "Mathlib.Algebra.Category.Grp.EpiMono",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Category.Grp.EnoughInjectives",
+      "dst": "Mathlib.Algebra.Category.Grp.EquivalenceGroupAddGroup",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Category.Grp.EnoughInjectives",
+      "dst": "Mathlib.Algebra.Category.Grp.Injective",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Category.Grp.EpiMono",
+      "dst": "Mathlib.Algebra.Category.Grp.EquivalenceGroupAddGroup",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Category.Grp.EquivalenceGroupAddGroup",
+      "dst": "Mathlib.Algebra.Category.Grp.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Category.Grp.FilteredColimits",
+      "dst": "Mathlib.Algebra.Category.Grp.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Category.Grp.FiniteGrp",
+      "dst": "Mathlib.Algebra.Category.Grp.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Category.Grp.ForgetCorepresentable",
+      "dst": "Mathlib.Algebra.Category.Grp.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Category.Grp.Images",
+      "dst": "Mathlib.Algebra.Category.Grp.Abelian",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Category.Grp.IsFinite",
+      "dst": "Mathlib.Algebra.Category.Grp.Abelian",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Category.Grp.IsFinite",
+      "dst": "Mathlib.Algebra.Category.Grp.EpiMono",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Category.Grp.Kernels",
+      "dst": "Mathlib.Algebra.Category.Grp.EpiMono",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Field.Defs",
+      "dst": "Mathlib.Algebra.Ring.Defs",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Group.Basic",
+      "dst": "Mathlib.Algebra.Group.Defs",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Group.Defs",
+      "dst": "Mathlib.Tactic.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Group.Equiv.Defs",
+      "dst": "Mathlib.Algebra.Group.Hom.Defs",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Group.Equiv.Defs",
+      "dst": "Mathlib.Logic.Equiv.Defs",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Group.Hom.Defs",
+      "dst": "Mathlib.Algebra.Group.Defs",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Group.Nat.Defs",
+      "dst": "Mathlib.Algebra.Group.Defs",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Group.UniqueProds.Basic",
+      "dst": "Mathlib.Algebra.Group.UniqueProds.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Module.Torsion.Basic",
+      "dst": "Mathlib.RingTheory.Ideal.Maps",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Module.Torsion.Basic",
+      "dst": "Mathlib.RingTheory.SimpleModule.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.MvPolynomial.Basic",
+      "dst": "Mathlib.Algebra.Algebra.Subalgebra.Lattice",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.MvPolynomial.Basic",
+      "dst": "Mathlib.Algebra.Algebra.Tower",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Order.Algebra",
+      "dst": "Mathlib.Algebra.Algebra.Defs",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Order.BigOperators.Group.Finset",
+      "dst": "Mathlib.Algebra.BigOperators.Group.Finset.Sigma",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Order.BigOperators.Group.Finset",
+      "dst": "Mathlib.Algebra.Order.Group.Nat",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Order.Group.Nat",
+      "dst": "Mathlib.Algebra.Group.Nat.Defs",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Order.Ring.Defs",
+      "dst": "Mathlib.Algebra.Ring.Defs",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Polynomial.AlgebraMap",
+      "dst": "Mathlib.Algebra.Algebra.Pi",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Polynomial.AlgebraMap",
+      "dst": "Mathlib.Algebra.Algebra.Prod",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Polynomial.AlgebraMap",
+      "dst": "Mathlib.Algebra.Algebra.Subalgebra.Lattice",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Algebra.Polynomial.AlgebraMap",
+      "dst": "Mathlib.Algebra.Algebra.Tower",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Analysis.Normed.Algebra.Spectrum",
+      "dst": "Mathlib.Algebra.Algebra.Spectrum.Quasispectrum",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Analysis.Normed.Module.FiniteDimension",
+      "dst": "Mathlib.Analysis.SpecificLimits.Normed",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Analysis.NormedSpace.HahnBanach.Extension",
+      "dst": "Mathlib.Algebra.Order.Algebra",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Analysis.NormedSpace.HahnBanach.Extension",
+      "dst": "Mathlib.Analysis.Normed.Group.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Analysis.NormedSpace.HahnBanach.Extension",
+      "dst": "Mathlib.Data.EReal.Inv",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Analysis.NormedSpace.HahnBanach.Extension",
+      "dst": "Mathlib.Data.Real.Sqrt",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Analysis.NormedSpace.HahnBanach.Extension",
+      "dst": "Mathlib.Tactic.Positivity",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Analysis.RCLike.Basic",
+      "dst": "Mathlib.Algebra.Algebra.IsSimpleRing",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Analysis.RCLike.Basic",
+      "dst": "Mathlib.Algebra.BigOperators.Balance",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Analysis.RCLike.Basic",
+      "dst": "Mathlib.Data.Real.Sqrt",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Analysis.SpecificLimits.Normed",
+      "dst": "Mathlib.Algebra.BigOperators.Module",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Analysis.SpecificLimits.Normed",
+      "dst": "Mathlib.Analysis.SpecificLimits.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.CategoryTheory.Category.Init",
+      "dst": "Mathlib.Init",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.CategoryTheory.Extensive",
+      "dst": "Mathlib.CategoryTheory.Limits.FunctorCategory.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.CategoryTheory.Extensive",
+      "dst": "Mathlib.CategoryTheory.Limits.Shapes.Pullback.IsPullback.BicartesianSq",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.CategoryTheory.Limits.Shapes.Preorder.WellOrderContinuous",
+      "dst": "Mathlib.CategoryTheory.Limits.Final",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.CategoryTheory.Preadditive.AdditiveFunctor",
+      "dst": "Mathlib.CategoryTheory.Limits.Preserves.Finite",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.CategoryTheory.Preadditive.Mat",
+      "dst": "Mathlib.Algebra.BigOperators.Group.Finset.Pi",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.CategoryTheory.Preadditive.Mat",
+      "dst": "Mathlib.Algebra.BigOperators.Pi",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.CategoryTheory.Preadditive.Mat",
+      "dst": "Mathlib.CategoryTheory.Preadditive.AdditiveFunctor",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Combinatorics.Enumerative.Schroder",
+      "dst": "Mathlib.Algebra.BigOperators.Fin",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Combinatorics.Enumerative.Schroder",
+      "dst": "Mathlib.Algebra.BigOperators.Group.Finset.Defs",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Combinatorics.Enumerative.Schroder",
+      "dst": "Mathlib.Algebra.BigOperators.Group.Finset.Lemmas",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Combinatorics.SetFamily.AhlswedeZhang",
+      "dst": "Mathlib.Algebra.BigOperators.Group.Finset.Powerset",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Combinatorics.SetFamily.AhlswedeZhang",
+      "dst": "Mathlib.Algebra.BigOperators.Intervals",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Combinatorics.SetFamily.AhlswedeZhang",
+      "dst": "Mathlib.Algebra.BigOperators.Ring.Finset",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Combinatorics.SetFamily.AhlswedeZhang",
+      "dst": "Mathlib.Algebra.Order.BigOperators.Group.Finset",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Combinatorics.SetFamily.AhlswedeZhang",
+      "dst": "Mathlib.Tactic.FieldSimp",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Combinatorics.SetFamily.AhlswedeZhang",
+      "dst": "Mathlib.Tactic.Positivity",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Combinatorics.SetFamily.FourFunctions",
+      "dst": "Mathlib.Algebra.BigOperators.Group.Finset.Piecewise",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Combinatorics.SetFamily.FourFunctions",
+      "dst": "Mathlib.Algebra.Order.BigOperators.Group.Finset",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Combinatorics.SetFamily.FourFunctions",
+      "dst": "Mathlib.Tactic.Ring",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Data.Finset.Attr",
+      "dst": "Mathlib.Init",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Data.List.Basic",
+      "dst": "Mathlib.Tactic.Common",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Data.Nat.Bitwise",
+      "dst": "Mathlib.Tactic.Common",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.LinearAlgebra.Determinant",
+      "dst": "Mathlib.Tactic.FieldSimp",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.LinearAlgebra.LinearIndependent.Lemmas",
+      "dst": "Mathlib.LinearAlgebra.Pi",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.LinearAlgebra.LinearIndependent.Lemmas",
+      "dst": "Mathlib.Tactic.Abel",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.LinearAlgebra.Matrix.ToLin",
+      "dst": "Mathlib.Algebra.Algebra.Subalgebra.Tower",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.LinearAlgebra.Pi",
+      "dst": "Mathlib.Algebra.BigOperators.GroupWithZero.Action",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.LinearAlgebra.Pi",
+      "dst": "Mathlib.Algebra.BigOperators.Pi",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.LinearAlgebra.Span.Basic",
+      "dst": "Mathlib.Order.CompactlyGenerated.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.ModelTheory.Arithmetic.Presburger.Semilinear.Basic",
+      "dst": "Mathlib.LinearAlgebra.Matrix.ToLin",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.RingTheory.AdjoinRoot",
+      "dst": "Mathlib.Algebra.Algebra.Defs",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.RingTheory.Artinian.Module",
+      "dst": "Mathlib.RingTheory.Ideal.Quotient.Operations",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.RingTheory.Ideal.Quotient.Operations",
+      "dst": "Mathlib.Algebra.Algebra.Subalgebra.Operations",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.RingTheory.LinearDisjoint",
+      "dst": "Mathlib.Algebra.Algebra.Subalgebra.MulOpposite",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.RingTheory.LinearDisjoint",
+      "dst": "Mathlib.Algebra.Algebra.Subalgebra.Rank",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.RingTheory.LocalRing.Module",
+      "dst": "Mathlib.Algebra.Module.Torsion.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.RingTheory.LocalRing.Module",
+      "dst": "Mathlib.LinearAlgebra.Dual.Lemmas",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Tactic",
+      "dst": "Mathlib.Tactic.Abel",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Tactic",
+      "dst": "Mathlib.Tactic.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Tactic",
+      "dst": "Mathlib.Tactic.Common",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Tactic",
+      "dst": "Mathlib.Tactic.FieldSimp",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Tactic",
+      "dst": "Mathlib.Tactic.Finiteness.Attr",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Tactic",
+      "dst": "Mathlib.Tactic.FunProp",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Tactic",
+      "dst": "Mathlib.Tactic.Linter.DeprecatedModule",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Tactic",
+      "dst": "Mathlib.Tactic.Linter.UpstreamableDecl",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Tactic",
+      "dst": "Mathlib.Tactic.NormNum",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Tactic",
+      "dst": "Mathlib.Tactic.Positivity",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Tactic",
+      "dst": "Mathlib.Tactic.Ring",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Tactic",
+      "dst": "Mathlib.Tactic.SetLike",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Tactic",
+      "dst": "Mathlib.Tactic.TypeStar",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Tactic.Basic",
+      "dst": "Mathlib.Tactic.TypeStar",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Tactic.Common",
+      "dst": "Mathlib.Tactic.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Tactic.Common",
+      "dst": "Mathlib.Tactic.FunProp",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Tactic.Finiteness.Attr",
+      "dst": "Mathlib.Init",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Tactic.Linter.DeprecatedModule",
+      "dst": "Mathlib.Init",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Tactic.Linter.UpstreamableDecl",
+      "dst": "Mathlib.Init",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Tactic.SetLike",
+      "dst": "Mathlib.Tactic.Basic",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Tactic.TypeStar",
+      "dst": "Mathlib.Init",
+      "type": "imports"
+    },
+    {
+      "src": "Mathlib.Util.CompileInductive",
+      "dst": "Mathlib.Init",
+      "type": "imports"
     },
     {
       "src": "MLTheory.Applications.AI.AIGeneralizationScenario.casesOn",

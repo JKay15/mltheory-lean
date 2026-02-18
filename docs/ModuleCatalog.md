@@ -1,8 +1,8 @@
-# 模块总表（Module Catalog）
+# Module summary(Module Catalog)
 
 <!-- GENERATED FROM docs/ssot/registry.json. DO NOT EDIT MANUALLY. -->
 
-## 真实模块（file-backed）字段约束：
+## real module(file-backed)Field constraints:
 - `module_path`
 - `primary_node_id`
 - `source_track(native/books/legacy)`
@@ -88,73 +88,73 @@
 | MLTheory.Methods.RL.MDP | rl | RL | native | partial | mathlib | SuttonBartoRL2 Ch3-Ch4 | methods | proved | forbidden | tool | public | MDPMethodProblem, bellmanOperator, valueIterationUpdate_eq_bellmanOperator, bellmanBridgeSpec |
 | MLTheory.Methods.RL.TemporalDifference | rl | RL | native | partial | mathlib | SuttonBartoRL2 Ch6-Ch7 | methods | proved | forbidden | tool | public | TemporalDifferenceProblem, tdTarget, tdError, tdUpdate, tdError_after_update, tdError_sq_nonneg |
 
-## 规划模块（non-file-backed）字段约束：
+## planning module(non-file-backed)Field constraints:
 - `module_path`
 - `target_node_id`
 - `source_track(native/books)`
 - `status(planned/partial/covered/gap)`
-- `execution_horizon(near/mid/far/unscheduled)`：来自 `execution_backlog`（未入短清单则为 unscheduled）
-- `execution_priority(P1/P2/P3)`：来自 `execution_backlog`（未入短清单则为 `—`）
-- `status=partial` 时，`reason` 必须包含可追溯证据（如 external/source_url/candidate_repo/证据）
+- `execution_horizon(near/mid/far/unscheduled)`:from `execution_backlog`(If not included in the short list, it is unscheduled)
+- `execution_priority(P1/P2/P3)`:from `execution_backlog`(If not included in the short list, it is `-`)
+- `status=partial` hour,`reason` Must contain traceability evidence(like external/source_url/candidate_repo/evidence)
 - `reason`
 
 | module_path | target_node_id | target_node_name | source_track(native/books) | status(planned/partial/covered/gap) | execution_horizon | execution_priority | reason |
 |---|---|---|---|---|---|---|---|
-| MLTheory.Books.BanditAlgorithms | bandits | Bandits | books | planned | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
-| MLTheory.Books.BanditAlgorithms.PartIII_AdversarialBandits | bandits | Bandits | books | gap | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
-| MLTheory.Books.BanditAlgorithms.PartII_StochasticBandits | bandits | Bandits | books | planned | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
-| MLTheory.Books.BanditAlgorithms.PartIV_ContextualLinearBandits | bandits | Bandits | books | gap | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
-| MLTheory.Books.BanditAlgorithms.PartI_Foundations | bandits | Bandits | books | planned | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
-| MLTheory.Books.BanditAlgorithms.PartVII_ReinforcementLearning | bandits | Bandits | books | gap | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
-| MLTheory.Books.BanditAlgorithms.PartVI_PureExploration | bandits | Bandits | books | gap | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
-| MLTheory.Books.BanditAlgorithms.PartV_LargeActionSpaces | bandits | Bandits | books | gap | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
-| MLTheory.Books.Durrett5 | probability | Probability | books | planned | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
-| MLTheory.Books.Durrett5.Ch01_MeasureTheory | probability | Probability | books | planned | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
-| MLTheory.Books.Durrett5.Ch02_ProbabilityTheory | probability | Probability | books | planned | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
-| MLTheory.Books.Durrett5.Ch03_IndependenceExpectations | probability | Probability | books | planned | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
-| MLTheory.Books.Durrett5.Ch04_LimitTheorems | probability | Probability | books | planned | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
-| MLTheory.Books.Durrett5.Ch05_PoissonApproximation | probability | Probability | books | gap | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
-| MLTheory.Books.Durrett5.Ch06_MarkovChains | probability | Probability | books | planned | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
-| MLTheory.Books.Durrett5.Ch07_Martingales | probability | Probability | books | planned | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
-| MLTheory.Books.Durrett5.Ch08_BrownianMotion | probability | Probability | books | gap | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
-| MLTheory.Books.Durrett5.Ch09_StationaryProcesses | probability | Probability | books | gap | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
-| MLTheory.Books.Durrett5.Ch10_CTMC | probability | Probability | books | gap | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
-| MLTheory.Books.Durrett5.Ch11_ErgodicTheorems | probability | Probability | books | planned | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
-| MLTheory.Books.HazanOCO2 | oco | OCO | books | planned | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
-| MLTheory.Books.HazanOCO2.PartIII_GeneralizationAndAdaptivity | oco | OCO | books | gap | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
-| MLTheory.Books.HazanOCO2.PartII_BanditAndGames | oco | OCO | books | gap | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
-| MLTheory.Books.HazanOCO2.PartIV_BoostingAndApproachability | oco | OCO | books | gap | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
-| MLTheory.Books.HazanOCO2.PartI_Core | oco | OCO | books | planned | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
-| MLTheory.Books.SuttonBartoRL2.PartIII_LookingDeeper | rl | RL | books | gap | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
-| MLTheory.Books.SuttonBartoRL2.PartII_ApproximateMethods | rl | RL | books | gap | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
-| MLTheory.Books.SuttonBartoRL2.PartI_TabularMethods | rl | RL | books | gap | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
-| MLTheory.Books.VershyninHDP.Ch01_Refresher | probability | Probability | books | planned | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
-| MLTheory.Books.VershyninHDP.Ch02_IndependentSums | probability | Probability | books | planned | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
-| MLTheory.Books.VershyninHDP.Ch03_RandomVectors | probability | Probability | books | planned | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
-| MLTheory.Books.VershyninHDP.Ch04_RandomMatrices | probability | Probability | books | planned | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
-| MLTheory.Books.VershyninHDP.Ch05_WithoutIndependence | probability | Probability | books | planned | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
-| MLTheory.Books.VershyninHDP.Ch06_QuadraticSymmContraction | probability | Probability | books | planned | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
-| MLTheory.Books.VershyninHDP.Ch07_RandomProcesses | probability | Probability | books | planned | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
-| MLTheory.Books.VershyninHDP.Ch08_Chaining | probability | Probability | books | planned | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
-| MLTheory.Books.VershyninHDP.Ch09_MatrixDeviations | probability | Probability | books | planned | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
-| MLTheory.Core.Probability.Brownian | probability | Probability | native | gap | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=core, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.BanditAlgorithms | bandits | Bandits | books | planned | unscheduled | - | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.BanditAlgorithms.PartIII_AdversarialBandits | bandits | Bandits | books | gap | unscheduled | - | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.BanditAlgorithms.PartII_StochasticBandits | bandits | Bandits | books | planned | unscheduled | - | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.BanditAlgorithms.PartIV_ContextualLinearBandits | bandits | Bandits | books | gap | unscheduled | - | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.BanditAlgorithms.PartI_Foundations | bandits | Bandits | books | planned | unscheduled | - | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.BanditAlgorithms.PartVII_ReinforcementLearning | bandits | Bandits | books | gap | unscheduled | - | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.BanditAlgorithms.PartVI_PureExploration | bandits | Bandits | books | gap | unscheduled | - | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.BanditAlgorithms.PartV_LargeActionSpaces | bandits | Bandits | books | gap | unscheduled | - | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.Durrett5 | probability | Probability | books | planned | unscheduled | - | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.Durrett5.Ch01_MeasureTheory | probability | Probability | books | planned | unscheduled | - | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.Durrett5.Ch02_ProbabilityTheory | probability | Probability | books | planned | unscheduled | - | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.Durrett5.Ch03_IndependenceExpectations | probability | Probability | books | planned | unscheduled | - | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.Durrett5.Ch04_LimitTheorems | probability | Probability | books | planned | unscheduled | - | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.Durrett5.Ch05_PoissonApproximation | probability | Probability | books | gap | unscheduled | - | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.Durrett5.Ch06_MarkovChains | probability | Probability | books | planned | unscheduled | - | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.Durrett5.Ch07_Martingales | probability | Probability | books | planned | unscheduled | - | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.Durrett5.Ch08_BrownianMotion | probability | Probability | books | gap | unscheduled | - | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.Durrett5.Ch09_StationaryProcesses | probability | Probability | books | gap | unscheduled | - | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.Durrett5.Ch10_CTMC | probability | Probability | books | gap | unscheduled | - | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.Durrett5.Ch11_ErgodicTheorems | probability | Probability | books | planned | unscheduled | - | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.HazanOCO2 | oco | OCO | books | planned | unscheduled | - | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.HazanOCO2.PartIII_GeneralizationAndAdaptivity | oco | OCO | books | gap | unscheduled | - | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.HazanOCO2.PartII_BanditAndGames | oco | OCO | books | gap | unscheduled | - | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.HazanOCO2.PartIV_BoostingAndApproachability | oco | OCO | books | gap | unscheduled | - | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.HazanOCO2.PartI_Core | oco | OCO | books | planned | unscheduled | - | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.SuttonBartoRL2.PartIII_LookingDeeper | rl | RL | books | gap | unscheduled | - | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.SuttonBartoRL2.PartII_ApproximateMethods | rl | RL | books | gap | unscheduled | - | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.SuttonBartoRL2.PartI_TabularMethods | rl | RL | books | gap | unscheduled | - | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.VershyninHDP.Ch01_Refresher | probability | Probability | books | planned | unscheduled | - | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.VershyninHDP.Ch02_IndependentSums | probability | Probability | books | planned | unscheduled | - | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.VershyninHDP.Ch03_RandomVectors | probability | Probability | books | planned | unscheduled | - | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.VershyninHDP.Ch04_RandomMatrices | probability | Probability | books | planned | unscheduled | - | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.VershyninHDP.Ch05_WithoutIndependence | probability | Probability | books | planned | unscheduled | - | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.VershyninHDP.Ch06_QuadraticSymmContraction | probability | Probability | books | planned | unscheduled | - | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.VershyninHDP.Ch07_RandomProcesses | probability | Probability | books | planned | unscheduled | - | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.VershyninHDP.Ch08_Chaining | probability | Probability | books | planned | unscheduled | - | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Books.VershyninHDP.Ch09_MatrixDeviations | probability | Probability | books | planned | unscheduled | - | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
+| MLTheory.Core.Probability.Brownian | probability | Probability | native | gap | unscheduled | - | No local .lean file yet; keep as roadmap/planned module (layer=core, role=placeholder, proof_status=placeholder). |
 | MLTheory.Core.Probability.CLTBridge | probability | Probability | native | gap | near | P3 | No local .lean file yet; keep as roadmap/planned module (layer=core, role=placeholder, proof_status=placeholder). |
-| MLTheory.Core.Probability.CTMC | probability | Probability | native | gap | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=core, role=placeholder, proof_status=placeholder). |
-| MLTheory.Core.Probability.DensityCDF | probability | Probability | native | planned | unscheduled | — | No local .lean file yet; roadmap item pending file-backed implementation. |
-| MLTheory.Core.Probability.Ergodic | probability | Probability | native | planned | unscheduled | — | No local .lean file yet; roadmap item pending file-backed implementation. |
-| MLTheory.Core.Probability.LimitLaws | probability | Probability | native | planned | unscheduled | — | No local .lean file yet; roadmap item pending file-backed implementation. |
-| MLTheory.Core.Probability.MarkovKernels | probability | Probability | native | planned | unscheduled | — | No local .lean file yet; roadmap item pending file-backed implementation. |
-| MLTheory.Core.Probability.Martingales | probability | Probability | native | planned | unscheduled | — | No local .lean file yet; roadmap item pending file-backed implementation. |
-| MLTheory.Core.Probability.Moments | probability | Probability | native | planned | unscheduled | — | No local .lean file yet; roadmap item pending file-backed implementation. |
-| MLTheory.Core.Probability.PoissonApprox | probability | Probability | native | gap | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=core, role=placeholder, proof_status=placeholder). |
-| MLTheory.Core.Probability.Stationary | probability | Probability | native | gap | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=core, role=placeholder, proof_status=placeholder). |
-| MLTheory.Methods.RL.CaseStudies | rl | RL | native | gap | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=methods, role=placeholder, proof_status=placeholder). |
-| MLTheory.Methods.RL.EligibilityTraces | rl | RL | native | gap | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=methods, role=placeholder, proof_status=placeholder). |
-| MLTheory.Methods.RL.Frontiers | rl | RL | native | gap | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=methods, role=placeholder, proof_status=placeholder). |
-| MLTheory.Methods.RL.FunctionApproximation | rl | RL | native | gap | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=methods, role=placeholder, proof_status=placeholder). |
-| MLTheory.Methods.RL.ModelBasedPlanning | rl | RL | native | gap | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=methods, role=placeholder, proof_status=placeholder). |
-| MLTheory.Methods.RL.MonteCarlo | rl | RL | native | gap | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=methods, role=placeholder, proof_status=placeholder). |
-| MLTheory.Methods.RL.NeuroscienceBridge | rl | RL | native | gap | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=methods, role=placeholder, proof_status=placeholder). |
-| MLTheory.Methods.RL.OffPolicy | rl | RL | native | gap | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=methods, role=placeholder, proof_status=placeholder). |
-| MLTheory.Methods.RL.PolicyGradient | rl | RL | native | gap | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=methods, role=placeholder, proof_status=placeholder). |
-| MLTheory.Methods.RL.PsychologyBridge | rl | RL | native | gap | unscheduled | — | No local .lean file yet; keep as roadmap/planned module (layer=methods, role=placeholder, proof_status=placeholder). |
+| MLTheory.Core.Probability.CTMC | probability | Probability | native | gap | unscheduled | - | No local .lean file yet; keep as roadmap/planned module (layer=core, role=placeholder, proof_status=placeholder). |
+| MLTheory.Core.Probability.DensityCDF | probability | Probability | native | planned | unscheduled | - | No local .lean file yet; roadmap item pending file-backed implementation. |
+| MLTheory.Core.Probability.Ergodic | probability | Probability | native | planned | unscheduled | - | No local .lean file yet; roadmap item pending file-backed implementation. |
+| MLTheory.Core.Probability.LimitLaws | probability | Probability | native | planned | unscheduled | - | No local .lean file yet; roadmap item pending file-backed implementation. |
+| MLTheory.Core.Probability.MarkovKernels | probability | Probability | native | planned | unscheduled | - | No local .lean file yet; roadmap item pending file-backed implementation. |
+| MLTheory.Core.Probability.Martingales | probability | Probability | native | planned | unscheduled | - | No local .lean file yet; roadmap item pending file-backed implementation. |
+| MLTheory.Core.Probability.Moments | probability | Probability | native | planned | unscheduled | - | No local .lean file yet; roadmap item pending file-backed implementation. |
+| MLTheory.Core.Probability.PoissonApprox | probability | Probability | native | gap | unscheduled | - | No local .lean file yet; keep as roadmap/planned module (layer=core, role=placeholder, proof_status=placeholder). |
+| MLTheory.Core.Probability.Stationary | probability | Probability | native | gap | unscheduled | - | No local .lean file yet; keep as roadmap/planned module (layer=core, role=placeholder, proof_status=placeholder). |
+| MLTheory.Methods.RL.CaseStudies | rl | RL | native | gap | unscheduled | - | No local .lean file yet; keep as roadmap/planned module (layer=methods, role=placeholder, proof_status=placeholder). |
+| MLTheory.Methods.RL.EligibilityTraces | rl | RL | native | gap | unscheduled | - | No local .lean file yet; keep as roadmap/planned module (layer=methods, role=placeholder, proof_status=placeholder). |
+| MLTheory.Methods.RL.Frontiers | rl | RL | native | gap | unscheduled | - | No local .lean file yet; keep as roadmap/planned module (layer=methods, role=placeholder, proof_status=placeholder). |
+| MLTheory.Methods.RL.FunctionApproximation | rl | RL | native | gap | unscheduled | - | No local .lean file yet; keep as roadmap/planned module (layer=methods, role=placeholder, proof_status=placeholder). |
+| MLTheory.Methods.RL.ModelBasedPlanning | rl | RL | native | gap | unscheduled | - | No local .lean file yet; keep as roadmap/planned module (layer=methods, role=placeholder, proof_status=placeholder). |
+| MLTheory.Methods.RL.MonteCarlo | rl | RL | native | gap | unscheduled | - | No local .lean file yet; keep as roadmap/planned module (layer=methods, role=placeholder, proof_status=placeholder). |
+| MLTheory.Methods.RL.NeuroscienceBridge | rl | RL | native | gap | unscheduled | - | No local .lean file yet; keep as roadmap/planned module (layer=methods, role=placeholder, proof_status=placeholder). |
+| MLTheory.Methods.RL.OffPolicy | rl | RL | native | gap | unscheduled | - | No local .lean file yet; keep as roadmap/planned module (layer=methods, role=placeholder, proof_status=placeholder). |
+| MLTheory.Methods.RL.PolicyGradient | rl | RL | native | gap | unscheduled | - | No local .lean file yet; keep as roadmap/planned module (layer=methods, role=placeholder, proof_status=placeholder). |
+| MLTheory.Methods.RL.PsychologyBridge | rl | RL | native | gap | unscheduled | - | No local .lean file yet; keep as roadmap/planned module (layer=methods, role=placeholder, proof_status=placeholder). |

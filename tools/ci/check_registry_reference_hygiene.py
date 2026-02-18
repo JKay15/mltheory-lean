@@ -31,8 +31,8 @@ def main() -> int:
     for b_idx, book in enumerate(books):
         book_id = str(book.get("book_id", f"books[{b_idx}]"))
         for r_idx, row in enumerate(book.get("coverage_rows", [])):
-            chapter = str(row.get("章节", f"coverage_rows[{r_idx}]"))
-            refs_text = str(row.get("对应模块", ""))
+            chapter = str(row.get("chapter", f"coverage_rows[{r_idx}]"))
+            refs_text = str(row.get("Corresponding module", ""))
             refs = MODULE_RE.findall(refs_text)
             coverage_rows_scanned += 1
 
@@ -44,15 +44,15 @@ def main() -> int:
                 seen.append(ref)
             if duplicate_refs:
                 errors.append(
-                    f"{book_id}/{chapter}: duplicate module refs in 覆盖表: {', '.join(duplicate_refs)}"
+                    f"{book_id}/{chapter}: duplicate module refs in Cover table: {', '.join(duplicate_refs)}"
                 )
 
             deprecated_hits = sorted({ref for ref in refs if ref in deprecated_alias_map})
             if deprecated_hits:
                 hints = "; ".join(f"{h} -> {deprecated_alias_map[h]}" for h in deprecated_hits)
                 errors.append(
-                    f"{book_id}/{chapter}: 覆盖表引用了 deprecated alias: {', '.join(deprecated_hits)} "
-                    f"(建议: {hints})"
+                    f"{book_id}/{chapter}: The coverage table references deprecated alias: {', '.join(deprecated_hits)} "
+                    f"(suggestion: {hints})"
                 )
 
     for g_idx, gap in enumerate(gaps):
@@ -65,8 +65,8 @@ def main() -> int:
         if deprecated_hits:
             hints = "; ".join(f"{h} -> {deprecated_alias_map[h]}" for h in deprecated_hits)
             errors.append(
-                f"{label}: GapLedger topic/next_action 引用了 deprecated alias: "
-                f"{', '.join(deprecated_hits)} (建议: {hints})"
+                f"{label}: GapLedger topic/next_action quoted deprecated alias: "
+                f"{', '.join(deprecated_hits)} (suggestion: {hints})"
             )
 
     if errors:

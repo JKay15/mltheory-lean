@@ -1,29 +1,29 @@
-# GPT5.2pro 重构交接包（MLTheory 全量实现快照）
+# GPT5.2pro Refactoring the handover package(MLTheory Full implementation snapshot)
 
 <!-- GENERATED FROM docs/ssot/registry.json. DO NOT EDIT MANUALLY. -->
 
-## 目的（给重构模型）
-1. 这份文档是“已做工作全量快照”，用于避免重构时丢上下文。
-2. 数据全部来自 `docs/ssot/registry.json`（和审查文件 `docs/ssot/lean4_contract_audit.json`）。
-3. 你可以把这份文档直接喂给 GPT5.2pro，让它基于真实现状更新重构方案。
+## Purpose(Give reconstruction model)
+1. This document is a snapshot of completed work to avoid context loss during refactoring.
+2. All data comes from `docs/ssot/registry.json`(and review documents `docs/ssot/lean4_contract_audit.json`).
+3. You can feed this document directly to GPT5.2pro,Let it update the reconstruction plan based on the real status quo.
 
-## 一眼看懂当前状态
-- SSOT schema_version：`1.4.0`
-- last_updated：`2026-02-18`
-- 决策总数：`167`
-- 真实模块（file-backed）总数：`69`
-- 规划模块（non-file-backed）总数：`58`
-- 执行短清单（execution_backlog）条数：`1`
-- aliases 总数：`22`
-- gaps 总数：`55`
+## Understand the current status at a glance
+- SSOT schema_version:`1.4.0`
+- last_updated:`2026-02-18`
+- Total number of decisions:`167`
+- real module(file-backed)total:`69`
+- planning module(non-file-backed)total:`58`
+- Execute short list(execution_backlog)number of items:`1`
+- aliases total:`22`
+- gaps total:`55`
 
-## 当前下一步（短清单）
+## Current next step(short list)
 | horizon | priority | module_path | target_node | why_now | done_when |
 |---|---|---|---|---|---|
-| near | P3 | MLTheory.Core.Probability.CLTBridge | Probability | BasicMeasure 已落地，继续补概率主线与极限定理连接层，服务上游 concentration 与 learning 接口。 | 形成 CLT bridge 最小接口（标准化和、极限分布占位接口）并接入 ImportSmoke。 |
+| near | P3 | MLTheory.Core.Probability.CLTBridge | Probability | BasicMeasure Has landed,Continue to supplement the main line of probability and the connection layer of limit theorem,Service upstream concentration and learning interface. | form CLT bridge minimal interface(Standardization and,Extreme distribution occupancy interface)and access ImportSmoke. |
 
-## 架构契约（重构时默认不可破）
-### 1) taxonomy 主树
+## architectural contract(Unbreakable by default when refactoring)
+### 1) taxonomy main tree
 | node_id | name | tier | primary_parent_id | status | order |
 |---|---|---|---|---|---|
 | ml_root | MLTheory Root | support | root | active | 0 |
@@ -42,84 +42,84 @@
 | llm | LLM | application | ai | active | 310 |
 | architecture | Architecture | support | support_infrastructure | active | 400 |
 
-### 2) taxonomy 关系边（secondary_parent/related）
+### 2) taxonomy relationship edge(secondary_parent/related)
 | from_node | from_name | to_node | to_name | relation_type | strength |
 |---|---|---|---|---|---|
 | statistics | Statistics | probability | Probability | related | 0.8 |
 | rl | RL | ai | AI | related | 0.6 |
 | bandits | Bandits | rl | RL | related | 0.8 |
 
-### 3) 官方工作流对齐（Lean 官方资源映射）
+### 3) Official workflow alignment(Lean Official resource mapping)
 | capability | source_url | status | local_enforcement |
 |---|---|---|---|
-| Loogle | https://lean-lang.org/learn/ | active | lean-lsp-mcp: `lean_loogle` + `--loogle-local`；CI: tools/ci/check_official_workflow_alignment.sh |
-| LeanSearch | https://lean-lang.org/learn/ | active | lean-lsp-mcp: `lean_leansearch`；CI: tools/ci/check_official_workflow_alignment.sh |
-| InfoView/LoogleView | https://raw.githubusercontent.com/leanprover/vscode-lean4/master/vscode-lean4/manual/manual.md | active | lean-lsp-mcp: `lean_goal` + `lean_diagnostic_messages`；augmented 模式要求关键结论进行 InfoView/LoogleView 人工复核并记录到契约评审说明（formalization-contract skill） |
-| REPL | https://lean-lang.org/learn/ | active | lean-lsp-mcp 启动参数要求包含 `--repl`；CI: tools/ci/check_official_workflow_alignment.sh |
+| Loogle | https://lean-lang.org/learn/ | active | lean-lsp-mcp: `lean_loogle` + `--loogle-local`;CI: tools/ci/check_official_workflow_alignment.sh |
+| LeanSearch | https://lean-lang.org/learn/ | active | lean-lsp-mcp: `lean_leansearch`;CI: tools/ci/check_official_workflow_alignment.sh |
+| InfoView/LoogleView | https://raw.githubusercontent.com/leanprover/vscode-lean4/master/vscode-lean4/manual/manual.md | active | lean-lsp-mcp: `lean_goal` + `lean_diagnostic_messages`;augmented The pattern requires key conclusions to be made InfoView/LoogleView Manual review and record into contract review instructions(formalization-contract skill) |
+| REPL | https://lean-lang.org/learn/ | active | lean-lsp-mcp The startup parameters are required to include `--repl`;CI: tools/ci/check_official_workflow_alignment.sh |
 
-### 4) canonical spec 契约
+### 4) canonical spec contract
 | spec_id | repo | entry_file | entry_decl | axiom_policy | status | required_decl_refs |
 |---|---|---|---|---|---|---|
 | mltheory_pac_badEvent_uniform_bound | MLTheory | MLTheory/Methods/Learning/GeneralizationTools.lean | pac_badEvent_uniform_bound | standard_only | active | pac_badEvent_uniform_bound, pac_badEvent_union_bound |
 | mltheory_stone_exists_uniform_near | MLTheory | MLTheory/Methods/Learning/StoneWeierstrassBridge.lean | stone_exists_uniform_near | standard_only | active | stone_exists_uniform_near, stone_closure_eq_top |
 
-## Phase-0 / skill 对齐审查快照
-- date=2026-02-17；mode=augmented；score=6/10；status=ok
+## Phase-0 / skill Alignment review snapshot
+- date=2026-02-17;mode=augmented;score=6/10;status=ok
 | # | check_id | title | result | hits |
 |---|---|---|---|---|
-| 1 | build_gate | 构建门禁（lake build） | PASS | 1 |
-| 2 | sorry_zero_gate | sorry 清零门禁 | PASS | 1 |
-| 3 | axiom_whitelist_gate | 自定义 axiom 白名单门禁 | PASS | 4 |
-| 4 | declaration_immutability | 定理声明不可私改规则 | PASS | 1 |
-| 5 | checkpoint_reproducible | 可复现 checkpoint 流程 | PASS | 2 |
-| 6 | canonical_signature_lock | canonical 入口签名锁定 | FAIL | 2 |
-| 7 | dependency_closure_verifiable | 依赖闭包可验证（声明级） | PASS | 2 |
-| 8 | intermediate_to_canonical_mapping | 中间概念到 canonical 映射约束 | FAIL | 0 |
-| 9 | official_toolchain_mapping | 官方工具链映射约束（Loogle/LeanSearch/InfoView/REPL） | FAIL | 2 |
-| 10 | three_repo_boundary | 三仓边界约束 | FAIL | 0 |
+| 1 | build_gate | Build access control(lake build) | PASS | 1 |
+| 2 | sorry_zero_gate | sorry Clear access control | PASS | 1 |
+| 3 | axiom_whitelist_gate | Customize axiom Whitelist access control | PASS | 4 |
+| 4 | declaration_immutability | Theorem states that rules cannot be changed privately | PASS | 1 |
+| 5 | checkpoint_reproducible | Reproducible checkpoint process | PASS | 2 |
+| 6 | canonical_signature_lock | canonical Entry signature lock | FAIL | 2 |
+| 7 | dependency_closure_verifiable | Dependency closure is verifiable(Declarative level) | PASS | 2 |
+| 8 | intermediate_to_canonical_mapping | intermediate concept to canonical Mapping constraints | FAIL | 0 |
+| 9 | official_toolchain_mapping | Official toolchain mapping constraints(Loogle/LeanSearch/InfoView/REPL) | FAIL | 2 |
+| 10 | three_repo_boundary | Three warehouse boundary constraints | FAIL | 0 |
 
-## 已完成实现（planned -> file-backed 提升轨迹）
+## Completed implementation(planned -> file-backed Ascension trajectory)
 | date | module_path | node | state(layer/role/proof) | impact |
 |---|---|---|---|---|
-| 2026-02-16 | MLTheory.Core.Probability.ProbIneq | Probability | core/tool/proved | 概率核心层新增可复用 conditioning/inequality 入口，execution_backlog 的 near 项开始实质消化。 |
-| 2026-02-16 | MLTheory.Core.Statistics.Risk | Statistics | core/tool/proved | 统计核心层新增 risk 语义壳层，near 短清单进一步收敛。 |
-| 2026-02-16 | MLTheory.Methods.OR.ConvexCore | OR | methods/tool/proved | OR 方法层新增凸优化核心抽象，near backlog 继续收敛。 |
-| 2026-02-16 | MLTheory.Methods.Bandits.Foundations | Bandits | methods/canonical/proved | Bandits 方法层形成统一 foundations 入口，near backlog 继续缩短。 |
-| 2026-02-16 | MLTheory.Methods.OCO.OptimizationCore | OCO | methods/tool/proved | OCO 主线补齐问题定义/comparator/update 抽象，execution_backlog 近期项完成并进入下一轮中期队列。 |
-| 2026-02-16 | MLTheory.Methods.Bandits.Stochastic | Bandits | methods/tool/proved | Bandits 主线补齐 UCB/ETC 最小声明壳并复用 Foundations regret 接口，近期队列继续向 OCO/RL 中期项推进。 |
-| 2026-02-16 | MLTheory.Methods.OCO.Generalization | OCO | methods/tool/proved | OCO->Learning 的 online-to-batch 最小桥接接口落地，execution_backlog 近期焦点顺延至 RL.MDP。 |
-| 2026-02-16 | MLTheory.Methods.RL.MDP | RL | methods/tool/proved | RL 方法层补齐 MDP 入口壳并对齐 Core/DP 接口，execution_backlog 近期焦点顺延至 TemporalDifference。 |
-| 2026-02-16 | MLTheory.Methods.RL.TemporalDifference | RL | methods/tool/proved | RL 主线补齐 TD 更新与误差递推接口；execution_backlog 近期焦点顺延至 Applications.AI.Generalization。 |
-| 2026-02-16 | MLTheory.Applications.AI.Generalization | AI | applications/tool/proved | 应用层 AI 泛化桥接入口落地且不新增底层概念；execution_backlog 近期焦点顺延至 Applications.LLM.Autoregressive。 |
-| 2026-02-16 | MLTheory.Applications.LLM.Autoregressive | LLM | applications/tool/proved | 应用层 LLM 自回归入口落地并复用 AI 泛化契约；当前 execution_backlog 清空，后续需人工确定下一批 near 队列。 |
-| 2026-02-16 | MLTheory.Core.Statistics.Information | Statistics | core/tool/proved | 统计信息论主线新增 KL/maxent/conditional-gap 最小接口，近期焦点顺延至 Methods.Learning.Capacity。 |
-| 2026-02-16 | MLTheory.Methods.Learning.Capacity | Learning | methods/tool/proved | Learning 方法层补齐 capacity/JL 占位接口并连通概率尾界桥接；近期焦点顺延至 Applications.AI.DecisionLearning。 |
-| 2026-02-16 | MLTheory.Applications.AI.DecisionLearning | AI | applications/tool/proved | AI 应用层补齐 decision-learning 场景入口并复用 Learning/OCO/RL 接口；近期焦点顺延至 Applications.LLM.Sampling。 |
-| 2026-02-16 | MLTheory.Applications.LLM.Sampling | LLM | applications/tool/proved | LLM 应用层补齐 sampling 策略最小接口并与 autoregressive 契约对齐；近期焦点顺延至 Applications.LLM.AlignmentObjectives。 |
-| 2026-02-16 | MLTheory.Applications.LLM.AlignmentObjectives | LLM | applications/tool/proved | LLM 应用层补齐 alignment objective 入口并与 sampling/autoregressive 契约打通；近期焦点切换到 Methods.Bandits.InformationTheory。 |
-| 2026-02-16 | MLTheory.Methods.Bandits.InformationTheory | Bandits | methods/tool/proved | Bandits 方法层补齐 information-theoretic bonus/regret 入口并复用 cumulativeRegret；近期焦点切换到 Methods.Bandits.Adversarial。 |
-| 2026-02-16 | MLTheory.Methods.Bandits.Adversarial | Bandits | methods/tool/proved | Bandits 方法层补齐 adversarial regret/EXP3 入口并与共享 cumulativeRegret 对齐；近期焦点切换到 Methods.Bandits.BestArmIdentification。 |
-| 2026-02-16 | MLTheory.Methods.Bandits.BestArmIdentification | Bandits | methods/tool/proved | Bandits 方法层补齐 BAI/simple-regret/sample-complexity 最小接口；近期焦点切换到 Methods.Bandits.ContextualLinear。 |
-| 2026-02-16 | MLTheory.Methods.Bandits.ContextualLinear | Bandits | methods/tool/proved | Bandits 方法层补齐 contextual-linear 问题定义/置信半径/regret 入口；近期焦点切换到 Methods.Bandits.Dueling。 |
-| 2026-02-17 | MLTheory.Methods.Bandits.Dueling | Bandits | methods/tool/proved | Bandits 方法层补齐 dueling 偏好反馈与 regret 入口；近期焦点切换到 Methods.Bandits.LargeActionSpaces。 |
-| 2026-02-17 | MLTheory.Methods.Bandits.LargeActionSpaces | Bandits | methods/tool/proved | Bandits 方法层补齐大动作空间候选池规模与 regret 入口；近期焦点切换到 Methods.Bandits.PureExplorationLinear。 |
-| 2026-02-17 | MLTheory.Methods.Bandits.PureExplorationLinear | Bandits | methods/tool/proved | Bandits 方法层补齐 pure-exploration-linear 的误差半径与 simple-regret 接口；近期焦点切换到 Methods.Bandits.RLBridge。 |
-| 2026-02-17 | MLTheory.Methods.Bandits.RLBridge | Bandits | methods/tool/proved | Bandits 方法层补齐与 RL.TD 的桥接接口；近期焦点切换到 Methods.OR.DiscreteOptimization。 |
-| 2026-02-17 | MLTheory.Methods.OR.DiscreteOptimization | OR | methods/tool/proved | Methods.OR 形成离散优化最小接口并复用 ConvexCore.objectiveGap；近期焦点切换到 Methods.OR.GraphOptimization。 |
-| 2026-02-17 | MLTheory.Methods.OR.GraphOptimization | OR | methods/tool/proved | Methods.OR 补齐图优化最小接口（路径/割差距）并复用 ConvexCore.objectiveGap；近期焦点切换到 Methods.OR.StochasticMatrix。 |
-| 2026-02-17 | MLTheory.Methods.OR.StochasticMatrix | OR | methods/tool/proved | Methods.OR 随机矩阵最小接口落地并复用 ConvexCore.objectiveGap；OR 近期三项完成，近期焦点切换到 Methods.OCO.BanditConvex。 |
-| 2026-02-17 | MLTheory.Methods.OCO.BanditConvex | OCO | methods/tool/proved | Methods.OCO 增加 bandit-convex 估计/遗憾差距接口并复用 OCO regret 核心；近期焦点切换到 Methods.OCO.DynamicRegret。 |
-| 2026-02-17 | MLTheory.Methods.OCO.DynamicRegret | OCO | methods/tool/proved | Methods.OCO 增加动态比较器与动态遗憾最小接口；近期焦点切换到 Methods.OCO.GamesAndDuality。 |
-| 2026-02-17 | MLTheory.Methods.OCO.GamesAndDuality | OCO | methods/tool/proved | Methods.OCO 补齐 games/duality 最小接口（博弈遗憾与对偶差距）；近期焦点切换到 Methods.OCO.Boosting。 |
-| 2026-02-17 | MLTheory.Methods.OCO.Boosting | OCO | methods/tool/proved | Methods.OCO 近期待办全部收口完成；近期焦点切换到 Methods.Learning.AdvancedSLT。 |
-| 2026-02-17 | MLTheory.Methods.Learning.AdvancedSLT | Learning | methods/tool/proved | Methods.Learning 补齐 advanced SLT 最小接口；近期焦点切换到 Methods.Learning.Sequential。 |
-| 2026-02-17 | MLTheory.Methods.Learning.Sequential | Learning | methods/tool/proved | Methods.Learning 补齐 sequential 学习最小接口并连通 OCO 遗憾定义；近期焦点切换到 Methods.Learning.KernelBayes。 |
-| 2026-02-17 | MLTheory.Methods.Learning.KernelBayes | Learning | methods/tool/proved | Learning 主线补齐 kernel-Bayes 后验更新与风险差距最小接口，execution_backlog 近期焦点顺延至 AutomataLanguage。 |
-| 2026-02-17 | MLTheory.Methods.Learning.AutomataLanguage | Learning | methods/tool/proved | Learning 子线新增离散自动机语言风险接口，execution_backlog 近期焦点顺延至 DiscreteModeling。 |
-| 2026-02-17 | MLTheory.Methods.Learning.DiscreteModeling | Learning | methods/tool/proved | Learning 近期短清单三项（KernelBayes/AutomataLanguage/DiscreteModeling）已全部落地，execution_backlog 转入概率基础补齐。 |
-| 2026-02-17 | MLTheory.Core.Probability.BasicMeasure | Probability | core/tool/proved | foundations 概率层补齐测度基础入口，execution_backlog 近期焦点顺延至 CLTBridge。 |
+| 2026-02-16 | MLTheory.Core.Probability.ProbIneq | Probability | core/tool/proved | The probability core layer is newly added and reusable conditioning/inequality Entrance,execution_backlog of near The item begins to be substantially digested. |
+| 2026-02-16 | MLTheory.Core.Statistics.Risk | Statistics | core/tool/proved | New statistics core layer risk semantic shell,near The short list further converges. |
+| 2026-02-16 | MLTheory.Methods.OR.ConvexCore | OR | methods/tool/proved | OR Added convex optimization core abstraction to the method layer,near backlog Continue to converge. |
+| 2026-02-16 | MLTheory.Methods.Bandits.Foundations | Bandits | methods/canonical/proved | Bandits The method layer forms a unified foundations Entrance,near backlog continue to shorten. |
+| 2026-02-16 | MLTheory.Methods.OCO.OptimizationCore | OCO | methods/tool/proved | OCO Main line completion problem definition/comparator/update abstract,execution_backlog Recent projects are completed and entered into the next mid-term queue. |
+| 2026-02-16 | MLTheory.Methods.Bandits.Stochastic | Bandits | methods/tool/proved | Bandits Main line completion UCB/ETC Minimally declare a shell and reuse it Foundations regret interface,The recent queue continues to OCO/RL Mid-term project promotion. |
+| 2026-02-16 | MLTheory.Methods.OCO.Generalization | OCO | methods/tool/proved | OCO->Learning of online-to-batch Minimum bridge interface implemented,execution_backlog The recent focus is postponed to RL.MDP. |
+| 2026-02-16 | MLTheory.Methods.RL.MDP | RL | methods/tool/proved | RL Method layer completion MDP Inlet shell and align Core/DP interface,execution_backlog The recent focus is postponed to TemporalDifference. |
+| 2026-02-16 | MLTheory.Methods.RL.TemporalDifference | RL | methods/tool/proved | RL Main line completion TD Update and error recursion interface;execution_backlog The recent focus is postponed to Applications.AI.Generalization. |
+| 2026-02-16 | MLTheory.Applications.AI.Generalization | AI | applications/tool/proved | Application layer AI The generalized bridge entrance is implemented without adding new underlying concepts.;execution_backlog The recent focus is postponed to Applications.LLM.Autoregressive. |
+| 2026-02-16 | MLTheory.Applications.LLM.Autoregressive | LLM | applications/tool/proved | Application layer LLM The self-returning entrance is implemented and reused AI generalized contract;current execution_backlog Clear,The next batch needs to be manually determined later. near queue. |
+| 2026-02-16 | MLTheory.Core.Statistics.Information | Statistics | core/tool/proved | New main line of statistical information theory KL/maxent/conditional-gap minimal interface,The recent focus is postponed to Methods.Learning.Capacity. |
+| 2026-02-16 | MLTheory.Methods.Learning.Capacity | Learning | methods/tool/proved | Learning Method layer completion capacity/JL Place the interface and connect to the probabilistic tail-bound bridge;The recent focus is postponed to Applications.AI.DecisionLearning. |
+| 2026-02-16 | MLTheory.Applications.AI.DecisionLearning | AI | applications/tool/proved | AI Application layer completion decision-learning Scene entry and reuse Learning/OCO/RL interface;The recent focus is postponed to Applications.LLM.Sampling. |
+| 2026-02-16 | MLTheory.Applications.LLM.Sampling | LLM | applications/tool/proved | LLM Application layer completion sampling Policy minimal interface and with autoregressive contract alignment;The recent focus is postponed to Applications.LLM.AlignmentObjectives. |
+| 2026-02-16 | MLTheory.Applications.LLM.AlignmentObjectives | LLM | applications/tool/proved | LLM Application layer completion alignment objective entrance and with sampling/autoregressive Contract opening;Recent focus switches to Methods.Bandits.InformationTheory. |
+| 2026-02-16 | MLTheory.Methods.Bandits.InformationTheory | Bandits | methods/tool/proved | Bandits Method layer completion information-theoretic bonus/regret Entry and reuse cumulativeRegret;Recent focus switches to Methods.Bandits.Adversarial. |
+| 2026-02-16 | MLTheory.Methods.Bandits.Adversarial | Bandits | methods/tool/proved | Bandits Method layer completion adversarial regret/EXP3 Entry and share with cumulativeRegret Alignment;Recent focus switches to Methods.Bandits.BestArmIdentification. |
+| 2026-02-16 | MLTheory.Methods.Bandits.BestArmIdentification | Bandits | methods/tool/proved | Bandits Method layer completion BAI/simple-regret/sample-complexity minimal interface;Recent focus switches to Methods.Bandits.ContextualLinear. |
+| 2026-02-16 | MLTheory.Methods.Bandits.ContextualLinear | Bandits | methods/tool/proved | Bandits Method layer completion contextual-linear problem definition/confidence radius/regret Entrance;Recent focus switches to Methods.Bandits.Dueling. |
+| 2026-02-17 | MLTheory.Methods.Bandits.Dueling | Bandits | methods/tool/proved | Bandits Method layer completion dueling Preference feedback and regret Entrance;Recent focus switches to Methods.Bandits.LargeActionSpaces. |
+| 2026-02-17 | MLTheory.Methods.Bandits.LargeActionSpaces | Bandits | methods/tool/proved | Bandits The method layer completes the large action space candidate pool size and regret Entrance;Recent focus switches to Methods.Bandits.PureExplorationLinear. |
+| 2026-02-17 | MLTheory.Methods.Bandits.PureExplorationLinear | Bandits | methods/tool/proved | Bandits Method layer completion pure-exploration-linear The error radius of simple-regret interface;Recent focus switches to Methods.Bandits.RLBridge. |
+| 2026-02-17 | MLTheory.Methods.Bandits.RLBridge | Bandits | methods/tool/proved | Bandits Method layer completion and RL.TD bridge interface;Recent focus switches to Methods.OR.DiscreteOptimization. |
+| 2026-02-17 | MLTheory.Methods.OR.DiscreteOptimization | OR | methods/tool/proved | Methods.OR Form a discrete optimized minimal interface and reuse it ConvexCore.objectiveGap;Recent focus switches to Methods.OR.GraphOptimization. |
+| 2026-02-17 | MLTheory.Methods.OR.GraphOptimization | OR | methods/tool/proved | Methods.OR Completion graph optimization minimal interface(path/Cut the gap)and reuse ConvexCore.objectiveGap;Recent focus switches to Methods.OR.StochasticMatrix. |
+| 2026-02-17 | MLTheory.Methods.OR.StochasticMatrix | OR | methods/tool/proved | Methods.OR The minimum interface of random matrix is ​​implemented and reused ConvexCore.objectiveGap;OR Three recent completions,Recent focus switches to Methods.OCO.BanditConvex. |
+| 2026-02-17 | MLTheory.Methods.OCO.BanditConvex | OCO | methods/tool/proved | Methods.OCO Increase bandit-convex estimate/Sorry gap interface and reuse OCO regret core;Recent focus switches to Methods.OCO.DynamicRegret. |
+| 2026-02-17 | MLTheory.Methods.OCO.DynamicRegret | OCO | methods/tool/proved | Methods.OCO Added dynamic comparator and dynamic regret minimum interface;Recent focus switches to Methods.OCO.GamesAndDuality. |
+| 2026-02-17 | MLTheory.Methods.OCO.GamesAndDuality | OCO | methods/tool/proved | Methods.OCO complete games/duality minimal interface(Game Regret and Duality Gap);Recent focus switches to Methods.OCO.Boosting. |
+| 2026-02-17 | MLTheory.Methods.OCO.Boosting | OCO | methods/tool/proved | Methods.OCO All closings awaiting completion in the near future;Recent focus switches to Methods.Learning.AdvancedSLT. |
+| 2026-02-17 | MLTheory.Methods.Learning.AdvancedSLT | Learning | methods/tool/proved | Methods.Learning complete advanced SLT minimal interface;Recent focus switches to Methods.Learning.Sequential. |
+| 2026-02-17 | MLTheory.Methods.Learning.Sequential | Learning | methods/tool/proved | Methods.Learning complete sequential Learn the minimal interface and connect OCO regret definition;Recent focus switches to Methods.Learning.KernelBayes. |
+| 2026-02-17 | MLTheory.Methods.Learning.KernelBayes | Learning | methods/tool/proved | Learning Main line completion kernel-Bayes Posterior update and risk gap minimum interface,execution_backlog The recent focus is postponed to AutomataLanguage. |
+| 2026-02-17 | MLTheory.Methods.Learning.AutomataLanguage | Learning | methods/tool/proved | Learning A new discrete automaton language risk interface is added to the sub-line.,execution_backlog The recent focus is postponed to DiscreteModeling. |
+| 2026-02-17 | MLTheory.Methods.Learning.DiscreteModeling | Learning | methods/tool/proved | Learning Three items on the short list for the near future(KernelBayes/AutomataLanguage/DiscreteModeling)All have been implemented,execution_backlog Complete the basic transfer probability. |
+| 2026-02-17 | MLTheory.Core.Probability.BasicMeasure | Probability | core/tool/proved | foundations Probability layer completes the measurement basic entrance,execution_backlog The recent focus is postponed to CLTBridge. |
 
-## 真实模块全量清单（实现细节）
+## Full list of real modules(Implementation details)
 | module_path | file_path | node | source_track | layer | role | proof_status | formal_decl_refs |
 |---|---|---|---|---|---|---|---|
 | MLTheory | MLTheory.lean | Architecture | native | legacy | bridge | statement |  |
@@ -192,7 +192,7 @@
 | MLTheory.Methods.RL.MDP | MLTheory/Methods/RL/MDP.lean | RL | native | methods | tool | proved | MDPMethodProblem, bellmanOperator, valueIterationUpdate_eq_bellmanOperator, bellmanBridgeSpec |
 | MLTheory.Methods.RL.TemporalDifference | MLTheory/Methods/RL/TemporalDifference.lean | RL | native | methods | tool | proved | TemporalDifferenceProblem, tdTarget, tdError, tdUpdate, tdError_after_update, tdError_sq_nonneg |
 
-## 规划模块全量清单（未落地）
+## Full list of planning modules(Not yet landed)
 | module_path | target_node | source_track | status | reason |
 |---|---|---|---|---|
 | MLTheory.Books.BanditAlgorithms | Bandits | books | planned | No local .lean file yet; keep as roadmap/planned module (layer=books, role=placeholder, proof_status=placeholder). |
@@ -254,12 +254,12 @@
 | MLTheory.Methods.RL.PolicyGradient | RL | native | gap | No local .lean file yet; keep as roadmap/planned module (layer=methods, role=placeholder, proof_status=placeholder). |
 | MLTheory.Methods.RL.PsychologyBridge | RL | native | gap | No local .lean file yet; keep as roadmap/planned module (layer=methods, role=placeholder, proof_status=placeholder). |
 
-## 结构风险与重构优先级（自动识别）
+## Structural Risks and Refactoring Priorities(automatic recognition)
 | issue_id | severity | title | evidence | action | acceptance_gate |
 |---|---|---|---|---|---|
-| S4 | P2 | 关键入口声明已在，但证明状态仍是 statement | 3 个模块；示例：MLTheory.Core.RL.MDP, MLTheory.Methods.Learning.KernelMethods, MLTheory.Methods.RL.DynamicProgramming | 按 canonical_specs 优先级把 statement 入口逐批推进到 proved；先补依赖闭包最短链路。 | canonical/tool 的 proved 比例按批次上升，且 canonical_contract 持续通过。 |
+| S4 | P2 | The key entry statement is already in,But the proof status is still statement | 3 modules;Example:MLTheory.Core.RL.MDP, MLTheory.Methods.Learning.KernelMethods, MLTheory.Methods.RL.DynamicProgramming | according to canonical_specs Prioritize statement The entrance is advanced in batches to proved;First complement dependency closure shortest link. | canonical/tool of proved Ratio increases by batch,and canonical_contract keep passing. |
 
-## 可复现验收命令（重构后至少跑这些）
+## Reproducible acceptance command(After refactoring, run at least these)
 ```bash
 python3 tools/docs/validate_ssot.py
 python3 tools/docs/sync_docs.py --check
@@ -281,7 +281,7 @@ bash /Users/xiongjiangkai/xjk_papers/paper-template/scripts/formalization_prefli
 bash /Users/xiongjiangkai/xjk_papers/paper-template/scripts/check_final_signature.sh
 ```
 
-## 给 GPT5.2pro 的建议阅读顺序
-1. 先看“架构契约”与“Phase-0 审查快照”，确认硬约束。
-2. 再看“已完成实现轨迹”与“真实模块全量清单”，避免重复造轮子。
-3. 最后看“规划模块全量清单 + 结构风险”，决定推翻重做范围与迁移策略。
+## Give GPT5.2pro Suggested reading order for
+1. Read 'architectural contract' and 'Phase-0 review snapshot' first to confirm hard constraints.
+2. Then read 'completed implementation trajectory' and the full real-module list to avoid duplication.
+3. Finally read 'planning modules + structural risk' to decide rewrite scope and migration strategy.

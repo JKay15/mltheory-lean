@@ -15,7 +15,7 @@ TOOL_FOREST_HTML = ROOT / "docs" / "ToolForestInteractive.html"
 INDEX_DOC = ROOT / "docs" / "INDEX.md"
 
 PROMOTION_DECISION_RE = re.compile(
-    r"`([^`]+)` 已从 planned_modules 提升为真实 file-backed module"
+    r"`([^`]+)` Already from planned_modules elevated to reality file-backed module"
 )
 
 
@@ -75,11 +75,11 @@ def main() -> int:
     require_markers(
         dashboard,
         [
-            "# 验收看板（Review Dashboard）",
-            "## 你先看这四件事",
-            "## 最近提升（planned -> file-backed）",
-            "## 当前执行焦点（execution_backlog）",
-            "## 一键验收命令",
+            "# Acceptance Kanban(Review Dashboard)",
+            "## Look at these four things first",
+            "## Recently promoted(planned -> file-backed)",
+            "## Current execution focus(execution_backlog)",
+            "## One-click acceptance command",
         ],
         "ReviewDashboard.md",
         errors,
@@ -88,10 +88,10 @@ def main() -> int:
     require_markers(
         api_cards,
         [
-            "# 最小 API 卡片（APICards）",
-            "## 怎么用（2 分钟）",
-            "## 最近变更优先看",
-            "## 按领域查看（public 模块）",
+            "# smallest API card(APICards)",
+            "## How to use(2 minute)",
+            "## See recent changes first",
+            "## View by area(public module)",
         ],
         "APICards.md",
         errors,

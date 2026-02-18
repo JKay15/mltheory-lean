@@ -490,13 +490,13 @@ def migrate(data: dict) -> dict:
     migration_decision = {
         "date": str(date.today()),
         "decision": (
-            "Taxonomy v2 重整：采用层级树主导 + 三层标签；modules 仅保留真实 file-backed 模块，"
-            "无文件条目迁移到 planned_modules；Books/Legacy 改为 source_track 轴。"
+            "Taxonomy v2 Reorganize:Adopt hierarchical tree dominance + Three layers of labels;modules Keep only the truth file-backed module,"
+            "No file entries migrated to planned_modules;Books/Legacy Change to source_track axis."
         ),
         "status": "active",
         "impact": (
-            "结构可视化与治理从扁平 domain 迁移到 taxonomy_nodes/taxonomy_relations，"
-            "减少语义混杂并提升独立验证可追踪性。"
+            "Structural visualization and governance from flat domain Migrate to taxonomy_nodes/taxonomy_relations,"
+            "Reduce semantic clutter and improve independent verification traceability."
         ),
     }
     if migration_decision["decision"] not in {d.get("decision") for d in decisions}:
@@ -505,11 +505,11 @@ def migrate(data: dict) -> dict:
     boundary_decision = {
         "date": str(date.today()),
         "decision": (
-            "canonical_specs 三仓边界收敛：MLTheory SSOT 仅保留 repo=MLTheory 的通用 canonical 契约；"
-            "paper-template 题目专属契约迁回论文仓脚本配置。"
+            "canonical_specs Three warehouse boundary convergence:MLTheory SSOT Only keep repo=MLTheory universal canonical contract;"
+            "paper-template Topic Exclusive Contract Migration Back to Thesis Warehouse Script Configuration."
         ),
         "status": "active",
-        "impact": "避免跨仓 canonical 规则混放，降低边界漂移风险。",
+        "impact": "Avoid cross positions canonical Mix of rules,Reduce the risk of boundary drift.",
     }
     if boundary_decision["decision"] not in {d.get("decision") for d in decisions}:
         decisions.append(boundary_decision)

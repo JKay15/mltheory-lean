@@ -95,18 +95,18 @@ def main() -> int:
 
     if transitioned:
         msg = (
-            f"推进 cleanup_release_epoch 到 {target_epoch}，并将到期候选切换为 ready_to_remove："
+            f"advance cleanup_release_epoch arrive {target_epoch},and switch the expiration candidate to ready_to_remove:"
             + " / ".join(transitioned)
-            + "。"
+            + "."
         )
     else:
-        msg = f"推进 cleanup_release_epoch 到 {target_epoch}，本次无候选到期切换为 ready_to_remove。"
+        msg = f"advance cleanup_release_epoch arrive {target_epoch},This time there are no candidates to expire and switch to ready_to_remove."
 
     decision = {
         "date": str(date.today()),
         "decision": msg,
         "status": "active",
-        "impact": "release 窗口推进由脚本统一落地，ready_to_remove 转换可复现且可审计。",
+        "impact": "release Window advancement is implemented uniformly through scripts,ready_to_remove Transformations are reproducible and auditable.",
     }
     if decision["decision"] not in {d.get("decision") for d in data.get("decisions", [])}:
         data.setdefault("decisions", []).append(decision)

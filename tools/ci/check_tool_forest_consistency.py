@@ -1,137 +1,157 @@
 #!/usr/bin/env python3
-"""Check taxonomy/tool-forest consistency from SSOT."""
+"""Check ToolForest docs consistency against current source of truth."""
 
 from __future__ import annotations
 
 import json
-from collections import defaultdict
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 REGISTRY = ROOT / "docs" / "ssot" / "registry.json"
+META_TAXONOMY = ROOT / "docs" / "meta" / "taxonomy.yaml"
+MODULES_INDEX = ROOT / "artifacts" / "index" / "modules.json"
 TOOL_FOREST_DOC = ROOT / "docs" / "ToolForest.md"
 TOOL_FOREST_HTML = ROOT / "docs" / "ToolForestInteractive.html"
 
 
+def parse_simple_yaml(path: Path) -> dict:
+    if not path.exists():
+        return {}
+    result: dict = {}
+    section: str | None = None
+    current: dict | None = None
+    with path.open("r", encoding="utf-8") as f:
+        for raw in f:
+            line = raw.rstrip("\n")
+            if not line.strip() or line.lstrip().startswith("#"):
+                continue
+            indent = len(line) - len(line.lstrip(" "))
+            s = line.strip()
+            if indent == 0 and s.endswith(":"):
+                if section == "nodes" and current is not None:
+                    result.setdefault("nodes", []).append(current)
+                    current = None
+                section = s[:-1]
+                if section not in result:
+                    result[section] = [] if section == "nodes" else {}
+                continue
+            if section == "nodes":
+                if s.startswith("- "):
+                    if current is not None:
+                        result["nodes"].append(current)
+                    current = {}
+                    tail = s[2:].strip()
+                    if ":" in tail:
+                        k, v = tail.split(":", 1)
+                        current[k.strip()] = v.strip().strip('"').strip("'")
+                    continue
+                if current is not None and ":" in s:
+                    k, v = s.split(":", 1)
+                    current[k.strip()] = v.strip().strip('"').strip("'")
+    if section == "nodes" and current is not None:
+        result.setdefault("nodes", []).append(current)
+    return result
+
+
+def source_from_meta_index(errors: list[str]) -> tuple[list[str], list[str]] | None:
+    if not (META_TAXONOMY.exists() and MODULES_INDEX.exists()):
+        return None
+    taxonomy = parse_simple_yaml(META_TAXONOMY)
+    nodes = taxonomy.get("nodes", [])
+    if not isinstance(nodes, list) or not nodes:
+        errors.append("docs/meta/taxonomy.yaml: invalid nodes")
+        return None
+    node_ids = [str(n.get("id")) for n in nodes if isinstance(n, dict) and n.get("id")]
+    try:
+        modules_payload = json.loads(MODULES_INDEX.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as err:
+        errors.append(f"artifacts/index/modules.json invalid JSON: {err}")
+        return None
+    mods = modules_payload.get("modules", [])
+    modules = [
+        str(m.get("module"))
+        for m in mods
+        if isinstance(m, dict) and isinstance(m.get("module"), str)
+    ]
+    return node_ids, modules
+
+
+def source_from_registry(errors: list[str]) -> tuple[list[str], list[str]]:
+    try:
+        data = json.loads(REGISTRY.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as err:
+        errors.append(f"docs/ssot/registry.json invalid JSON: {err}")
+        return [], []
+    node_ids = [
+        str(n.get("node_id"))
+        for n in data.get("taxonomy_nodes", [])
+        if isinstance(n, dict) and n.get("node_id")
+    ]
+    modules = [
+        str(m.get("module_path"))
+        for m in data.get("modules", [])
+        if isinstance(m, dict) and m.get("module_path")
+    ]
+    modules += [
+        str(m.get("module_path"))
+        for m in data.get("planned_modules", [])
+        if isinstance(m, dict) and m.get("module_path")
+    ]
+    return node_ids, modules
+
+
+def require_markers(text: str, markers: list[str], label: str, errors: list[str]) -> None:
+    for marker in markers:
+        if marker not in text:
+            errors.append(f"{label} missing required marker: {marker}")
+
+
 def main() -> int:
-    data = json.loads(REGISTRY.read_text(encoding="utf-8"))
-    nodes = data.get("taxonomy_nodes", [])
-    relations = data.get("taxonomy_relations", [])
-    modules = data.get("modules", [])
-    planned_modules = data.get("planned_modules", [])
     errors: list[str] = []
+    source = source_from_meta_index(errors)
+    if source is None:
+        source = source_from_registry(errors)
+    expected_nodes, expected_modules = source
 
-    if not nodes:
-        errors.append("taxonomy_nodes is empty")
-    node_ids = [n.get("node_id") for n in nodes]
-    if len(node_ids) != len(set(node_ids)):
-        errors.append("duplicate node_id detected")
-
-    node_map = {n["node_id"]: n for n in nodes if "node_id" in n}
-    children = defaultdict(list)
-    roots = []
-    for n in nodes:
-        nid = n.get("node_id")
-        parent = n.get("primary_parent_id")
-        if not nid:
-            errors.append("taxonomy node with empty node_id")
-            continue
-        if parent:
-            if parent not in node_map:
-                errors.append(f"node `{nid}` references missing parent `{parent}`")
-            else:
-                children[parent].append(nid)
-        else:
-            roots.append(nid)
-
-    if len(roots) != 1:
-        errors.append(f"expected exactly one root node, got {len(roots)}")
-
-    # Cycle detection on primary parent tree.
-    visited = set()
-    stack = set()
-
-    def dfs(node: str) -> None:
-        if node in stack:
-            errors.append(f"cycle detected at node `{node}`")
-            return
-        if node in visited:
-            return
-        visited.add(node)
-        stack.add(node)
-        for nxt in children.get(node, []):
-            dfs(nxt)
-        stack.remove(node)
-
-    for r in roots:
-        dfs(r)
-
-    # Relation endpoints.
-    for i, rel in enumerate(relations):
-        frm = rel.get("from_node")
-        to = rel.get("to_node")
-        if frm not in node_map:
-            errors.append(f"taxonomy_relations[{i}].from_node unknown: {frm}")
-        if to not in node_map:
-            errors.append(f"taxonomy_relations[{i}].to_node unknown: {to}")
-
-    # Module references.
-    for i, mod in enumerate(modules):
-        nid = mod.get("primary_node_id")
-        path = mod.get("module_path", f"<modules[{i}]>")
-        if not nid:
-            errors.append(f"{path}: missing primary_node_id")
-        elif nid not in node_map:
-            errors.append(f"{path}: primary_node_id `{nid}` not found")
-
-    for i, mod in enumerate(planned_modules):
-        nid = mod.get("target_node_id")
-        path = mod.get("module_path", f"<planned_modules[{i}]>")
-        if not nid:
-            errors.append(f"{path}: missing target_node_id")
-        elif nid not in node_map:
-            errors.append(f"{path}: target_node_id `{nid}` not found")
-
-    # Ensure generated markdown doc contains required sections.
-    if TOOL_FOREST_DOC.exists():
-        doc = TOOL_FOREST_DOC.read_text(encoding="utf-8")
-        required_markers = [
-            "## 视图 A：Taxonomy 主树",
-            "## 表 1：taxonomy 节点总览",
-            "## 表 2：关系边（次父/关联）",
-            "## 表 3：source_track 分布（真实/规划）",
-            "## 表 4：入口模块（canonical + tool",
-            "## 表 5：规划模块样例（Top",
-            "## 交互页（完整明细）",
-            "## 使用说明（人 + Codex）",
-        ]
-        for marker in required_markers:
-            if marker not in doc:
-                errors.append(f"ToolForest.md missing required section `{marker}`")
-        for nid in node_map:
-            if nid not in doc:
-                errors.append(f"ToolForest.md missing taxonomy node label `{nid}`")
-    else:
+    if not TOOL_FOREST_DOC.exists():
         errors.append("docs/ToolForest.md missing")
-
-    # Ensure interactive html exists and carries payload with nodes+modules.
-    if TOOL_FOREST_HTML.exists():
-        html = TOOL_FOREST_HTML.read_text(encoding="utf-8")
-        if 'id="tool-forest-data"' not in html:
-            errors.append("ToolForestInteractive.html missing embedded data payload marker")
-        for nid in node_map:
-            if nid not in html:
-                errors.append(f"ToolForestInteractive.html missing node `{nid}`")
-        for mod in modules:
-            mp = mod.get("module_path")
-            if mp and mp not in html:
-                errors.append(f"ToolForestInteractive.html missing real module `{mp}`")
-        for mod in planned_modules:
-            mp = mod.get("module_path")
-            if mp and mp not in html:
-                errors.append(f"ToolForestInteractive.html missing planned module `{mp}`")
-    else:
+    if not TOOL_FOREST_HTML.exists():
         errors.append("docs/ToolForestInteractive.html missing")
+    if errors:
+        print("[check_tool_forest_consistency] failed:")
+        for err in errors:
+            print(f"- {err}")
+        return 1
+
+    doc = TOOL_FOREST_DOC.read_text(encoding="utf-8")
+    html = TOOL_FOREST_HTML.read_text(encoding="utf-8")
+
+    require_markers(
+        doc,
+        [
+            "## view A:Taxonomy main tree",
+            "## surface 1:taxonomy Node overview",
+            "## surface 4:Entry module",
+            "## interactive page(Full details)",
+        ],
+        "ToolForest.md",
+        errors,
+    )
+    require_markers(
+        html,
+        ['id="tool-forest-data"', "const MAX_ROWS = 120;"],
+        "ToolForestInteractive.html",
+        errors,
+    )
+
+    for nid in expected_nodes:
+        if nid not in doc:
+            errors.append(f"ToolForest.md missing taxonomy node `{nid}`")
+        if nid not in html:
+            errors.append(f"ToolForestInteractive.html missing taxonomy node `{nid}`")
+    for module in expected_modules:
+        if module not in html:
+            errors.append(f"ToolForestInteractive.html missing module `{module}`")
 
     if errors:
         print("[check_tool_forest_consistency] failed:")

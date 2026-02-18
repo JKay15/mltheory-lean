@@ -62,9 +62,9 @@ PLANNED_PARTIAL_REASON_EVIDENCE_TOKENS = (
     "github",
     "mathlib",
     "evidence",
-    "证据",
-    "候选",
-    "来源",
+    "evidence",
+    "candidate",
+    "source",
 )
 
 
@@ -517,7 +517,7 @@ def validate_registry(data: object) -> tuple[list[str], list[str]]:
             if status == "partial" and reason and not _planned_partial_reason_has_evidence(reason):
                 errors.append(
                     f"{label}: planned_modules.status=partial must include traceable evidence in reason "
-                    "(e.g. source_url/candidate_repo/external/证据)"
+                    "(e.g. source_url/candidate_repo/external/evidence)"
                 )
 
     execution_backlog = data.get("execution_backlog")
@@ -787,13 +787,13 @@ def validate_registry(data: object) -> tuple[list[str], list[str]]:
                         continue
                     _check_keys_exact(
                         c,
-                        {"章节", "对应模块", "覆盖状态", "证据链接", "缺口说明", "后续动作"},
+                        {"chapter", "Corresponding module", "Override status", "Evidence link", "Gap description", "Follow-up actions"},
                         clabel,
                         errors,
                     )
-                    if c.get("覆盖状态") not in COVERAGE_STATUSES:
-                        errors.append(f"{clabel}.覆盖状态: invalid value: {c.get('覆盖状态')}")
-                    for ref in _iter_module_refs(str(c.get("对应模块", ""))):
+                    if c.get("Override status") not in COVERAGE_STATUSES:
+                        errors.append(f"{clabel}.Override status: invalid value: {c.get('Override status')}")
+                    for ref in _iter_module_refs(str(c.get("Corresponding module", ""))):
                         coverage_module_refs.add(ref)
 
         combined_paths = set(module_paths)

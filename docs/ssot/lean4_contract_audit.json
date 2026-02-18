@@ -12,7 +12,7 @@
   "checks": [
     {
       "check_id": "build_gate",
-      "title": "构建门禁（lake build）",
+      "title": "Build access control(lake build)",
       "passed": true,
       "hits": [
         {
@@ -26,28 +26,28 @@
     },
     {
       "check_id": "sorry_zero_gate",
-      "title": "sorry 清零门禁",
+      "title": "sorry Clear access control",
       "passed": true,
       "hits": [
         {
           "file_key": "skill",
           "path": "/Users/xiongjiangkai/.codex/skills/lean4/SKILL.md",
           "line": 14,
-          "snippet": "**Build incrementally.** Lean's type checker is your test suite—if it compiles with no sorries and standard axioms only, the proof is sound.",
+          "snippet": "**Build incrementally.** Lean's type checker is your test suite-if it compiles with no sorries and standard axioms only, the proof is sound.",
           "pattern": "\\bZero sorries\\b|\\bno sorries\\b|\\bzero sorries\\b"
         }
       ]
     },
     {
       "check_id": "axiom_whitelist_gate",
-      "title": "自定义 axiom 白名单门禁",
+      "title": "Customize axiom Whitelist access control",
       "passed": true,
       "hits": [
         {
           "file_key": "skill",
           "path": "/Users/xiongjiangkai/.codex/skills/lean4/SKILL.md",
           "line": 14,
-          "snippet": "**Build incrementally.** Lean's type checker is your test suite—if it compiles with no sorries and standard axioms only, the proof is sound.",
+          "snippet": "**Build incrementally.** Lean's type checker is your test suite-if it compiles with no sorries and standard axioms only, the proof is sound.",
           "pattern": "standard axioms"
         },
         {
@@ -75,7 +75,7 @@
     },
     {
       "check_id": "declaration_immutability",
-      "title": "定理声明不可私改规则",
+      "title": "Theorem states that rules cannot be changed privately",
       "passed": true,
       "hits": [
         {
@@ -89,7 +89,7 @@
     },
     {
       "check_id": "checkpoint_reproducible",
-      "title": "可复现 checkpoint 流程",
+      "title": "Reproducible checkpoint process",
       "passed": true,
       "hits": [
         {
@@ -110,7 +110,7 @@
     },
     {
       "check_id": "canonical_signature_lock",
-      "title": "canonical 入口签名锁定",
+      "title": "canonical Entry signature lock",
       "passed": false,
       "hits": [
         {
@@ -131,7 +131,7 @@
     },
     {
       "check_id": "dependency_closure_verifiable",
-      "title": "依赖闭包可验证（声明级）",
+      "title": "Dependency closure is verifiable(Declarative level)",
       "passed": true,
       "hits": [
         {
@@ -152,13 +152,13 @@
     },
     {
       "check_id": "intermediate_to_canonical_mapping",
-      "title": "中间概念到 canonical 映射约束",
+      "title": "intermediate concept to canonical Mapping constraints",
       "passed": false,
       "hits": []
     },
     {
       "check_id": "official_toolchain_mapping",
-      "title": "官方工具链映射约束（Loogle/LeanSearch/InfoView/REPL）",
+      "title": "Official toolchain mapping constraints(Loogle/LeanSearch/InfoView/REPL)",
       "passed": false,
       "hits": [
         {
@@ -179,7 +179,7 @@
     },
     {
       "check_id": "three_repo_boundary",
-      "title": "三仓边界约束",
+      "title": "Three warehouse boundary constraints",
       "passed": false,
       "hits": []
     }

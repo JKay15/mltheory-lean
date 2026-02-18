@@ -1,21 +1,21 @@
-# 书籍覆盖索引
+# book coverage index
 
 <!-- GENERATED FROM docs/ssot/registry.json. DO NOT EDIT MANUALLY. -->
 
-## 覆盖文档
-| 书籍 | 覆盖文档 | 缺口来源 |
+## Overwrite document
+| books | Overwrite document | Source of gap |
 |---|---|---|
-| Vershynin《High-Dimensional Probability》 | [Vershynin_HDP_Coverage.md](./Vershynin_HDP_Coverage.md) | [../GapLedger.md](../GapLedger.md)（`book=Vershynin`） |
-| Durrett《Probability Theory and Examples》 | [Durrett5_Coverage.md](./Durrett5_Coverage.md) | [../GapLedger.md](../GapLedger.md)（`book=Durrett5`） |
-| Lattimore & Szepesvari《Bandit Algorithms》 | [BanditAlgorithms_Coverage.md](./BanditAlgorithms_Coverage.md) | [../GapLedger.md](../GapLedger.md)（`book=BanditAlgorithms`） |
-| Hazan《Introduction to Online Convex Optimization》 | [HazanOCO2_Coverage.md](./HazanOCO2_Coverage.md) | [../GapLedger.md](../GapLedger.md)（`book=HazanOCO2`） |
-| Mohri-Rostamizadeh-Talwalkar《Foundations of Machine Learning》 | [FoML2_Coverage.md](./FoML2_Coverage.md) | [../GapLedger.md](../GapLedger.md)（`book=FoML2`） |
-| Sutton-Barto《Reinforcement Learning: An Introduction》 | [SuttonBarto_RL2_Coverage.md](./SuttonBarto_RL2_Coverage.md) | [../GapLedger.md](../GapLedger.md)（`book=SuttonBartoRL2`） |
+| Vershynin<High-Dimensional Probability> | [Vershynin_HDP_Coverage.md](./Vershynin_HDP_Coverage.md) | [../GapLedger.md](../GapLedger.md)(`book=Vershynin`) |
+| Durrett<Probability Theory and Examples> | [Durrett5_Coverage.md](./Durrett5_Coverage.md) | [../GapLedger.md](../GapLedger.md)(`book=Durrett5`) |
+| Lattimore & Szepesvari<Bandit Algorithms> | [BanditAlgorithms_Coverage.md](./BanditAlgorithms_Coverage.md) | [../GapLedger.md](../GapLedger.md)(`book=BanditAlgorithms`) |
+| Hazan<Introduction to Online Convex Optimization> | [HazanOCO2_Coverage.md](./HazanOCO2_Coverage.md) | [../GapLedger.md](../GapLedger.md)(`book=HazanOCO2`) |
+| Mohri-Rostamizadeh-Talwalkar<Foundations of Machine Learning> | [FoML2_Coverage.md](./FoML2_Coverage.md) | [../GapLedger.md](../GapLedger.md)(`book=FoML2`) |
+| Sutton-Barto<Reinforcement Learning: An Introduction> | [SuttonBarto_RL2_Coverage.md](./SuttonBarto_RL2_Coverage.md) | [../GapLedger.md](../GapLedger.md)(`book=SuttonBartoRL2`) |
 
-## 模板
-- [下一本书覆盖模板](./_BookCoverageTemplate.md)
+## template
+- [Next book coverage template](./_BookCoverageTemplate.md)
 
-## 使用约定
-1. 每本书先落覆盖文档，再补缺口条目。
-2. 覆盖状态只用三档：`covered`、`partial`、`gap`（允许 `planned` 仅用于尚未落位章节）。
-3. 文档里的模块名必须与 `../ModuleCatalog.md` 的 `module_path` 一致。
+## Usage convention
+1. Each book first drops coverage documents,Fill in the gaps.
+2. Only three gears are used for coverage status.:`covered`,`partial`,`gap`(allow `planned` Only for chapters that have not yet been completed).
+3. The module name in the document must match `../ModuleCatalog.md` of `module_path` consistent.

@@ -1,15 +1,15 @@
-# 验收看板（Review Dashboard）
+# Acceptance Kanban(Review Dashboard)
 
 <!-- GENERATED FROM docs/ssot/registry.json. DO NOT EDIT MANUALLY. -->
 
-## 你先看这四件事
-1. 真实模块：`69`
-2. 规划模块：`58`
-3. 当前短清单：`1`
-4. 最近提升（planned -> file-backed）：`10`
+## Look at these four things first
+1. real module:`69`
+2. planning module:`58`
+3. Current short list:`1`
+4. Recently promoted(planned -> file-backed):`10`
 
-## 最近提升（planned -> file-backed）
-| module_path | node | role | proof_status | 先看声明(Top3) |
+## Recently promoted(planned -> file-backed)
+| module_path | node | role | proof_status | Read the statement first(Top3) |
 |---|---|---|---|---|
 | MLTheory.Core.Probability.BasicMeasure | Probability | tool | proved | isMeasurableEvent, eventMass, eventMass_mono, ...(+3) |
 | MLTheory.Methods.Learning.DiscreteModeling | Learning | tool | proved | DiscreteModelingProblem, discretePointLoss, discreteEmpiricalRisk, ...(+3) |
@@ -22,12 +22,12 @@
 | MLTheory.Methods.OCO.DynamicRegret | OCO | tool | proved | DynamicComparator, dynamicInstantRegret, dynamicCumulativeRegret, ...(+3) |
 | MLTheory.Methods.OCO.BanditConvex | OCO | tool | proved | BanditConvexProblem, estimationGap, trueInstantRegret, ...(+3) |
 
-## 当前执行焦点（execution_backlog）
+## Current execution focus(execution_backlog)
 | horizon | priority | module_path | target_node | why_now | done_when |
 |---|---|---|---|---|---|
-| near | P3 | MLTheory.Core.Probability.CLTBridge | Probability | BasicMeasure 已落地，继续补概率主线与极限定理连接层，服务上游 concentration 与 learning 接口。 | 形成 CLT bridge 最小接口（标准化和、极限分布占位接口）并接入 ImportSmoke。 |
+| near | P3 | MLTheory.Core.Probability.CLTBridge | Probability | BasicMeasure Has landed,Continue to supplement the main line of probability and the connection layer of limit theorem,Service upstream concentration and learning interface. | form CLT bridge minimal interface(Standardization and,Extreme distribution occupancy interface)and access ImportSmoke. |
 
-## 结构热区（按规划压力排序）
+## structural hot zone(Sort by planning pressure)
 | node_name | node_id | real_modules | planned_modules |
 |---|---|---|---|
 | Probability | probability | 4 | 32 |
@@ -39,8 +39,8 @@
 | MLTheory Root | ml_root | 0 | 0 |
 | Methods and Problems | methods_problems | 0 | 0 |
 
-## 一键验收命令
-通过标准：以上命令全部 `PASS` / `Build completed successfully`。
+## One-click acceptance command
+pass standard:All the above commands `PASS` / `Build completed successfully`.
 ```bash
 python3 tools/docs/validate_ssot.py
 python3 tools/docs/sync_docs.py --check
@@ -53,7 +53,7 @@ bash tools/ci/check_no_sorry_axiom.sh
 ~/.elan/bin/lake build
 ```
 
-## 怎么用（人话）
-1. 先看“最近提升”，判断这批是否是你想要的方向。
-2. 再看“当前执行焦点”，确认下一步是不是你认可的优先级。
-3. 最后复制“ 一键验收命令 ”跑完，确保这轮变更可独立复验。
+## How to use(human language)
+1. Check 'Recently promoted' first to confirm this batch matches the intended direction.
+2. Then check 'Current execution focus' to confirm the next-step priority.
+3. Finally run the 'One-click acceptance commands' to ensure independent reproducibility.

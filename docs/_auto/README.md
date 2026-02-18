@@ -1,9 +1,9 @@
 # docs/_auto
 
-本目录存放自动生成的检索/索引视图，不作为手写文档。
+This directory stores automatically generated searches/index view,Not as a handwritten document.
 
-- 生成入口：`tools/index/gen_mltheory_index.sh`
-- 图谱入口：`tools/index/gen_graph_artifacts.sh`
-- 当前视图：`CodeIndex.md`、`GraphArtifacts.md`、`subgraph.json`
+- Generate entry:`tools/index/gen_mltheory_index.sh`
+- Map entrance:`tools/index/gen_graph_artifacts.sh`
+- Current view:`CodeIndex.md`,`GraphArtifacts.md`,`subgraph.json`
 
-若内容不一致，请重新运行生成命令，不要手工改动本目录文件。
+If the content is inconsistent,Please rerun the build command,Do not manually modify this directory file.

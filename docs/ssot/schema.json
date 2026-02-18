@@ -405,23 +405,23 @@
               "type": "object",
               "additionalProperties": false,
               "required": [
-                "章节",
-                "对应模块",
-                "覆盖状态",
-                "证据链接",
-                "缺口说明",
-                "后续动作"
+                "chapter",
+                "Corresponding module",
+                "Override status",
+                "Evidence link",
+                "Gap description",
+                "Follow-up actions"
               ],
               "properties": {
-                "章节": { "type": "string" },
-                "对应模块": { "type": "string" },
-                "覆盖状态": {
+                "chapter": { "type": "string" },
+                "Corresponding module": { "type": "string" },
+                "Override status": {
                   "type": "string",
                   "enum": ["planned", "partial", "covered", "gap"]
                 },
-                "证据链接": { "type": "string" },
-                "缺口说明": { "type": "string" },
-                "后续动作": { "type": "string" }
+                "Evidence link": { "type": "string" },
+                "Gap description": { "type": "string" },
+                "Follow-up actions": { "type": "string" }
               }
             }
           }

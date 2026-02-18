@@ -13,6 +13,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 REGISTRY_PATH = ROOT / "docs" / "ssot" / "registry.json"
 LEAN4_AUDIT_PATH = ROOT / "docs" / "ssot" / "lean4_contract_audit.json"
+META_TAXONOMY_PATH = ROOT / "docs" / "meta" / "taxonomy.yaml"
+META_CANON_PATH = ROOT / "docs" / "meta" / "canon.yaml"
+MODULES_INDEX_PATH = ROOT / "artifacts" / "index" / "modules.json"
 GENERATED_NOTE = "<!-- GENERATED FROM docs/ssot/registry.json. DO NOT EDIT MANUALLY. -->"
 PARTIAL_REASON_EVIDENCE_TOKENS = (
     "external",
@@ -21,12 +24,16 @@ PARTIAL_REASON_EVIDENCE_TOKENS = (
     "github",
     "mathlib",
     "evidence",
-    "证据",
-    "候选",
-    "来源",
+    "evidence",
+    "candidate",
+    "source",
 )
 PROMOTION_DECISION_RE = re.compile(
-    r"`([^`]+)` 已从 planned_modules 提升为真实 file-backed module"
+    r"`([^`]+)` Already from planned_modules elevated to reality file-backed module"
+)
+AUTO_BLOCK_RE = re.compile(
+    r"(<!-- AUTO:(?P<name>[A-Z0-9_-]+) BEGIN -->)(?P<body>.*?)(<!-- AUTO:(?P=name) END -->)",
+    re.DOTALL,
 )
 
 
@@ -60,6 +67,273 @@ def table(headers: list[str], rows: list[list[object]]) -> str:
     return "\n".join(out)
 
 
+def _parse_simple_yaml(path: Path) -> dict:
+    if not path.exists():
+        return {}
+    result: dict = {}
+    section: str | None = None
+    current: dict | None = None
+    with path.open("r", encoding="utf-8") as f:
+        for raw in f:
+            line = raw.rstrip("\n")
+            if not line.strip() or line.lstrip().startswith("#"):
+                continue
+            indent = len(line) - len(line.lstrip(" "))
+            stripped = line.strip()
+            if indent == 0 and stripped.endswith(":"):
+                if section in {"nodes", "bindings"} and current is not None:
+                    result.setdefault(section, []).append(current)
+                    current = None
+                section = stripped[:-1]
+                if section not in result:
+                    result[section] = [] if section in {"nodes", "bindings"} else {}
+                continue
+            if section in {"nodes", "bindings"}:
+                if stripped.startswith("- "):
+                    if current is not None:
+                        result[section].append(current)
+                    current = {}
+                    tail = stripped[2:].strip()
+                    if ":" in tail:
+                        k, v = tail.split(":", 1)
+                        current[k.strip()] = v.strip().strip('"').strip("'")
+                    continue
+                if current is not None and ":" in stripped:
+                    k, v = stripped.split(":", 1)
+                    current[k.strip()] = v.strip().strip('"').strip("'")
+                continue
+            if section is not None and isinstance(result.get(section), dict):
+                if ":" in stripped:
+                    k, v = stripped.split(":", 1)
+                    key = k.strip()
+                    val = v.strip()
+                    if val == "":
+                        result[section][key] = []
+                    else:
+                        result[section][key] = val.strip('"').strip("'")
+                elif stripped.startswith("- "):
+                    keys = list(result[section].keys())
+                    if keys:
+                        result[section][keys[-1]].append(
+                            stripped[2:].strip().strip('"').strip("'")
+                        )
+    if section in {"nodes", "bindings"} and current is not None:
+        result.setdefault(section, []).append(current)
+    return result
+
+
+def _load_meta_index_source() -> dict | None:
+    if not META_TAXONOMY_PATH.exists() or not MODULES_INDEX_PATH.exists():
+        return None
+    try:
+        modules_payload = json.loads(MODULES_INDEX_PATH.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return None
+    modules = modules_payload.get("modules")
+    if not isinstance(modules, list):
+        return None
+    taxonomy = _parse_simple_yaml(META_TAXONOMY_PATH)
+    nodes = taxonomy.get("nodes")
+    if not isinstance(nodes, list) or not nodes:
+        return None
+    canon = _parse_simple_yaml(META_CANON_PATH)
+    canon_modules = {
+        m for m in canon.get("canonical_modules", []) if isinstance(m, str) and m.strip()
+    }
+    binding_map: dict[str, str] = {}
+    spine_modules: set[str] = set()
+    for b in taxonomy.get("bindings", []):
+        if not isinstance(b, dict):
+            continue
+        if b.get("kind") != "module":
+            continue
+        target = b.get("target")
+        node = b.get("node")
+        if isinstance(target, str) and isinstance(node, str):
+            binding_map[target] = node
+            if str(b.get("spine", "")).lower() == "true":
+                spine_modules.add(target)
+    return {
+        "nodes": nodes,
+        "modules": modules,
+        "bindings": binding_map,
+        "spine_modules": spine_modules,
+        "canon_modules": canon_modules,
+    }
+
+
+def _toolforest_tier(node_id: str, parent: str | None) -> str:
+    if parent is None:
+        return "foundation"
+    if node_id == "methods":
+        return "methods"
+    if node_id == "applications":
+        return "application"
+    return "support"
+
+
+def _build_rows_from_meta_index(registry: dict, source: dict) -> tuple[list[dict], list[dict], list[dict], list[dict]]:
+    taxonomy_nodes_raw = source["nodes"]
+    modules_raw = source["modules"]
+    binding_map = source["bindings"]
+    spine_modules = source["spine_modules"]
+    canon_modules = source["canon_modules"]
+
+    taxonomy_nodes: list[dict] = []
+    for idx, n in enumerate(taxonomy_nodes_raw):
+        if not isinstance(n, dict):
+            continue
+        node_id = n.get("id")
+        name = n.get("title")
+        parent = n.get("parent")
+        if not isinstance(node_id, str) or not isinstance(name, str):
+            continue
+        taxonomy_nodes.append(
+            {
+                "node_id": node_id,
+                "name": name,
+                "tier": _toolforest_tier(node_id, parent if isinstance(parent, str) else None),
+                "primary_parent_id": parent if isinstance(parent, str) and parent else None,
+                "status": "active",
+                "order": idx,
+            }
+        )
+    if not taxonomy_nodes:
+        return [], [], [], []
+
+    node_ids = {n["node_id"] for n in taxonomy_nodes}
+    node_name = {n["node_id"]: n["name"] for n in taxonomy_nodes}
+    root_node = next((n["node_id"] for n in taxonomy_nodes if n["primary_parent_id"] is None), taxonomy_nodes[0]["node_id"])
+
+    def default_node_for_layer(layer: str) -> str:
+        mapping = {
+            "core": "core",
+            "methods": "methods",
+            "applications": "applications",
+            "books": "books",
+        }
+        candidate = mapping.get(layer, root_node)
+        return candidate if candidate in node_ids else root_node
+
+    real_rows: list[dict] = []
+    for m in sorted(modules_raw, key=lambda x: x.get("module", "")):
+        if not isinstance(m, dict):
+            continue
+        module_path = m.get("module")
+        layer = str(m.get("layer", "other"))
+        if not isinstance(module_path, str):
+            continue
+        node_id = binding_map.get(module_path, default_node_for_layer(layer))
+        if node_id not in node_ids:
+            node_id = root_node
+        subdomain, key_problem = _derive_subdomain_and_problem(module_path)
+        role = "canonical" if module_path in canon_modules else "tool"
+        proof_status = "proved" if module_path in spine_modules else "statement"
+        real_rows.append(
+            {
+                "dataset": "real",
+                "module_path": module_path,
+                "node_id": node_id,
+                "node_name": node_name.get(node_id, node_id),
+                "source_track": "native",
+                "status": "covered",
+                "layer": layer,
+                "role": role,
+                "proof_status": proof_status,
+                "formal_decl_refs": [],
+                "subdomain": subdomain,
+                "key_problem": key_problem,
+                "reason": "",
+                "execution_horizon": "",
+                "execution_priority": "",
+                "in_backlog": False,
+            }
+        )
+
+    backlog_map = {
+        row["module_path"]: row
+        for row in registry.get("execution_backlog", [])
+        if isinstance(row, dict) and "module_path" in row
+    }
+    planned_rows: list[dict] = []
+    for m in sorted(registry["planned_modules"], key=lambda x: x["module_path"]):
+        subdomain, key_problem = _derive_subdomain_and_problem(m["module_path"])
+        backlog = backlog_map.get(m["module_path"], {})
+        node_id = m["target_node_id"] if m["target_node_id"] in node_ids else root_node
+        planned_rows.append(
+            {
+                "dataset": "planned",
+                "module_path": m["module_path"],
+                "node_id": node_id,
+                "node_name": node_name.get(node_id, node_id),
+                "source_track": m["source_track"],
+                "status": m["status"],
+                "layer": "planned",
+                "role": "planned",
+                "proof_status": "placeholder",
+                "formal_decl_refs": [],
+                "subdomain": subdomain,
+                "key_problem": key_problem,
+                "reason": m["reason"],
+                "execution_horizon": backlog.get("horizon", "unscheduled"),
+                "execution_priority": backlog.get("priority", ""),
+                "in_backlog": bool(backlog),
+            }
+        )
+
+    relations: list[dict] = []
+    for n in taxonomy_nodes:
+        pid = n["primary_parent_id"]
+        if pid is None:
+            continue
+        relations.append(
+            {
+                "from_node": n["node_id"],
+                "to_node": pid,
+                "relation_type": "secondary_parent",
+                "strength": 1.0,
+            }
+        )
+    return taxonomy_nodes, relations, real_rows, planned_rows
+
+
+def _tool_forest_source(registry: dict) -> tuple[list[dict], list[dict], list[dict], list[dict], str]:
+    meta_source = _load_meta_index_source()
+    if meta_source is not None:
+        taxonomy_nodes, relations, real_rows, planned_rows = _build_rows_from_meta_index(registry, meta_source)
+        if taxonomy_nodes and real_rows:
+            return taxonomy_nodes, relations, real_rows, planned_rows, "meta_index"
+    real_rows, planned_rows = _build_forest_rows(registry)
+    return (
+        _taxonomy_nodes_sorted(registry),
+        registry["taxonomy_relations"],
+        real_rows,
+        planned_rows,
+        "ssot",
+    )
+
+
+def _merge_auto_blocks(existing: str, generated: str) -> str:
+    generated_blocks = {m.group("name"): m for m in AUTO_BLOCK_RE.finditer(generated)}
+    if not generated_blocks:
+        return generated
+    existing_block_names = {m.group("name") for m in AUTO_BLOCK_RE.finditer(existing)}
+    if not existing_block_names:
+        return generated
+
+    merged = existing
+    for name, gm in generated_blocks.items():
+        if name not in existing_block_names:
+            return generated
+        pattern = re.compile(
+            rf"(<!-- AUTO:{name} BEGIN -->)(.*?)(<!-- AUTO:{name} END -->)",
+            re.DOTALL,
+        )
+        replacement = gm.group(0)
+        merged = pattern.sub(replacement, merged)
+    return merged
+
+
 def _has_partial_evidence_reason(reason: str) -> bool:
     lowered = reason.lower()
     if "no local .lean file yet" in lowered:
@@ -76,7 +350,7 @@ def render_decision_log(registry: dict) -> str:
     ]
     return "\n".join(
         [
-            "# 决策日志",
+            "# Decision log",
             "",
             GENERATED_NOTE,
             "",
@@ -125,17 +399,17 @@ def render_module_catalog(registry: dict) -> str:
                 m["source_track"],
                 m["status"],
                 backlog.get("horizon", "unscheduled"),
-                backlog.get("priority", "—"),
+                backlog.get("priority", "-"),
                 m["reason"],
             ]
         )
     return "\n".join(
         [
-            "# 模块总表（Module Catalog）",
+            "# Module summary(Module Catalog)",
             "",
             GENERATED_NOTE,
             "",
-            "## 真实模块（file-backed）字段约束：",
+            "## real module(file-backed)Field constraints:",
             "- `module_path`",
             "- `primary_node_id`",
             "- `source_track(native/books/legacy)`",
@@ -168,14 +442,14 @@ def render_module_catalog(registry: dict) -> str:
                 rows,
             ),
             "",
-            "## 规划模块（non-file-backed）字段约束：",
+            "## planning module(non-file-backed)Field constraints:",
             "- `module_path`",
             "- `target_node_id`",
             "- `source_track(native/books)`",
             "- `status(planned/partial/covered/gap)`",
-            "- `execution_horizon(near/mid/far/unscheduled)`：来自 `execution_backlog`（未入短清单则为 unscheduled）",
-            "- `execution_priority(P1/P2/P3)`：来自 `execution_backlog`（未入短清单则为 `—`）",
-            "- `status=partial` 时，`reason` 必须包含可追溯证据（如 external/source_url/candidate_repo/证据）",
+            "- `execution_horizon(near/mid/far/unscheduled)`:from `execution_backlog`(If not included in the short list, it is unscheduled)",
+            "- `execution_priority(P1/P2/P3)`:from `execution_backlog`(If not included in the short list, it is `-`)",
+            "- `status=partial` hour,`reason` Must contain traceability evidence(like external/source_url/candidate_repo/evidence)",
             "- `reason`",
             "",
             table(
@@ -213,19 +487,19 @@ def _detect_structure_issues(registry: dict) -> list[dict]:
         if real_count.get(node_id, 0) == 0 and count >= 10:
             hollow_hotspots.append((node_id, count))
     if hollow_hotspots:
-        evidence = "；".join(
+        evidence = ";".join(
             f"{node_name.get(n, n)}: real=0 planned={c}" for n, c in hollow_hotspots
         )
         issues.append(
             {
                 "issue_id": "S1",
                 "severity": "P1",
-                "title": "主树空心节点（规划很多，真实模块为 0）",
+                "title": "Main tree hollow node(A lot of planning,The real module is 0)",
                 "evidence": evidence,
-                "scope": f"{sum(c for _, c in hollow_hotspots)} 个规划模块",
-                "action": "先给每个热点节点补 1 个 file-backed 骨架入口（非占位证明），再按书/主题逐步填充。",
-                "acceptance_gate": "对应节点 real_modules >= 1；lake build + check_namespace_layout 通过。",
-                "rollback_point": "仅新增骨架文件与 import；如不满意可回退该批新增文件与相应 import。",
+                "scope": f"{sum(c for _, c in hollow_hotspots)} planning module",
+                "action": "First supplement each hotspot node 1 indivual file-backed skeleton entrance(Proof of non-placeholder),Press the book again/Topics are gradually populated.",
+                "acceptance_gate": "Corresponding node real_modules >= 1;lake build + check_namespace_layout pass.",
+                "rollback_point": "Only add skeleton files and import;If you are not satisfied, you can roll back the batch of new files and the corresponding import.",
             }
         )
 
@@ -239,12 +513,12 @@ def _detect_structure_issues(registry: dict) -> list[dict]:
             {
                 "issue_id": "S2",
                 "severity": "P1",
-                "title": "公开入口仍是 placeholder",
-                "evidence": f"{len(public_placeholders)} 个：{names}",
-                "scope": "applications 用户入口",
-                "action": "把 placeholder 入口降级为 internal，或改成 bridge/compat 并明确指向可用 canonical 入口。",
-                "acceptance_gate": "role=placeholder 且 user_surface=public 的真实模块数量为 0。",
-                "rollback_point": "仅变更 registry 字段（role/user_surface）；可单次回滚 JSON 变更。",
+                "title": "Public entrance remains placeholder",
+                "evidence": f"{len(public_placeholders)} indivual:{names}",
+                "scope": "applications User portal",
+                "action": "Bundle placeholder The entrance is downgraded to internal,or change to bridge/compat and explicitly point to available canonical Entrance.",
+                "acceptance_gate": "role=placeholder and user_surface=public The real number of modules is 0.",
+                "rollback_point": "Change only registry Field(role/user_surface);Single rollback possible JSON change.",
             }
         )
 
@@ -258,12 +532,12 @@ def _detect_structure_issues(registry: dict) -> list[dict]:
             {
                 "issue_id": "S3",
                 "severity": "P2",
-                "title": "仍有 active alias，入口双轨并存",
-                "evidence": f"active aliases={len(active_aliases)}；示例：{names}",
-                "scope": "FoML2/SB2 章节兼容入口",
-                "action": "为每条 active alias 增加退役批次与窗口，逐批切换到 deprecated 并执行防回流扫描。",
-                "acceptance_gate": "active aliases 按批次单调下降，且 check_no_new_deprecated_imports 持续通过。",
-                "rollback_point": "如迁移受阻，仅将受影响 alias 状态切回 active，不动 canonical 文件。",
+                "title": "There are still active alias,Coexistence of dual entrance tracks",
+                "evidence": f"active aliases={len(active_aliases)};Example:{names}",
+                "scope": "FoML2/SB2 Chapter compatible entrance",
+                "action": "for each active alias Add decommissioning batches and windows,Switch to batch by batch deprecated and perform an anti-reflow scan.",
+                "acceptance_gate": "active aliases Decrease monotonically by batch,and check_no_new_deprecated_imports keep passing.",
+                "rollback_point": "If migration is blocked,will only be affected alias State switch back active,Not moving canonical document.",
             }
         )
 
@@ -281,12 +555,12 @@ def _detect_structure_issues(registry: dict) -> list[dict]:
             {
                 "issue_id": "S4",
                 "severity": "P2",
-                "title": "关键入口声明已在，但证明状态仍是 statement",
-                "evidence": f"{len(statement_entries)} 个模块；示例：{names}",
-                "scope": "canonical/tool 可信度",
-                "action": "按 canonical_specs 优先级把 statement 入口逐批推进到 proved；先补依赖闭包最短链路。",
-                "acceptance_gate": "canonical/tool 的 proved 比例按批次上升，且 canonical_contract 持续通过。",
-                "rollback_point": "单批证明失败时只回滚该批 theorem 变更，不回滚已通过批次。",
+                "title": "The key entry statement is already in,But the proof status is still statement",
+                "evidence": f"{len(statement_entries)} modules;Example:{names}",
+                "scope": "canonical/tool Credibility",
+                "action": "according to canonical_specs Prioritize statement The entrance is advanced in batches to proved;First complement dependency closure shortest link.",
+                "acceptance_gate": "canonical/tool of proved Ratio increases by batch,and canonical_contract keep passing.",
+                "rollback_point": "When the proof of a single batch fails, only the batch will be rolled back. theorem change,Do not roll back passed batches.",
             }
         )
 
@@ -304,16 +578,16 @@ def _detect_structure_issues(registry: dict) -> list[dict]:
             {
                 "issue_id": "S5",
                 "severity": "P3",
-                "title": "规划模块状态语义混杂（partial/gap 同时存在）",
+                "title": "Planning module state semantics mixed(partial/gap exist simultaneously)",
                 "evidence": (
-                    f"planned status 分布：planned={planned_status.get('planned', 0)}，"
-                    f"partial={planned_status.get('partial', 0)}，gap={planned_status.get('gap', 0)}；"
-                    f"无证据 partial={len(partial_without_evidence)}（示例：{names}）"
+                    f"planned status distributed:planned={planned_status.get('planned', 0)},"
+                    f"partial={planned_status.get('partial', 0)},gap={planned_status.get('gap', 0)};"
+                    f"no evidence partial={len(partial_without_evidence)}(Example:{names})"
                 ),
-                "scope": "路线图可读性",
-                "action": "收敛 planned 状态语义：未落地文件优先用 planned/gap，partial 仅用于有明确外部可复用证据。",
-                "acceptance_gate": "planned_modules 的 partial 条目有一致理由模板且可追溯来源。",
-                "rollback_point": "仅调整 planned_modules.status/reason 文案，可单次回滚 registry。",
+                "scope": "Roadmap readability",
+                "action": "convergence planned state semantics:Unimplemented files will be used first planned/gap,partial Only used if there is clear evidence of external reusability.",
+                "acceptance_gate": "planned_modules of partial Entries have consistent justification templates and traceable sources.",
+                "rollback_point": "Adjust only planned_modules.status/reason copywriting,Single rollback possible registry.",
             }
         )
 
@@ -341,30 +615,30 @@ def render_structure_issues(registry: dict) -> str:
         [
             "Phase-1",
             "S1 + S2",
-            "先把空心节点和公开 placeholder 收敛到可用入口（不改 theorem 语义）",
+            "First make the hollow nodes public placeholder Convergence to available entry(Don't change theorem semantics)",
             "lake build + check_namespace_layout + check_placeholder_policy",
-            "回滚新增骨架文件与 registry 字段改动",
+            "Roll back newly added skeleton files and registry Field changes",
         ],
         [
             "Phase-2",
             "S3",
-            "active alias 分批退役，保证用户入口单轨化",
+            "active alias Decommissioning in batches,Ensure single-track user entrance",
             "check_no_new_deprecated_imports + ImportSmoke",
-            "把受阻 alias 从 deprecated 切回 active",
+            "block alias from deprecated switch back active",
         ],
         [
             "Phase-3",
             "S4",
-            "关键 canonical/tool 从 statement 推进到 proved",
+            "key canonical/tool from statement advance to proved",
             "check_canonical_contract + lake build",
-            "仅回滚当前批 theorem，不影响已收敛批次",
+            "Rollback only the current batch theorem,Does not affect converged batches",
         ],
         [
             "Phase-4",
             "S5",
-            "整理 planned 状态语义，降低路线图歧义",
+            "tidy planned state semantics,Reduce roadmap ambiguity",
             "validate_ssot + sync_docs --check",
-            "仅回滚 planned_modules 的状态与 reason 文案",
+            "Rollback only planned_modules status and reason copywriting",
         ],
     ]
     phase_rows = []
@@ -375,16 +649,16 @@ def render_structure_issues(registry: dict) -> str:
 
     return "\n".join(
         [
-            "# 结构问题台账（Structure Issues）",
+            "# Structural Issues Ledger(Structure Issues)",
             "",
             GENERATED_NOTE,
             "",
-            "## 这份文档解决什么问题（人话）",
-            "1. 不靠主观印象，直接从当前 `registry.json` 统计结构问题。",
-            "2. 每个问题都给证据、影响范围、下一步动作、验收门禁、回滚点。",
-            "3. 目标是让“先修什么、怎么修、失败怎么退”一眼可见。",
+            "## What problem does this document solve?(human language)",
+            "1. Not relying on subjective impression,directly from the current `registry.json` Statistical structure issues.",
+            "2. Give evidence for every question,Scope of influence,Next action,Acceptance of access control,rollback point.",
+            "3. The goal is to make 'what to fix first, how to fix it, and how to roll back' visible at a glance.",
             "",
-            "## 当前自动识别的问题",
+            "## Current automatically identified issues",
             table(
                 [
                     "issue_id",
@@ -399,16 +673,16 @@ def render_structure_issues(registry: dict) -> str:
                 rows,
             ),
             "",
-            "## 分批重整顺序（可回滚）",
+            "## batch reordering(Can be rolled back)",
             table(
                 ["phase", "status", "focus_issues", "goal", "gates", "rollback"],
                 phase_rows,
             ),
             "",
-            "## 使用方式",
-            "1. 先看最高 severity 的问题（若存在 `P1`，优先修 `P1`）。",
-            "2. 每完成一批，都跑对应 gates；未过门禁不进入下一批。",
-            "3. 若某批卡住，按该批 rollback 先撤回，再拆小批次重试。",
+            "## Usage",
+            "1. Look at the highest first severity question(if exists `P1`,Prioritize repair `P1`).",
+            "2. Each batch is completed,All running correspondence gates;Those who fail to pass the gate will not be admitted to the next batch..",
+            "3. If a batch is stuck,According to the batch rollback Withdraw first,Split into smaller batches and try again.",
             "",
         ]
     )
@@ -441,23 +715,23 @@ def render_execution_backlog(registry: dict) -> str:
     )
 
     lines = [
-        "# 规划执行清单（Execution Backlog）",
+        "# Planning execution checklist(Execution Backlog)",
         "",
         GENERATED_NOTE,
         "",
-        "## 一眼看懂",
-        f"- 规划模块总数：{len(registry['planned_modules'])}",
-        f"- 执行短清单总数：{len(backlog)}",
-        f"- 未排期（unscheduled）：{len(unscheduled)}",
-        "- 解释：`near`=最近两轮就要推进，`mid`=后续阶段，`far`=远期探索。",
+        "## Understand at a glance",
+        f"- Total number of planning modules:{len(registry['planned_modules'])}",
+        f"- Total number of execution shortlists:{len(backlog)}",
+        f"- Not scheduled(unscheduled):{len(unscheduled)}",
+        "- explain:`near`=The last two rounds will be advanced,`mid`=Follow-up stage,`far`=long term exploration.",
         "",
-        "## near（近期）",
+        "## near(Recently)",
     ]
 
     near_rows = []
     for row in by_horizon["near"]:
         module_path = row["module_path"]
-        target_node = planned_by_path.get(module_path, {}).get("target_node_id", "—")
+        target_node = planned_by_path.get(module_path, {}).get("target_node_id", "-")
         near_rows.append(
             [
                 row["priority"],
@@ -470,12 +744,12 @@ def render_execution_backlog(registry: dict) -> str:
     lines.append(
         table(["priority", "module_path", "target_node", "why_now", "done_when"], near_rows)
     )
-    lines.extend(["", "## mid（中期）"])
+    lines.extend(["", "## mid(medium term)"])
 
     mid_rows = []
     for row in by_horizon["mid"]:
         module_path = row["module_path"]
-        target_node = planned_by_path.get(module_path, {}).get("target_node_id", "—")
+        target_node = planned_by_path.get(module_path, {}).get("target_node_id", "-")
         mid_rows.append(
             [
                 row["priority"],
@@ -488,12 +762,12 @@ def render_execution_backlog(registry: dict) -> str:
     lines.append(
         table(["priority", "module_path", "target_node", "why_now", "done_when"], mid_rows)
     )
-    lines.extend(["", "## far（远期）"])
+    lines.extend(["", "## far(forward)"])
 
     far_rows = []
     for row in by_horizon["far"]:
         module_path = row["module_path"]
-        target_node = planned_by_path.get(module_path, {}).get("target_node_id", "—")
+        target_node = planned_by_path.get(module_path, {}).get("target_node_id", "-")
         far_rows.append(
             [
                 row["priority"],
@@ -511,13 +785,13 @@ def render_execution_backlog(registry: dict) -> str:
     lines.extend(
         [
             "",
-            "## 未排期模块（Top 25）",
+            "## Unscheduled modules(Top 25)",
             table(["module_path"], unscheduled_rows),
             "",
-            "## 使用方式",
-            "1. 每次只从 `near` 里取 1-2 项推进，避免并发过多导致质量下降。",
-            "2. 只有完成 `done_when`，才允许把条目从 short-list 移出或降级到 `mid/far`。",
-            "3. 新增规划模块时，优先决定是否进入 `execution_backlog`，否则默认 `unscheduled`。",
+            "## Usage",
+            "1. Only from `near` Litori 1-2 Item advancement,Avoid quality degradation caused by excessive concurrency.",
+            "2. only completed `done_when`,Items are allowed to be moved from short-list Move out or downgrade to `mid/far`.",
+            "3. When adding a new planning module,Prioritize whether to enter `execution_backlog`,Otherwise default `unscheduled`.",
             "",
         ]
     )
@@ -536,7 +810,7 @@ def render_review_dashboard(registry: dict) -> str:
     for module_path in recent_promotions:
         mod = module_map.get(module_path)
         if mod is None:
-            recent_rows.append([module_path, "—", "—", "—", "—"])
+            recent_rows.append([module_path, "-", "-", "-", "-"])
             continue
         recent_rows.append(
             [
@@ -560,15 +834,15 @@ def render_review_dashboard(registry: dict) -> str:
     ):
         mpath = str(row.get("module_path", ""))
         planned = next((x for x in planned_modules if x["module_path"] == mpath), None)
-        target = planned["target_node_id"] if planned else "—"
+        target = planned["target_node_id"] if planned else "-"
         backlog_rows.append(
             [
-                row.get("horizon", "—"),
-                row.get("priority", "—"),
+                row.get("horizon", "-"),
+                row.get("priority", "-"),
                 mpath,
                 node_name.get(target, target),
-                row.get("why_now", "—"),
-                row.get("done_when", "—"),
+                row.get("why_now", "-"),
+                row.get("done_when", "-"),
             ]
         )
 
@@ -600,41 +874,41 @@ def render_review_dashboard(registry: dict) -> str:
     ]
 
     lines = [
-        "# 验收看板（Review Dashboard）",
+        "# Acceptance Kanban(Review Dashboard)",
         "",
         GENERATED_NOTE,
         "",
-        "## 你先看这四件事",
-        f"1. 真实模块：`{len(modules)}`",
-        f"2. 规划模块：`{len(planned_modules)}`",
-        f"3. 当前短清单：`{len(backlog_rows)}`",
-        f"4. 最近提升（planned -> file-backed）：`{len(recent_rows)}`",
+        "## Look at these four things first",
+        f"1. real module:`{len(modules)}`",
+        f"2. planning module:`{len(planned_modules)}`",
+        f"3. Current short list:`{len(backlog_rows)}`",
+        f"4. Recently promoted(planned -> file-backed):`{len(recent_rows)}`",
         "",
-        "## 最近提升（planned -> file-backed）",
+        "## Recently promoted(planned -> file-backed)",
         table(
-            ["module_path", "node", "role", "proof_status", "先看声明(Top3)"],
-            recent_rows if recent_rows else [["（暂无）", "—", "—", "—", "—"]],
+            ["module_path", "node", "role", "proof_status", "Read the statement first(Top3)"],
+            recent_rows if recent_rows else [["(None yet)", "-", "-", "-", "-"]],
         ),
         "",
-        "## 当前执行焦点（execution_backlog）",
+        "## Current execution focus(execution_backlog)",
         table(
             ["horizon", "priority", "module_path", "target_node", "why_now", "done_when"],
-            backlog_rows if backlog_rows else [["—", "—", "（空）", "—", "—", "—"]],
+            backlog_rows if backlog_rows else [["-", "-", "(null)", "-", "-", "-"]],
         ),
         "",
-        "## 结构热区（按规划压力排序）",
+        "## structural hot zone(Sort by planning pressure)",
         table(["node_name", "node_id", "real_modules", "planned_modules"], node_rows[:8]),
         "",
-        "## 一键验收命令",
-        "通过标准：以上命令全部 `PASS` / `Build completed successfully`。",
+        "## One-click acceptance command",
+        "pass standard:All the above commands `PASS` / `Build completed successfully`.",
         "```bash",
         *gate_commands,
         "```",
         "",
-        "## 怎么用（人话）",
-        "1. 先看“最近提升”，判断这批是否是你想要的方向。",
-        "2. 再看“当前执行焦点”，确认下一步是不是你认可的优先级。",
-        "3. 最后复制“ 一键验收命令 ”跑完，确保这轮变更可独立复验。",
+        "## How to use(human language)",
+        "1. Check 'Recently promoted' first to confirm this batch matches the intended direction.",
+        "2. Then check 'Current execution focus' to confirm the next-step priority.",
+        "3. Finally run the 'One-click acceptance commands' to ensure independent reproducibility.",
         "",
     ]
     return "\n".join(lines)
@@ -653,38 +927,38 @@ def render_api_cards(registry: dict) -> str:
         by_node[m["primary_node_id"]].append(m)
 
     role_desc = {
-        "canonical": "主入口",
-        "tool": "工具接口",
-        "bridge": "桥接接口",
-        "compat": "兼容入口",
-        "placeholder": "占位入口",
+        "canonical": "main entrance",
+        "tool": "Tool interface",
+        "bridge": "bridge interface",
+        "compat": "Compatible entrance",
+        "placeholder": "Placeholder entrance",
     }
     layer_desc = {
-        "core": "基础层",
-        "methods": "方法层",
-        "applications": "应用层",
-        "books": "书籍层",
-        "legacy": "兼容层",
+        "core": "base layer",
+        "methods": "method layer",
+        "applications": "Application layer",
+        "books": "book layer",
+        "legacy": "Compatibility layer",
     }
 
     lines = [
-        "# 最小 API 卡片（APICards）",
+        "# smallest API card(APICards)",
         "",
         GENERATED_NOTE,
         "",
-        "## 怎么用（2 分钟）",
-        "1. 先看“最近变更优先看”，只检查这几项是否符合你的预期。",
-        "2. 再到对应领域分组，按模块卡片看：做什么 + 先看哪些声明。",
-        "3. 不需要一次看全库；每轮只抽查 3-5 个模块即可。",
+        "## How to use(2 minute)",
+        "1. Start with 'See recent changes first' and verify these items match expectations.",
+        "2. Then go to the corresponding field grouping,View by module card:do what + Which statements to look at first.",
+        "3. No need to read the entire database at once;Only spot checks in each round 3-5 Just one module.",
         "",
-        "## 最近变更优先看",
+        "## See recent changes first",
     ]
 
     recent_rows = []
     for module_path in _extract_recent_promotions(registry, limit=10):
         mod = next((m for m in modules if m["module_path"] == module_path), None)
         if mod is None:
-            recent_rows.append([module_path, "—", "—", "—"])
+            recent_rows.append([module_path, "-", "-", "-"])
             continue
         recent_rows.append(
             [
@@ -696,11 +970,11 @@ def render_api_cards(registry: dict) -> str:
         )
     lines.append(
         table(
-            ["module_path", "node", "状态(layer/role/proof)", "先看声明(Top3)"],
-            recent_rows if recent_rows else [["（暂无）", "—", "—", "—"]],
+            ["module_path", "node", "state(layer/role/proof)", "Read the statement first(Top3)"],
+            recent_rows if recent_rows else [["(None yet)", "-", "-", "-"]],
         )
     )
-    lines.extend(["", "## 按领域查看（public 模块）"])
+    lines.extend(["", "## View by area(public module)"])
 
     for nid in [n["node_id"] for n in _taxonomy_nodes_sorted(registry)]:
         mods = sorted(by_node.get(nid, []), key=lambda m: m["module_path"])
@@ -708,28 +982,28 @@ def render_api_cards(registry: dict) -> str:
             continue
         nname = node_name.get(nid, nid)
         lines.append("")
-        lines.append(f"### {nname}（{len(mods)}）")
+        lines.append(f"### {nname}({len(mods)})")
         for m in mods:
             mark = "[NEW] " if m["module_path"] in recent_promotions else ""
             purpose = (
-                f"{layer_desc.get(m['layer'], m['layer'])}的"
+                f"{layer_desc.get(m['layer'], m['layer'])}of"
                 f"{role_desc.get(m['role'], m['role'])}"
             )
             lines.append(
                 (
-                    f"- {mark}`{m['module_path']}`：{purpose}；"
-                    f"先看 `{_decl_preview(m['formal_decl_refs'], limit=3)}`；"
-                    f"状态 `{m['proof_status']}`；"
-                    f"文件 `{_module_path_to_file(m['module_path'])}`"
+                    f"- {mark}`{m['module_path']}`:{purpose};"
+                    f"Look first `{_decl_preview(m['formal_decl_refs'], limit=3)}`;"
+                    f"state `{m['proof_status']}`;"
+                    f"document `{_module_path_to_file(m['module_path'])}`"
                 )
             )
 
     lines.extend(
         [
             "",
-            "## 抽查建议",
-            "1. 每次先抽查 1 个 `NEW` 模块 + 1 个同领域旧模块，确认风格是否一致。",
-            "2. 若卡片描述与代码不一致，优先修 SSOT，再重新生成文档。",
+            "## Spot check suggestions",
+            "1. Check first every time 1 indivual `NEW` module + 1 Old modules in the same field,Confirm whether the style is consistent.",
+            "2. If the card description is inconsistent with the code,Prioritize repair SSOT,Regenerate the document.",
             "",
         ]
     )
@@ -755,15 +1029,15 @@ def render_refactor_handoff(registry: dict) -> str:
         ),
     ):
         mpath = str(row.get("module_path", ""))
-        target = planned_by_path.get(mpath, {}).get("target_node_id", "—")
+        target = planned_by_path.get(mpath, {}).get("target_node_id", "-")
         backlog_rows.append(
             [
-                row.get("horizon", "—"),
-                row.get("priority", "—"),
+                row.get("horizon", "-"),
+                row.get("priority", "-"),
                 mpath,
                 node_name.get(target, target),
-                row.get("why_now", "—"),
-                row.get("done_when", "—"),
+                row.get("why_now", "-"),
+                row.get("done_when", "-"),
             ]
         )
 
@@ -783,16 +1057,16 @@ def render_refactor_handoff(registry: dict) -> str:
         mod = next((x for x in modules if x["module_path"] == module_path), None)
         if mod is None:
             promotion_rows.append(
-                [decision_row.get("date", "—"), module_path, "—", "—", decision_row.get("impact", "—")]
+                [decision_row.get("date", "-"), module_path, "-", "-", decision_row.get("impact", "-")]
             )
             continue
         promotion_rows.append(
             [
-                decision_row.get("date", "—"),
+                decision_row.get("date", "-"),
                 module_path,
                 node_name.get(mod["primary_node_id"], mod["primary_node_id"]),
                 f"{mod['layer']}/{mod['role']}/{mod['proof_status']}",
-                decision_row.get("impact", "—"),
+                decision_row.get("impact", "-"),
             ]
         )
 
@@ -878,11 +1152,11 @@ def render_refactor_handoff(registry: dict) -> str:
     ]
 
     audit_rows = []
-    audit_summary = "（未找到 lean4_contract_audit.json）"
+    audit_summary = "(not found lean4_contract_audit.json)"
     if isinstance(audit, dict):
         audit_summary = (
-            f"date={audit.get('date', '—')}；mode={audit.get('mode', '—')}；"
-            f"score={audit.get('score', '—')}；status={audit.get('status', '—')}"
+            f"date={audit.get('date', '-')};mode={audit.get('mode', '-')};"
+            f"score={audit.get('score', '-')};status={audit.get('status', '-')}"
         )
         checks = audit.get("checks", [])
         if isinstance(checks, list):
@@ -894,59 +1168,59 @@ def render_refactor_handoff(registry: dict) -> str:
                 audit_rows.append(
                     [
                         idx,
-                        row.get("check_id", "—"),
-                        row.get("title", "—"),
+                        row.get("check_id", "-"),
+                        row.get("title", "-"),
                         "PASS" if row.get("passed") else "FAIL",
                         hit_count,
                     ]
                 )
 
     lines = [
-        "# GPT5.2pro 重构交接包（MLTheory 全量实现快照）",
+        "# GPT5.2pro Refactoring the handover package(MLTheory Full implementation snapshot)",
         "",
         GENERATED_NOTE,
         "",
-        "## 目的（给重构模型）",
-        "1. 这份文档是“已做工作全量快照”，用于避免重构时丢上下文。",
-        "2. 数据全部来自 `docs/ssot/registry.json`（和审查文件 `docs/ssot/lean4_contract_audit.json`）。",
-        "3. 你可以把这份文档直接喂给 GPT5.2pro，让它基于真实现状更新重构方案。",
+        "## Purpose(Give reconstruction model)",
+        "1. This document is a snapshot of completed work to avoid context loss during refactoring.",
+        "2. All data comes from `docs/ssot/registry.json`(and review documents `docs/ssot/lean4_contract_audit.json`).",
+        "3. You can feed this document directly to GPT5.2pro,Let it update the reconstruction plan based on the real status quo.",
         "",
-        "## 一眼看懂当前状态",
-        f"- SSOT schema_version：`{registry['meta']['schema_version']}`",
-        f"- last_updated：`{registry['meta']['last_updated']}`",
-        f"- 决策总数：`{len(registry['decisions'])}`",
-        f"- 真实模块（file-backed）总数：`{len(modules)}`",
-        f"- 规划模块（non-file-backed）总数：`{len(planned_modules)}`",
-        f"- 执行短清单（execution_backlog）条数：`{len(backlog_rows)}`",
-        f"- aliases 总数：`{len(registry['aliases'])}`",
-        f"- gaps 总数：`{len(registry['gaps'])}`",
+        "## Understand the current status at a glance",
+        f"- SSOT schema_version:`{registry['meta']['schema_version']}`",
+        f"- last_updated:`{registry['meta']['last_updated']}`",
+        f"- Total number of decisions:`{len(registry['decisions'])}`",
+        f"- real module(file-backed)total:`{len(modules)}`",
+        f"- planning module(non-file-backed)total:`{len(planned_modules)}`",
+        f"- Execute short list(execution_backlog)number of items:`{len(backlog_rows)}`",
+        f"- aliases total:`{len(registry['aliases'])}`",
+        f"- gaps total:`{len(registry['gaps'])}`",
         "",
-        "## 当前下一步（短清单）",
+        "## Current next step(short list)",
         table(
             ["horizon", "priority", "module_path", "target_node", "why_now", "done_when"],
-            backlog_rows if backlog_rows else [["—", "—", "（空）", "—", "—", "—"]],
+            backlog_rows if backlog_rows else [["-", "-", "(null)", "-", "-", "-"]],
         ),
         "",
-        "## 架构契约（重构时默认不可破）",
-        "### 1) taxonomy 主树",
+        "## architectural contract(Unbreakable by default when refactoring)",
+        "### 1) taxonomy main tree",
         table(
             ["node_id", "name", "tier", "primary_parent_id", "status", "order"],
             taxonomy_rows,
         ),
         "",
-        "### 2) taxonomy 关系边（secondary_parent/related）",
+        "### 2) taxonomy relationship edge(secondary_parent/related)",
         table(
             ["from_node", "from_name", "to_node", "to_name", "relation_type", "strength"],
-            relation_rows if relation_rows else [["—", "—", "—", "—", "—", "—"]],
+            relation_rows if relation_rows else [["-", "-", "-", "-", "-", "-"]],
         ),
         "",
-        "### 3) 官方工作流对齐（Lean 官方资源映射）",
+        "### 3) Official workflow alignment(Lean Official resource mapping)",
         table(
             ["capability", "source_url", "status", "local_enforcement"],
             workflow_rows,
         ),
         "",
-        "### 4) canonical spec 契约",
+        "### 4) canonical spec contract",
         table(
             [
                 "spec_id",
@@ -960,20 +1234,20 @@ def render_refactor_handoff(registry: dict) -> str:
             canonical_rows,
         ),
         "",
-        "## Phase-0 / skill 对齐审查快照",
+        "## Phase-0 / skill Alignment review snapshot",
         f"- {audit_summary}",
         table(
             ["#", "check_id", "title", "result", "hits"],
-            audit_rows if audit_rows else [["—", "—", "—", "—", "—"]],
+            audit_rows if audit_rows else [["-", "-", "-", "-", "-"]],
         ),
         "",
-        "## 已完成实现（planned -> file-backed 提升轨迹）",
+        "## Completed implementation(planned -> file-backed Ascension trajectory)",
         table(
             ["date", "module_path", "node", "state(layer/role/proof)", "impact"],
-            promotion_rows if promotion_rows else [["—", "—", "—", "—", "—"]],
+            promotion_rows if promotion_rows else [["-", "-", "-", "-", "-"]],
         ),
         "",
-        "## 真实模块全量清单（实现细节）",
+        "## Full list of real modules(Implementation details)",
         table(
             [
                 "module_path",
@@ -988,19 +1262,19 @@ def render_refactor_handoff(registry: dict) -> str:
             module_rows,
         ),
         "",
-        "## 规划模块全量清单（未落地）",
+        "## Full list of planning modules(Not yet landed)",
         table(
             ["module_path", "target_node", "source_track", "status", "reason"],
             planned_rows,
         ),
         "",
-        "## 结构风险与重构优先级（自动识别）",
+        "## Structural Risks and Refactoring Priorities(automatic recognition)",
         table(
             ["issue_id", "severity", "title", "evidence", "action", "acceptance_gate"],
-            issue_rows if issue_rows else [["—", "—", "（无）", "—", "—", "—"]],
+            issue_rows if issue_rows else [["-", "-", "(none)", "-", "-", "-"]],
         ),
         "",
-        "## 可复现验收命令（重构后至少跑这些）",
+        "## Reproducible acceptance command(After refactoring, run at least these)",
         "```bash",
         "python3 tools/docs/validate_ssot.py",
         "python3 tools/docs/sync_docs.py --check",
@@ -1022,10 +1296,10 @@ def render_refactor_handoff(registry: dict) -> str:
         "bash /Users/xiongjiangkai/xjk_papers/paper-template/scripts/check_final_signature.sh",
         "```",
         "",
-        "## 给 GPT5.2pro 的建议阅读顺序",
-        "1. 先看“架构契约”与“Phase-0 审查快照”，确认硬约束。",
-        "2. 再看“已完成实现轨迹”与“真实模块全量清单”，避免重复造轮子。",
-        "3. 最后看“规划模块全量清单 + 结构风险”，决定推翻重做范围与迁移策略。",
+        "## Give GPT5.2pro Suggested reading order for",
+        "1. Read 'architectural contract' and 'Phase-0 review snapshot' first to confirm hard constraints.",
+        "2. Then read 'completed implementation trajectory' and the full real-module list to avoid duplication.",
+        "3. Finally read 'planning modules + structural risk' to decide rewrite scope and migration strategy.",
         "",
     ]
     return "\n".join(lines)
@@ -1080,7 +1354,7 @@ def _module_path_to_file(module_path: str) -> str:
 
 def _decl_preview(decls: list[str], limit: int = 3) -> str:
     if not decls:
-        return "—"
+        return "-"
     if len(decls) <= limit:
         return ", ".join(decls)
     shown = ", ".join(decls[:limit])
@@ -1177,9 +1451,8 @@ def _build_forest_rows(registry: dict) -> tuple[list[dict], list[dict]]:
 
 
 def render_tool_forest(registry: dict) -> str:
-    taxonomy_nodes = _taxonomy_nodes_sorted(registry)
-    node_name = _node_name_map(registry)
-    real_rows, planned_rows = _build_forest_rows(registry)
+    taxonomy_nodes, relations, real_rows, planned_rows, source_mode = _tool_forest_source(registry)
+    node_name = {n["node_id"]: n["name"] for n in taxonomy_nodes}
     planned_by_path = {m["module_path"]: m for m in registry["planned_modules"]}
     backlog = list(registry.get("execution_backlog", []))
 
@@ -1235,8 +1508,15 @@ def render_tool_forest(registry: dict) -> str:
     node_rows.sort(key=lambda x: (-x[4], -x[5], x[0]))
 
     relation_rows = [
-        [r["from_node"], node_name.get(r["from_node"], r["from_node"]), r["to_node"], node_name.get(r["to_node"], r["to_node"]), r["relation_type"], r["strength"]]
-        for r in registry["taxonomy_relations"]
+        [
+            r["from_node"],
+            node_name.get(r["from_node"], r["from_node"]),
+            r["to_node"],
+            node_name.get(r["to_node"], r["to_node"]),
+            r["relation_type"],
+            r["strength"],
+        ]
+        for r in relations
     ]
 
     source_rows = [
@@ -1266,7 +1546,7 @@ def render_tool_forest(registry: dict) -> str:
             r["source_track"],
             r["status"],
             r["execution_horizon"],
-            r["execution_priority"] or "—",
+            r["execution_priority"] or "-",
             _short_text(r["reason"], limit=72),
         ]
         for r in planned_rows
@@ -1284,43 +1564,43 @@ def render_tool_forest(registry: dict) -> str:
         ),
     ):
         module_path = str(row.get("module_path", ""))
-        target_node = planned_by_path.get(module_path, {}).get("target_node_id", "—")
+        target_node = planned_by_path.get(module_path, {}).get("target_node_id", "-")
         backlog_rows.append(
             [
-                row.get("horizon", "—"),
-                row.get("priority", "—"),
+                row.get("horizon", "-"),
+                row.get("priority", "-"),
                 module_path,
                 node_name.get(target_node, target_node),
-                _short_text(str(row.get("why_now", "—")), limit=56),
-                _short_text(str(row.get("done_when", "—")), limit=56),
+                _short_text(str(row.get("why_now", "-")), limit=56),
+                _short_text(str(row.get("done_when", "-")), limit=56),
             ]
         )
 
     lines = [
-        "# 工具森林（Tool Forest）",
+        "# Tool forest(Tool Forest)",
         "",
         GENERATED_NOTE,
         "",
-        "## 一眼看懂",
-        f"- 真实模块数：{len(real_rows)}",
-        f"- 规划模块数：{len(planned_rows)}",
-        f"- 规划执行短清单：{backlog_count}",
-        f"- 规划未排期：{unscheduled_count}",
-        f"- taxonomy 节点数：{len(taxonomy_nodes)}",
+        "## Understand at a glance",
+        f"- Real number of modules:{len(real_rows)}",
+        f"- Number of planning modules:{len(planned_rows)}",
+        f"- Planning Execution Short Checklist:{backlog_count}",
+        f"- Planning is not scheduled:{unscheduled_count}",
+        f"- taxonomy Number of nodes:{len(taxonomy_nodes)}",
         (
-            f"- 真实模块角色：canonical={role_count['canonical']}，tool={role_count['tool']}，"
-            f"compat={role_count['compat']}，bridge={role_count['bridge']}，placeholder={role_count['placeholder']}"
+            f"- real module role:canonical={role_count['canonical']},tool={role_count['tool']},"
+            f"compat={role_count['compat']},bridge={role_count['bridge']},placeholder={role_count['placeholder']}"
         ),
         (
-            f"- 真实模块证明状态：proved={proof_count['proved']}，statement={proof_count['statement']}，"
+            f"- Real module proof status:proved={proof_count['proved']},statement={proof_count['statement']},"
             f"placeholder={proof_count['placeholder']}"
         ),
-        "- `Books/Legacy` 已改为 `source_track` 轴，不再作为主树节点。",
+        "- `Books/Legacy` has been changed to `source_track` axis,No longer a main tree node.",
         "",
-        "## 视图 A：Taxonomy 主树",
+        "## view A:Taxonomy main tree",
         *view_a,
         "",
-        "## 表 1：taxonomy 节点总览",
+        "## surface 1:taxonomy Node overview",
         table(
             [
                 "node_id",
@@ -1335,27 +1615,27 @@ def render_tool_forest(registry: dict) -> str:
             node_rows,
         ),
         "",
-        "## 表 2：关系边（次父/关联）",
+        "## surface 2:relationship edge(second father/association)",
         table(
             ["from_node", "from_name", "to_node", "to_name", "relation_type", "strength"],
             relation_rows,
         ),
         "",
-        "## 表 3：source_track 分布（真实/规划）",
+        "## surface 3:source_track distributed(reality/planning)",
         table(
             ["source_track", "real_modules", "planned_modules"],
             source_rows,
         ),
         "",
-        "## 表 4：入口模块（canonical + tool，Top 20）",
-        f"- 全量入口数：{len(entry_rows_all)}（这里默认只展示前 20 条，详细请看交互页）",
+        "## surface 4:Entry module(canonical + tool,Top 20)",
+        f"- Total number of entries:{len(entry_rows_all)}(By default, only the front 20 strip,Please see the interactive page for details)",
         table(
             ["module_path", "node_name", "source_track", "layer", "role", "proof_status", "formal_decl_refs"],
             entry_rows,
         ),
         "",
-        "## 表 5：规划模块样例（Top 12）",
-        f"- 全量规划模块数：{len(planned_top_rows_all)}（这里只展示前 12 条，避免刷屏）",
+        "## surface 5:Planning module sample(Top 12)",
+        f"- Total number of planning modules:{len(planned_top_rows_all)}(Only the front is shown here 12 strip,Avoid swiping)",
         table(
             [
                 "module_path",
@@ -1369,38 +1649,36 @@ def render_tool_forest(registry: dict) -> str:
             planned_top_rows,
         ),
         "",
-        "## 表 6：规划执行短清单（near/mid/far）",
+        "## surface 6:Planning Execution Short Checklist(near/mid/far)",
         table(
             ["horizon", "priority", "module_path", "target_node", "why_now", "done_when"],
             backlog_rows[:10],
         ),
         "",
-        "## 交互页（完整明细）",
-        "- 见 [ToolForestInteractive.html](./ToolForestInteractive.html)。",
-        "- 默认只显示 `真实模块`；需要时再切到 `规划模块`。",
-        "- 支持 `真实模块/规划模块` 开关、node/source/layer/role/proof/plan window 筛选与搜索。",
-        "- 想快速验收本轮变化：看 [ReviewDashboard.md](./ReviewDashboard.md)。",
-        "- 想快速理解模块用途：看 [APICards.md](./APICards.md)。",
+        "## interactive page(Full details)",
+        "- See [ToolForestInteractive.html](./ToolForestInteractive.html).",
+        "- By default, only the `real module`;Cut to it when needed `planning module`.",
+        "- support `real module/planning module` switch,node/source/layer/role/proof/plan window Filter and search.",
+        "- Want to quickly accept this round of changes:look [ReviewDashboard.md](./ReviewDashboard.md).",
+        "- Want to quickly understand the purpose of the module:look [APICards.md](./APICards.md).",
         "",
-        "## 使用说明（人 + Codex）",
-        "1. 本文档由 `docs/ssot/registry.json` 自动生成，禁止手改。",
-        "2. 主树看 `taxonomy_nodes`，横向关系看 `taxonomy_relations`。",
-        "3. 真实结构看 `modules`；路线图看 `planned_modules`。",
-        "4. 变更流程：",
-        "- 先改 `docs/ssot/registry.json`。",
-        "- 跑 `python3 tools/docs/validate_ssot.py`。",
-        "- 跑 `python3 tools/docs/sync_docs.py --write`。",
-        "- 跑 `python3 tools/ci/check_taxonomy_contract.py`。",
-        "- 跑 `python3 tools/ci/check_tool_forest_consistency.py`。",
+        "## Instructions for use(people + Codex)",
+        f"1. This document is provided by `{ 'docs/meta + artifacts/index' if source_mode == 'meta_index' else 'docs/ssot/registry.json' }` Automatically generated,Manual modification is prohibited.",
+        "2. main tree view `taxonomy_nodes`,Looking at the horizontal relationship `taxonomy_relations`.",
+        "3. Look at the real structure `modules`;Look at the road map `planned_modules`.",
+        "4. Change process:",
+        "- Change first `docs/ssot/registry.json`.",
+        "- run `python3 tools/docs/validate_ssot.py`.",
+        "- run `python3 tools/docs/sync_docs.py --write`.",
+        "- run `python3 tools/ci/check_taxonomy_contract.py`.",
+        "- run `python3 tools/ci/check_tool_forest_consistency.py`.",
         "",
     ]
     return "\n".join(lines)
 
 
 def render_tool_forest_interactive(registry: dict) -> str:
-    nodes = _taxonomy_nodes_sorted(registry)
-    relations = registry["taxonomy_relations"]
-    real_rows, planned_rows = _build_forest_rows(registry)
+    nodes, relations, real_rows, planned_rows, _ = _tool_forest_source(registry)
     payload = json.dumps(
         {
             "meta": registry["meta"],
@@ -1606,23 +1884,23 @@ def render_tool_forest_interactive(registry: dict) -> str:
     <div class="card">
       <h1>Tool Forest Interactive</h1>
       <div class="muted">
-        这个页面只读 `docs/ssot/registry.json` 派生数据。<br />
-        默认先看真实模块；只有需要排期时再切到规划模块视图。
+        This page is read only `docs/ssot/registry.json` derived data.<br />
+        By default, look at the real module first;Only switch to the planning module view when scheduling is needed.
       </div>
       <div class="chips" id="summary"></div>
     </div>
 
     <div class="card controls">
       <div>
-        <label for="q">搜索</label>
+        <label for="q">search</label>
         <input id="q" placeholder="module/node/subdomain/key_problem/formal decl" />
       </div>
       <div>
         <label for="f-dataset">Dataset</label>
         <select id="f-dataset">
-          <option value="">全部</option>
-          <option value="real" selected>真实模块</option>
-          <option value="planned">规划模块</option>
+          <option value="">all</option>
+          <option value="real" selected>real module</option>
+          <option value="planned">planning module</option>
         </select>
       </div>
       <div>
@@ -1647,26 +1925,26 @@ def render_tool_forest_interactive(registry: dict) -> str:
       </div>
       <div>
         <label>&nbsp;</label>
-        <button id="reset">重置筛选</button>
+        <button id="reset">Reset filter</button>
       </div>
     </div>
 
     <div class="card">
-      <div class="muted" style="margin-bottom:6px;">快速视图</div>
+      <div class="muted" style="margin-bottom:6px;">quick view</div>
       <div class="chips">
-        <button class="qbtn" id="preset-real">只看真实模块</button>
-        <button class="qbtn" id="preset-near">只看近期规划</button>
-        <button class="qbtn" id="preset-all">显示全部</button>
+        <button class="qbtn" id="preset-real">Only look at real modules</button>
+        <button class="qbtn" id="preset-near">Only look at recent plans</button>
+        <button class="qbtn" id="preset-all">Show all</button>
       </div>
     </div>
 
     <div class="layout">
       <div class="card">
-        <div class="muted" style="margin-bottom:8px;">领域结构（可折叠）</div>
+        <div class="muted" style="margin-bottom:8px;">domain structure(Foldable)</div>
         <div class="tree" id="tree"></div>
       </div>
       <div class="card">
-        <div class="muted" style="margin-bottom:8px;">模块列表（点击行看详情）</div>
+        <div class="muted" style="margin-bottom:8px;">Module list(Click on row to view details)</div>
         <div class="table-wrap">
           <table>
             <thead>
@@ -1684,7 +1962,7 @@ def render_tool_forest_interactive(registry: dict) -> str:
           </table>
         </div>
         <div class="detail" id="detail">
-          <div class="muted">点击上方任意模块行显示详情。</div>
+          <div class="muted">Click on any module row above to display details.</div>
         </div>
       </div>
     </div>
@@ -1722,7 +2000,7 @@ def render_tool_forest_interactive(registry: dict) -> str:
       el.innerHTML = "";
       const opt0 = document.createElement("option");
       opt0.value = "";
-      opt0.textContent = "全部";
+      opt0.textContent = "all";
       el.appendChild(opt0);
       for (const v of values) {{
         const o = document.createElement("option");
@@ -1896,7 +2174,7 @@ def render_tool_forest_interactive(registry: dict) -> str:
       }}
       if (list.length > MAX_ROWS) {{
         const tr = document.createElement("tr");
-        tr.innerHTML = `<td colspan="7" class="muted">已显示前 ${MAX_ROWS} 条，共 ${list.length} 条。请继续筛选或搜索。</td>`;
+        tr.innerHTML = `<td colspan="7" class="muted">Shown before ${MAX_ROWS} strip,common ${list.length} strip.Please continue filtering or searching.</td>`;
         dom.tbody.appendChild(tr);
       }}
     }}
@@ -1906,11 +2184,11 @@ def render_tool_forest_interactive(registry: dict) -> str:
         <div class="k">module_path</div><div class="v">${m.module_path}</div>
         <div class="k">node / subdomain / key_problem</div><div class="v">${m.node_name} / ${m.subdomain} / ${m.key_problem}</div>
         <div class="k">dataset / source_track</div><div class="v">${m.dataset} / ${m.source_track}</div>
-        <div class="k">plan window / priority / shortlist</div><div class="v">${m.execution_horizon || "—"} / ${m.execution_priority || "—"} / ${m.in_backlog ? "yes" : "no"}</div>
+        <div class="k">plan window / priority / shortlist</div><div class="v">${m.execution_horizon || "-"} / ${m.execution_priority || "-"} / ${m.in_backlog ? "yes" : "no"}</div>
         <div class="k">layer / role / proof_status</div><div class="v">${m.layer} / ${m.role} / ${m.proof_status}</div>
-        <div class="k">formal_decl_refs</div><div class="v">${(m.formal_decl_refs || []).join(", ") || "—"}</div>
-        <div class="k">status</div><div class="v">${m.status || "—"}</div>
-        <div class="k">reason</div><div class="v">${m.reason || "—"}</div>
+        <div class="k">formal_decl_refs</div><div class="v">${(m.formal_decl_refs || []).join(", ") || "-"}</div>
+        <div class="k">status</div><div class="v">${m.status || "-"}</div>
+        <div class="k">reason</div><div class="v">${m.reason || "-"}</div>
       `;
     }}
 
@@ -1994,27 +2272,27 @@ def render_structure_cleanup_candidates(registry: dict) -> str:
 
     if rows:
         intro_lines = [
-            "1. 本清单用于结构重整排期，不在本轮执行物理删除。",
-            "2. 每条候选都必须给证据：定义文件 + 被 import 位置。",
-            "3. `execution_state`：`pending` -> `deprecated_announced` -> `migrating` -> `ready_to_remove`。",
-            "4. `remove_after_releases` + `migration_started_epoch` + `meta.cleanup_release_epoch` 决定是否到期可删。",
-            "5. 本清单先执行 `deprecated`，兼容窗口结束后再评估物理删除。",
-            "6. 真删前必须先写 `DecisionLog`，并跑全量门禁。",
+            "1. This list is used for restructuring scheduling,Do not perform physical deletion this round.",
+            "2. Each candidate must provide evidence:definition file + quilt import Location.",
+            "3. `execution_state`:`pending` -> `deprecated_announced` -> `migrating` -> `ready_to_remove`.",
+            "4. `remove_after_releases` + `migration_started_epoch` + `meta.cleanup_release_epoch` Decide whether to delete after expiration.",
+            "5. This list is executed first `deprecated`,Physical deletion will not be evaluated until the compatibility window ends..",
+            "6. You must write it before deleting it `DecisionLog`,And run full access control.",
         ]
     else:
         intro_lines = [
-            "1. 当前 `structure_cleanup_candidates=0`，兼容入口分批删除已完成。",
-            "2. 若后续新增兼容入口，必须先登记候选证据，再进入 `deprecated -> ready_to_remove -> physical remove` 流程。",
-            "3. 删除动作仍要求先写 `DecisionLog`，并跑全量门禁。",
+            "1. current `structure_cleanup_candidates=0`,Batch deletion of compatible portals has been completed.",
+            "2. If a new compatible entry is added in the future,,Candidate evidence must be registered first,re-enter `deprecated -> ready_to_remove -> physical remove` process.",
+            "3. The delete action still requires writing first `DecisionLog`,And run full access control.",
         ]
 
     return "\n".join(
         [
-            "# 结构清理候选（只做清单）",
+            "# Structural Cleanup Candidates(Just make a list)",
             "",
             GENERATED_NOTE,
             "",
-            "## 说明",
+            "## illustrate",
             *intro_lines,
             "",
             table(
@@ -2061,7 +2339,7 @@ def render_namespace_convergence(registry: dict) -> str:
                 layer,
                 prefix,
                 len(layer_modules),
-                "<br>".join(examples) if examples else "—",
+                "<br>".join(examples) if examples else "-",
             ]
         )
 
@@ -2091,40 +2369,41 @@ def render_namespace_convergence(registry: dict) -> str:
             active_alias_rows.append(row)
 
     cleanup_summary = (
-        "当前 `structure_cleanup_candidates = 0`，兼容入口分批删除已完成。"
+        "current `structure_cleanup_candidates = 0`,Batch deletion of compatible portals has been completed."
         if not cleanup
-        else f"当前仍有 {len(cleanup)} 条 cleanup 候选，详见 `StructureCleanupCandidates.md`。"
+        else f"There are still {len(cleanup)} strip cleanup candidate,See details `StructureCleanupCandidates.md`."
     )
 
     return "\n".join(
         [
-            "# 命名空间收敛视图（Namespace Convergence）",
+            "# Namespace convergence view(Namespace Convergence)",
             "",
             GENERATED_NOTE,
             "",
-            "## 目标（人话）",
-            "1. 新模块必须落在分层前缀下（`Core/Methods/Applications/Books`）。",
-            "2. `legacy` 层仅保留顶层兼容入口（`MLTheory.X`），不再新增深层 legacy 路径。",
-            "3. 旧入口统一通过 `aliases` 映射到新入口，避免“看起来还能 import，但不知道该改到哪里”。",
+            "## Target(human language)",
+            "1. New modules must fall under the hierarchical prefix(`Core/Methods/Applications/Books`).",
+            "2. `legacy` Layers retain only top-level compatible entries(`MLTheory.X`),No more new depths legacy path.",
+            "3. Map old entry paths to new entry paths via `aliases` to avoid"
+            " 'imports still work, but migration targets are unclear'.",
             "",
-            "## 当前收敛状态",
+            "## Current convergence status",
             f"- {cleanup_summary}",
-            f"- 真实模块总数：{len(modules)}",
-            f"- alias 总数：{len(aliases)}（deprecated={len(deprecated_alias_rows)} / active={len(active_alias_rows)}）",
+            f"- Total number of real modules:{len(modules)}",
+            f"- alias total:{len(aliases)}(deprecated={len(deprecated_alias_rows)} / active={len(active_alias_rows)})",
             "",
-            "## 分层前缀约束（真实模块）",
+            "## Hierarchical prefix constraints(real module)",
             table(["layer", "required_prefix", "module_count", "examples"], prefix_rows),
             "",
-            "## 剩余顶层 legacy 入口（保留兼容）",
+            "## Remaining top layer legacy Entrance(Keep compatible)",
             table(
                 ["module_path", "source_track", "role", "status", "proof_status"],
                 legacy_root_rows,
             ),
             "",
-            "## Deprecated Alias（旧入口 -> 新入口）",
+            "## Deprecated Alias(old entrance -> new entrance)",
             table(["legacy_module", "canonical_module", "status"], deprecated_alias_rows),
             "",
-            "## Active Alias（仍处于兼容映射）",
+            "## Active Alias(Still in compatibility mapping)",
             table(["legacy_module", "canonical_module", "status"], active_alias_rows),
             "",
         ]
@@ -2148,11 +2427,11 @@ def render_gap_ledger(registry: dict) -> str:
     ]
     return "\n".join(
         [
-            "# 全局缺口台账（Gap Ledger）",
+            "# Global gap ledger(Gap Ledger)",
             "",
             GENERATED_NOTE,
             "",
-            "字段约束：`book`、`chapter`、`topic`、`status`、`last_search_date`、`sources_checked`、`candidate_repo`、`next_action`",
+            "Field constraints:`book`,`chapter`,`topic`,`status`,`last_search_date`,`sources_checked`,`candidate_repo`,`next_action`",
             "",
             table(
                 [
@@ -2173,47 +2452,50 @@ def render_gap_ledger(registry: dict) -> str:
 
 
 def render_book_doc(book: dict, last_updated: str) -> str:
+    def _row_value(row: dict, en_key: str, zh_key: str) -> str:
+        return str(row.get(en_key, row.get(zh_key, "")))
+
     lines = []
-    lines.append(f"# {book['title']} 覆盖映射")
+    lines.append(f"# {book['title']} overlay mapping")
     lines.append("")
     lines.append(GENERATED_NOTE)
     lines.append("")
-    lines.append("## 书目信息")
-    lines.append(f"- 书名：{book['title']}")
-    lines.append(f"- 版本：{book['edition']}")
-    lines.append(f"- 覆盖日期：{last_updated}")
-    lines.append("- 维护人：Codex + 用户")
+    lines.append("## bibliographic information")
+    lines.append(f"- book title:{book['title']}")
+    lines.append(f"- Version:{book['edition']}")
+    lines.append(f"- Coverage date:{last_updated}")
+    lines.append("- maintainer:Codex + user")
     lines.append("")
-    lines.append("## 目录来源与证据")
+    lines.append("## Table of Contents Sources and Evidence")
     if book["evidence_links"]:
         for i, link in enumerate(book["evidence_links"], start=1):
             lines.append(f"{i}. `{link}`")
     else:
-        lines.append("1. （暂无外部 URL；见对应章节的证据描述）")
+        lines.append("1. (No external URL;See the description of evidence in the corresponding chapter)")
     lines.append("")
-    lines.append("## 章节覆盖表（SSOT 派生）")
+    lines.append("## Chapter coverage table(SSOT derived)")
     rows = [
         [
-            r["章节"],
-            r["对应模块"],
-            r["覆盖状态"],
-            r["证据链接"],
-            r["缺口说明"],
-            r["后续动作"],
+            _row_value(r, "chapter", "\u7ae0\u8282"),
+            _row_value(r, "module", "\u5bf9\u5e94\u6a21\u5757"),
+            _row_value(r, "status", "\u8986\u76d6\u72b6\u6001"),
+            _row_value(r, "evidence_link", "\u8bc1\u636e\u94fe\u63a5"),
+            _row_value(r, "gap_note", "\u7f3a\u53e3\u8bf4\u660e"),
+            _row_value(r, "next_action", "\u540e\u7eed\u52a8\u4f5c"),
         ]
         for r in book["coverage_rows"]
     ]
     lines.append(
         table(
-            ["章节", "对应模块", "覆盖状态", "证据链接", "缺口说明", "后续动作"],
+            ["chapter", "Corresponding module", "Override status", "Evidence link", "Gap description", "Follow-up actions"],
             rows,
         )
     )
     lines.append("")
-    lines.append("## 与全局文档联动")
-    lines.append("1. 模块路径以 `../ModuleCatalog.md` 为唯一模块清单来源。")
-    lines.append("2. 缺口追踪以 `../GapLedger.md` 为唯一缺口台账来源。")
-    lines.append("3. 本文件仅保留章节覆盖映射，不重复维护全量模块表。")
+    lines.append("## Linked to global documents")
+    lines.append("1. The module path starts with `../ModuleCatalog.md` as the only module manifest source.")
+    lines.append("2. Gap tracking starts with `../GapLedger.md` It is the only source of gap ledger.")
+    lines.append("3. This file only retains chapter coverage mapping,No repeated maintenance of the full module table.")
     lines.append("")
     return "\n".join(lines)
 
@@ -2226,26 +2508,26 @@ def render_books_readme(registry: dict) -> str:
             [
                 book["title"],
                 f"[{rel}](./{rel})",
-                f"[../GapLedger.md](../GapLedger.md)（`book={book['book_id']}`）",
+                f"[../GapLedger.md](../GapLedger.md)(`book={book['book_id']}`)",
             ]
         )
 
     return "\n".join(
         [
-            "# 书籍覆盖索引",
+            "# book coverage index",
             "",
             GENERATED_NOTE,
             "",
-            "## 覆盖文档",
-            table(["书籍", "覆盖文档", "缺口来源"], rows),
+            "## Overwrite document",
+            table(["books", "Overwrite document", "Source of gap"], rows),
             "",
-            "## 模板",
-            "- [下一本书覆盖模板](./_BookCoverageTemplate.md)",
+            "## template",
+            "- [Next book coverage template](./_BookCoverageTemplate.md)",
             "",
-            "## 使用约定",
-            "1. 每本书先落覆盖文档，再补缺口条目。",
-            "2. 覆盖状态只用三档：`covered`、`partial`、`gap`（允许 `planned` 仅用于尚未落位章节）。",
-            "3. 文档里的模块名必须与 `../ModuleCatalog.md` 的 `module_path` 一致。",
+            "## Usage convention",
+            "1. Each book first drops coverage documents,Fill in the gaps.",
+            "2. Only three gears are used for coverage status.:`covered`,`partial`,`gap`(allow `planned` Only for chapters that have not yet been completed).",
+            "3. The module name in the document must match `../ModuleCatalog.md` of `module_path` consistent.",
             "",
         ]
     )
@@ -2254,90 +2536,92 @@ def render_books_readme(registry: dict) -> str:
 def render_glossary() -> str:
     return "\n".join(
         [
-            "# 术语白话表（Glossary）",
+            "# Glossary of vernacular terms(Glossary)",
             "",
             GENERATED_NOTE,
             "",
-            "## 数据结构基础",
-            "1. JSON：一种数据格式，可表达对象（键值对）和数组（列表）。",
-            "2. root（最外层）：JSON 文件最外面那层对象。",
-            "3. 对象（object）：形如 `{ \"键\": 值 }`。",
-            "4. 数组（array）：形如 `[值1, 值2, ...]`。",
+            "## Data structure basics",
+            "1. JSON:a data format,expressible objects(key value pair)and array(list).",
+            "2. root(outermost layer):JSON The outermost object of the file.",
+            "3. object(object):shaped like `{ \"key\": value }`.",
+            "4. array(array):shaped like `[value1, value2, ...]`.",
             "",
-            "## SSOT 根字段（`docs/ssot/registry.json`）",
-            "1. `meta`：项目全局信息（语言、toolchain、更新时间、策略、cleanup_release_epoch）。",
-            "2. `decisions`：决策日志（日期、决策、状态、影响）。",
-            "3. `taxonomy_nodes`：主树节点（主父关系 + tier 标签）。",
-            "4. `taxonomy_relations`：横向关系边（次父/关联 + 强度 0~1）。",
-            "5. `official_workflow_refs`：Lean 官方工作流能力与本仓落地点映射。",
-            "6. `canonical_specs`：canonical 入口契约（签名/禁词/依赖闭包）。",
-            "7. `modules`：真实模块清单（必须有本地 `.lean` 文件）。",
-            "8. `planned_modules`：规划模块清单（允许暂未落地文件）。",
-            "9. `execution_backlog`：规划短清单（`near/mid/far` + 优先级 + 完成定义）。",
-            "10. `structure_cleanup_candidates`：结构重整候选（执行状态、分批、兼容窗口、窗口数值、迁移起点、替代入口、风险、建议动作）。",
-            "11. `gaps`：缺口台账（没覆盖或部分覆盖的主题与后续动作）。",
-            "12. `books`：书籍覆盖映射（章节 -> 模块 -> 覆盖状态）。",
-            "13. `aliases`：兼容映射（旧模块路径 -> 新模块路径）。",
+            "## SSOT root field(`docs/ssot/registry.json`)",
+            "1. `meta`:Global project information(language,toolchain,Update time,Strategy,cleanup_release_epoch).",
+            "2. `decisions`:Decision log(date,decision making,state,Influence).",
+            "3. `taxonomy_nodes`:main tree node(master-father relationship + tier Label).",
+            "4. `taxonomy_relations`:Horizontal relationship edge(second father/association + strength 0~1).",
+            "5. `official_workflow_refs`:Lean Official workflow capabilities and warehouse location mapping.",
+            "6. `canonical_specs`:canonical Entrance contract(sign/forbidden words/Dependency closure).",
+            "7. `modules`:Real module list(Must have local `.lean` document).",
+            "8. `planned_modules`:Planning module list(Allow files that have not been implemented yet).",
+            "9. `execution_backlog`:Planning short list(`near/mid/far` + priority + complete definition).",
+            "10. `structure_cleanup_candidates`:Restructuring Candidates(Execution status,in batches,Compatibility window,window value,Migration starting point,alternative entrance,risk,Recommended action).",
+            "11. `gaps`:Gap ledger(Topics not covered or partially covered and follow-up actions).",
+            "12. `books`:book coverage mapping(chapter -> module -> Override status).",
+            "13. `aliases`:Compatible mapping(old module path -> new module path).",
             "",
-            "## 模块相关术语",
-            "1. 模块（module）：一个可被 `import` 的 Lean 代码单元，通常对应一个 `.lean` 文件。",
-            "2. `module_path`：模块路径，如 `MLTheory.Core.Learning.PAC`。",
-            "3. `status`：覆盖状态，`planned/partial/covered/gap`。",
-            "3.1 对 `planned_modules`，`partial` 只允许用于“有可追溯外部证据”的条目；否则应使用 `planned` 或 `gap`。",
-            "4. `primary_node_id`：模块在 taxonomy 主树中的主归属节点。",
-            "5. `source_track`：来源轴（`native/books/legacy`）。",
-            "5.1 在 `modules` 中可取 `native/books/legacy`；在 `planned_modules` 中只允许 `native/books`。",
-            "5.2 `execution_backlog` 用于给 `planned_modules` 做短队列排期：`near`（近期）、`mid`（中期）、`far`（远期）。",
-            "6. `layer`：分层归属，`core/methods/applications/books/legacy`。",
-            "7. `proof_status`：证明进度，`placeholder/statement/proved`。",
-            "8. `placeholder_policy_scope`：占位策略，`allowed/forbidden`。",
-            "9. `role`：模块角色（canonical/compat/bridge/tool/placeholder）。",
-            "10. `user_surface`：对使用者是否作为公开入口（public/internal）。",
-            "11. `formal_decl_refs`：该模块承载的关键声明名清单。",
+            "## Module related terms",
+            "1. module(module):one can be `import` of Lean code unit,Usually corresponds to a `.lean` document.",
+            "2. `module_path`:module path,like `MLTheory.Core.Learning.PAC`.",
+            "3. `status`:Override status,`planned/partial/covered/gap`.",
+            "3.1 In `planned_modules`, `partial` is only allowed for entries with traceable external evidence;"
+            " otherwise use `planned` or `gap`.",
+            "4. `primary_node_id`:module in taxonomy Primary home node in the primary tree.",
+            "5. `source_track`:source axis(`native/books/legacy`).",
+            "5.1 exist `modules` Desirable `native/books/legacy`;exist `planned_modules` Only allowed in `native/books`.",
+            "5.2 `execution_backlog` used to give `planned_modules` Do short queue scheduling:`near`(Recently),`mid`(medium term),`far`(forward).",
+            "6. `layer`:Hierarchical ownership,`core/methods/applications/books/legacy`.",
+            "7. `proof_status`:Demonstrate progress,`placeholder/statement/proved`.",
+            "8. `placeholder_policy_scope`:placeholder strategy,`allowed/forbidden`.",
+            "9. `role`:module role(canonical/compat/bridge/tool/placeholder).",
+            "10. `user_surface`:Whether to be a public entrance to users(public/internal).",
+            "11. `formal_decl_refs`:List of key declaration names carried by this module.",
             "",
-            "## 文档生成与一致性",
-            "1. SSOT（Single Source of Truth）：单一事实源，这里是 `docs/ssot/registry.json`。",
-            "2. 派生文档：从 SSOT 自动生成的 Markdown（如 `INDEX.md`、`ModuleCatalog.md`）。",
-            "3. `sync_docs.py --write`：按固定模板生成文档。",
-            "4. `sync_docs.py --check`：重新生成一份“期望文本”，与当前文件逐字比较；任一不同就报错。",
-            "5. 固定模板：`tools/docs/sync_docs.py` 里的 `render_*` 函数（标题、列顺序、说明文字都写死）。",
-            "6. `NamespaceConvergence.md`：命名空间收敛视图（也是 SSOT 派生，不允许手改）。",
+            "## Documentation generation and consistency",
+            "1. SSOT(Single Source of Truth):single source of truth,here it is `docs/ssot/registry.json`.",
+            "2. Derived documents:from SSOT automatically generated Markdown(like `INDEX.md`,`ModuleCatalog.md`).",
+            "3. `sync_docs.py --write`:Generate documents according to fixed template.",
+            "4. `sync_docs.py --check`: regenerate expected text and compare it to the current file;"
+            " any difference fails the check.",
+            "5. fixed template:`tools/docs/sync_docs.py` inside `render_*` function(title,Column order,The descriptions are all written down).",
+            "6. `NamespaceConvergence.md`:Namespace convergence view(Too SSOT derived,Manual modification is not allowed).",
             "",
-            "## Lean 构建与检查",
-            "1. `lake build`：构建整个 Lean 项目（解析 import、类型检查、生成产物）。",
-            "2. `import`：导入模块。",
-            "3. `#check`：检查某个名字是否存在、类型是否正确。",
-            "4. 冒烟检查（smoke）：用最小例子快速确认关键路径仍可编译。",
+            "## Lean Build and check",
+            "1. `lake build`:build the entire Lean project(parse import,type checking,Generate products).",
+            "2. `import`:Import module.",
+            "3. `#check`:Check if a name exists,Is the type correct?.",
+            "4. smoke check(smoke):Quickly confirm that critical paths can still be compiled with a minimal example.",
             "",
-            "## 质量门禁脚本",
-            "1. `check_no_sorry_axiom.sh`：扫描是否出现 `sorry` 或 `axiom`。",
-            "2. `sorry`：临时占位，表示证明未完成但先让编译通过。",
-            "3. `axiom`：直接引入未证明前提，会降低形式化可靠性。",
-            "4. `check_placeholder_policy.sh`：检查 `Core/Methods` 不允许 `Prop := True` 占位，并核对 SSOT 占位策略字段。",
-            "5. 占位允许范围：当前策略允许 `applications/books/legacy` 保留阶段性占位，不允许 `core/methods` 占位回归。",
-            "6. `check_canonical_contract.sh`：检查 canonical 契约声明存在性、禁词与依赖引用。",
-            "7. `check_official_workflow_alignment.sh`：检查官方能力映射（Loogle/LeanSearch/InfoView/LoogleView/REPL）。",
-            "8. `check_tool_forest_consistency.py`：检查概念树与模块归属一致性。",
-            "9. `check_review_views_consistency.py`：检查 ReviewDashboard/APICards/交互页默认行为是否与 SSOT 一致。",
-            "10. `check_namespace_layout.py`：检查模块路径是否遵守分层前缀与 alias 收敛约束。",
-            "11. `check_no_new_deprecated_imports.sh`：禁止新增对已弃用兼容入口的 import（防回流）。",
-            "12. `check_ready_to_remove.py`：按 release 窗口自动判定是否应进入 `ready_to_remove`。",
-            "13. `check_registry_reference_hygiene.py`：检查 books/gaps 是否引用 deprecated alias，并检查 coverage 行是否出现重复模块。",
-            "14. `check_ssot_migration_idempotent.sh`：检查迁移脚本幂等性（当前 registry 运行迁移后不得产生 diff）。",
-            "15. `advance_cleanup_release_epoch.py`：推进 cleanup_release_epoch 并自动切换到期候选状态。",
-            "16. `StructureCleanupCandidates.md`：结构重整候选清单（本轮只清单，不删文件）。",
+            "## Quality Gate Control Script",
+            "1. `check_no_sorry_axiom.sh`:Does the scan appear? `sorry` or `axiom`.",
+            "2. `sorry`:Temporary placeholder,Indicates that the proof is not completed but the compilation must pass first.",
+            "3. `axiom`:Direct introduction of unproven premises,Will reduce formal reliability.",
+            "4. `check_placeholder_policy.sh`:examine `Core/Methods` not allowed `Prop := True` Placeholder,and check SSOT placeholder policy field.",
+            "5. Allowable range of space occupied:Current policy allows `applications/books/legacy` Keep staged placeholders,not allowed `core/methods` placeholder return.",
+            "6. `check_canonical_contract.sh`:examine canonical contract declares existence,Forbidden words and dependent citations.",
+            "7. `check_official_workflow_alignment.sh`:Check official capability mapping(Loogle/LeanSearch/InfoView/LoogleView/REPL).",
+            "8. `check_tool_forest_consistency.py`:Check concept tree and module ownership consistency.",
+            "9. `check_review_views_consistency.py`:examine ReviewDashboard/APICards/Is the default behavior of interactive pages consistent with SSOT consistent.",
+            "10. `check_namespace_layout.py`:Check that module paths respect hierarchical prefixes with alias Convergence constraints.",
+            "11. `check_no_new_deprecated_imports.sh`:Prohibit new additions to deprecated compatible entries import(Backflow prevention).",
+            "12. `check_ready_to_remove.py`:according to release The window automatically determines whether to enter `ready_to_remove`.",
+            "13. `check_registry_reference_hygiene.py`:examine books/gaps Whether to quote deprecated alias,and check coverage Whether there are repeated modules in the row.",
+            "14. `check_ssot_migration_idempotent.sh`:Check migration script idempotence(current registry MUST NOT produce after running migration diff).",
+            "15. `advance_cleanup_release_epoch.py`:advance cleanup_release_epoch And automatically switch to the expiration candidate status.",
+            "16. `StructureCleanupCandidates.md`:Restructuring candidate list(This round only list,Don't delete files).",
             "",
-            "## 兼容层与导入回归",
-            "1. 兼容层：旧模块路径的薄封装文件，用于保持历史 `import` 不断。",
-            "2. 薄封装：文件本身不承载核心实现，主要转发到新分层模块。",
-            "3. 导入回归：`Eval/ImportSmoke.lean` 同时导入新路径和旧路径，验证重构后接口未断。",
+            "## Compatibility layer and import regression",
+            "1. Compatibility layer:Thin wrapper files for old module paths,for keeping history `import` constantly.",
+            "2. thin package:The file itself does not host the core implementation,Mainly forwarded to the new hierarchical module.",
+            "3. Import regression:`Eval/ImportSmoke.lean` Import new path and old path at the same time,Verify that the interface is not broken after reconstruction.",
             "",
-            "## 开发环境术语",
-            "1. symlink（符号链接）：类似快捷方式，指向另一个目录或文件。",
-            "2. submodule（Git 子模块）：在一个仓库中固定引用另一个仓库的某个提交。",
-            "3. MCP：Codex 使用的工具服务接入层；本项目用 `lean-lsp-mcp` 提供 Lean 交互能力。",
+            "## Development environment terminology",
+            "1. symlink(symbolic link):Similar shortcut,Point to another directory or file.",
+            "2. submodule(Git submodule):Fixed reference to a commit in another repository in one repository.",
+            "3. MCP:Codex Tool service access layer used;For this project `lean-lsp-mcp` supply Lean Interactive capabilities.",
             "",
-            "## 常用命令（本仓）",
+            "## Common commands(Main warehouse)",
             "1. `python3 tools/docs/validate_ssot.py`",
             "2. `python3 tools/docs/sync_docs.py --check`",
             "3. `python3 tools/docs/sync_docs.py --write`",
@@ -2356,23 +2640,24 @@ def render_glossary() -> str:
             "16. `~/.elan/bin/lake env lean Eval/ImportSmoke.lean`",
             "17. `~/.elan/bin/lake build`",
             "",
-            "## 常见报错（含义 -> 建议命令）",
-            "| 报错片段 | 含义（白话） | 先跑哪个命令 |",
+            "## Common errors(meaning -> Suggested command)",
+            "| Error report fragment | meaning(vernacular) | Which command to run first? |",
             "|---|---|---|",
-            "| `Derived docs are out of sync` | 生成后的文档和仓库里现有文档不一致 | `python3 tools/docs/sync_docs.py --write` 然后 `--check` |",
-            "| `missing keys` / `extra keys` | `registry.json` 字段不符合契约 | `python3 tools/docs/validate_ssot.py` 定位后修复 JSON 字段 |",
-            "| `bad import` | 导入路径无效或依赖没拉到本地 | 先 `~/.elan/bin/lake build`，再检查对应 `import` 路径是否存在 |",
-            "| `found forbidden token` | 出现了被禁止的 `sorry/axiom` | `tools/ci/check_no_sorry_axiom.sh` 定位并删除 |",
-            "| `Prop := True placeholders` | `Core/Methods` 出现不允许的占位 | `tools/ci/check_placeholder_policy.sh` 定位并改为真实 statement |",
-            "| `no such file or directory`（mathlib） | 依赖目录或路径不匹配 | `~/.elan/bin/lake build` 重新解析依赖并看首个失败点 |",
+            "| `Derived docs are out of sync` | The generated document is inconsistent with the existing document in the warehouse | `python3 tools/docs/sync_docs.py --write` Then `--check` |",
+            "| `missing keys` / `extra keys` | `registry.json` Field does not conform to contract | `python3 tools/docs/validate_ssot.py` Repair after positioning JSON Field |",
+            "| `bad import` | The import path is invalid or the dependencies are not pulled locally. | First `~/.elan/bin/lake build`,Check the correspondence again `import` Does the path exist? |",
+            "| `found forbidden token` | Prohibited `sorry/axiom` | `tools/ci/check_no_sorry_axiom.sh` Locate and delete |",
+            "| `Prop := True placeholders` | `Core/Methods` An illegal placeholder appears | `tools/ci/check_placeholder_policy.sh` locate and change to true statement |",
+            "| `no such file or directory`(mathlib) | Dependency directory or path does not match | `~/.elan/bin/lake build` Re-parse dependencies and look at the first failure point |",
             "",
-            "## 术语反查（看到新词时怎么找定义）",
-            "1. 先在 `docs/Glossary.md` 看白话定义。",
-            "2. 再在 `docs/ssot/registry.json` 查该词对应的字段或模块路径。",
-            "3. 若是模块名（如 `MLTheory.X.Y`），用 `rg \"MLTheory\\.X\\.Y\" docs /Users/xiongjiangkai/xjk_papers/MLTheory/MLTheory` 找来源与引用。",
-            "4. 若是脚本术语（如 `placeholder_policy_scope`），用 `rg \"placeholder_policy_scope\" /Users/xiongjiangkai/xjk_papers/MLTheory/tools` 找校验逻辑。",
-            "5. 若是 CI 术语（如 `ImportSmoke`），看 `/Users/xiongjiangkai/xjk_papers/MLTheory/.github/workflows/lean_action_ci.yml` 对应步骤。",
-            "6. 仍不清楚时，优先问“这个词在哪个文件第几行生效”，避免语义歧义。",
+            "## Terminology back-checking(How to find the definition when you see a new word)",
+            "1. first `docs/Glossary.md` Look at the vernacular definition.",
+            "2. again `docs/ssot/registry.json` Check the field or module path corresponding to the word.",
+            "3. If it is the module name(like `MLTheory.X.Y`),use `rg \"MLTheory\\.X\\.Y\" docs /Users/xiongjiangkai/xjk_papers/MLTheory/MLTheory` Find sources and citations.",
+            "4. If it is a script term(like `placeholder_policy_scope`),use `rg \"placeholder_policy_scope\" /Users/xiongjiangkai/xjk_papers/MLTheory/tools` Find verification logic.",
+            "5. if CI the term(like `ImportSmoke`),look `/Users/xiongjiangkai/xjk_papers/MLTheory/.github/workflows/lean_action_ci.yml` Corresponding steps.",
+            "6. If still unclear, ask: 'In which file and line does this term take effect?'"
+            " to avoid semantic ambiguity.",
             "",
         ]
     )
@@ -2386,66 +2671,70 @@ def render_index(registry: dict) -> str:
 
     return "\n".join(
         [
-            "# MLTheory 文档索引",
+            "# MLTheory Document index",
             "",
             GENERATED_NOTE,
             "",
-            "## 目的",
-            "本目录用于沉淀 MLTheory 的历史决策、模块规划、书籍覆盖情况与缺口检索台账。",
+            "## Purpose",
+            "This directory is used for precipitation MLTheory historical decisions,Module planning,Book coverage and gap search ledger.",
             "",
-            "## 核心导航",
+            "## core navigation",
+            "<!-- AUTO:INDEX-CORE-NAV BEGIN -->",
             table(
-                ["文档", "说明"],
+                ["document", "illustrate"],
                 [
-                    ["[../AGENTS.md](../AGENTS.md)", "代理执行规范（文档系统优先、删除留痕规则）"],
-                    ["[DecisionLog.md](./DecisionLog.md)", "决策日志（固定字段：`date/decision/status/impact`）"],
-                    ["[ModuleCatalog.md](./ModuleCatalog.md)", "模块总表（固定字段：`module_path/primary_node_id/source_track/status/...`）"],
-                    ["[GapLedger.md](./GapLedger.md)", "全局缺口台账（固定字段：`book/chapter/topic/status/last_search_date/sources_checked/candidate_repo/next_action`）"],
-                    ["[ToolForest.md](./ToolForest.md)", "概念 + 模块森林图（由 SSOT 自动生成）"],
-                    ["[ToolForestInteractive.html](./ToolForestInteractive.html)", "可筛选/可搜索/可折叠的交互式结构视图（推荐日常使用）"],
-                    ["[GraphExplorer.html](./GraphExplorer.html)", "图谱视图 MVP（骨干优先 + 一跳展开，读取 subgraph）"],
-                    ["[ReviewDashboard.md](./ReviewDashboard.md)", "验收看板（本轮新增、当前焦点、一键验收命令）"],
-                    ["[RefactorHandoffForGPT52Pro.md](./RefactorHandoffForGPT52Pro.md)", "给 GPT5.2pro 的重构交接包（实现全景 + 门禁 + 风险）"],
-                    ["[APICards.md](./APICards.md)", "最小 API 卡片（每个 public 模块做什么、先看哪些声明）"],
-                    ["[ExecutionBacklog.md](./ExecutionBacklog.md)", "规划模块短清单（near/mid/far），把 96 条路线图收敛成可执行队列"],
-                    ["[NamespaceConvergence.md](./NamespaceConvergence.md)", "命名空间收敛视图（层级前缀、legacy 入口、alias 映射）"],
-                    ["[StructureIssues.md](./StructureIssues.md)", "结构问题台账（自动识别问题 + 分批整改顺序 + 回滚点）"],
-                    ["[StructureCleanupCandidates.md](./StructureCleanupCandidates.md)", "结构重整候选清单（分批/窗口/替代入口/风险）"],
-                    ["[books/README.md](./books/README.md)", "书籍覆盖索引页"],
-                    ["[Glossary.md](./Glossary.md)", "术语白话表（减少黑话沟通成本）"],
-                    ["[meta/taxonomy.yaml](./meta/taxonomy.yaml)", "vNext 概念树与绑定（增量 meta）"],
-                    ["[meta/aliases.yaml](./meta/aliases.yaml)", "vNext 检索别名表（增量 meta）"],
-                    ["[meta/canon.yaml](./meta/canon.yaml)", "vNext 稳定 API 清单（增量 meta）"],
-                    ["[_auto/README.md](./_auto/README.md)", "自动视图目录说明（生成入口）"],
-                    ["[_auto/CodeIndex.md](./_auto/CodeIndex.md)", "代码优先模块/import 自动视图"],
-                    ["[_auto/GraphArtifacts.md](./_auto/GraphArtifacts.md)", "子图与 telemetry 统计自动视图"],
-                    ["[ssot/registry.json](./ssot/registry.json)", "单一事实源（唯一可手改数据文件）"],
-                    ["[ssot/schema.json](./ssot/schema.json)", "SSOT 字段契约"],
+                    ["[../AGENTS.md](../AGENTS.md)", "Agent execution specifications(Document system first,Delete legacy rules)"],
+                    ["[DecisionLog.md](./DecisionLog.md)", "Decision log(fixed fields:`date/decision/status/impact`)"],
+                    ["[ModuleCatalog.md](./ModuleCatalog.md)", "Module summary(fixed fields:`module_path/primary_node_id/source_track/status/...`)"],
+                    ["[GapLedger.md](./GapLedger.md)", "Global gap ledger(fixed fields:`book/chapter/topic/status/last_search_date/sources_checked/candidate_repo/next_action`)"],
+                    ["[ToolForest.md](./ToolForest.md)", "concept + Module forest diagram(Depend on SSOT Automatically generated)"],
+                    ["[ToolForestInteractive.html](./ToolForestInteractive.html)", "filterable/Searchable/Collapsible interactive structure view(Recommended for daily use)"],
+                    ["[GraphExplorer.html](./GraphExplorer.html)", "Graph view MVP(Backbone priority + One jump to expand,read subgraph)"],
+                    ["[ReviewDashboard.md](./ReviewDashboard.md)", "Acceptance Kanban(New in this round,current focus,One-click acceptance command)"],
+                    ["[RefactorHandoffForGPT52Pro.md](./RefactorHandoffForGPT52Pro.md)", "Give GPT5.2pro refactoring handover package(Achieve panorama + access control + risk)"],
+                    ["[APICards.md](./APICards.md)", "smallest API card(each public what module does,Which statements to look at first)"],
+                    ["[ExecutionBacklog.md](./ExecutionBacklog.md)", "Planning module short list(near/mid/far),Bundle 96 roadmap converges into executable queue"],
+                    ["[NamespaceConvergence.md](./NamespaceConvergence.md)", "Namespace convergence view(Level prefix,legacy Entrance,alias mapping)"],
+                    ["[StructureIssues.md](./StructureIssues.md)", "Structural Issues Ledger(Automatically identify problems + Rectification order in batches + rollback point)"],
+                    ["[StructureCleanupCandidates.md](./StructureCleanupCandidates.md)", "Restructuring candidate list(in batches/window/alternative entrance/risk)"],
+                    ["[books/README.md](./books/README.md)", "Books cover index page"],
+                    ["[Glossary.md](./Glossary.md)", "Glossary of vernacular terms(Reduce slang communication costs)"],
+                    ["[meta/taxonomy.yaml](./meta/taxonomy.yaml)", "vNext Concept tree and binding(Increment meta)"],
+                    ["[meta/aliases.yaml](./meta/aliases.yaml)", "vNext Retrieve alias table(Increment meta)"],
+                    ["[meta/canon.yaml](./meta/canon.yaml)", "vNext Stablize API Checklist(Increment meta)"],
+                    ["[_auto/README.md](./_auto/README.md)", "AutoView Catalog Description(Generate entry)"],
+                    ["[_auto/CodeIndex.md](./_auto/CodeIndex.md)", "code first module/import automatic view"],
+                    ["[_auto/GraphArtifacts.md](./_auto/GraphArtifacts.md)", "subgraph with telemetry Statistics automatic view"],
+                    ["[ssot/registry.json](./ssot/registry.json)", "single source of truth(The only data file that can be modified manually)"],
+                    ["[ssot/schema.json](./ssot/schema.json)", "SSOT field contract"],
                 ],
             ),
+            "<!-- AUTO:INDEX-CORE-NAV END -->",
             "",
-            "## 书籍覆盖文档",
-            table(["书籍", "覆盖文档"], book_rows),
+            "## Book coverage document",
+            "<!-- AUTO:INDEX-BOOKS BEGIN -->",
+            table(["books", "Overwrite document"], book_rows),
+            "<!-- AUTO:INDEX-BOOKS END -->",
             "",
-            "## 维护规则（新增一本书时）",
-            "1. 先更新 `ssot/registry.json`，再运行文档生成脚本。",
-            "2. 执行 `python3 tools/docs/validate_ssot.py` 校验字段契约。",
-            "3. 执行 `python3 tools/docs/sync_docs.py --write` 生成派生文档。",
-            "4. 执行 `tools/index/gen_mltheory_index.sh` 更新 `artifacts/index` 与 `docs/_auto`。",
-            "5. 若有删除或替代，必须在 `DecisionLog.md` 留痕。",
+            "## maintenance rules(When adding a new book)",
+            "1. Update first `ssot/registry.json`,Run the document generation script again.",
+            "2. implement `python3 tools/docs/validate_ssot.py` Check field contract.",
+            "3. implement `python3 tools/docs/sync_docs.py --write` Generate derived documents.",
+            "4. implement `tools/index/gen_mltheory_index.sh` renew `artifacts/index` and `docs/_auto`.",
+            "5. If deleted or replaced,must be in `DecisionLog.md` leave traces.",
             "",
-            "## ToolForest 快速上手",
-            "1. 验收当前一轮改动：先看 [ReviewDashboard.md](./ReviewDashboard.md)。",
-            "2. 要给重构模型完整上下文：看 [RefactorHandoffForGPT52Pro.md](./RefactorHandoffForGPT52Pro.md)。",
-            "3. 看模块用途与入口声明：再看 [APICards.md](./APICards.md)。",
-            "4. 看整体结构：打开 [ToolForestInteractive.html](./ToolForestInteractive.html)（默认只看真实模块）。",
-            "5. 看骨干+展开图谱：打开 [GraphExplorer.html](./GraphExplorer.html)。",
-            "6. 看索引统计与图谱统计：查看 [_auto/CodeIndex.md](./_auto/CodeIndex.md) + [_auto/GraphArtifacts.md](./_auto/GraphArtifacts.md)。",
-            "7. 要总览主树：看 [ToolForest.md](./ToolForest.md) 的“表 1：taxonomy 节点总览”。",
-            "8. 要看近期排期：看 [ExecutionBacklog.md](./ExecutionBacklog.md)。",
-            "9. 要看命名空间迁移路径：看 [NamespaceConvergence.md](./NamespaceConvergence.md)。",
-            "10. 要看结构问题与清理候选：看 [StructureIssues.md](./StructureIssues.md) + [StructureCleanupCandidates.md](./StructureCleanupCandidates.md)。",
-            "11. 任何结构调整都只能改 `ssot/registry.json`，再执行：",
+            "## ToolForest Get started quickly",
+            "1. Accept the current round of changes:Look first [ReviewDashboard.md](./ReviewDashboard.md).",
+            "2. To give complete context to the reconstructed model:look [RefactorHandoffForGPT52Pro.md](./RefactorHandoffForGPT52Pro.md).",
+            "3. See module usage and entry declaration:Look again [APICards.md](./APICards.md).",
+            "4. Look at the overall structure:Open [ToolForestInteractive.html](./ToolForestInteractive.html)(By default, only the real modules are viewed).",
+            "5. Look at the backbone+Expand map:Open [GraphExplorer.html](./GraphExplorer.html).",
+            "6. Look at index statistics and graph statistics:Check [_auto/CodeIndex.md](./_auto/CodeIndex.md) + [_auto/GraphArtifacts.md](./_auto/GraphArtifacts.md).",
+            "7. To overview the main tree, read [ToolForest.md](./ToolForest.md), Table 1: taxonomy node overview.",
+            "8. Depends on the recent schedule:look [ExecutionBacklog.md](./ExecutionBacklog.md).",
+            "9. Depends on the namespace migration path:look [NamespaceConvergence.md](./NamespaceConvergence.md).",
+            "10. Depends on structural issues and cleanup candidates:look [StructureIssues.md](./StructureIssues.md) + [StructureCleanupCandidates.md](./StructureCleanupCandidates.md).",
+            "11. Any structural adjustment can only change `ssot/registry.json`,Execute again:",
             "- `python3 tools/docs/validate_ssot.py`",
             "- `python3 tools/docs/sync_docs.py --write`",
             "- `tools/index/gen_mltheory_index.sh`",
@@ -2459,11 +2748,11 @@ def render_index(registry: dict) -> str:
             "- `python3 tools/ci/check_ready_to_remove.py`",
             "- `python3 tools/ci/check_registry_reference_hygiene.py`",
             "",
-            "## 当前默认约束",
-            "1. 文档语言：中文。",
-            "2. 文档组织：多文档索引制（不合并为单一总文档）。",
-            "3. 近期策略：先稳固 SSOT 与分层模块骨架，再逐章补证明。",
-            "4. 删除规则：不允许随意删除；有理由删除必须记录影响范围。",
+            "## Current default constraints",
+            "1. Document language:Chinese.",
+            "2. Document organization:Multiple document indexing(Not merged into a single overall document).",
+            "3. Near term strategy:Stable first SSOT with layered module skeleton,Then add proof chapter by chapter.",
+            "4. delete rule:Random deletion is not allowed;When deletion is justified, the scope of impact must be recorded.",
             "",
         ]
     )
@@ -2472,36 +2761,36 @@ def render_index(registry: dict) -> str:
 def render_book_template() -> str:
     return "\n".join(
         [
-            "# 书籍覆盖模板（复制后重命名）",
+            "# book cover template(Rename after copying)",
             "",
             GENERATED_NOTE,
             "",
-            "## 书目信息",
-            "- 书名：",
-            "- 版本：",
-            "- 覆盖日期：",
-            "- 维护人：",
+            "## bibliographic information",
+            "- book title:",
+            "- Version:",
+            "- Coverage date:",
+            "- maintainer:",
             "",
-            "## 章节覆盖表",
-            "| 章节 | 对应模块 | 覆盖状态 | 证据链接 | 缺口说明 | 后续动作 |",
+            "## Chapter coverage table",
+            "| chapter | Corresponding module | Override status | Evidence link | Gap description | Follow-up actions |",
             "|---|---|---|---|---|---|",
-            "| 示例：Ch1 | `MLTheory.XXX.YYY` | partial | `https://...` | 缺少某定理 | 在某模块新增占位并继续检索 |",
+            "| Example:Ch1 | `MLTheory.XXX.YYY` | partial | `https://...` | missing a theorem | Add a placeholder in a module and continue searching |",
             "",
-            "## 覆盖状态定义",
-            "- `covered`：已有可直接复用的 Lean 形式化内容。",
-            "- `partial`：有基础设施或外部候选，但未完整覆盖该章节。",
-            "- `gap`：当前无可复用形式化实现。",
+            "## Override status definition",
+            "- `covered`:Already available for direct reuse Lean formal content.",
+            "- `partial`:There are infrastructure or external candidates,But the chapter is not completely covered.",
+            "- `gap`:There is currently no reusable formal implementation.",
             "",
-            "## 与全局文档联动",
-            "1. 新增本书文档后，必须更新：",
-            "- `../README.md`（书籍索引）",
-            "- `../../ModuleCatalog.md`（`book_refs`）",
-            "- `../../GapLedger.md`（缺口条目）",
-            "- `../../DecisionLog.md`（关键策略变更）",
+            "## Linked to global documents",
+            "1. After adding this book document,Must update:",
+            "- `../README.md`(book index)",
+            "- `../../ModuleCatalog.md`(`book_refs`)",
+            "- `../../GapLedger.md`(gap entry)",
+            "- `../../DecisionLog.md`(Key strategy changes)",
             "",
-            "2. 记录粒度要求：",
-            "- 每条 gap 必填 `last_search_date` 与 `next_action`。",
-            "- 模块名必须与 `ModuleCatalog.md` 的 `module_path` 完全一致。",
+            "2. Record granularity requirements:",
+            "- each gap Required `last_search_date` and `next_action`.",
+            "- The module name must match `ModuleCatalog.md` of `module_path` completely consistent.",
             "",
         ]
     )
@@ -2536,11 +2825,13 @@ def render_all(registry: dict) -> dict[Path, str]:
 def check_mode(outputs: dict[Path, str]) -> int:
     mismatches: list[Path] = []
     for path, content in outputs.items():
+        expected = content
         if not path.exists():
             mismatches.append(path)
             continue
         current = path.read_text(encoding="utf-8")
-        if current != content:
+        expected = _merge_auto_blocks(current, content)
+        if current != expected:
             mismatches.append(path)
     if mismatches:
         print("Derived docs are out of sync:")
@@ -2554,6 +2845,9 @@ def check_mode(outputs: dict[Path, str]) -> int:
 def write_mode(outputs: dict[Path, str]) -> int:
     for path, content in outputs.items():
         path.parent.mkdir(parents=True, exist_ok=True)
+        if path.exists():
+            current = path.read_text(encoding="utf-8")
+            content = _merge_auto_blocks(current, content)
         path.write_text(content, encoding="utf-8")
     print(f"Generated {len(outputs)} files from SSOT.")
     return 0

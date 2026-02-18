@@ -153,7 +153,7 @@
 <body>
   <header>
     <h1>MLTheory Graph Explorer</h1>
-    <p class="subtitle">默认展示 spine，点击节点按一跳展开，支持层级过滤与源码路径回溯。</p>
+    <p class="subtitle">Default display spine,Click on the node to expand it by one jump,Supports hierarchical filtering and source code path tracing.</p>
     <div class="controls">
       <label><input id="spineOnly" type="checkbox" checked /> spine only</label>
       <label>scope
@@ -161,6 +161,16 @@
           <option value="all">all</option>
           <option value="mltheory">MLTheory only</option>
           <option value="mathlib-slice">mathlib slice only</option>
+        </select>
+      </label>
+      <label>layer
+        <select id="layerFilter">
+          <option value="all">all</option>
+          <option value="core">core</option>
+          <option value="methods">methods</option>
+          <option value="applications">applications</option>
+          <option value="books">books</option>
+          <option value="mathlib">mathlib</option>
         </select>
       </label>
       <label><input id="kindModule" type="checkbox" checked /> module</label>
@@ -177,7 +187,7 @@
     <section class="panel">
       <h2>Nodes</h2>
       <div id="nodeList" class="node-list"></div>
-      <div id="details" class="details">请选择一个节点。</div>
+      <div id="details" class="details">Please select a node.</div>
     </section>
     <section id="canvas-wrap">
       <div id="stats">loading...</div>
@@ -237,6 +247,8 @@
     function isNodeVisibleByFilters(node) {
       if (!isKindEnabled(node)) return false;
       if (!isInScope(node)) return false;
+      const layerFilter = byId("layerFilter").value;
+      if (layerFilter !== "all" && String(node.layer || "") !== layerFilter) return false;
       if (byId("spineOnly").checked && !node.spine) return false;
       const q = byId("search").value.trim().toLowerCase();
       if (!q) return true;
@@ -304,11 +316,21 @@
       const box = byId("details");
       const node = state.nodesById.get(state.selected);
       if (!node) {
-        box.textContent = "请选择一个节点。";
+        box.textContent = "Please select a node.";
         return;
       }
-      const outCount = (state.outgoing.get(node.id) || []).length;
-      const inCount = (state.incoming.get(node.id) || []).length;
+      const outgoing = state.outgoing.get(node.id) || [];
+      const incoming = state.incoming.get(node.id) || [];
+      const outCount = outgoing.length;
+      const inCount = incoming.length;
+      let internalDeps = 0;
+      let mathlibDeps = 0;
+      for (const e of outgoing) {
+        const n = state.nodesById.get(e.dst);
+        if (!n) continue;
+        if (n.package === "mathlib") mathlibDeps += 1;
+        else internalDeps += 1;
+      }
       box.innerHTML = `
         <div><strong>${node.title || node.id}</strong></div>
         <div>id: <code>${node.id}</code></div>
@@ -316,6 +338,7 @@
         <div>module: <code>${node.module || "-"}</code></div>
         <div>path: <code>${node.path || "-"}</code></div>
         <div>outgoing: <code>${outCount}</code>, incoming: <code>${inCount}</code></div>
+        <div>dependency source: MLTheory/internal <code>${internalDeps}</code> | mathlib slice <code>${mathlibDeps}</code></div>
         <button id="expandOut">expand outgoing 1-hop</button>
         <button id="expandIn">expand incoming 1-hop</button>
         <button id="focusNode">focus neighborhood</button>
@@ -407,7 +430,7 @@
         state.graph = await loadData();
         buildAdjacency();
         setInitialVisible();
-        for (const id of ["spineOnly", "scope", "kindModule", "kindDecl", "kindConcept", "search"]) {
+        for (const id of ["spineOnly", "scope", "layerFilter", "kindModule", "kindDecl", "kindConcept", "search"]) {
           byId(id).addEventListener("input", () => renderAll());
         }
         byId("resetView").onclick = () => { setInitialVisible(); renderAll(); };
