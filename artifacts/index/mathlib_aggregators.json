@@ -1,0 +1,422 @@
+{
+  "generated_at": "2026-02-18T07:16:51+00:00",
+  "package": "mathlib",
+  "top_k": 50,
+  "aggregators": [
+    {
+      "module": "Mathlib",
+      "fan_in": 1,
+      "fan_out": 7518,
+      "reason": [
+        "top_entry",
+        "high_fan_out"
+      ]
+    },
+    {
+      "module": "Mathlib.Tactic",
+      "fan_in": 1,
+      "fan_out": 320,
+      "reason": [
+        "high_fan_out"
+      ]
+    },
+    {
+      "module": "Mathlib.Tactic.Common",
+      "fan_in": 69,
+      "fan_out": 78,
+      "reason": [
+        "high_fan_out"
+      ]
+    },
+    {
+      "module": "Mathlib.Init",
+      "fan_in": 171,
+      "fan_out": 25,
+      "reason": [
+        "name=Init",
+        "high_fan_out"
+      ]
+    },
+    {
+      "module": "Mathlib.Tactic.Linter.UpstreamableDecl",
+      "fan_in": 3,
+      "fan_out": 19,
+      "reason": [
+        "high_fan_out"
+      ]
+    },
+    {
+      "module": "Mathlib.LinearAlgebra.Dual.Lemmas",
+      "fan_in": 20,
+      "fan_out": 13,
+      "reason": [
+        "high_fan_out"
+      ]
+    },
+    {
+      "module": "Mathlib.Analysis.Normed.Module.FiniteDimension",
+      "fan_in": 17,
+      "fan_out": 13,
+      "reason": [
+        "high_fan_out"
+      ]
+    },
+    {
+      "module": "Mathlib.Analysis.SpecificLimits.Normed",
+      "fan_in": 15,
+      "fan_out": 13,
+      "reason": [
+        "high_fan_out"
+      ]
+    },
+    {
+      "module": "Mathlib.RingTheory.NonUnitalSubsemiring.Basic",
+      "fan_in": 6,
+      "fan_out": 13,
+      "reason": [
+        "name=Basic",
+        "high_fan_out"
+      ]
+    },
+    {
+      "module": "Mathlib.GroupTheory.Perm.Sign",
+      "fan_in": 5,
+      "fan_out": 13,
+      "reason": [
+        "high_fan_out"
+      ]
+    },
+    {
+      "module": "Mathlib.LinearAlgebra.Matrix.ToLin",
+      "fan_in": 20,
+      "fan_out": 12,
+      "reason": [
+        "high_fan_out"
+      ]
+    },
+    {
+      "module": "Mathlib.RingTheory.SimpleModule.Basic",
+      "fan_in": 14,
+      "fan_out": 12,
+      "reason": [
+        "name=Basic",
+        "high_fan_out"
+      ]
+    },
+    {
+      "module": "Mathlib.GroupTheory.OrderOfElement",
+      "fan_in": 13,
+      "fan_out": 12,
+      "reason": [
+        "high_fan_out"
+      ]
+    },
+    {
+      "module": "Mathlib.RingTheory.Artinian.Module",
+      "fan_in": 12,
+      "fan_out": 12,
+      "reason": [
+        "high_fan_out"
+      ]
+    },
+    {
+      "module": "Mathlib.Algebra.Order.GroupWithZero.Canonical",
+      "fan_in": 10,
+      "fan_out": 12,
+      "reason": [
+        "high_fan_out"
+      ]
+    },
+    {
+      "module": "Mathlib.RingTheory.LinearDisjoint",
+      "fan_in": 2,
+      "fan_out": 12,
+      "reason": [
+        "high_fan_out"
+      ]
+    },
+    {
+      "module": "Mathlib.ModelTheory.Arithmetic.Presburger.Semilinear.Basic",
+      "fan_in": 1,
+      "fan_out": 12,
+      "reason": [
+        "name=Basic",
+        "high_fan_out"
+      ]
+    },
+    {
+      "module": "Mathlib.LinearAlgebra.Determinant",
+      "fan_in": 20,
+      "fan_out": 11,
+      "reason": [
+        "high_fan_out"
+      ]
+    },
+    {
+      "module": "Mathlib.FieldTheory.Finite.Basic",
+      "fan_in": 18,
+      "fan_out": 11,
+      "reason": [
+        "name=Basic",
+        "high_fan_out"
+      ]
+    },
+    {
+      "module": "Mathlib.RingTheory.Spectrum.Prime.Topology",
+      "fan_in": 14,
+      "fan_out": 11,
+      "reason": [
+        "high_fan_out"
+      ]
+    },
+    {
+      "module": "Mathlib.Data.Finset.Basic",
+      "fan_in": 8,
+      "fan_out": 11,
+      "reason": [
+        "name=Basic",
+        "high_fan_out"
+      ]
+    },
+    {
+      "module": "Mathlib.LinearAlgebra.LinearIndependent.Lemmas",
+      "fan_in": 8,
+      "fan_out": 11,
+      "reason": [
+        "high_fan_out"
+      ]
+    },
+    {
+      "module": "Mathlib.Algebra.BigOperators.Group.List.Basic",
+      "fan_in": 6,
+      "fan_out": 11,
+      "reason": [
+        "name=Basic",
+        "high_fan_out"
+      ]
+    },
+    {
+      "module": "Mathlib.Algebra.BigOperators.Group.List.Lemmas",
+      "fan_in": 5,
+      "fan_out": 11,
+      "reason": [
+        "high_fan_out"
+      ]
+    },
+    {
+      "module": "Mathlib.CategoryTheory.Extensive",
+      "fan_in": 5,
+      "fan_out": 11,
+      "reason": [
+        "high_fan_out"
+      ]
+    },
+    {
+      "module": "Mathlib.CategoryTheory.Limits.Shapes.Preorder.WellOrderContinuous",
+      "fan_in": 5,
+      "fan_out": 11,
+      "reason": [
+        "high_fan_out"
+      ]
+    },
+    {
+      "module": "Mathlib.Data.Nat.Bitwise",
+      "fan_in": 5,
+      "fan_out": 11,
+      "reason": [
+        "high_fan_out"
+      ]
+    },
+    {
+      "module": "Mathlib.RingTheory.LocalRing.Module",
+      "fan_in": 5,
+      "fan_out": 11,
+      "reason": [
+        "high_fan_out"
+      ]
+    },
+    {
+      "module": "Mathlib.RingTheory.MvPowerSeries.PiTopology",
+      "fan_in": 4,
+      "fan_out": 11,
+      "reason": [
+        "high_fan_out"
+      ]
+    },
+    {
+      "module": "Mathlib.Geometry.Manifold.Instances.Sphere",
+      "fan_in": 3,
+      "fan_out": 11,
+      "reason": [
+        "high_fan_out"
+      ]
+    },
+    {
+      "module": "Mathlib.Combinatorics.Enumerative.Schroder",
+      "fan_in": 2,
+      "fan_out": 11,
+      "reason": [
+        "high_fan_out"
+      ]
+    },
+    {
+      "module": "Mathlib.Combinatorics.SetFamily.FourFunctions",
+      "fan_in": 2,
+      "fan_out": 11,
+      "reason": [
+        "high_fan_out"
+      ]
+    },
+    {
+      "module": "Mathlib.Analysis.NormedSpace.HahnBanach.Extension",
+      "fan_in": 1,
+      "fan_out": 11,
+      "reason": [
+        "high_fan_out"
+      ]
+    },
+    {
+      "module": "Mathlib.CategoryTheory.Preadditive.Mat",
+      "fan_in": 1,
+      "fan_out": 11,
+      "reason": [
+        "high_fan_out"
+      ]
+    },
+    {
+      "module": "Mathlib.Combinatorics.SetFamily.AhlswedeZhang",
+      "fan_in": 1,
+      "fan_out": 11,
+      "reason": [
+        "high_fan_out"
+      ]
+    },
+    {
+      "module": "Mathlib.Topology.Algebra.Ring.Compact",
+      "fan_in": 1,
+      "fan_out": 11,
+      "reason": [
+        "high_fan_out"
+      ]
+    },
+    {
+      "module": "Mathlib.Algebra.Order.Ring.Defs",
+      "fan_in": 30,
+      "fan_out": 10,
+      "reason": [
+        "high_fan_out"
+      ]
+    },
+    {
+      "module": "Mathlib.CategoryTheory.Limits.Final",
+      "fan_in": 25,
+      "fan_out": 10,
+      "reason": [
+        "high_fan_out"
+      ]
+    },
+    {
+      "module": "Mathlib.LinearAlgebra.Pi",
+      "fan_in": 19,
+      "fan_out": 10,
+      "reason": [
+        "high_fan_out"
+      ]
+    },
+    {
+      "module": "Mathlib.Algebra.Module.Torsion.Basic",
+      "fan_in": 14,
+      "fan_out": 10,
+      "reason": [
+        "name=Basic",
+        "high_fan_out"
+      ]
+    },
+    {
+      "module": "Mathlib.Data.List.Basic",
+      "fan_in": 14,
+      "fan_out": 10,
+      "reason": [
+        "name=Basic",
+        "high_fan_out"
+      ]
+    },
+    {
+      "module": "Mathlib.LinearAlgebra.Span.Basic",
+      "fan_in": 14,
+      "fan_out": 10,
+      "reason": [
+        "name=Basic",
+        "high_fan_out"
+      ]
+    },
+    {
+      "module": "Mathlib.Algebra.BigOperators.Finprod",
+      "fan_in": 11,
+      "fan_out": 10,
+      "reason": [
+        "high_fan_out"
+      ]
+    },
+    {
+      "module": "Mathlib.RingTheory.AdjoinRoot",
+      "fan_in": 10,
+      "fan_out": 10,
+      "reason": [
+        "high_fan_out"
+      ]
+    },
+    {
+      "module": "Mathlib.Algebra.Algebra.Basic",
+      "fan_in": 9,
+      "fan_out": 10,
+      "reason": [
+        "name=Basic",
+        "high_fan_out"
+      ]
+    },
+    {
+      "module": "Mathlib.Algebra.Group.UniqueProds.Basic",
+      "fan_in": 7,
+      "fan_out": 10,
+      "reason": [
+        "name=Basic",
+        "high_fan_out"
+      ]
+    },
+    {
+      "module": "Mathlib.Algebra.MvPolynomial.Basic",
+      "fan_in": 7,
+      "fan_out": 10,
+      "reason": [
+        "name=Basic",
+        "high_fan_out"
+      ]
+    },
+    {
+      "module": "Mathlib.Tactic.FunProp",
+      "fan_in": 7,
+      "fan_out": 10,
+      "reason": [
+        "high_fan_out"
+      ]
+    },
+    {
+      "module": "Mathlib.Analysis.Normed.Algebra.Spectrum",
+      "fan_in": 5,
+      "fan_out": 10,
+      "reason": [
+        "high_fan_out"
+      ]
+    },
+    {
+      "module": "Mathlib.Order.CompactlyGenerated.Basic",
+      "fan_in": 5,
+      "fan_out": 10,
+      "reason": [
+        "name=Basic",
+        "high_fan_out"
+      ]
+    }
+  ]
+}
