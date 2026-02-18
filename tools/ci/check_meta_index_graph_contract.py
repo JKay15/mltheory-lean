@@ -112,6 +112,43 @@ def validate_meta(errors: list[str]) -> None:
     if not isinstance(canon_mods, list):
         errors.append("docs/meta/canon.yaml: `canonical_modules` must be list")
 
+    backlog_path = ROOT / "docs" / "meta" / "backlog.yaml"
+    if backlog_path.exists():
+        backlog = parse_simple_yaml(backlog_path)
+        backlog_cfg = backlog.get("config")
+        if isinstance(backlog_cfg, dict):
+            default_state = backlog_cfg.get("default_state")
+            allowed_states = backlog_cfg.get("allowed_states")
+        else:
+            default_state = backlog.get("default_state")
+            allowed_states = backlog.get("allowed_states")
+        if not isinstance(default_state, str) or not default_state:
+            errors.append("docs/meta/backlog.yaml: `default_state` must be non-empty string")
+        if not isinstance(allowed_states, list) or not all(
+            isinstance(x, str) and x for x in allowed_states
+        ):
+            errors.append("docs/meta/backlog.yaml: `allowed_states` must be non-empty string list")
+        elif isinstance(default_state, str) and default_state not in allowed_states:
+            errors.append("docs/meta/backlog.yaml: `default_state` must be listed in `allowed_states`")
+
+    ui_path = ROOT / "docs" / "meta" / "ui.yaml"
+    if ui_path.exists():
+        ui = parse_simple_yaml(ui_path)
+        ui_defaults = ui.get("defaults")
+        if isinstance(ui_defaults, dict):
+            target = ui_defaults
+        else:
+            target = ui
+        for key in (
+            "default_scope",
+            "default_spine_only",
+            "default_expand_mode",
+            "default_max_visible_nodes",
+        ):
+            value = target.get(key) if isinstance(target, dict) else None
+            if value is None or value == "":
+                errors.append(f"docs/meta/ui.yaml: `{key}` is required when file exists")
+
 
 def validate_artifacts(errors: list[str]) -> None:
     modules = load_json(ROOT / "artifacts" / "index" / "modules.json", errors)

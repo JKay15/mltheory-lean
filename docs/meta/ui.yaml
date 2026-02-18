@@ -1,0 +1,7 @@
+version: 1
+description: Optional UI defaults for GraphExplorer and future subgraph viewers.
+defaults:
+  default_scope: mltheory
+  default_spine_only: true
+  default_expand_mode: one_hop
+  default_max_visible_nodes: 400

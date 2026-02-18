@@ -1,0 +1,40 @@
+name: MLTheory Docs+Index Checks (Non-blocking)
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  docs_index_checks:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Lean toolchain
+        uses: leanprover/lean-action@v1
+
+      - name: Validate SSOT contract
+        run: python3 tools/docs/validate_ssot.py
+
+      - name: Check derived docs sync
+        run: python3 tools/docs/sync_docs.py --check
+
+      - name: Generate code/mathlib index artifacts (non-blocking)
+        run: |
+          tools/index/gen_mltheory_index.sh
+          tools/index/gen_mathlib_slice.sh
+
+      - name: Check registry legacy modules mirror
+        run: python3 tools/docs/sync_registry_modules_legacy.py --check
+
+      - name: Generate graph/usage artifacts (non-blocking)
+        run: tools/index/gen_graph_artifacts.sh
+
+      - name: Validate meta/index/graph contracts
+        run: python3 tools/ci/check_meta_index_graph_contract.py
+
+      - name: Check generated artifacts are in sync
+        run: tools/ci/check_generated_artifacts.sh

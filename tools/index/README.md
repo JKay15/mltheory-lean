@@ -70,6 +70,12 @@ Outputs:
 - `docs/_auto/GraphArtifacts.md`
 - `docs/GraphExplorer.html` consumes `docs/_auto/subgraph.json` (fallback: `artifacts/graphs/subgraph.json`)
 
+Repository sync guard (used by CI):
+
+```bash
+tools/ci/check_generated_artifacts.sh
+```
+
 Record one telemetry event (local):
 
 ```bash

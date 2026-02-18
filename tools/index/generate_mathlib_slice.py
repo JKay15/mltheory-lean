@@ -36,8 +36,8 @@ def is_mathlib_module(module: str) -> bool:
     return module == "Mathlib" or module.startswith("Mathlib.")
 
 
-def utc_timestamp() -> str:
-    return datetime.now(timezone.utc).isoformat(timespec="seconds")
+def utc_date() -> str:
+    return datetime.now(timezone.utc).date().isoformat()
 
 
 def load_manifest(repo_root: Path) -> dict:
@@ -289,7 +289,7 @@ def main() -> int:
     repo_root = args.repo_root.resolve()
     out_dir = args.out_dir if args.out_dir.is_absolute() else (repo_root / args.out_dir)
     out_dir = out_dir.resolve()
-    generated_at = utc_timestamp()
+    generated_at = utc_date()
 
     manifest = load_manifest(repo_root)
     mathlib_dir = find_mathlib_dir(repo_root, manifest)

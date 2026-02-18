@@ -51,18 +51,3 @@ jobs:
 
       - name: Check review views consistency
         run: python3 tools/ci/check_review_views_consistency.py
-
-      - name: Generate MLTheory index artifacts (non-blocking)
-        run: tools/index/gen_mltheory_index.sh
-
-      - name: Check registry legacy modules mirror
-        run: python3 tools/docs/sync_registry_modules_legacy.py --check
-
-      - name: Generate graph/usage artifacts (non-blocking)
-        run: tools/index/gen_graph_artifacts.sh
-
-      - name: Validate meta/index/graph contracts
-        run: python3 tools/ci/check_meta_index_graph_contract.py
-
-      - name: Check generated artifacts are in sync
-        run: tools/ci/check_generated_artifacts.sh

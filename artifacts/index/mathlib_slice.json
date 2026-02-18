@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-02-18T07:16:51+00:00",
+  "generated_at": "2026-02-18",
   "package": "mathlib",
   "root_direct_imports": [
     "Mathlib"

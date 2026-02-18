@@ -4,7 +4,7 @@
 
 ## statistics
 - subgraph nodes: `1400`
-- subgraph edges: `5896`
+- subgraph edges: `5856`
 - usage events: `0`
 - usage nodes: `0`
 - usage edges: `0`

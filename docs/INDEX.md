@@ -28,6 +28,8 @@ This directory is used for precipitation MLTheory historical decisions,Module pl
 | [meta/taxonomy.yaml](./meta/taxonomy.yaml) | vNext Concept tree and binding(Increment meta) |
 | [meta/aliases.yaml](./meta/aliases.yaml) | vNext Retrieve alias table(Increment meta) |
 | [meta/canon.yaml](./meta/canon.yaml) | vNext Stablize API Checklist(Increment meta) |
+| [meta/backlog.yaml](./meta/backlog.yaml) | Optional blueprint-style Spec execution backlog states |
+| [meta/ui.yaml](./meta/ui.yaml) | Optional graph viewer defaults(scope/spine/expand/visible nodes) |
 | [_auto/README.md](./_auto/README.md) | AutoView Catalog Description(Generate entry) |
 | [_auto/CodeIndex.md](./_auto/CodeIndex.md) | code first module/import automatic view |
 | [_auto/GraphArtifacts.md](./_auto/GraphArtifacts.md) | subgraph with telemetry Statistics automatic view |

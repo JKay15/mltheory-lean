@@ -1,0 +1,9 @@
+version: 1
+description: Optional blueprint-style backlog metadata for spec-to-proof execution.
+config:
+  default_state: spec_only
+  allowed_states:
+    - planned
+    - spec_only
+    - partial_proof
+    - proved

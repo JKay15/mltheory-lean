@@ -32,6 +32,12 @@ if rg -n '^import\s+Paper\.' MLTheory MLTheory.lean; then
   status=1
 fi
 
+echo "[check_layer_imports] checking bare Mathlib imports..."
+if rg -n '^import\s+Mathlib(\s|$)' MLTheory --glob '!MLTheory/**/Compat/Mathlib.lean'; then
+  echo "[check_layer_imports] failed: bare `import Mathlib` is only allowed in Compat/Mathlib modules."
+  status=1
+fi
+
 if [[ "$status" -ne 0 ]]; then
   exit 1
 fi

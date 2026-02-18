@@ -1,7 +1,7 @@
 {
   "generated_at": "2026-02-18",
   "node_count": 1400,
-  "edge_count": 5896,
+  "edge_count": 5856,
   "nodes": [
     {
       "id": "concept:applications",
@@ -19433,6 +19433,12 @@
       "weight": 1.0
     },
     {
+      "src": "MLTheory.Core.Compat.Mathlib",
+      "dst": "Mathlib",
+      "type": "imports",
+      "weight": 1.0
+    },
+    {
       "src": "MLTheory.Core.Learning",
       "dst": "MLTheory.Core.Learning.Capacity",
       "type": "imports",
@@ -19457,32 +19463,14 @@
       "weight": 1.0
     },
     {
-      "src": "MLTheory.Core.Learning.Capacity",
-      "dst": "Mathlib",
-      "type": "imports",
-      "weight": 1.0
-    },
-    {
       "src": "MLTheory.Core.Learning.FunctionClass",
       "dst": "MLTheory.Core.Compat.Mathlib",
       "type": "imports",
       "weight": 1.0
     },
     {
-      "src": "MLTheory.Core.Learning.FunctionClass",
-      "dst": "Mathlib",
-      "type": "imports",
-      "weight": 1.0
-    },
-    {
       "src": "MLTheory.Core.Learning.PAC",
       "dst": "MLTheory.Core.Compat.Mathlib",
-      "type": "imports",
-      "weight": 1.0
-    },
-    {
-      "src": "MLTheory.Core.Learning.PAC",
-      "dst": "Mathlib",
       "type": "imports",
       "weight": 1.0
     },
@@ -19517,32 +19505,14 @@
       "weight": 1.0
     },
     {
-      "src": "MLTheory.Core.Probability.BasicMeasure",
-      "dst": "Mathlib",
-      "type": "imports",
-      "weight": 1.0
-    },
-    {
       "src": "MLTheory.Core.Probability.Conditioning",
       "dst": "MLTheory.Core.Compat.Mathlib",
       "type": "imports",
       "weight": 1.0
     },
     {
-      "src": "MLTheory.Core.Probability.Conditioning",
-      "dst": "Mathlib",
-      "type": "imports",
-      "weight": 1.0
-    },
-    {
       "src": "MLTheory.Core.Probability.ProbIneq",
       "dst": "MLTheory.Core.Compat.Mathlib",
-      "type": "imports",
-      "weight": 1.0
-    },
-    {
-      "src": "MLTheory.Core.Probability.ProbIneq",
-      "dst": "Mathlib",
       "type": "imports",
       "weight": 1.0
     },
@@ -19555,12 +19525,6 @@
     {
       "src": "MLTheory.Core.RL.MDP",
       "dst": "MLTheory.Core.Compat.Mathlib",
-      "type": "imports",
-      "weight": 1.0
-    },
-    {
-      "src": "MLTheory.Core.RL.MDP",
-      "dst": "Mathlib",
       "type": "imports",
       "weight": 1.0
     },
@@ -19583,20 +19547,8 @@
       "weight": 1.0
     },
     {
-      "src": "MLTheory.Core.Statistics.Information",
-      "dst": "Mathlib",
-      "type": "imports",
-      "weight": 1.0
-    },
-    {
       "src": "MLTheory.Core.Statistics.Risk",
       "dst": "MLTheory.Core.Compat.Mathlib",
-      "type": "imports",
-      "weight": 1.0
-    },
-    {
-      "src": "MLTheory.Core.Statistics.Risk",
-      "dst": "Mathlib",
       "type": "imports",
       "weight": 1.0
     },
@@ -19715,12 +19667,6 @@
       "weight": 1.0
     },
     {
-      "src": "MLTheory.Methods.Bandits.Adversarial",
-      "dst": "Mathlib",
-      "type": "imports",
-      "weight": 1.0
-    },
-    {
       "src": "MLTheory.Methods.Bandits.BestArmIdentification",
       "dst": "MLTheory.Methods.Bandits.Foundations",
       "type": "imports",
@@ -19729,12 +19675,6 @@
     {
       "src": "MLTheory.Methods.Bandits.BestArmIdentification",
       "dst": "MLTheory.Methods.Compat.Mathlib",
-      "type": "imports",
-      "weight": 1.0
-    },
-    {
-      "src": "MLTheory.Methods.Bandits.BestArmIdentification",
-      "dst": "Mathlib",
       "type": "imports",
       "weight": 1.0
     },
@@ -19751,12 +19691,6 @@
       "weight": 1.0
     },
     {
-      "src": "MLTheory.Methods.Bandits.ContextualLinear",
-      "dst": "Mathlib",
-      "type": "imports",
-      "weight": 1.0
-    },
-    {
       "src": "MLTheory.Methods.Bandits.Dueling",
       "dst": "MLTheory.Methods.Bandits.Foundations",
       "type": "imports",
@@ -19765,24 +19699,12 @@
     {
       "src": "MLTheory.Methods.Bandits.Dueling",
       "dst": "MLTheory.Methods.Compat.Mathlib",
-      "type": "imports",
-      "weight": 1.0
-    },
-    {
-      "src": "MLTheory.Methods.Bandits.Dueling",
-      "dst": "Mathlib",
       "type": "imports",
       "weight": 1.0
     },
     {
       "src": "MLTheory.Methods.Bandits.Foundations",
       "dst": "MLTheory.Methods.Compat.Mathlib",
-      "type": "imports",
-      "weight": 1.0
-    },
-    {
-      "src": "MLTheory.Methods.Bandits.Foundations",
-      "dst": "Mathlib",
       "type": "imports",
       "weight": 1.0
     },
@@ -19799,12 +19721,6 @@
       "weight": 1.0
     },
     {
-      "src": "MLTheory.Methods.Bandits.InformationTheory",
-      "dst": "Mathlib",
-      "type": "imports",
-      "weight": 1.0
-    },
-    {
       "src": "MLTheory.Methods.Bandits.LargeActionSpaces",
       "dst": "MLTheory.Methods.Bandits.Foundations",
       "type": "imports",
@@ -19817,12 +19733,6 @@
       "weight": 1.0
     },
     {
-      "src": "MLTheory.Methods.Bandits.LargeActionSpaces",
-      "dst": "Mathlib",
-      "type": "imports",
-      "weight": 1.0
-    },
-    {
       "src": "MLTheory.Methods.Bandits.PureExplorationLinear",
       "dst": "MLTheory.Methods.Bandits.Foundations",
       "type": "imports",
@@ -19831,12 +19741,6 @@
     {
       "src": "MLTheory.Methods.Bandits.PureExplorationLinear",
       "dst": "MLTheory.Methods.Compat.Mathlib",
-      "type": "imports",
-      "weight": 1.0
-    },
-    {
-      "src": "MLTheory.Methods.Bandits.PureExplorationLinear",
-      "dst": "Mathlib",
       "type": "imports",
       "weight": 1.0
     },
@@ -19859,12 +19763,6 @@
       "weight": 1.0
     },
     {
-      "src": "MLTheory.Methods.Bandits.RLBridge",
-      "dst": "Mathlib",
-      "type": "imports",
-      "weight": 1.0
-    },
-    {
       "src": "MLTheory.Methods.Bandits.Stochastic",
       "dst": "MLTheory.Methods.Bandits.Foundations",
       "type": "imports",
@@ -19873,12 +19771,6 @@
     {
       "src": "MLTheory.Methods.Bandits.Stochastic",
       "dst": "MLTheory.Methods.Compat.Mathlib",
-      "type": "imports",
-      "weight": 1.0
-    },
-    {
-      "src": "MLTheory.Methods.Bandits.Stochastic",
-      "dst": "Mathlib",
       "type": "imports",
       "weight": 1.0
     },
@@ -19991,20 +19883,8 @@
       "weight": 1.0
     },
     {
-      "src": "MLTheory.Methods.Learning.AdvancedSLT",
-      "dst": "Mathlib",
-      "type": "imports",
-      "weight": 1.0
-    },
-    {
       "src": "MLTheory.Methods.Learning.AutomataLanguage",
       "dst": "MLTheory.Methods.Compat.Mathlib",
-      "type": "imports",
-      "weight": 1.0
-    },
-    {
-      "src": "MLTheory.Methods.Learning.AutomataLanguage",
-      "dst": "Mathlib",
       "type": "imports",
       "weight": 1.0
     },
@@ -20027,12 +19907,6 @@
       "weight": 1.0
     },
     {
-      "src": "MLTheory.Methods.Learning.Capacity",
-      "dst": "Mathlib",
-      "type": "imports",
-      "weight": 1.0
-    },
-    {
       "src": "MLTheory.Methods.Learning.ConcentrationPackaging",
       "dst": "MLTheory.Methods.Compat.Mathlib",
       "type": "imports",
@@ -20041,12 +19915,6 @@
     {
       "src": "MLTheory.Methods.Learning.ConcentrationPackaging",
       "dst": "MLTheory.Methods.Learning.GeneralizationTools",
-      "type": "imports",
-      "weight": 1.0
-    },
-    {
-      "src": "MLTheory.Methods.Learning.ConcentrationPackaging",
-      "dst": "Mathlib",
       "type": "imports",
       "weight": 1.0
     },
@@ -20065,12 +19933,6 @@
     {
       "src": "MLTheory.Methods.Learning.DiscreteModeling",
       "dst": "MLTheory.Methods.Learning.AutomataLanguage",
-      "type": "imports",
-      "weight": 1.0
-    },
-    {
-      "src": "MLTheory.Methods.Learning.DiscreteModeling",
-      "dst": "Mathlib",
       "type": "imports",
       "weight": 1.0
     },
@@ -20099,32 +19961,14 @@
       "weight": 1.0
     },
     {
-      "src": "MLTheory.Methods.Learning.KernelBayes",
-      "dst": "Mathlib",
-      "type": "imports",
-      "weight": 1.0
-    },
-    {
       "src": "MLTheory.Methods.Learning.KernelMethods",
       "dst": "MLTheory.Methods.Compat.Mathlib",
       "type": "imports",
       "weight": 1.0
     },
     {
-      "src": "MLTheory.Methods.Learning.KernelMethods",
-      "dst": "Mathlib",
-      "type": "imports",
-      "weight": 1.0
-    },
-    {
       "src": "MLTheory.Methods.Learning.ModelSelection",
       "dst": "MLTheory.Methods.Compat.Mathlib",
-      "type": "imports",
-      "weight": 1.0
-    },
-    {
-      "src": "MLTheory.Methods.Learning.ModelSelection",
-      "dst": "Mathlib",
       "type": "imports",
       "weight": 1.0
     },
@@ -20141,12 +19985,6 @@
       "weight": 1.0
     },
     {
-      "src": "MLTheory.Methods.Learning.SVM",
-      "dst": "Mathlib",
-      "type": "imports",
-      "weight": 1.0
-    },
-    {
       "src": "MLTheory.Methods.Learning.Sequential",
       "dst": "MLTheory.Methods.Compat.Mathlib",
       "type": "imports",
@@ -20159,20 +19997,8 @@
       "weight": 1.0
     },
     {
-      "src": "MLTheory.Methods.Learning.Sequential",
-      "dst": "Mathlib",
-      "type": "imports",
-      "weight": 1.0
-    },
-    {
       "src": "MLTheory.Methods.Learning.StoneWeierstrassBridge",
       "dst": "MLTheory.Methods.Compat.Mathlib",
-      "type": "imports",
-      "weight": 1.0
-    },
-    {
-      "src": "MLTheory.Methods.Learning.StoneWeierstrassBridge",
-      "dst": "Mathlib",
       "type": "imports",
       "weight": 1.0
     },
@@ -20237,12 +20063,6 @@
       "weight": 1.0
     },
     {
-      "src": "MLTheory.Methods.OCO.BanditConvex",
-      "dst": "Mathlib",
-      "type": "imports",
-      "weight": 1.0
-    },
-    {
       "src": "MLTheory.Methods.OCO.Boosting",
       "dst": "MLTheory.Methods.Compat.Mathlib",
       "type": "imports",
@@ -20257,12 +20077,6 @@
     {
       "src": "MLTheory.Methods.OCO.Boosting",
       "dst": "MLTheory.Methods.OR.ConvexCore",
-      "type": "imports",
-      "weight": 1.0
-    },
-    {
-      "src": "MLTheory.Methods.OCO.Boosting",
-      "dst": "Mathlib",
       "type": "imports",
       "weight": 1.0
     },
@@ -20285,12 +20099,6 @@
       "weight": 1.0
     },
     {
-      "src": "MLTheory.Methods.OCO.DynamicRegret",
-      "dst": "Mathlib",
-      "type": "imports",
-      "weight": 1.0
-    },
-    {
       "src": "MLTheory.Methods.OCO.GamesAndDuality",
       "dst": "MLTheory.Methods.Compat.Mathlib",
       "type": "imports",
@@ -20305,12 +20113,6 @@
     {
       "src": "MLTheory.Methods.OCO.GamesAndDuality",
       "dst": "MLTheory.Methods.OR.ConvexCore",
-      "type": "imports",
-      "weight": 1.0
-    },
-    {
-      "src": "MLTheory.Methods.OCO.GamesAndDuality",
-      "dst": "Mathlib",
       "type": "imports",
       "weight": 1.0
     },
@@ -20335,12 +20137,6 @@
     {
       "src": "MLTheory.Methods.OCO.OptimizationCore",
       "dst": "MLTheory.Methods.OR.ConvexCore",
-      "type": "imports",
-      "weight": 1.0
-    },
-    {
-      "src": "MLTheory.Methods.OCO.OptimizationCore",
-      "dst": "Mathlib",
       "type": "imports",
       "weight": 1.0
     },
@@ -20375,12 +20171,6 @@
       "weight": 1.0
     },
     {
-      "src": "MLTheory.Methods.OR.ConvexCore",
-      "dst": "Mathlib",
-      "type": "imports",
-      "weight": 1.0
-    },
-    {
       "src": "MLTheory.Methods.OR.DiscreteOptimization",
       "dst": "MLTheory.Methods.Compat.Mathlib",
       "type": "imports",
@@ -20389,12 +20179,6 @@
     {
       "src": "MLTheory.Methods.OR.DiscreteOptimization",
       "dst": "MLTheory.Methods.OR.ConvexCore",
-      "type": "imports",
-      "weight": 1.0
-    },
-    {
-      "src": "MLTheory.Methods.OR.DiscreteOptimization",
-      "dst": "Mathlib",
       "type": "imports",
       "weight": 1.0
     },
@@ -20411,12 +20195,6 @@
       "weight": 1.0
     },
     {
-      "src": "MLTheory.Methods.OR.GraphOptimization",
-      "dst": "Mathlib",
-      "type": "imports",
-      "weight": 1.0
-    },
-    {
       "src": "MLTheory.Methods.OR.StochasticMatrix",
       "dst": "MLTheory.Methods.Compat.Mathlib",
       "type": "imports",
@@ -20425,12 +20203,6 @@
     {
       "src": "MLTheory.Methods.OR.StochasticMatrix",
       "dst": "MLTheory.Methods.OR.ConvexCore",
-      "type": "imports",
-      "weight": 1.0
-    },
-    {
-      "src": "MLTheory.Methods.OR.StochasticMatrix",
-      "dst": "Mathlib",
       "type": "imports",
       "weight": 1.0
     },
@@ -20465,12 +20237,6 @@
       "weight": 1.0
     },
     {
-      "src": "MLTheory.Methods.RL.DynamicProgramming",
-      "dst": "Mathlib",
-      "type": "imports",
-      "weight": 1.0
-    },
-    {
       "src": "MLTheory.Methods.RL.MDP",
       "dst": "MLTheory.Core.RL.MDP",
       "type": "imports",
@@ -20491,12 +20257,6 @@
     {
       "src": "MLTheory.Methods.RL.TemporalDifference",
       "dst": "MLTheory.Methods.RL.MDP",
-      "type": "imports",
-      "weight": 1.0
-    },
-    {
-      "src": "MLTheory.Methods.RL.TemporalDifference",
-      "dst": "Mathlib",
       "type": "imports",
       "weight": 1.0
     },
