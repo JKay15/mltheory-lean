@@ -362,7 +362,7 @@
   <header>
     <h1>MLTheory Graph Explorer</h1>
     <p class="subtitle">
-      Default view is Module Map. Use wheel to zoom, drag background to pan, drag nodes to pin positions,
+      Default view is Module Map. Use wheel to zoom, drag background to pan, click a node to pin/unpin,
       and use search to locate any module/decl quickly.
     </p>
 
@@ -420,6 +420,7 @@
         <label><input id="kindDecl" type="checkbox" /> declarations</label>
         <label><input id="kindConcept" type="checkbox" /> concepts</label>
         <label><input id="spineOnly" type="checkbox" /> spine only</label>
+        <label><input id="pinOnDrag" type="checkbox" /> pin on drag</label>
       </div>
 
       <div class="block">
@@ -1470,14 +1471,10 @@
         circle.addEventListener("click", (ev) => {
           ev.stopPropagation();
           if (Date.now() < state.suppressClickUntil) return;
+          togglePin(n.id);
           state.selected = n.id;
           state.selectedEdge = null;
           materializeNode(n.id);
-          renderAll();
-        });
-        circle.addEventListener("dblclick", (ev) => {
-          ev.stopPropagation();
-          togglePin(n.id);
           renderAll();
         });
 
@@ -1622,7 +1619,7 @@
       if (!node) {
         box.innerHTML = [
           "<div>Please select a node or use search locate.</div>",
-          "<div class='tiny'>Double click a node to pin/unpin. Drag a node to move and pin it.</div>",
+          "<div class='tiny'>Click a node to pin/unpin. Drag moves node; enable pin-on-drag to keep dragged nodes pinned.</div>",
         ].join("");
         return;
       }
@@ -1970,6 +1967,7 @@
 
     function startNodeDrag(ev, nodeId) {
       const p = nodePos(nodeId);
+      const pinOnDrag = byId("pinOnDrag") ? byId("pinOnDrag").checked : false;
       state.drag = {
         type: "node",
         nodeId,
@@ -1978,6 +1976,9 @@
         startClientY: ev.clientY,
         startNodeX: p[0],
         startNodeY: p[1],
+        wasPinned: state.pinned.has(nodeId),
+        pinOnDrag,
+        moved: false,
       };
       svg.classList.add("panning");
       svg.setPointerCapture(ev.pointerId);
@@ -2026,6 +2027,9 @@
       if (state.drag.type === "node") {
         const nx = state.drag.startNodeX + delta.dx;
         const ny = state.drag.startNodeY + delta.dy;
+        if (Math.abs(delta.dx) > 0.3 || Math.abs(delta.dy) > 0.3) {
+          state.drag.moved = true;
+        }
         state.pinned.set(state.drag.nodeId, [nx, ny]);
         state.suppressClickUntil = Date.now() + 180;
         scheduleGraphRender();
@@ -2036,9 +2040,13 @@
       if (!state.drag || state.drag.pointerId !== ev.pointerId) return;
       svg.classList.remove("panning");
       svg.releasePointerCapture(ev.pointerId);
-      const wasNodeDrag = state.drag.type === "node";
+      const dragState = state.drag;
+      const wasNodeDrag = dragState.type === "node";
       state.drag = null;
       if (wasNodeDrag) {
+        if (!dragState.wasPinned && !dragState.pinOnDrag) {
+          state.pinned.delete(dragState.nodeId);
+        }
         renderAll();
       }
     }
