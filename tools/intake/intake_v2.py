@@ -530,6 +530,22 @@ def run_checked(cmd: list[str], cwd: Path) -> None:
         raise RuntimeError(f"command failed ({proc.returncode}): {' '.join(cmd)}")
 
 
+def run_blocking_gates(repo_root: Path) -> None:
+    gate_cmds: list[list[str]] = [
+        ["lake", "build"],
+        ["lake", "env", "lean", "Eval/ImportSmoke.lean"],
+        ["lake", "env", "lean", "Eval/CanonicalAPISmoke.lean"],
+        ["tools/ci/check_no_sorry_axiom.sh"],
+        ["tools/ci/check_placeholder_policy.sh"],
+        ["tools/ci/check_layer_imports.sh"],
+        ["python3", "tools/ci/check_meta_index_graph_contract.py"],
+        ["python3", "tools/docs/validate_ssot.py"],
+        ["python3", "tools/docs/sync_docs.py", "--check"],
+    ]
+    for cmd in gate_cmds:
+        run_checked(cmd, repo_root)
+
+
 def load_domain_profiles(repo_root: Path) -> tuple[str, dict[str, DomainProfile]]:
     path = repo_root / "docs" / "meta" / "domains.yaml"
     data = parse_simple_yaml(path)
@@ -797,6 +813,9 @@ def stage_lean_commit(
     if run_artifacts:
         run_checked(["tools/index/gen_mltheory_index.sh"], ctx.repo_root)
         run_checked(["tools/index/gen_graph_artifacts.sh"], ctx.repo_root)
+
+    # Lean Commit contract: must pass the repository blocking gate.
+    run_blocking_gates(ctx.repo_root)
 
     append_telemetry_event(ctx, "lean_commit_ready", success=True)
     write_if_missing(

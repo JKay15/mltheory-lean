@@ -389,7 +389,7 @@
         <label><input id="kindModule" type="checkbox" checked /> modules</label>
         <label><input id="kindDecl" type="checkbox" /> declarations</label>
         <label><input id="kindConcept" type="checkbox" /> concepts</label>
-        <label><input id="spineOnly" type="checkbox" /> spine only</label>
+        <label><input id="spineOnly" type="checkbox" checked /> spine only</label>
       </div>
 
       <div class="block">
@@ -399,6 +399,8 @@
         <label><input id="edge_uses_value" type="checkbox" /> uses_value</label>
         <label><input id="edge_decl_in_module" type="checkbox" /> decl_in_module</label>
         <label><input id="edge_binds" type="checkbox" /> binds</label>
+        <label><input id="edge_alias_of" type="checkbox" /> alias_of</label>
+        <label><input id="edge_used_recently" type="checkbox" /> used_recently</label>
         <label>Max edges on canvas
           <select id="maxEdges">
             <option value="1500">1500</option>
@@ -466,6 +468,8 @@
         <div class="row"><span class="ln" style="border-top-color: var(--uses-value)"></span> uses_value</div>
         <div class="row"><span class="ln" style="border-top-color: var(--decl-in-module)"></span> decl_in_module</div>
         <div class="row"><span class="ln" style="border-top-color: var(--binds)"></span> binds</div>
+        <div class="row"><span class="ln" style="border-top-color: var(--alias-of)"></span> alias_of</div>
+        <div class="row"><span class="ln" style="border-top-color: var(--used-recently)"></span> used_recently</div>
       </div>
       <svg id="graph" viewBox="0 0 2400 1400" preserveAspectRatio="xMidYMid meet"></svg>
     </section>
@@ -1798,6 +1802,7 @@
       const rerenderIds = [
         "scope", "layerFilter", "domainFilter", "kindModule", "kindDecl", "kindConcept", "spineOnly",
         "edge_imports", "edge_uses_type", "edge_uses_value", "edge_decl_in_module", "edge_binds",
+        "edge_alias_of", "edge_used_recently",
         "showGenerated", "expandMathlib", "maxNodes", "maxEdges", "neighborhoodDepth", "layoutMode",
       ];
       for (const id of rerenderIds) {
