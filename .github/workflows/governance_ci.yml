@@ -54,3 +54,6 @@ jobs:
 
       - name: Generate MLTheory index artifacts (non-blocking)
         run: tools/index/gen_mltheory_index.sh
+
+      - name: Generate graph/usage artifacts (non-blocking)
+        run: tools/index/gen_graph_artifacts.sh

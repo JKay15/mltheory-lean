@@ -20,6 +20,13 @@ python3 tools/index/gen_module_graph.py \
   --imports "${ROOT_DIR}/artifacts/index/imports.json" \
   --out "${ROOT_DIR}/artifacts/graphs/module_graph.json"
 
+if [[ -f "${ROOT_DIR}/artifacts/graphs/decl_graph.json" ]]; then
+  python3 tools/index/gen_decls.py \
+    --decl-graph "${ROOT_DIR}/artifacts/graphs/decl_graph.json" \
+    --modules "${ROOT_DIR}/artifacts/index/modules.json" \
+    --out "${ROOT_DIR}/artifacts/index/decls.json"
+fi
+
 python3 tools/index/render_auto_docs.py \
   --modules "${ROOT_DIR}/artifacts/index/modules.json" \
   --imports "${ROOT_DIR}/artifacts/index/imports.json" \

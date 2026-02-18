@@ -30,11 +30,19 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--modules", type=Path, required=True, help="modules.json path")
     ap.add_argument("--imports", type=Path, required=True, help="imports.json path")
+    ap.add_argument("--decls", type=Path, default=Path("artifacts/index/decls.json"), help="decls.json path")
     ap.add_argument("--out", type=Path, required=True, help="Output markdown path")
     args = ap.parse_args()
 
     modules_data = load_json(args.modules.resolve())
     imports_data = load_json(args.imports.resolve())
+    decl_count = "-"
+    decls_path = args.decls.resolve()
+    if decls_path.exists():
+        try:
+            decl_count = str(load_json(decls_path).get("decl_count", "-"))
+        except Exception:
+            decl_count = "-"
 
     modules = modules_data.get("modules", [])
     fan_out_raw = imports_data.get("fan_out", {})
@@ -55,6 +63,7 @@ def main() -> int:
         f"- 生成日期：`{modules_data.get('generated_at', '-')}`",
         f"- 模块数：`{modules_data.get('module_count', len(modules))}`",
         f"- import 边数：`{imports_data.get('edge_count', '-')}`",
+        f"- 声明数（decls）：`{decl_count}`",
         "",
         "## 按层分布",
         md_table(

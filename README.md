@@ -28,14 +28,16 @@ tools/ci/check_placeholder_policy.sh
 tools/index/gen_mltheory_index.sh
 tools/index/gen_mathlib_slice.sh
 tools/index/gen_decl_graph.sh
+tools/index/gen_graph_artifacts.sh
 ```
 
 主要产物：
 
 - `artifacts/index/modules.json` / `artifacts/index/imports.json`
 - `artifacts/index/mathlib_slice.json` / `artifacts/index/mltheory_to_mathlib.json`
-- `artifacts/graphs/module_graph.json` / `artifacts/graphs/decl_graph.json`
+- `artifacts/graphs/module_graph.json` / `artifacts/graphs/decl_graph.json` / `artifacts/graphs/subgraph.json` / `artifacts/graphs/usage_graph.json`
 - `docs/_auto/CodeIndex.md`
+- `docs/GraphExplorer.html`
 
 ## 文档系统（SSOT）
 

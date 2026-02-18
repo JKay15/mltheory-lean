@@ -1059,6 +1059,12 @@
       "decision": "落地 Phase 2/3 的代码优先索引：新增 docs/meta(taxonomy/aliases/canon)、tools/index/gen_modules.py + gen_imports.py + gen_mltheory_index.sh，生成 artifacts/index/modules.json/imports.json、artifacts/graphs/module_graph.json 与 docs/_auto/CodeIndex.md。",
       "status": "active",
       "impact": "把“全量模块枚举”从 SSOT 主链路降级为自动发现+增量 meta，支持 slice/graph 检索与 docs/_auto 自动视图。"
+    },
+    {
+      "date": "2026-02-18",
+      "decision": "落地可选 PR-5/PR-6：新增 GraphExplorer MVP 与子图产物链路（usage_graph + subgraph），并提供 telemetry 记录脚本与 usage 驱动 spine/入口建议。",
+      "status": "active",
+      "impact": "可视化从 ToolForest 单树升级为“骨干+展开”图谱；检索可利用 usage 权重做默认排序与建议。"
     }
   ],
   "taxonomy_nodes": [

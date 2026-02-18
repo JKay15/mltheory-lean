@@ -1,3 +1,4 @@
 /.lake
 /.DS_Store
 .DS_Store
+/artifacts/telemetry/usage_events.jsonl

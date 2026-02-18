@@ -14,6 +14,7 @@ Generated files:
 
 - `artifacts/index/modules.json`
 - `artifacts/index/imports.json`
+- `artifacts/index/decls.json` (when `artifacts/graphs/decl_graph.json` exists)
 - `artifacts/graphs/module_graph.json`
 - `docs/_auto/CodeIndex.md`
 
@@ -52,6 +53,32 @@ Output:
 
 - `artifacts/graphs/decl_graph.json` (`uses_type` + `uses_value`)
 
+## Subgraph + usage telemetry (PR-5/PR-6 optional)
+
+Generate usage graph, usage-driven suggestions, and merged subgraph:
+
+```bash
+tools/index/gen_graph_artifacts.sh
+```
+
+Outputs:
+
+- `artifacts/graphs/usage_graph.json`
+- `artifacts/index/usage_suggestions.json`
+- `artifacts/graphs/subgraph.json`
+- `docs/_auto/subgraph.json`
+- `docs/_auto/GraphArtifacts.md`
+- `docs/GraphExplorer.html` consumes `docs/_auto/subgraph.json` (fallback: `artifacts/graphs/subgraph.json`)
+
+Record one telemetry event (local):
+
+```bash
+python3 tools/index/record_usage.py --module MLTheory.Methods.RL.MDP --task card-001 --decl MLTheory.Methods.RL.valueIterationUpdate --status success
+```
+
+Local event log path:
+
+- `artifacts/telemetry/usage_events.jsonl`
 
 ## Notes
 

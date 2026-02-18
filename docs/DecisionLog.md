@@ -170,3 +170,4 @@
 | 2026-02-18 | 落地 Phase 3 的 mathlib 结构探索脚本：从 `lake-manifest.json` 自动定位 mathlib，生成 modules/imports/hubs/aggregators/slice 与 `MLTheory→mathlib` 映射产物。 | active | 形成可重复的一键索引与切片管线，为限域检索与后续子图构建提供机器可读基础数据。 |
 | 2026-02-18 | 落地 Phase 4 的声明依赖导出：新增 `tools/index/ExtractDeclDeps.lean` 与 `gen_decl_graph.sh`，导出 `uses_type/uses_value` 到 `artifacts/graphs/decl_graph.json`。 | active | 子图从模块级 import 图升级到声明级真实依赖边，可用于邻域检索与“骨干+可展开”可视化。 |
 | 2026-02-18 | 落地 Phase 2/3 的代码优先索引：新增 docs/meta(taxonomy/aliases/canon)、tools/index/gen_modules.py + gen_imports.py + gen_mltheory_index.sh，生成 artifacts/index/modules.json/imports.json、artifacts/graphs/module_graph.json 与 docs/_auto/CodeIndex.md。 | active | 把“全量模块枚举”从 SSOT 主链路降级为自动发现+增量 meta，支持 slice/graph 检索与 docs/_auto 自动视图。 |
+| 2026-02-18 | 落地可选 PR-5/PR-6：新增 GraphExplorer MVP 与子图产物链路（usage_graph + subgraph），并提供 telemetry 记录脚本与 usage 驱动 spine/入口建议。 | active | 可视化从 ToolForest 单树升级为“骨干+展开”图谱；检索可利用 usage 权重做默认排序与建议。 |

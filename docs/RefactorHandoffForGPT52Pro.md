@@ -10,7 +10,7 @@
 ## 一眼看懂当前状态
 - SSOT schema_version：`1.4.0`
 - last_updated：`2026-02-18`
-- 决策总数：`166`
+- 决策总数：`167`
 - 真实模块（file-backed）总数：`69`
 - 规划模块（non-file-backed）总数：`58`
 - 执行短清单（execution_backlog）条数：`1`

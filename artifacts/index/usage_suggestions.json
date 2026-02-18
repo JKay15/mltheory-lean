@@ -1,0 +1,10 @@
+{
+  "generated_at": "2026-02-18",
+  "event_count": 0,
+  "spine_candidates": [],
+  "entry_module_candidates": [],
+  "notes": [
+    "spine_candidates ranked by usage score (2*success + usage_count)",
+    "entry_module_candidates aggregated from top usage decl modules"
+  ]
+}

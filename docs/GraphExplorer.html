@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MLTheory Graph Explorer</title>
+  <style>
+    :root {
+      --bg: #f3f5ef;
+      --panel: #fbfcf8;
+      --ink: #1d2a1f;
+      --muted: #5a6c5d;
+      --accent: #0e8a73;
+      --edge: #c5d3c8;
+      --module: #20639b;
+      --decl: #e07a2f;
+      --concept: #2a9d4b;
+      --spine: #b3261e;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Space Grotesk", "IBM Plex Sans", "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 10% 10%, #ffffff 0%, #f3f5ef 45%, #e9eee2 100%);
+    }
+    header {
+      padding: 18px 22px 8px;
+      border-bottom: 1px solid #d9e2d4;
+    }
+    h1 {
+      margin: 0 0 8px;
+      font-size: 24px;
+      letter-spacing: 0.4px;
+    }
+    .subtitle {
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      font-size: 13px;
+    }
+    .controls input[type="text"], .controls select {
+      border: 1px solid #c8d4c8;
+      background: white;
+      padding: 6px 8px;
+      border-radius: 8px;
+      min-width: 170px;
+    }
+    .controls button {
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      background: white;
+      padding: 6px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    main {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 14px;
+      padding: 14px;
+      min-height: calc(100vh - 110px);
+    }
+    .panel {
+      background: var(--panel);
+      border: 1px solid #d8e2d2;
+      border-radius: 14px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .panel h2 {
+      margin: 0;
+      padding: 12px 14px;
+      font-size: 15px;
+      border-bottom: 1px solid #e2eadf;
+      background: #f7faf2;
+    }
+    .node-list {
+      overflow: auto;
+      padding: 8px;
+      max-height: 42vh;
+    }
+    .node-item {
+      border: 1px solid #dde5da;
+      border-radius: 9px;
+      margin-bottom: 6px;
+      padding: 7px 8px;
+      cursor: pointer;
+      background: #fff;
+      font-size: 12px;
+    }
+    .node-item:hover { border-color: #b7c7ba; }
+    .node-item.active {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent) inset;
+    }
+    .node-item .meta {
+      color: var(--muted);
+      margin-top: 3px;
+    }
+    .details {
+      border-top: 1px solid #e2eadf;
+      padding: 10px;
+      font-size: 13px;
+      overflow: auto;
+      line-height: 1.45;
+    }
+    .details button {
+      margin-right: 8px;
+      margin-top: 6px;
+      border: 1px solid #b3c4b8;
+      background: white;
+      border-radius: 7px;
+      padding: 4px 8px;
+      cursor: pointer;
+    }
+    #canvas-wrap {
+      background: var(--panel);
+      border: 1px solid #d8e2d2;
+      border-radius: 14px;
+      overflow: hidden;
+      position: relative;
+    }
+    #stats {
+      position: absolute;
+      right: 10px;
+      top: 8px;
+      font-size: 12px;
+      color: var(--muted);
+      z-index: 2;
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid #e0e7de;
+      border-radius: 8px;
+      padding: 4px 8px;
+    }
+    svg { width: 100%; height: 100%; display: block; }
+    @media (max-width: 980px) {
+      main { grid-template-columns: 1fr; }
+      .node-list { max-height: 26vh; }
+      #canvas-wrap { min-height: 58vh; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>MLTheory Graph Explorer</h1>
+    <p class="subtitle">默认展示 spine，点击节点按一跳展开，支持层级过滤与源码路径回溯。</p>
+    <div class="controls">
+      <label><input id="spineOnly" type="checkbox" checked /> spine only</label>
+      <label>scope
+        <select id="scope">
+          <option value="all">all</option>
+          <option value="mltheory">MLTheory only</option>
+          <option value="mathlib-slice">mathlib slice only</option>
+        </select>
+      </label>
+      <label><input id="kindModule" type="checkbox" checked /> module</label>
+      <label><input id="kindDecl" type="checkbox" checked /> decl</label>
+      <label><input id="kindConcept" type="checkbox" checked /> concept</label>
+      <input id="search" type="text" placeholder="search node id/title" />
+      <button id="resetView">reset spine</button>
+      <button id="clearView">clear</button>
+      <span id="sourceHint"></span>
+    </div>
+  </header>
+
+  <main>
+    <section class="panel">
+      <h2>Nodes</h2>
+      <div id="nodeList" class="node-list"></div>
+      <div id="details" class="details">请选择一个节点。</div>
+    </section>
+    <section id="canvas-wrap">
+      <div id="stats">loading...</div>
+      <svg id="graph" viewBox="0 0 1200 760" preserveAspectRatio="xMidYMid meet"></svg>
+    </section>
+  </main>
+
+  <script>
+    const dataCandidates = ["./_auto/subgraph.json", "../artifacts/graphs/subgraph.json"];
+    const state = {
+      graph: null,
+      visible: new Set(),
+      selected: null,
+      outgoing: new Map(),
+      incoming: new Map(),
+      nodesById: new Map(),
+      edges: []
+    };
+
+    const byId = id => document.getElementById(id);
+    const svg = byId("graph");
+
+    function nodeColor(node) {
+      if (node.spine) return "var(--spine)";
+      if (node.kind === "module") return "var(--module)";
+      if (node.kind === "decl") return "var(--decl)";
+      return "var(--concept)";
+    }
+
+    async function loadData() {
+      for (const path of dataCandidates) {
+        try {
+          const res = await fetch(path, { cache: "no-store" });
+          if (!res.ok) continue;
+          const graph = await res.json();
+          byId("sourceHint").textContent = `source: ${path}`;
+          return graph;
+        } catch (_) {}
+      }
+      throw new Error("no graph data available");
+    }
+
+    function isInScope(node) {
+      const scope = byId("scope").value;
+      if (scope === "all") return true;
+      if (scope === "mltheory") return node.package !== "mathlib";
+      return node.package === "mathlib";
+    }
+
+    function isKindEnabled(node) {
+      if (node.kind === "module") return byId("kindModule").checked;
+      if (node.kind === "decl") return byId("kindDecl").checked;
+      if (node.kind === "concept") return byId("kindConcept").checked;
+      return true;
+    }
+
+    function isNodeVisibleByFilters(node) {
+      if (!isKindEnabled(node)) return false;
+      if (!isInScope(node)) return false;
+      if (byId("spineOnly").checked && !node.spine) return false;
+      const q = byId("search").value.trim().toLowerCase();
+      if (!q) return true;
+      return node.id.toLowerCase().includes(q) || String(node.title || "").toLowerCase().includes(q);
+    }
+
+    function setInitialVisible() {
+      state.visible.clear();
+      for (const node of state.graph.nodes) {
+        if (node.spine) state.visible.add(node.id);
+      }
+      if (state.visible.size === 0) {
+        for (const node of state.graph.nodes.slice(0, 120)) state.visible.add(node.id);
+      }
+    }
+
+    function buildAdjacency() {
+      state.outgoing.clear();
+      state.incoming.clear();
+      state.edges = [];
+      state.nodesById.clear();
+      for (const n of state.graph.nodes) state.nodesById.set(n.id, n);
+      for (const e of state.graph.edges) {
+        if (!state.nodesById.has(e.src) || !state.nodesById.has(e.dst)) continue;
+        state.edges.push(e);
+        if (!state.outgoing.has(e.src)) state.outgoing.set(e.src, []);
+        if (!state.incoming.has(e.dst)) state.incoming.set(e.dst, []);
+        state.outgoing.get(e.src).push(e);
+        state.incoming.get(e.dst).push(e);
+      }
+    }
+
+    function expandOneHop(nodeId, dir) {
+      const edges = dir === "out" ? (state.outgoing.get(nodeId) || []) : (state.incoming.get(nodeId) || []);
+      for (const e of edges) {
+        state.visible.add(dir === "out" ? e.dst : e.src);
+      }
+      renderAll();
+    }
+
+    function renderNodeList() {
+      const wrap = byId("nodeList");
+      const rows = [];
+      for (const id of state.visible) {
+        const node = state.nodesById.get(id);
+        if (!node || !isNodeVisibleByFilters(node)) continue;
+        rows.push(node);
+      }
+      rows.sort((a, b) => {
+        const sa = a.spine ? 0 : 1;
+        const sb = b.spine ? 0 : 1;
+        return sa - sb || a.kind.localeCompare(b.kind) || a.id.localeCompare(b.id);
+      });
+      wrap.innerHTML = "";
+      for (const n of rows.slice(0, 400)) {
+        const div = document.createElement("div");
+        div.className = "node-item" + (state.selected === n.id ? " active" : "");
+        div.innerHTML = `<div><strong>${n.title || n.id}</strong></div><div class="meta">${n.kind} | ${n.id}</div>`;
+        div.onclick = () => { state.selected = n.id; renderAll(); };
+        wrap.appendChild(div);
+      }
+    }
+
+    function renderDetails() {
+      const box = byId("details");
+      const node = state.nodesById.get(state.selected);
+      if (!node) {
+        box.textContent = "请选择一个节点。";
+        return;
+      }
+      const outCount = (state.outgoing.get(node.id) || []).length;
+      const inCount = (state.incoming.get(node.id) || []).length;
+      box.innerHTML = `
+        <div><strong>${node.title || node.id}</strong></div>
+        <div>id: <code>${node.id}</code></div>
+        <div>kind: <code>${node.kind}</code> | layer: <code>${node.layer || "-"}</code> | spine: <code>${String(Boolean(node.spine))}</code></div>
+        <div>module: <code>${node.module || "-"}</code></div>
+        <div>path: <code>${node.path || "-"}</code></div>
+        <div>outgoing: <code>${outCount}</code>, incoming: <code>${inCount}</code></div>
+        <button id="expandOut">expand outgoing 1-hop</button>
+        <button id="expandIn">expand incoming 1-hop</button>
+        <button id="focusNode">focus neighborhood</button>
+      `;
+      byId("expandOut").onclick = () => expandOneHop(node.id, "out");
+      byId("expandIn").onclick = () => expandOneHop(node.id, "in");
+      byId("focusNode").onclick = () => {
+        const keep = new Set([node.id]);
+        for (const e of state.outgoing.get(node.id) || []) keep.add(e.dst);
+        for (const e of state.incoming.get(node.id) || []) keep.add(e.src);
+        state.visible = keep;
+        renderAll();
+      };
+    }
+
+    function renderSvg() {
+      svg.innerHTML = "";
+      const visibleNodes = [];
+      for (const id of state.visible) {
+        const node = state.nodesById.get(id);
+        if (node && isNodeVisibleByFilters(node)) visibleNodes.push(node);
+      }
+      const visibleIds = new Set(visibleNodes.map(n => n.id));
+      const visibleEdges = state.edges.filter(e => visibleIds.has(e.src) && visibleIds.has(e.dst)).slice(0, 2200);
+
+      const W = 1200, H = 760, cx = W / 2, cy = H / 2;
+      const groups = { concept: [], module: [], decl: [] };
+      for (const n of visibleNodes) groups[n.kind] ? groups[n.kind].push(n) : groups.decl.push(n);
+
+      const pos = new Map();
+      function place(nodes, radius, jitter = 0) {
+        const N = Math.max(nodes.length, 1);
+        nodes.forEach((n, i) => {
+          const ang = (2 * Math.PI * i) / N;
+          const r = radius + (jitter ? ((i % 7) - 3) * jitter : 0);
+          pos.set(n.id, [cx + Math.cos(ang) * r, cy + Math.sin(ang) * r]);
+        });
+      }
+      place(groups.concept, 120, 5);
+      place(groups.module, 255, 10);
+      place(groups.decl, 370, 14);
+
+      const edgeG = document.createElementNS("http://www.w3.org/2000/svg", "g");
+      edgeG.setAttribute("stroke", "var(--edge)");
+      edgeG.setAttribute("stroke-width", "1.1");
+      edgeG.setAttribute("stroke-opacity", "0.78");
+      for (const e of visibleEdges) {
+        const a = pos.get(e.src), b = pos.get(e.dst);
+        if (!a || !b) continue;
+        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        line.setAttribute("x1", a[0]); line.setAttribute("y1", a[1]);
+        line.setAttribute("x2", b[0]); line.setAttribute("y2", b[1]);
+        edgeG.appendChild(line);
+      }
+      svg.appendChild(edgeG);
+
+      const nodeG = document.createElementNS("http://www.w3.org/2000/svg", "g");
+      for (const n of visibleNodes) {
+        const [x, y] = pos.get(n.id);
+        const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        g.style.cursor = "pointer";
+        const c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        c.setAttribute("cx", x); c.setAttribute("cy", y);
+        c.setAttribute("r", n.kind === "decl" ? 4.6 : 6.3);
+        c.setAttribute("fill", nodeColor(n));
+        if (state.selected === n.id) {
+          c.setAttribute("stroke", "#000");
+          c.setAttribute("stroke-width", "1.3");
+        }
+        const t = document.createElementNS("http://www.w3.org/2000/svg", "title");
+        t.textContent = `${n.id} (${n.kind})`;
+        g.appendChild(c);
+        g.appendChild(t);
+        g.onclick = () => { state.selected = n.id; renderAll(); };
+        nodeG.appendChild(g);
+      }
+      svg.appendChild(nodeG);
+      byId("stats").textContent = `nodes ${visibleNodes.length} | edges ${visibleEdges.length}`;
+    }
+
+    function renderAll() {
+      renderNodeList();
+      renderDetails();
+      renderSvg();
+    }
+
+    async function boot() {
+      try {
+        state.graph = await loadData();
+        buildAdjacency();
+        setInitialVisible();
+        for (const id of ["spineOnly", "scope", "kindModule", "kindDecl", "kindConcept", "search"]) {
+          byId(id).addEventListener("input", () => renderAll());
+        }
+        byId("resetView").onclick = () => { setInitialVisible(); renderAll(); };
+        byId("clearView").onclick = () => { state.visible.clear(); renderAll(); };
+        renderAll();
+      } catch (err) {
+        byId("details").textContent = String(err);
+        byId("stats").textContent = "failed to load graph data";
+      }
+    }
+    boot();
+  </script>
+</body>
+</html>
