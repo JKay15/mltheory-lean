@@ -419,7 +419,7 @@
         <label><input id="kindModule" type="checkbox" checked /> modules</label>
         <label><input id="kindDecl" type="checkbox" /> declarations</label>
         <label><input id="kindConcept" type="checkbox" /> concepts</label>
-        <label><input id="spineOnly" type="checkbox" checked /> spine only</label>
+        <label><input id="spineOnly" type="checkbox" /> spine only</label>
       </div>
 
       <div class="block">
@@ -529,6 +529,7 @@
       outgoing: new Map(),
       incoming: new Map(),
       degree: new Map(),
+      displayDegree: new Map(),
       visible: new Set(),
       selected: null,
       selectedEdge: null,
@@ -573,6 +574,14 @@
       return state.degree.get(id) || 0;
     }
 
+    function labelDegreeOf(id) {
+      return state.displayDegree.get(id) || degreeOf(id);
+    }
+
+    function currentZoom() {
+      return state.world.w / Math.max(state.view.w, 1);
+    }
+
     function layerKey(node) {
       const layer = String((node && node.layer) || "other");
       if (layer === "core") return "core";
@@ -591,6 +600,24 @@
       return "var(--decl)";
     }
 
+    function compactModuleLabel(id) {
+      const normalized = String(id || "").replace(/^MLTheory\./, "");
+      if (normalized.length <= 36) return normalized;
+      const parts = normalized.split(".");
+      if (parts.length >= 3) {
+        const candidate = `${parts[0]}.…${parts.slice(-2).join(".")}`;
+        if (candidate.length <= 40) return candidate;
+      }
+      return `${normalized.slice(0, 16)}…${normalized.slice(-18)}`;
+    }
+
+    function nodeLabelText(node) {
+      if (!node) return "";
+      if (node.id === MATHLIB_SLICE_ID) return "MathlibSlice";
+      if (node.kind === "module") return compactModuleLabel(node.id);
+      return node.title || node.id.split(".").pop() || node.id;
+    }
+
     function hashInt(s) {
       let h = 2166136261;
       for (let i = 0; i < s.length; i++) {
@@ -602,6 +629,29 @@
 
     function clamp(v, lo, hi) {
       return Math.max(lo, Math.min(hi, v));
+    }
+
+    function estimateLabelWidth(node) {
+      const text = nodeLabelText(node);
+      return Math.max(18, Math.min(320, text.length * 6.6 + 10));
+    }
+
+    function labelSpacingForRows(rows, options = {}) {
+      const floor = Number.isFinite(options.floor) ? options.floor : 40;
+      const ceil = Number.isFinite(options.ceil) ? options.ceil : 200;
+      const factor = Number.isFinite(options.factor) ? options.factor : 0.5;
+      if (!Array.isArray(rows) || rows.length === 0) return floor;
+
+      let maxWidth = 0;
+      let sumWidth = 0;
+      for (const node of rows) {
+        const w = estimateLabelWidth(node);
+        maxWidth = Math.max(maxWidth, w);
+        sumWidth += w;
+      }
+      const avgWidth = sumWidth / rows.length;
+      const blended = Math.max(maxWidth * 0.6, avgWidth * 0.85) * factor;
+      return clamp(blended, floor, ceil);
     }
 
     function sortNodesForDisplay(rows) {
@@ -657,7 +707,10 @@
         if (!domains.includes(activeDomain)) return false;
       }
       if (node.kind === "decl" && !byId("showGenerated").checked && node.generated === true) return false;
-      if (byId("spineOnly").checked && !node.spine) return false;
+      if (byId("spineOnly").checked) {
+        // Keep module-map readable by default: do not hide non-spine modules.
+        if (!(activeViewMode() === "module-map" && node.kind === "module") && !node.spine) return false;
+      }
       return true;
     }
 
@@ -1018,9 +1071,9 @@
 
     function spacingRadius(node) {
       if (!node) return 10;
-      if (node.kind === "module") return 18;
-      if (node.kind === "concept") return 17;
-      return 10;
+      if (node.kind === "module") return clamp(14 + estimateLabelWidth(node) * 0.22, 20, 74);
+      if (node.kind === "concept") return clamp(12 + estimateLabelWidth(node) * 0.18, 16, 54);
+      return clamp(9 + estimateLabelWidth(node) * 0.08, 9, 26);
     }
 
     function resolveNodeOverlaps(displayNodes, pos) {
@@ -1062,8 +1115,8 @@
             const ux = dx / dist;
             const uy = dy / dist;
             const push = (minDist - dist) * 0.5;
-            const wa = a.node.kind === "module" ? 0.35 : 1;
-            const wb = b.node.kind === "module" ? 0.35 : 1;
+            const wa = a.node.kind === "module" ? 0.75 : 1;
+            const wb = b.node.kind === "module" ? 0.75 : 1;
             const sum = wa + wb;
             const pa = push * (wa / sum);
             const pb = push * (wb / sum);
@@ -1131,9 +1184,11 @@
         const x = layerX[layer] || layerX.other;
         const spanTop = layer === "mathlib" ? 180 : 220;
         const spanBottom = H - 120;
-        const rowsPerCol = Math.max(8, Math.ceil(Math.sqrt(mods.length * 1.6)));
+        const span = Math.max(120, spanBottom - spanTop);
+        const rowStep = labelSpacingForRows(mods, { floor: 26, ceil: 56, factor: 0.24 });
+        const rowsPerCol = Math.max(4, Math.floor(span / Math.max(rowStep, 1)));
         const cols = Math.max(1, Math.ceil(mods.length / rowsPerCol));
-        const colGap = 34;
+        const colGap = labelSpacingForRows(mods, { floor: 150, ceil: 360, factor: 1.15 });
         for (let i = 0; i < mods.length; i++) {
           const col = Math.floor(i / rowsPerCol);
           const row = i % rowsPerCol;
@@ -1154,11 +1209,12 @@
       for (const [mod, rows] of declByModule.entries()) {
         rows.sort((a, b) => degreeOf(b.id) - degreeOf(a.id) || a.id.localeCompare(b.id));
         const anchor = pos.get(mod) || [layerX[layerKey(rows[0])] || 1860, 900];
+        const declChord = labelSpacingForRows(rows, { floor: 20, ceil: 70, factor: 0.24 });
         placeCircularCluster(
           rows,
           anchor,
           hashInt(mod),
-          { baseRadius: 56, ringStep: 24, minChord: 20, yScale: 0.92 },
+          { baseRadius: 56, ringStep: 24, minChord: declChord, yScale: 0.92 },
           pos,
           { w: W, h: H, m: M }
         );
@@ -1213,11 +1269,12 @@
           degreeOf(b.id) - degreeOf(a.id) ||
           a.id.localeCompare(b.id)
         );
+        const moduleChord = labelSpacingForRows(mods, { floor: 90, ceil: 260, factor: 1.0 });
         placeCircularCluster(
           mods,
           [cx, cy],
           hashInt(`layer:${layer}`),
-          { baseRadius: layerRadius[layer] || layerRadius.other, ringStep: 34, minChord: 52, yScale: 0.95 },
+          { baseRadius: layerRadius[layer] || layerRadius.other, ringStep: 34, minChord: moduleChord, yScale: 0.95 },
           pos,
           { w: W, h: H, m: M }
         );
@@ -1234,11 +1291,12 @@
       for (const [mod, rows] of declByModule.entries()) {
         rows.sort((a, b) => degreeOf(b.id) - degreeOf(a.id) || a.id.localeCompare(b.id));
         const anchor = pos.get(mod) || [cx, cy];
+        const declChord = labelSpacingForRows(rows, { floor: 18, ceil: 64, factor: 0.22 });
         placeCircularCluster(
           rows,
           anchor,
           hashInt(mod),
-          { baseRadius: 42, ringStep: 22, minChord: 18, yScale: 1 },
+          { baseRadius: 42, ringStep: 22, minChord: declChord, yScale: 1 },
           pos,
           { w: W, h: H, m: M }
         );
@@ -1269,18 +1327,30 @@
 
     function shouldLabel(node, displayNodes) {
       if (state.selected === node.id) return true;
+      const zoom = currentZoom();
       if (node.kind === "concept") return true;
       if (node.kind === "module") {
-        if (displayNodes.length <= 180) return true;
-        return node.spine || node.id === MATHLIB_SLICE_ID || degreeOf(node.id) >= 6;
+        if (zoom < 1.25) return node.spine || node.id === MATHLIB_SLICE_ID || labelDegreeOf(node.id) >= 8;
+        if (displayNodes.length <= 40) return true;
+        if (zoom < 1.8) return node.spine || node.id === MATHLIB_SLICE_ID || labelDegreeOf(node.id) >= 5;
+        if (displayNodes.length <= 90) return node.spine || node.id === MATHLIB_SLICE_ID || labelDegreeOf(node.id) >= 4;
+        return node.spine || node.id === MATHLIB_SLICE_ID || labelDegreeOf(node.id) >= 5;
       }
-      if (displayNodes.length <= 120) return true;
-      return node.spine || degreeOf(node.id) >= 10;
+      if (zoom < 1.4) return node.spine || labelDegreeOf(node.id) >= 14;
+      if (displayNodes.length <= 70) return true;
+      return node.spine || labelDegreeOf(node.id) >= 12;
     }
 
     function applyViewBox() {
       const v = state.view;
       svg.setAttribute("viewBox", `${v.x} ${v.y} ${v.w} ${v.h}`);
+    }
+
+    function viewportAspect() {
+      const rect = svg.getBoundingClientRect();
+      const w = Math.max(rect.width, 1);
+      const h = Math.max(rect.height, 1);
+      return w / h;
     }
 
     function clampView() {
@@ -1291,16 +1361,51 @@
       v.y = clamp(v.y, -0.08 * state.world.h, Math.max(maxY, 0) + 0.08 * state.world.h);
     }
 
+    function normalizeViewToViewport(anchorX, anchorY, px = 0.5, py = 0.5) {
+      const aspect = viewportAspect();
+      if (!Number.isFinite(aspect) || aspect <= 0) return;
+
+      const safePx = clamp(Number(px), 0, 1);
+      const safePy = clamp(Number(py), 0, 1);
+      const currentAnchorX = Number.isFinite(anchorX) ? anchorX : (state.view.x + state.view.w * safePx);
+      const currentAnchorY = Number.isFinite(anchorY) ? anchorY : (state.view.y + state.view.h * safePy);
+
+      let w = state.view.w;
+      let h = state.view.h;
+      const currentAspect = w / Math.max(h, 1e-6);
+      if (Math.abs(currentAspect - aspect) > 1e-3) {
+        if (currentAspect > aspect) {
+          h = w / aspect;
+        } else {
+          w = h * aspect;
+        }
+      }
+      state.view.w = clamp(w, 220, state.world.w * 4.2);
+      state.view.h = clamp(h, 160, state.world.h * 4.2);
+      state.view.x = currentAnchorX - safePx * state.view.w;
+      state.view.y = currentAnchorY - safePy * state.view.h;
+      clampView();
+    }
+
     function renderGraph(display, skipInspector = false) {
       state.lastDisplay = display;
       computeLayout(display.nodes);
       state.lastPos = new Map();
 
       svg.innerHTML = "";
+      normalizeViewToViewport(state.view.x + state.view.w / 2, state.view.y + state.view.h / 2, 0.5, 0.5);
       applyViewBox();
 
       const displayed = new Set(display.nodes.map((n) => n.id));
       const edges = display.edges.filter((e) => displayed.has(e.src) && displayed.has(e.dst));
+      state.displayDegree = new Map();
+      for (const n of display.nodes) {
+        state.displayDegree.set(n.id, 0);
+      }
+      for (const e of edges) {
+        state.displayDegree.set(e.src, (state.displayDegree.get(e.src) || 0) + 1);
+        state.displayDegree.set(e.dst, (state.displayDegree.get(e.dst) || 0) + 1);
+      }
 
       const edgeG = document.createElementNS("http://www.w3.org/2000/svg", "g");
       for (const e of edges) {
@@ -1327,6 +1432,7 @@
       svg.appendChild(edgeG);
 
       const nodeG = document.createElementNS("http://www.w3.org/2000/svg", "g");
+      const placedLabelBoxes = [];
       for (const n of display.nodes) {
         const [x, y] = nodePos(n.id);
         state.lastPos.set(n.id, [x, y]);
@@ -1376,18 +1482,30 @@
         nodeG.appendChild(g);
 
         if (shouldLabel(n, display.nodes)) {
+          const text = nodeLabelText(n);
+          const textWidth = estimateLabelWidth(n) * 1.12;
+          let preferRight = x < state.world.w * 0.5;
+          if (n.kind === "module" && Math.abs(x - state.world.w * 0.5) < state.world.w * 0.24) {
+            preferRight = (hashInt(n.id) & 1) === 0;
+          }
+          const labelX = preferRight ? (x + 9) : (x - 9);
+          const box = preferRight
+            ? { x1: labelX - 3, y1: y - 20, x2: labelX + textWidth + 3, y2: y }
+            : { x1: labelX - textWidth - 3, y1: y - 20, x2: labelX + 3, y2: y };
+          const overlaps = placedLabelBoxes.some((b) =>
+            !(box.x2 < b.x1 || box.x1 > b.x2 || box.y2 < b.y1 || box.y1 > b.y2)
+          );
+          const priority = state.selected === n.id || n.spine || n.kind === "concept";
+          if (!overlaps || priority) {
+            placedLabelBoxes.push(box);
           const t = document.createElementNS("http://www.w3.org/2000/svg", "text");
-          t.setAttribute("x", String(x + 9));
+            t.setAttribute("x", String(labelX));
           t.setAttribute("y", String(y - 7));
           t.setAttribute("class", "node-label");
-          if (n.id === MATHLIB_SLICE_ID) {
-            t.textContent = "MathlibSlice";
-          } else if (n.kind === "module") {
-            t.textContent = n.id.replace("MLTheory.", "");
-          } else {
-            t.textContent = n.title || n.id.split(".").pop();
+            t.setAttribute("text-anchor", preferRight ? "start" : "end");
+            t.textContent = text;
+            nodeG.appendChild(t);
           }
-          nodeG.appendChild(t);
         }
       }
       svg.appendChild(nodeG);
@@ -1717,9 +1835,7 @@
       const h = clamp(maxY - minY + pad * 2, 180, state.world.h * 3.2);
       state.view.w = w;
       state.view.h = h;
-      state.view.x = minX - pad;
-      state.view.y = minY - pad;
-      clampView();
+      normalizeViewToViewport((minX + maxX) / 2, (minY + maxY) / 2, 0.5, 0.5);
       applyViewBox();
       renderOverlay(state.lastDisplay);
     }
@@ -1727,9 +1843,7 @@
     function centerOnNode(nodeId) {
       const p = state.lastPos.get(nodeId);
       if (!p) return;
-      state.view.x = p[0] - state.view.w / 2;
-      state.view.y = p[1] - state.view.h / 2;
-      clampView();
+      normalizeViewToViewport(p[0], p[1], 0.5, 0.5);
       applyViewBox();
       renderOverlay(state.lastDisplay);
     }
@@ -1934,11 +2048,9 @@
       const newW = clamp(state.view.w * factor, 220, state.world.w * 4.2);
       const newH = clamp(state.view.h * factor, 160, state.world.h * 4.2);
 
-      state.view.x = anchorX - (anchorX - state.view.x) * (newW / state.view.w);
-      state.view.y = anchorY - (anchorY - state.view.y) * (newH / state.view.h);
       state.view.w = newW;
       state.view.h = newH;
-      clampView();
+      normalizeViewToViewport(anchorX, anchorY, px, py);
       applyViewBox();
       renderOverlay(state.lastDisplay);
     }
@@ -2012,15 +2124,20 @@
       byId("clearLayout").onclick = () => clearSavedLayout();
 
       svg.addEventListener("pointerdown", (ev) => {
-        if (ev.target === svg) {
-          state.selectedEdge = null;
-          startPan(ev);
-        }
+        if (ev.button !== 0) return;
+        state.selectedEdge = null;
+        startPan(ev);
       });
       svg.addEventListener("pointermove", onPointerMove);
       svg.addEventListener("pointerup", onPointerUp);
       svg.addEventListener("pointercancel", onPointerUp);
       svg.addEventListener("wheel", onWheel, { passive: false });
+      window.addEventListener("resize", () => {
+        if (!state.lastDisplay || !Array.isArray(state.lastDisplay.nodes) || state.lastDisplay.nodes.length === 0) return;
+        normalizeViewToViewport(state.view.x + state.view.w / 2, state.view.y + state.view.h / 2, 0.5, 0.5);
+        applyViewBox();
+        renderOverlay(state.lastDisplay);
+      });
 
       svg.addEventListener("click", (ev) => {
         if (ev.target === svg && Date.now() >= state.suppressClickUntil) {
