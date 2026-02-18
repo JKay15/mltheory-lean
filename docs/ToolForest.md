@@ -9,7 +9,7 @@
 - 规划未排期：57
 - taxonomy 节点数：15
 - 真实模块角色：canonical=7，tool=44，compat=2，bridge=16，placeholder=0
-- 真实模块证明状态：proved=51，statement=18，placeholder=0
+- 真实模块证明状态：proved=48，statement=21，placeholder=0
 - `Books/Legacy` 已改为 `source_track` 轴，不再作为主树节点。
 
 ## 视图 A：Taxonomy 主树
@@ -96,7 +96,7 @@ graph TD
 | MLTheory.Core.Probability.BasicMeasure | Probability | native | core | tool | proved | isMeasurableEvent, eventMass, eventMass_mono, ...(+3) |
 | MLTheory.Core.Probability.Conditioning | Probability | native | core | tool | proved | conditionedEvent, conditionedEvent_subset_left, condWeight_nonneg |
 | MLTheory.Core.Probability.ProbIneq | Probability | native | core | tool | proved | tailUpperEnvelope, tailUpperEnvelope_trans, tailUpperEnvelope_add, ...(+1) |
-| MLTheory.Core.RL.MDP | RL | native | core | tool | proved | FiniteMDP, DeterministicPolicy, bellmanExpectationPlaceholder, ...(+1) |
+| MLTheory.Core.RL.MDP | RL | native | core | tool | statement | FiniteMDP, DeterministicPolicy, bellmanExpectationSpec, ...(+1) |
 | MLTheory.Core.Statistics.Information | Statistics | native | core | tool | proved | InformationPair, klSurrogate, klSurrogate_nonneg_of_le, ...(+3) |
 | MLTheory.Core.Statistics.Risk | Statistics | native | core | tool | proved | RiskPair, excessRisk, excessRisk_nonneg_of_le, ...(+1) |
 | MLTheory.Methods.Bandits.Adversarial | Bandits | native | methods | tool | proved | AdversarialBanditModel, adversarialRoundRegret, adversarialRoundRegret_nonneg_of_le, ...(+6) |

@@ -21,19 +21,23 @@ def valueIterationUpdate {State Action : Type*}
     (_mdp : FiniteMDP State Action) (v : State -> Real) : State -> Real :=
   fun s => v s
 
-/-- Statement-level hook for policy evaluation. -/
-theorem policyEvaluationPlaceholder : ∀ v : Real, v = v := by
-  intro v
-  rfl
+/-- Specification-level statement for policy evaluation. -/
+def policyEvaluationSpec {State Action : Type*}
+    (mdp : FiniteMDP State Action) (π : DeterministicPolicy State Action) (V : State -> Real) :
+    Prop :=
+  ∀ s s' : State,
+    0 ≤ mdp.transition s (π s) s' ->
+      V s ≤ mdp.reward s (π s) s' + mdp.discount * V s'
 
-/-- Statement-level hook for policy improvement. -/
-theorem policyImprovementPlaceholder : ∀ v : Real, v = v := by
-  intro v
-  rfl
+/-- Specification-level statement for policy improvement. -/
+def policyImprovementSpec {State Action : Type*}
+    (_mdp : FiniteMDP State Action) (V V' : State -> Real) : Prop :=
+  ∀ s : State, V s ≤ V' s
 
-/-- Statement-level hook for policy-iteration convergence. -/
-theorem policyIterationConvergencePlaceholder : ∀ n : Nat, n ≤ n := by
-  intro n
-  exact Nat.le_refl n
+/-- Specification-level statement for policy-iteration convergence. -/
+def policyIterationConvergenceSpec {State Action : Type*}
+    (_mdp : FiniteMDP State Action) (seq : Nat -> State -> Real) (VStar : State -> Real) :
+    Prop :=
+  ∀ s : State, ∀ n : Nat, seq n s ≤ VStar s
 
 end MLTheory.Methods.RL

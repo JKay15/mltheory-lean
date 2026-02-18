@@ -50,7 +50,7 @@
 - [NEW] `MLTheory.Methods.Learning.DiscreteModeling`：方法层的工具接口；先看 `DiscreteModelingProblem, discretePointLoss, discreteEmpiricalRisk, ...(+3)`；状态 `proved`；文件 `MLTheory/Methods/Learning/DiscreteModeling.lean`
 - `MLTheory.Methods.Learning.GeneralizationTools`：方法层的主入口；先看 `pac_badEvent_uniform_bound, pac_badEvent_union_bound`；状态 `proved`；文件 `MLTheory/Methods/Learning/GeneralizationTools.lean`
 - [NEW] `MLTheory.Methods.Learning.KernelBayes`：方法层的工具接口；先看 `KernelBayesProblem, posteriorWeightUnnormalized, posteriorNormalization, ...(+3)`；状态 `proved`；文件 `MLTheory/Methods/Learning/KernelBayes.lean`
-- `MLTheory.Methods.Learning.KernelMethods`：方法层的工具接口；先看 `KernelFunction, isPSDKernel, KernelLearningProblem, ...(+1)`；状态 `proved`；文件 `MLTheory/Methods/Learning/KernelMethods.lean`
+- `MLTheory.Methods.Learning.KernelMethods`：方法层的工具接口；先看 `KernelFunction, isPSDKernel, KernelLearningProblem, ...(+1)`；状态 `statement`；文件 `MLTheory/Methods/Learning/KernelMethods.lean`
 - `MLTheory.Methods.Learning.ModelSelection`：方法层的工具接口；先看 `ModelSelectionProblem, structuralRiskMinimizationBound`；状态 `proved`；文件 `MLTheory/Methods/Learning/ModelSelection.lean`
 - `MLTheory.Methods.Learning.Rademacher`：方法层的主入口；先看 `radStd, radAbs`；状态 `proved`；文件 `MLTheory/Methods/Learning/Rademacher.lean`
 - `MLTheory.Methods.Learning.SVM`：方法层的工具接口；先看 `BinaryClassificationDataset, boolLabelToSign, hingeLoss, ...(+2)`；状态 `proved`；文件 `MLTheory/Methods/Learning/SVM.lean`
@@ -68,9 +68,9 @@
 - `MLTheory.Applications.RL`：应用层的桥接接口；先看 `—`；状态 `statement`；文件 `MLTheory/Applications/RL.lean`
 - `MLTheory.Books.SuttonBartoRL2`：书籍层的兼容入口；先看 `—`；状态 `statement`；文件 `MLTheory/Books/SuttonBartoRL2.lean`
 - `MLTheory.Core.RL`：基础层的桥接接口；先看 `—`；状态 `statement`；文件 `MLTheory/Core/RL.lean`
-- `MLTheory.Core.RL.MDP`：基础层的工具接口；先看 `FiniteMDP, DeterministicPolicy, bellmanExpectationPlaceholder, ...(+1)`；状态 `proved`；文件 `MLTheory/Core/RL/MDP.lean`
+- `MLTheory.Core.RL.MDP`：基础层的工具接口；先看 `FiniteMDP, DeterministicPolicy, bellmanExpectationSpec, ...(+1)`；状态 `statement`；文件 `MLTheory/Core/RL/MDP.lean`
 - `MLTheory.Methods.RL`：方法层的桥接接口；先看 `—`；状态 `statement`；文件 `MLTheory/Methods/RL.lean`
-- `MLTheory.Methods.RL.DynamicProgramming`：方法层的工具接口；先看 `valueIterationUpdate, policyEvaluationPlaceholder, policyImprovementPlaceholder, ...(+1)`；状态 `proved`；文件 `MLTheory/Methods/RL/DynamicProgramming.lean`
+- `MLTheory.Methods.RL.DynamicProgramming`：方法层的工具接口；先看 `valueIterationUpdate, policyEvaluationSpec, policyImprovementSpec, ...(+1)`；状态 `statement`；文件 `MLTheory/Methods/RL/DynamicProgramming.lean`
 - `MLTheory.Methods.RL.MDP`：方法层的工具接口；先看 `MDPMethodProblem, bellmanOperator, valueIterationUpdate_eq_bellmanOperator, ...(+1)`；状态 `proved`；文件 `MLTheory/Methods/RL/MDP.lean`
 - `MLTheory.Methods.RL.TemporalDifference`：方法层的工具接口；先看 `TemporalDifferenceProblem, tdTarget, tdError, ...(+3)`；状态 `proved`；文件 `MLTheory/Methods/RL/TemporalDifference.lean`
 

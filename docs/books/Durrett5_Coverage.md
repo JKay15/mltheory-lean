@@ -5,7 +5,7 @@
 ## 书目信息
 - 书名：Durrett《Probability Theory and Examples》
 - 版本：5th
-- 覆盖日期：2026-02-17
+- 覆盖日期：2026-02-18
 - 维护人：Codex + 用户
 
 ## 目录来源与证据

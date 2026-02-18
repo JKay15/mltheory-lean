@@ -9,8 +9,8 @@
 
 ## 一眼看懂当前状态
 - SSOT schema_version：`1.4.0`
-- last_updated：`2026-02-17`
-- 决策总数：`162`
+- last_updated：`2026-02-18`
+- 决策总数：`165`
 - 真实模块（file-backed）总数：`69`
 - 规划模块（non-file-backed）总数：`58`
 - 执行短清单（execution_backlog）条数：`1`
@@ -144,7 +144,7 @@
 | MLTheory.Core.Probability.Conditioning | MLTheory/Core/Probability/Conditioning.lean | Probability | native | core | tool | proved | conditionedEvent, conditionedEvent_subset_left, condWeight_nonneg |
 | MLTheory.Core.Probability.ProbIneq | MLTheory/Core/Probability/ProbIneq.lean | Probability | native | core | tool | proved | tailUpperEnvelope, tailUpperEnvelope_trans, tailUpperEnvelope_add, scale_nonneg |
 | MLTheory.Core.RL | MLTheory/Core/RL.lean | RL | native | core | bridge | statement |  |
-| MLTheory.Core.RL.MDP | MLTheory/Core/RL/MDP.lean | RL | native | core | tool | proved | FiniteMDP, DeterministicPolicy, bellmanExpectationPlaceholder, bellmanOptimalityPlaceholder |
+| MLTheory.Core.RL.MDP | MLTheory/Core/RL/MDP.lean | RL | native | core | tool | statement | FiniteMDP, DeterministicPolicy, bellmanExpectationSpec, bellmanOptimalitySpec |
 | MLTheory.Core.Statistics | MLTheory/Core/Statistics.lean | Statistics | native | core | bridge | statement |  |
 | MLTheory.Core.Statistics.Information | MLTheory/Core/Statistics/Information.lean | Statistics | native | core | tool | proved | InformationPair, klSurrogate, klSurrogate_nonneg_of_le, MaxEntropyTemplate, maxEntGap, conditionalMaxEntGap |
 | MLTheory.Core.Statistics.Risk | MLTheory/Core/Statistics/Risk.lean | Statistics | native | core | tool | proved | RiskPair, excessRisk, excessRisk_nonneg_of_le, excessRisk_add_empirical |
@@ -169,7 +169,7 @@
 | MLTheory.Methods.Learning.DiscreteModeling | MLTheory/Methods/Learning/DiscreteModeling.lean | Learning | native | methods | tool | proved | DiscreteModelingProblem, discretePointLoss, discreteEmpiricalRisk, DiscreteComparator, discreteRiskGap, averageDiscreteRiskGap |
 | MLTheory.Methods.Learning.GeneralizationTools | MLTheory/Methods/Learning/GeneralizationTools.lean | Learning | native | methods | canonical | proved | pac_badEvent_uniform_bound, pac_badEvent_union_bound |
 | MLTheory.Methods.Learning.KernelBayes | MLTheory/Methods/Learning/KernelBayes.lean | Learning | native | methods | tool | proved | KernelBayesProblem, posteriorWeightUnnormalized, posteriorNormalization, posteriorWeight, kernelBayesPredictiveMean, kernelBayesRiskGap |
-| MLTheory.Methods.Learning.KernelMethods | MLTheory/Methods/Learning/KernelMethods.lean | Learning | native | methods | tool | proved | KernelFunction, isPSDKernel, KernelLearningProblem, representerTheoremPlaceholder |
+| MLTheory.Methods.Learning.KernelMethods | MLTheory/Methods/Learning/KernelMethods.lean | Learning | native | methods | tool | statement | KernelFunction, isPSDKernel, KernelLearningProblem, representerTheoremSpec |
 | MLTheory.Methods.Learning.ModelSelection | MLTheory/Methods/Learning/ModelSelection.lean | Learning | native | methods | tool | proved | ModelSelectionProblem, structuralRiskMinimizationBound |
 | MLTheory.Methods.Learning.Rademacher | MLTheory/Methods/Learning/Rademacher.lean | Learning | native | methods | canonical | proved | radStd, radAbs |
 | MLTheory.Methods.Learning.SVM | MLTheory/Methods/Learning/SVM.lean | Learning | native | methods | tool | proved | BinaryClassificationDataset, boolLabelToSign, hingeLoss, svmPrimalGuarantee, svmDualGuarantee |
@@ -188,8 +188,8 @@
 | MLTheory.Methods.OR.GraphOptimization | MLTheory/Methods/OR/GraphOptimization.lean | OR | native | methods | tool | proved | GraphOptimizationProblem, pathCost, pathObjectiveGap, pathObjectiveGap_nonneg_of_le, cutObjectiveGap, cumulativePathObjectiveGap_nonneg |
 | MLTheory.Methods.OR.StochasticMatrix | MLTheory/Methods/OR/StochasticMatrix.lean | OR | native | methods | tool | proved | StochasticMatrixProblem, rowMass, rowMassGap, rowMassGap_nonneg_of_le, entrywiseDeviation, cumulativeRowMassGap_nonneg |
 | MLTheory.Methods.RL | MLTheory/Methods/RL.lean | RL | native | methods | bridge | statement |  |
-| MLTheory.Methods.RL.DynamicProgramming | MLTheory/Methods/RL/DynamicProgramming.lean | RL | native | methods | tool | proved | valueIterationUpdate, policyEvaluationPlaceholder, policyImprovementPlaceholder, policyIterationConvergencePlaceholder |
-| MLTheory.Methods.RL.MDP | MLTheory/Methods/RL/MDP.lean | RL | native | methods | tool | proved | MDPMethodProblem, bellmanOperator, valueIterationUpdate_eq_bellmanOperator, bellmanBridge_scalar |
+| MLTheory.Methods.RL.DynamicProgramming | MLTheory/Methods/RL/DynamicProgramming.lean | RL | native | methods | tool | statement | valueIterationUpdate, policyEvaluationSpec, policyImprovementSpec, policyIterationConvergenceSpec |
+| MLTheory.Methods.RL.MDP | MLTheory/Methods/RL/MDP.lean | RL | native | methods | tool | proved | MDPMethodProblem, bellmanOperator, valueIterationUpdate_eq_bellmanOperator, bellmanBridgeSpec |
 | MLTheory.Methods.RL.TemporalDifference | MLTheory/Methods/RL/TemporalDifference.lean | RL | native | methods | tool | proved | TemporalDifferenceProblem, tdTarget, tdError, tdUpdate, tdError_after_update, tdError_sq_nonneg |
 
 ## 规划模块全量清单（未落地）
@@ -257,7 +257,7 @@
 ## 结构风险与重构优先级（自动识别）
 | issue_id | severity | title | evidence | action | acceptance_gate |
 |---|---|---|---|---|---|
-| — | — | （无） | — | — | — |
+| S4 | P2 | 关键入口声明已在，但证明状态仍是 statement | 3 个模块；示例：MLTheory.Core.RL.MDP, MLTheory.Methods.Learning.KernelMethods, MLTheory.Methods.RL.DynamicProgramming | 按 canonical_specs 优先级把 statement 入口逐批推进到 proved；先补依赖闭包最短链路。 | canonical/tool 的 proved 比例按批次上升，且 canonical_contract 持续通过。 |
 
 ## 可复现验收命令（重构后至少跑这些）
 ```bash

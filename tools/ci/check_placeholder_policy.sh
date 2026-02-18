@@ -10,4 +10,9 @@ if rg -n ':\s*Prop\s*:=\s*True\b' MLTheory/Core MLTheory/Methods; then
   exit 1
 fi
 
+if rg -n '\b(theorem|lemma)\s+\w*Placeholder\w*\b' MLTheory/Core MLTheory/Methods; then
+  echo "[check_placeholder_policy] failed: Core/Methods contains Placeholder theorem/lemma names."
+  exit 1
+fi
+
 echo "[check_placeholder_policy] passed."

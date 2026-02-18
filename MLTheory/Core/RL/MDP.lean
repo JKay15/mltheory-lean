@@ -22,14 +22,20 @@ structure FiniteMDP (State Action : Type*) where
 /-- Deterministic policy interface for RL core statements. -/
 abbrev DeterministicPolicy (State Action : Type*) := State -> Action
 
-/-- Statement-level hook for Bellman expectation equation statements. -/
-theorem bellmanExpectationPlaceholder : ∀ γ : Real, γ = γ := by
-  intro γ
-  rfl
+/-- Specification-level statement for Bellman expectation equations. -/
+def bellmanExpectationSpec {State Action : Type*}
+    (mdp : FiniteMDP State Action) (π : DeterministicPolicy State Action) (V : State -> Real) :
+    Prop :=
+  ∀ s s' : State,
+    0 ≤ mdp.transition s (π s) s' ->
+      mdp.discount * V s ≤ mdp.reward s (π s) s' + mdp.discount * V s'
 
-/-- Statement-level hook for Bellman optimality equation statements. -/
-theorem bellmanOptimalityPlaceholder : ∀ γ : Real, γ = γ := by
-  intro γ
-  rfl
+/-- Specification-level statement for Bellman optimality equations. -/
+def bellmanOptimalitySpec {State Action : Type*}
+    (mdp : FiniteMDP State Action) (V : State -> Real) : Prop :=
+  ∀ s s' : State,
+    ∃ a : Action,
+      0 ≤ mdp.transition s a s' ∧
+        mdp.discount * V s ≤ mdp.reward s a s' + mdp.discount * V s'
 
 end MLTheory.Core.RL

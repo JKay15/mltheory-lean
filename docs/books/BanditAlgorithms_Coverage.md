@@ -5,7 +5,7 @@
 ## 书目信息
 - 书名：Lattimore & Szepesvari《Bandit Algorithms》
 - 版本：2020
-- 覆盖日期：2026-02-17
+- 覆盖日期：2026-02-18
 - 维护人：Codex + 用户
 
 ## 目录来源与证据

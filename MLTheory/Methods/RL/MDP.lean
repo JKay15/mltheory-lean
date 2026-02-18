@@ -38,8 +38,9 @@ theorem valueIterationUpdate_eq_bellmanOperator {State Action : Type*}
     valueIterationUpdate mdp v = bellmanOperator mdp v := by
   rfl
 
-/-- Scalar bridge hook to core Bellman expectation placeholder. -/
-theorem bellmanBridge_scalar (γ : Real) : γ = γ := by
-  exact MLTheory.Core.RL.bellmanExpectationPlaceholder γ
+/-- Bridge spec from methods-layer MDP bundles to the core Bellman expectation spec. -/
+def bellmanBridgeSpec {State Action : Type*}
+    (problem : MDPMethodProblem State Action) (π : DeterministicPolicy State Action) : Prop :=
+  bellmanExpectationSpec problem.mdp π problem.initValue
 
 end MLTheory.Methods.RL
