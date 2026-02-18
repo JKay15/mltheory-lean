@@ -79,6 +79,7 @@ Incubator/<Domain>/<Problem>/
 
 ## Lean Commit contract
 
+- `lean-commit` now validates research quality (no `TODO/TBD/???` placeholders in research pack files).
 - `Spec.lean`, `Cache.lean`, `Sketch.lean` are compiled via `lake env lean`.
 - `Sketch.lean` is incubator-only; Core/Methods must not import it.
 - `docs/meta/taxonomy.yaml` receives `binds` entries for the new `Spec` module.

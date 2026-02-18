@@ -53,6 +53,8 @@ DOMAIN_KEYWORDS: dict[str, tuple[str, ...]] = {
     ),
 }
 
+PLACEHOLDER_RE = re.compile(r"\b(TODO|TBD)\b|\?\?\?", flags=re.IGNORECASE)
+
 
 @dataclass
 class DomainProfile:
@@ -419,6 +421,92 @@ planner_reply:
 """
 
 
+def has_placeholder(text: str) -> bool:
+    return bool(PLACEHOLDER_RE.search(text))
+
+
+def markdown_table_rows(text: str) -> list[list[str]]:
+    rows: list[list[str]] = []
+    for raw in text.splitlines():
+        line = raw.strip()
+        if not line.startswith("|") or line.count("|") < 3:
+            continue
+        cells = [c.strip() for c in line.strip("|").split("|")]
+        if not cells:
+            continue
+        # table separator row like |---|---|
+        if all(c and set(c) <= {"-", ":"} for c in cells):
+            continue
+        rows.append(cells)
+    return rows
+
+
+def validate_research_pack_quality(ctx: ProblemContext) -> list[str]:
+    errors: list[str] = []
+
+    sources_path = ctx.research_dir / "sources.md"
+    glossary_path = ctx.research_dir / "glossary.yaml"
+    outline_path = ctx.research_dir / "outline.md"
+    lemmas_path = ctx.research_dir / "candidate_lemmas.md"
+    gaps_path = ctx.research_dir / "gaps.md"
+
+    sources_text = sources_path.read_text(encoding="utf-8")
+    glossary_text = glossary_path.read_text(encoding="utf-8")
+    outline_text = outline_path.read_text(encoding="utf-8")
+    lemmas_text = lemmas_path.read_text(encoding="utf-8")
+    gaps_text = gaps_path.read_text(encoding="utf-8")
+
+    if has_placeholder(sources_text):
+        errors.append("research/sources.md contains placeholder tokens (TODO/TBD/???)")
+    source_rows = markdown_table_rows(sources_text)
+    if len(source_rows) < 2:
+        errors.append("research/sources.md must include at least one filled fact row")
+    else:
+        for i, row in enumerate(source_rows[1:], start=1):
+            row_text = " | ".join(row)
+            if has_placeholder(row_text):
+                errors.append(f"research/sources.md row {i} still has placeholder tokens")
+            # expected columns: fact_id | claim | source | location | confidence | notes
+            if len(row) >= 4:
+                source_col = row[2].strip()
+                location_col = row[3].strip()
+                if not source_col or source_col == "-":
+                    errors.append(f"research/sources.md row {i} has empty source column")
+                if not location_col or location_col == "-":
+                    errors.append(f"research/sources.md row {i} has empty location column")
+
+    if has_placeholder(glossary_text):
+        errors.append("research/glossary.yaml contains placeholder tokens (TODO/TBD/???)")
+    if "terms:" not in glossary_text:
+        errors.append("research/glossary.yaml missing `terms` section")
+    term_rows = [ln for ln in glossary_text.splitlines() if ln.strip().startswith("- term:")]
+    if not term_rows:
+        errors.append("research/glossary.yaml must provide at least one term mapping")
+
+    if has_placeholder(outline_text):
+        errors.append("research/outline.md contains placeholder tokens (TODO/TBD/???)")
+    outline_steps = [
+        ln for ln in outline_text.splitlines()
+        if re.match(r"^\s*\d+\.\s+\S", ln)
+    ]
+    if len(outline_steps) < 3:
+        errors.append("research/outline.md must include at least 3 numbered proof steps")
+
+    if has_placeholder(lemmas_text):
+        errors.append("research/candidate_lemmas.md contains placeholder tokens (TODO/TBD/???)")
+    lemma_rows = markdown_table_rows(lemmas_text)
+    if len(lemma_rows) < 2:
+        errors.append("research/candidate_lemmas.md must include at least one lemma candidate row")
+
+    if has_placeholder(gaps_text):
+        errors.append("research/gaps.md contains placeholder tokens (TODO/TBD/???)")
+    gap_rows = markdown_table_rows(gaps_text)
+    if len(gap_rows) < 2:
+        errors.append("research/gaps.md must include at least one gap row")
+
+    return errors
+
+
 def assert_research_pack_ready(ctx: ProblemContext) -> None:
     missing = [name for name in RESEARCH_FILES if not (ctx.research_dir / name).exists()]
     if missing:
@@ -426,6 +514,13 @@ def assert_research_pack_ready(ctx: ProblemContext) -> None:
         raise RuntimeError(
             "Research Pack incomplete. Missing files: "
             f"{joined}. Run `intake_v2.py research-pack ...` first and fill the package."
+        )
+    quality_errors = validate_research_pack_quality(ctx)
+    if quality_errors:
+        details = "\n".join(f"- {msg}" for msg in quality_errors)
+        raise RuntimeError(
+            "Research Pack quality check failed. Fill the research files before Lean Commit:\n"
+            f"{details}"
         )
 
 

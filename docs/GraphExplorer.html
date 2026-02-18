@@ -339,6 +339,13 @@
     <div class="controls">
       <div class="block">
         <div class="title">View</div>
+        <label>Graph view
+          <select id="viewMode">
+            <option value="module-map" selected>module map</option>
+            <option value="decl-neighborhood">decl neighborhood</option>
+            <option value="concept-browser">concept browser</option>
+          </select>
+        </label>
         <label>Package scope
           <select id="scope">
             <option value="all">all</option>
@@ -360,6 +367,13 @@
         <label>Domain
           <select id="domainFilter">
             <option value="all">all domains</option>
+          </select>
+        </label>
+        <label>Neighborhood depth
+          <select id="neighborhoodDepth">
+            <option value="1" selected>1-hop</option>
+            <option value="2">2-hop</option>
+            <option value="3">3-hop</option>
           </select>
         </label>
       </div>
@@ -408,6 +422,9 @@
         <button id="resetMap">reset module map</button>
         <button id="fitView">fit visible</button>
         <button id="clearPins">clear all pins</button>
+        <button id="saveLayout">save layout</button>
+        <button id="loadLayout">load layout</button>
+        <button id="clearLayout">clear saved layout</button>
       </div>
     </div>
   </header>
@@ -453,6 +470,7 @@
     };
 
     const MATHLIB_SLICE_ID = "MathlibSlice";
+    const LAYOUT_STORAGE_KEY = "mltheory.graph.layout.v1";
     const dataCandidates = ["./_auto/subgraph.json", "../artifacts/graphs/subgraph.json"];
     const svg = document.getElementById("graph");
 
@@ -477,9 +495,26 @@
       rafPending: false,
       searchMatches: [],
       domainProfiles: new Map(),
+      dataSource: "source: loading...",
     };
 
     const byId = (id) => document.getElementById(id);
+
+    function activeViewMode() {
+      const el = byId("viewMode");
+      return el && typeof el.value === "string" ? el.value : "module-map";
+    }
+
+    function modeTitle(mode) {
+      if (mode === "decl-neighborhood") return "Decl Neighborhood";
+      if (mode === "concept-browser") return "Concept Browser";
+      return "Module Map";
+    }
+
+    function setSourceHint(extra = "") {
+      const base = state.dataSource || "source: unknown";
+      byId("sourceHint").textContent = extra ? `${base} | ${extra}` : base;
+    }
 
     function edgeColor(type) {
       return EDGE_COLORS[type] || "#9aa8a0";
@@ -518,6 +553,16 @@
 
     function clamp(v, lo, hi) {
       return Math.max(lo, Math.min(hi, v));
+    }
+
+    function sortNodesForDisplay(rows) {
+      rows.sort((a, b) =>
+        (b.spine ? 1 : 0) - (a.spine ? 1 : 0) ||
+        (a.kind === "module" ? 0 : 1) - (b.kind === "module" ? 0 : 1) ||
+        degreeOf(b.id) - degreeOf(a.id) ||
+        a.id.localeCompare(b.id)
+      );
+      return rows;
     }
 
     function isEdgeTypeEnabled(type) {
@@ -573,7 +618,8 @@
     async function loadData() {
       const embedded = globalThis.__MLTHEORY_SUBGRAPH__;
       if (embedded && Array.isArray(embedded.nodes) && Array.isArray(embedded.edges)) {
-        byId("sourceHint").textContent = "source: ./_auto/subgraph.js";
+        state.dataSource = "source: ./_auto/subgraph.js";
+        setSourceHint("");
         return embedded;
       }
       for (const path of dataCandidates) {
@@ -581,7 +627,8 @@
           const res = await fetch(path, { cache: "no-store" });
           if (!res.ok) continue;
           const graph = await res.json();
-          byId("sourceHint").textContent = `source: ${path}`;
+          state.dataSource = `source: ${path}`;
+          setSourceHint("");
           return graph;
         } catch (_) {}
       }
@@ -663,13 +710,7 @@
         if (!nodePassesFilters(node)) continue;
         rows.push(node);
       }
-      rows.sort((a, b) =>
-        (b.spine ? 1 : 0) - (a.spine ? 1 : 0) ||
-        (a.kind === "module" ? 0 : 1) - (b.kind === "module" ? 0 : 1) ||
-        degreeOf(b.id) - degreeOf(a.id) ||
-        a.id.localeCompare(b.id)
-      );
-      return rows;
+      return sortNodesForDisplay(rows);
     }
 
     function collapseMathlib(nodes, edges) {
@@ -732,29 +773,143 @@
       return { nodes: keptNodes, edges: allEdges };
     }
 
-    function collectDisplayGraph() {
-      const maxNodes = Number(byId("maxNodes").value || "500");
+    function forceNodeInList(rows, node, maxNodes) {
+      if (!node || !node.id) return rows;
+      if (rows.some((n) => n.id === node.id)) return rows;
+      const out = rows.slice(0, Math.max(0, maxNodes - 1));
+      out.unshift(node);
+      return out;
+    }
+
+    function collectModuleMapGraph(maxNodes) {
       const ranked = sortedVisibleNodes();
 
       if (state.selected && state.nodesById.has(state.selected)) {
         const selectedNode = state.nodesById.get(state.selected);
-        if (selectedNode && !ranked.some((n) => n.id === selectedNode.id) && nodePassesFilters(selectedNode)) {
-          ranked.unshift(selectedNode);
+        if (selectedNode && nodePassesFilters(selectedNode)) {
+          return collectWithNodeList(forceNodeInList(ranked, selectedNode, maxNodes), maxNodes);
+        }
+      }
+      return collectWithNodeList(ranked, maxNodes);
+    }
+
+    function defaultNeighborhoodCenterId() {
+      if (state.selected && state.nodesById.has(state.selected)) {
+        return state.selected;
+      }
+      if (state.searchMatches.length > 0 && state.nodesById.has(state.searchMatches[0].id)) {
+        return state.searchMatches[0].id;
+      }
+      const decls = [];
+      for (const node of state.nodesById.values()) {
+        if (node.kind !== "decl") continue;
+        if (!nodePassesFilters(node)) continue;
+        decls.push(node);
+      }
+      if (!decls.length) return "";
+      sortNodesForDisplay(decls);
+      return decls[0].id;
+    }
+
+    function collectDeclNeighborhoodGraph(maxNodes) {
+      const depth = clamp(Number(byId("neighborhoodDepth").value || "1"), 1, 3);
+      const centerId = defaultNeighborhoodCenterId();
+      if (!centerId || !state.nodesById.has(centerId)) {
+        return { nodes: [], edges: [] };
+      }
+
+      const seen = new Set([centerId]);
+      const queue = [{ id: centerId, depth: 0 }];
+
+      while (queue.length > 0) {
+        const row = queue.shift();
+        if (!row || row.depth >= depth) continue;
+        const around = (state.outgoing.get(row.id) || []).concat(state.incoming.get(row.id) || []);
+        for (const e of around) {
+          if (!isEdgeTypeEnabled(e.type)) continue;
+          const nextId = e.src === row.id ? e.dst : e.src;
+          if (!state.nodesById.has(nextId)) continue;
+          if (!seen.has(nextId)) {
+            seen.add(nextId);
+            queue.push({ id: nextId, depth: row.depth + 1 });
+          }
+          const nextNode = state.nodesById.get(nextId);
+          if (nextNode && nextNode.kind === "decl" && typeof nextNode.module === "string" && nextNode.module) {
+            seen.add(nextNode.module);
+          }
         }
       }
 
-      const nodes = ranked.slice(0, maxNodes);
+      const centerNode = state.nodesById.get(centerId);
+      if (centerNode && centerNode.kind === "decl" && typeof centerNode.module === "string" && centerNode.module) {
+        seen.add(centerNode.module);
+      }
+
+      const nodes = [];
+      for (const id of seen) {
+        const node = state.nodesById.get(id);
+        if (!node) continue;
+        if (id !== centerId && !nodePassesFilters(node)) continue;
+        nodes.push(node);
+      }
+
+      sortNodesForDisplay(nodes);
+      const ranked = forceNodeInList(nodes, centerNode, maxNodes);
+      return collectWithNodeList(ranked, maxNodes);
+    }
+
+    function collectConceptBrowserGraph(maxNodes) {
+      const ids = new Set();
+      for (const node of state.nodesById.values()) {
+        if (node.kind !== "concept") continue;
+        if (!nodePassesFilters(node)) continue;
+        ids.add(node.id);
+      }
+
+      for (const e of state.edges) {
+        if (e.type !== "binds" || !isEdgeTypeEnabled(e.type)) continue;
+        if (ids.has(e.src) && state.nodesById.has(e.dst)) ids.add(e.dst);
+      }
+
+      for (const id of Array.from(ids)) {
+        const node = state.nodesById.get(id);
+        if (!node || node.kind !== "decl") continue;
+        if (typeof node.module === "string" && node.module) ids.add(node.module);
+      }
+
+      const nodes = [];
+      for (const id of ids) {
+        const node = state.nodesById.get(id);
+        if (!node) continue;
+        if (node.kind !== "concept" && !nodePassesFilters(node)) continue;
+        nodes.push(node);
+      }
+      sortNodesForDisplay(nodes);
+      return collectWithNodeList(nodes, maxNodes);
+    }
+
+    function collectWithNodeList(rankedNodes, maxNodes) {
+      const nodes = rankedNodes.slice(0, maxNodes);
       const nodeSet = new Set(nodes.map((n) => n.id));
       const edges = [];
-
       for (const e of state.edges) {
         if (!isEdgeTypeEnabled(e.type)) continue;
         if (!nodeSet.has(e.src) || !nodeSet.has(e.dst)) continue;
         edges.push(e);
       }
+      return collapseMathlib(nodes, edges);
+    }
 
-      const collapsed = collapseMathlib(nodes, edges);
-      return collapsed;
+    function collectDisplayGraph() {
+      const maxNodes = Number(byId("maxNodes").value || "500");
+      const mode = activeViewMode();
+      if (mode === "decl-neighborhood") {
+        return collectDeclNeighborhoodGraph(maxNodes);
+      }
+      if (mode === "concept-browser") {
+        return collectConceptBrowserGraph(maxNodes);
+      }
+      return collectModuleMapGraph(maxNodes);
     }
 
     function computeLayout(displayNodes) {
@@ -1104,6 +1259,7 @@
       const crossHint = activeDomain === "all"
         ? "-"
         : (otherDomains.length ? `cross-domain -> ${otherDomains.join(", ")}` : "domain-local");
+      const sourcePath = typeof node.path === "string" ? node.path : "";
 
       box.innerHTML = `
         <div><strong>${node.title || node.id}</strong></div>
@@ -1123,6 +1279,7 @@
           <button id="detailExpandIn">expand incoming 1-hop</button>
           <button id="detailTogglePin">toggle pin</button>
           <button id="detailUnpin">unpin selected</button>
+          ${sourcePath ? '<button id="detailCopyPath">copy source path</button><button id="detailOpenSource">open source</button>' : ""}
           ${node.kind === "module" ? '<button id="detailExpandModule">expand module decls</button><button id="detailCollapseModule">collapse module decls</button>' : ""}
         </div>
         ${renderNeighborBlock("Outgoing neighbors", outRows)}
@@ -1139,6 +1296,24 @@
         state.pinned.delete(node.id);
         renderAll();
       };
+
+      const copyPathBtn = byId("detailCopyPath");
+      if (copyPathBtn) {
+        copyPathBtn.onclick = async () => {
+          const ok = await copyTextToClipboard(sourcePath);
+          setSourceHint(ok ? `path copied: ${sourcePath}` : "path copy failed");
+        };
+      }
+      const openPathBtn = byId("detailOpenSource");
+      if (openPathBtn) {
+        openPathBtn.onclick = () => {
+          const target = sourcePath.startsWith("/")
+            ? `file://${sourcePath}`
+            : sourcePath;
+          window.open(target, "_blank", "noopener");
+          setSourceHint(`open requested: ${sourcePath}`);
+        };
+      }
 
       const expandModule = byId("detailExpandModule");
       if (expandModule) expandModule.onclick = () => expandModuleDecls(node.id);
@@ -1158,6 +1333,7 @@
     function renderOverlay(display) {
       const edgeType = state.selectedEdge ? state.selectedEdge.type : "-";
       const activeDomain = byId("domainFilter").value;
+      const mode = activeViewMode();
       byId("overlay").innerHTML = [
         `<div><strong>visible</strong> nodes: <code>${display.nodes.length}</code>, edges: <code>${display.edges.length}</code></div>`,
         `<div>selected node: <code>${state.selected || "(none)"}</code></div>`,
@@ -1169,7 +1345,10 @@
       byId("statsBox").innerHTML = [
         `<div>Total graph: nodes <code>${state.nodesById.size}</code>, edges <code>${state.edges.length}</code></div>`,
         `<div>Visible window: nodes <code>${display.nodes.length}</code>, edges <code>${display.edges.length}</code></div>`,
-        `<div>Mode: <code>Module Map default</code> (decl hidden, mathlib collapsed)</div>`,
+        `<div>Mode: <code>${modeTitle(mode)}</code></div>`,
+        mode === "decl-neighborhood"
+          ? `<div>Neighborhood center: <code>${state.selected || defaultNeighborhoodCenterId() || "(none)"}</code> | depth: <code>${byId("neighborhoodDepth").value}</code></div>`
+          : "",
       ].join("");
     }
 
@@ -1276,6 +1455,111 @@
       clampView();
       applyViewBox();
       renderOverlay(state.lastDisplay);
+    }
+
+    async function copyTextToClipboard(text) {
+      if (!text) return false;
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(text);
+          return true;
+        }
+      } catch (_) {}
+      try {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        const ok = document.execCommand("copy");
+        document.body.removeChild(ta);
+        return ok;
+      } catch (_) {
+        return false;
+      }
+    }
+
+    function saveLayoutToStorage() {
+      try {
+        const positions = {};
+        for (const [id, p] of state.lastPos.entries()) {
+          positions[id] = [Number(p[0]), Number(p[1])];
+        }
+        const payload = {
+          version: 1,
+          saved_at: new Date().toISOString(),
+          mode: activeViewMode(),
+          selected: state.selected,
+          view: {
+            x: Number(state.view.x),
+            y: Number(state.view.y),
+            w: Number(state.view.w),
+            h: Number(state.view.h),
+          },
+          positions,
+        };
+        localStorage.setItem(LAYOUT_STORAGE_KEY, JSON.stringify(payload));
+        setSourceHint(`layout saved (${Object.keys(positions).length} nodes)`);
+      } catch (err) {
+        setSourceHint(`layout save failed: ${String(err)}`);
+      }
+    }
+
+    function loadLayoutFromStorage() {
+      try {
+        const raw = localStorage.getItem(LAYOUT_STORAGE_KEY);
+        if (!raw) {
+          setSourceHint("no saved layout");
+          return;
+        }
+        const payload = JSON.parse(raw);
+        if (!payload || typeof payload !== "object") {
+          setSourceHint("saved layout is invalid");
+          return;
+        }
+
+        if (typeof payload.mode === "string" && byId("viewMode")) {
+          byId("viewMode").value = payload.mode;
+        }
+        if (payload.view && typeof payload.view === "object") {
+          const v = payload.view;
+          if ([v.x, v.y, v.w, v.h].every((n) => typeof n === "number" && Number.isFinite(n))) {
+            state.view = { x: v.x, y: v.y, w: v.w, h: v.h };
+            clampView();
+          }
+        }
+
+        state.pinned.clear();
+        const positions = payload.positions && typeof payload.positions === "object"
+          ? payload.positions
+          : {};
+        for (const [id, p] of Object.entries(positions)) {
+          if (!Array.isArray(p) || p.length !== 2) continue;
+          if (!state.nodesById.has(id)) continue;
+          const x = Number(p[0]);
+          const y = Number(p[1]);
+          if (!Number.isFinite(x) || !Number.isFinite(y)) continue;
+          state.pinned.set(id, [x, y]);
+        }
+
+        if (typeof payload.selected === "string" && state.nodesById.has(payload.selected)) {
+          state.selected = payload.selected;
+          materializeNode(payload.selected);
+        }
+
+        renderAll();
+        applyViewBox();
+        setSourceHint(`layout loaded (${state.pinned.size} pinned)`);
+      } catch (err) {
+        setSourceHint(`layout load failed: ${String(err)}`);
+      }
+    }
+
+    function clearSavedLayout() {
+      localStorage.removeItem(LAYOUT_STORAGE_KEY);
+      setSourceHint("saved layout cleared");
     }
 
     function screenToSvgDelta(dxPx, dyPx) {
@@ -1392,13 +1676,31 @@
       const rerenderIds = [
         "scope", "layerFilter", "domainFilter", "kindModule", "kindDecl", "kindConcept", "spineOnly",
         "edge_imports", "edge_uses_type", "edge_uses_value", "edge_decl_in_module", "edge_binds",
-        "showGenerated", "expandMathlib", "maxNodes",
+        "showGenerated", "expandMathlib", "maxNodes", "neighborhoodDepth",
       ];
       for (const id of rerenderIds) {
         const el = byId(id);
         if (!el) continue;
         el.addEventListener("change", () => renderAll());
       }
+
+      byId("viewMode").addEventListener("change", () => {
+        const mode = activeViewMode();
+        if (mode === "decl-neighborhood") {
+          byId("kindDecl").checked = true;
+          byId("kindModule").checked = true;
+          byId("edge_uses_value").checked = true;
+        }
+        if (mode === "concept-browser") {
+          byId("kindConcept").checked = true;
+          byId("edge_binds").checked = true;
+        }
+        if (mode === "module-map" && state.visible.size === 0) {
+          resetToModuleMap();
+        }
+        renderAll();
+        fitViewToDisplay();
+      });
 
       byId("search").addEventListener("input", () => renderSearchResults());
       byId("search").addEventListener("keydown", (ev) => {
@@ -1415,6 +1717,7 @@
       };
 
       byId("resetMap").onclick = () => {
+        byId("viewMode").value = "module-map";
         resetToModuleMap();
         renderAll();
         fitViewToDisplay();
@@ -1426,6 +1729,9 @@
         state.pinned.clear();
         renderAll();
       };
+      byId("saveLayout").onclick = () => saveLayoutToStorage();
+      byId("loadLayout").onclick = () => loadLayoutFromStorage();
+      byId("clearLayout").onclick = () => clearSavedLayout();
 
       svg.addEventListener("pointerdown", (ev) => {
         if (ev.target === svg) {
