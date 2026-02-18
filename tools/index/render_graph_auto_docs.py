@@ -36,6 +36,7 @@ def main() -> int:
 
     top_spine = usage_suggestions.get("spine_candidates", [])[:15]
     top_modules = usage_suggestions.get("entry_module_candidates", [])[:15]
+    has_telemetry = bool(usage_graph.get("event_count", 0))
 
     lines = [
         "# Graph Artifacts(Automatically generated)",
@@ -48,12 +49,13 @@ def main() -> int:
         f"- usage events: `{usage_graph.get('event_count', 0)}`",
         f"- usage nodes: `{usage_graph.get('node_count', 0)}`",
         f"- usage edges: `{usage_graph.get('edge_count', 0)}`",
+        f"- telemetry status: `{'active' if has_telemetry else 'empty (run record_usage.py first)'}`",
         "",
         "## Telemetry driven spine candidate(Top 15)",
-        table(["decl"], [[d] for d in top_spine] or [["(null)"]]),
+        table(["decl"], [[d] for d in top_spine] or [["No telemetry candidates yet"]]),
         "",
         "## Telemetry Driver entry module candidate(Top 15)",
-        table(["module"], [[m] for m in top_modules] or [["(null)"]]),
+        table(["module"], [[m] for m in top_modules] or [["No telemetry candidates yet"]]),
         "",
         "## One-click update command",
         "```bash",

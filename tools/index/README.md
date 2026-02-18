@@ -67,6 +67,7 @@ Outputs:
 - `artifacts/index/usage_suggestions.json`
 - `artifacts/graphs/subgraph.json`
 - `docs/_auto/subgraph.json`
+- `docs/_auto/subgraph.js` (GraphExplorer file:// fallback data)
 - `docs/_auto/GraphArtifacts.md`
 - `docs/GraphExplorer.html` consumes `docs/_auto/subgraph.json` (fallback: `artifacts/graphs/subgraph.json`)
 

@@ -46,6 +46,10 @@ python3 tools/index/gen_subgraph.py \
   --out "${ROOT_DIR}/artifacts/graphs/subgraph.json" \
   --export-docs-data "${ROOT_DIR}/docs/_auto/subgraph.json"
 
+python3 tools/index/gen_subgraph_js.py \
+  --subgraph "${ROOT_DIR}/docs/_auto/subgraph.json" \
+  --out "${ROOT_DIR}/docs/_auto/subgraph.js"
+
 python3 tools/index/render_graph_auto_docs.py \
   --subgraph "${ROOT_DIR}/artifacts/graphs/subgraph.json" \
   --usage-graph "${ROOT_DIR}/artifacts/graphs/usage_graph.json" \

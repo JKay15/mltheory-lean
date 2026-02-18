@@ -26,6 +26,7 @@ FILES=(
   "docs/_auto/CodeIndex.md"
   "docs/_auto/GraphArtifacts.md"
   "docs/_auto/subgraph.json"
+  "docs/_auto/subgraph.js"
 )
 
 if ! git diff --quiet -- "${FILES[@]}"; then

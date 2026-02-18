@@ -8,16 +8,17 @@
 - usage events: `0`
 - usage nodes: `0`
 - usage edges: `0`
+- telemetry status: `empty (run record_usage.py first)`
 
 ## Telemetry driven spine candidate(Top 15)
 | decl |
 |---|
-| (null) |
+| No telemetry candidates yet |
 
 ## Telemetry Driver entry module candidate(Top 15)
 | module |
 |---|
-| (null) |
+| No telemetry candidates yet |
 
 ## One-click update command
 ```bash

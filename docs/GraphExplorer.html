@@ -195,6 +195,7 @@
     </section>
   </main>
 
+  <script src="./_auto/subgraph.js"></script>
   <script>
     const dataCandidates = ["./_auto/subgraph.json", "../artifacts/graphs/subgraph.json"];
     const state = {
@@ -218,6 +219,11 @@
     }
 
     async function loadData() {
+      const embedded = globalThis.__MLTHEORY_SUBGRAPH__;
+      if (embedded && Array.isArray(embedded.nodes) && Array.isArray(embedded.edges)) {
+        byId("sourceHint").textContent = "source: ./_auto/subgraph.js (embedded fallback)";
+        return embedded;
+      }
       for (const path of dataCandidates) {
         try {
           const res = await fetch(path, { cache: "no-store" });
@@ -226,6 +232,11 @@
           byId("sourceHint").textContent = `source: ${path}`;
           return graph;
         } catch (_) {}
+      }
+      if (window.location.protocol === "file:") {
+        throw new Error(
+          "no graph data available in file:// mode. run `cd /Users/xiongjiangkai/xjk_papers/MLTheory && tools/index/gen_graph_artifacts.sh` and reopen GraphExplorer.html"
+        );
       }
       throw new Error("no graph data available");
     }
