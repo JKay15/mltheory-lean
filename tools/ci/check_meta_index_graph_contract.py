@@ -88,6 +88,12 @@ def require_keys(obj: dict, keys: list[str], label: str, errors: list[str]) -> N
             errors.append(f"{label}: missing key `{key}`")
 
 
+def as_str_list(value) -> list[str]:
+    if not isinstance(value, list):
+        return []
+    return [x for x in value if isinstance(x, str) and x]
+
+
 def validate_meta(errors: list[str]) -> None:
     taxonomy = parse_simple_yaml(ROOT / "docs" / "meta" / "taxonomy.yaml")
     aliases = parse_simple_yaml(ROOT / "docs" / "meta" / "aliases.yaml")
@@ -111,6 +117,34 @@ def validate_meta(errors: list[str]) -> None:
     canon_mods = canon.get("canonical_modules")
     if not isinstance(canon_mods, list):
         errors.append("docs/meta/canon.yaml: `canonical_modules` must be list")
+
+    domains_path = ROOT / "docs" / "meta" / "domains.yaml"
+    if domains_path.exists():
+        domains = parse_simple_yaml(domains_path)
+        module_roots = domains.get("domain_module_roots")
+        local_roots = domains.get("domain_allowed_local_roots")
+        concept_binds = domains.get("domain_concept_binds")
+        if not isinstance(module_roots, dict) or not module_roots:
+            errors.append("docs/meta/domains.yaml: `domain_module_roots` must be non-empty mapping")
+        if not isinstance(local_roots, dict) or not local_roots:
+            errors.append("docs/meta/domains.yaml: `domain_allowed_local_roots` must be non-empty mapping")
+        if concept_binds is not None and not isinstance(concept_binds, dict):
+            errors.append("docs/meta/domains.yaml: `domain_concept_binds` must be mapping when present")
+
+        domain_ids: set[str] = set()
+        if isinstance(module_roots, dict):
+            domain_ids.update(k for k in module_roots if isinstance(k, str) and k)
+        if isinstance(local_roots, dict):
+            domain_ids.update(k for k in local_roots if isinstance(k, str) and k)
+        if not domain_ids:
+            errors.append("docs/meta/domains.yaml: no domain ids found")
+        for domain_id in sorted(domain_ids):
+            roots = as_str_list(module_roots.get(domain_id)) if isinstance(module_roots, dict) else []
+            allowed = as_str_list(local_roots.get(domain_id)) if isinstance(local_roots, dict) else []
+            if not roots:
+                errors.append(f"docs/meta/domains.yaml: domain `{domain_id}` missing module_roots")
+            if not allowed:
+                errors.append(f"docs/meta/domains.yaml: domain `{domain_id}` missing allowed_local_roots")
 
     backlog_path = ROOT / "docs" / "meta" / "backlog.yaml"
     if backlog_path.exists():
@@ -151,6 +185,7 @@ def validate_meta(errors: list[str]) -> None:
 
 
 def validate_artifacts(errors: list[str]) -> None:
+    domains_meta_exists = (ROOT / "docs" / "meta" / "domains.yaml").exists()
     modules = load_json(ROOT / "artifacts" / "index" / "modules.json", errors)
     imports = load_json(ROOT / "artifacts" / "index" / "imports.json", errors)
     decls = load_json(ROOT / "artifacts" / "index" / "decls.json", errors)
@@ -159,6 +194,7 @@ def validate_artifacts(errors: list[str]) -> None:
     subgraph = load_json(ROOT / "artifacts" / "graphs" / "subgraph.json", errors)
     usage_graph = load_json(ROOT / "artifacts" / "graphs" / "usage_graph.json", errors)
     usage_suggestions = load_json(ROOT / "artifacts" / "index" / "usage_suggestions.json", errors)
+    decl_graph_decl_to_module: dict[str, str] = {}
 
     if modules is not None:
         require_keys(modules, ["generated_at", "modules"], "modules.json", errors)
@@ -180,6 +216,39 @@ def validate_artifacts(errors: list[str]) -> None:
 
     if decl_graph is not None:
         require_keys(decl_graph, ["nodes", "edges"], "decl_graph.json", errors)
+        fallback_count = decl_graph.get("fallback_module_count")
+        if fallback_count is not None and (not isinstance(fallback_count, int) or fallback_count < 0):
+            errors.append("decl_graph.json: `fallback_module_count` must be a non-negative integer")
+        if isinstance(fallback_count, int) and fallback_count >= 5:
+            errors.append(
+                f"decl_graph.json: `fallback_module_count` too large ({fallback_count}), expected < 5"
+            )
+        nodes = decl_graph.get("nodes", [])
+        if not isinstance(nodes, list):
+            errors.append("decl_graph.json: `nodes` must be list")
+        else:
+            for i, node in enumerate(nodes):
+                if not isinstance(node, dict):
+                    errors.append(f"decl_graph.json: nodes[{i}] must be object")
+                    continue
+                name = node.get("name")
+                module = node.get("module")
+                kind = node.get("kind")
+                decl_kind = node.get("decl_kind")
+                generated = node.get("generated")
+                if not isinstance(name, str) or not name:
+                    errors.append(f"decl_graph.json: nodes[{i}].name must be non-empty string")
+                    continue
+                if not isinstance(module, str) or not module:
+                    errors.append(f"decl_graph.json: nodes[{i}] `{name}` missing non-empty module")
+                if kind != "decl":
+                    errors.append(f"decl_graph.json: nodes[{i}] `{name}` kind must be `decl`")
+                if not isinstance(decl_kind, str) or not decl_kind:
+                    errors.append(f"decl_graph.json: nodes[{i}] `{name}` missing non-empty decl_kind")
+                if not isinstance(generated, bool):
+                    errors.append(f"decl_graph.json: nodes[{i}] `{name}` missing boolean generated")
+                if isinstance(module, str) and module:
+                    decl_graph_decl_to_module[name] = module
 
     allowed_edge_types = {
         "imports",
@@ -192,13 +261,108 @@ def validate_artifacts(errors: list[str]) -> None:
     }
     if subgraph is not None:
         require_keys(subgraph, ["generated_at", "nodes", "edges"], "subgraph.json", errors)
-        for i, edge in enumerate(subgraph.get("edges", [])):
+        nodes = subgraph.get("nodes", [])
+        edges = subgraph.get("edges", [])
+        if not isinstance(nodes, list):
+            errors.append("subgraph.json: `nodes` must be list")
+            nodes = []
+        if not isinstance(edges, list):
+            errors.append("subgraph.json: `edges` must be list")
+            edges = []
+
+        node_kind_by_id: dict[str, str] = {}
+        decl_nodes: dict[str, str] = {}
+        for i, node in enumerate(nodes):
+            if not isinstance(node, dict):
+                errors.append(f"subgraph.json: nodes[{i}] must be object")
+                continue
+            nid = node.get("id")
+            kind = node.get("kind")
+            if not isinstance(nid, str) or not nid:
+                errors.append(f"subgraph.json: nodes[{i}].id must be non-empty string")
+                continue
+            if not isinstance(kind, str) or not kind:
+                errors.append(f"subgraph.json: nodes[{i}] `{nid}` missing kind")
+                continue
+            if nid in node_kind_by_id:
+                errors.append(f"subgraph.json: duplicate node id `{nid}`")
+            node_kind_by_id[nid] = kind
+            domains = node.get("domains")
+            if not isinstance(domains, list) or not all(isinstance(x, str) for x in domains):
+                errors.append(f"subgraph.json: node `{nid}` missing string-list `domains`")
+            if kind == "decl":
+                module = node.get("module")
+                generated = node.get("generated")
+                if not isinstance(module, str) or not module:
+                    errors.append(f"subgraph.json: decl node `{nid}` missing non-empty module")
+                else:
+                    decl_nodes[nid] = module
+                if not isinstance(generated, bool):
+                    errors.append(f"subgraph.json: decl node `{nid}` missing boolean generated")
+
+        decl_in_module_edges: dict[str, set[str]] = {}
+        for i, edge in enumerate(edges):
             if not isinstance(edge, dict):
                 errors.append(f"subgraph.json: edges[{i}] must be object")
                 continue
             etype = edge.get("type")
             if etype not in allowed_edge_types:
                 errors.append(f"subgraph.json: edges[{i}].type invalid: {etype}")
+                continue
+            if etype == "decl_in_module":
+                src = edge.get("src")
+                dst = edge.get("dst")
+                if not isinstance(src, str) or not isinstance(dst, str):
+                    errors.append(f"subgraph.json: edges[{i}] decl_in_module must have string src/dst")
+                    continue
+                if node_kind_by_id.get(src) != "decl":
+                    errors.append(f"subgraph.json: decl_in_module src `{src}` must be decl node")
+                if node_kind_by_id.get(dst) != "module":
+                    errors.append(f"subgraph.json: decl_in_module dst `{dst}` must be module node")
+                decl_in_module_edges.setdefault(src, set()).add(dst)
+
+        for decl_id, module in decl_nodes.items():
+            if node_kind_by_id.get(module) != "module":
+                errors.append(
+                    f"subgraph.json: decl `{decl_id}` module `{module}` is missing or not a module node"
+                )
+            if module not in decl_in_module_edges.get(decl_id, set()):
+                errors.append(
+                    f"subgraph.json: decl `{decl_id}` missing decl_in_module edge to `{module}`"
+                )
+            expected_module = decl_graph_decl_to_module.get(decl_id)
+            if expected_module is not None and expected_module != module:
+                errors.append(
+                    f"subgraph.json: decl `{decl_id}` module mismatch "
+                    f"(decl_graph={expected_module}, subgraph={module})"
+                )
+
+        domains_obj = subgraph.get("domains")
+        if domains_meta_exists:
+            if not isinstance(domains_obj, dict):
+                errors.append("subgraph.json: missing `domains` object while docs/meta/domains.yaml exists")
+            else:
+                profiles = domains_obj.get("profiles")
+                default_domain = domains_obj.get("default_domain")
+                if not isinstance(profiles, list) or not profiles:
+                    errors.append("subgraph.json: `domains.profiles` must be non-empty list")
+                else:
+                    for i, profile in enumerate(profiles):
+                        if not isinstance(profile, dict):
+                            errors.append(f"subgraph.json: domains.profiles[{i}] must be object")
+                            continue
+                        pid = profile.get("id")
+                        if not isinstance(pid, str) or not pid:
+                            errors.append(f"subgraph.json: domains.profiles[{i}] missing id")
+                            continue
+                        for key in ("module_roots", "allowed_local_roots", "concept_binds"):
+                            val = profile.get(key)
+                            if not isinstance(val, list) or not all(isinstance(x, str) for x in val):
+                                errors.append(
+                                    f"subgraph.json: domains.profiles[{i}] `{key}` must be string list"
+                                )
+                if not isinstance(default_domain, str) or not default_domain:
+                    errors.append("subgraph.json: domains.default_domain must be non-empty string")
 
     if usage_graph is not None:
         require_keys(usage_graph, ["generated_at", "nodes", "edges"], "usage_graph.json", errors)

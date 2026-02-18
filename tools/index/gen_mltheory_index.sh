@@ -4,14 +4,19 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "${ROOT_DIR}"
 
+SRC_ARGS=(--src "${ROOT_DIR}/MLTheory")
+if [[ -d "${ROOT_DIR}/Incubator" ]]; then
+  SRC_ARGS+=(--src "${ROOT_DIR}/Incubator")
+fi
+
 python3 tools/index/gen_modules.py \
   --root "${ROOT_DIR}" \
-  --src "${ROOT_DIR}/MLTheory" \
+  "${SRC_ARGS[@]}" \
   --out "${ROOT_DIR}/artifacts/index/modules.json" \
   --package MLTheory
 
 python3 tools/index/gen_imports.py \
-  --src "${ROOT_DIR}/MLTheory" \
+  "${SRC_ARGS[@]}" \
   --out "${ROOT_DIR}/artifacts/index/imports.json" \
   --package MLTheory
 

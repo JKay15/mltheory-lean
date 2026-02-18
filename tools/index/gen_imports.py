@@ -29,7 +29,13 @@ def parse_imports(line: str) -> list[str]:
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--src", type=Path, required=True, help="Lean source root")
+    ap.add_argument(
+        "--src",
+        type=Path,
+        action="append",
+        required=True,
+        help="Lean source root (repeatable)",
+    )
     ap.add_argument("--out", type=Path, required=True, help="Output JSON path")
     ap.add_argument(
         "--package",
@@ -39,19 +45,22 @@ def main() -> int:
     )
     args = ap.parse_args()
 
-    src = args.src.resolve()
+    src_roots = [src.resolve() for src in args.src]
     out = args.out.resolve()
 
     nodes: set[str] = set()
     edge_set: set[tuple[str, str]] = set()
 
-    for lean_file in sorted(src.rglob("*.lean")):
-        src_mod = module_name(src, lean_file)
-        nodes.add(src_mod)
-        for raw in lean_file.read_text(encoding="utf-8").splitlines():
-            for dst_mod in parse_imports(raw):
-                nodes.add(dst_mod)
-                edge_set.add((src_mod, dst_mod))
+    for src in src_roots:
+        if not src.exists():
+            continue
+        for lean_file in sorted(src.rglob("*.lean")):
+            src_mod = module_name(src, lean_file)
+            nodes.add(src_mod)
+            for raw in lean_file.read_text(encoding="utf-8").splitlines():
+                for dst_mod in parse_imports(raw):
+                    nodes.add(dst_mod)
+                    edge_set.add((src_mod, dst_mod))
 
     edges = [
         {"src": src_mod, "dst": dst_mod, "type": "imports", "package": args.package}

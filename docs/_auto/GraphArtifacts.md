@@ -51,21 +51,21 @@
 ## Structural Hub Modules (MLTheory, Top 15 by degree)
 | title | module_id | layer | degree | out | in |
 |---|---|---|---|---|---|
-| MLTheory.Methods.Learning | MLTheory.Methods.Learning | methods | 115 | 14 | 101 |
-| MLTheory.Methods.Bandits | MLTheory.Methods.Bandits | methods | 97 | 11 | 86 |
-| MLTheory.Methods.OCO | MLTheory.Methods.OCO | methods | 72 | 7 | 65 |
-| MLTheory.Methods.OR | MLTheory.Methods.OR | methods | 41 | 4 | 37 |
+| MLTheory.Methods.OCO.OptimizationCore | MLTheory.Methods.OCO.OptimizationCore | methods | 56 | 2 | 54 |
+| MLTheory.Methods.OCO.GamesAndDuality | MLTheory.Methods.OCO.GamesAndDuality | methods | 44 | 3 | 41 |
+| MLTheory.Applications.LLM.Sampling | MLTheory.Applications.LLM.Sampling | applications | 43 | 1 | 42 |
+| MLTheory.Methods.Learning.DiscreteModeling | MLTheory.Methods.Learning.DiscreteModeling | methods | 41 | 2 | 39 |
+| MLTheory.Methods.OR.ConvexCore | MLTheory.Methods.OR.ConvexCore | methods | 41 | 1 | 40 |
+| MLTheory.Methods.Bandits.ContextualLinear | MLTheory.Methods.Bandits.ContextualLinear | methods | 40 | 2 | 38 |
+| MLTheory.Core.Statistics.Information | MLTheory.Core.Statistics.Information | core | 38 | 1 | 37 |
+| MLTheory.Applications.LLM.Autoregressive | MLTheory.Applications.LLM.Autoregressive | applications | 36 | 1 | 35 |
+| MLTheory.Applications.LLM.AlignmentObjectives | MLTheory.Applications.LLM.AlignmentObjectives | applications | 35 | 1 | 34 |
+| MLTheory.Methods.Learning.KernelMethods | MLTheory.Methods.Learning.KernelMethods | methods | 35 | 1 | 34 |
 | MLTheory.Methods.Compat.Mathlib | MLTheory.Methods.Compat.Mathlib | methods | 34 | 1 | 33 |
-| MLTheory.Applications.LLM | MLTheory.Applications.LLM | applications | 28 | 4 | 24 |
-| MLTheory.Methods.RL | MLTheory.Methods.RL | methods | 23 | 3 | 20 |
-| MLTheory.Core.Probability | MLTheory.Core.Probability | core | 20 | 3 | 17 |
-| MLTheory.Applications.AI | MLTheory.Applications.AI | applications | 17 | 3 | 14 |
-| MLTheory.Core.Statistics | MLTheory.Core.Statistics | core | 17 | 2 | 15 |
-| MLTheory.Core.Learning | MLTheory.Core.Learning | core | 16 | 3 | 13 |
-| MLTheory.Core.Compat.Mathlib | MLTheory.Core.Compat.Mathlib | core | 12 | 1 | 11 |
-| MLTheory.Methods.Bandits.Foundations | MLTheory.Methods.Bandits.Foundations | methods | 10 | 1 | 9 |
-| MLTheory.Methods.OR.ConvexCore | MLTheory.Methods.OR.ConvexCore | methods | 10 | 1 | 9 |
-| MLTheory.Methods.OCO.OptimizationCore | MLTheory.Methods.OCO.OptimizationCore | methods | 9 | 2 | 7 |
+| MLTheory.Methods.OCO.BanditConvex | MLTheory.Methods.OCO.BanditConvex | methods | 31 | 3 | 28 |
+| MLTheory.Methods.OCO.Boosting | MLTheory.Methods.OCO.Boosting | methods | 30 | 3 | 27 |
+| MLTheory.Methods.Learning.AdvancedSLT | MLTheory.Methods.Learning.AdvancedSLT | methods | 30 | 2 | 28 |
+| MLTheory.Methods.Learning.KernelBayes | MLTheory.Methods.Learning.KernelBayes | methods | 30 | 2 | 28 |
 
 ## Structural Hub Modules (mathlib slice, Top 15 by degree)
 | title | module_id | layer | degree | out | in |
@@ -89,21 +89,21 @@
 ## Structural Hub Declarations (MLTheory, Top 15 by degree)
 | title | decl_id | layer | degree | out | in |
 |---|---|---|---|---|---|
-| Comparator | MLTheory.Methods.OCO.Comparator | methods | 117 | 1 | 116 |
-| FiniteMDP | MLTheory.Core.RL.FiniteMDP | core | 88 | 1 | 87 |
-| BanditInstance | MLTheory.Methods.Bandits.BanditInstance | methods | 81 | 1 | 80 |
-| AIGeneralizationScenario | MLTheory.Applications.AI.AIGeneralizationScenario | applications | 71 | 1 | 70 |
-| CapacityMethodBundle | MLTheory.Methods.Learning.CapacityMethodBundle | methods | 67 | 1 | 66 |
-| AutoregressiveModel | MLTheory.Applications.LLM.AutoregressiveModel | applications | 63 | 1 | 62 |
-| KernelBayesProblem | MLTheory.Methods.Learning.KernelBayesProblem | methods | 61 | 1 | 60 |
-| SamplingPolicy | MLTheory.Applications.LLM.SamplingPolicy | applications | 60 | 1 | 59 |
-| SequentialLearningProblem | MLTheory.Methods.Learning.SequentialLearningProblem | methods | 60 | 1 | 59 |
-| BanditConvexProblem | MLTheory.Methods.OCO.BanditConvexProblem | methods | 59 | 1 | 58 |
-| DiscreteModelingProblem | MLTheory.Methods.Learning.DiscreteModelingProblem | methods | 56 | 1 | 55 |
-| AutomataLanguageProblem | MLTheory.Methods.Learning.AutomataLanguageProblem | methods | 55 | 1 | 54 |
-| DiscreteOptimizationProblem | MLTheory.Methods.OR.DiscreteOptimizationProblem | methods | 54 | 1 | 53 |
-| StochasticBanditModel | MLTheory.Methods.Bandits.StochasticBanditModel | methods | 53 | 1 | 52 |
-| FiniteClassConcentrationBundle | MLTheory.Methods.Learning.FiniteClassConcentrationBundle | methods | 53 | 1 | 52 |
+| Comparator | MLTheory.Methods.OCO.Comparator | methods | 109 | 1 | 108 |
+| FiniteMDP | MLTheory.Core.RL.FiniteMDP | core | 78 | 1 | 77 |
+| BanditInstance | MLTheory.Methods.Bandits.BanditInstance | methods | 73 | 1 | 72 |
+| AIGeneralizationScenario | MLTheory.Applications.AI.AIGeneralizationScenario | applications | 62 | 1 | 61 |
+| CapacityMethodBundle | MLTheory.Methods.Learning.CapacityMethodBundle | methods | 58 | 1 | 57 |
+| AutoregressiveModel | MLTheory.Applications.LLM.AutoregressiveModel | applications | 55 | 1 | 54 |
+| SamplingPolicy | MLTheory.Applications.LLM.SamplingPolicy | applications | 51 | 1 | 50 |
+| KernelBayesProblem | MLTheory.Methods.Learning.KernelBayesProblem | methods | 50 | 1 | 49 |
+| SequentialLearningProblem | MLTheory.Methods.Learning.SequentialLearningProblem | methods | 50 | 1 | 49 |
+| BanditConvexProblem | MLTheory.Methods.OCO.BanditConvexProblem | methods | 50 | 1 | 49 |
+| DiscreteModelingProblem | MLTheory.Methods.Learning.DiscreteModelingProblem | methods | 46 | 1 | 45 |
+| AutomataLanguageProblem | MLTheory.Methods.Learning.AutomataLanguageProblem | methods | 44 | 1 | 43 |
+| GameProblem | MLTheory.Methods.OCO.GameProblem | methods | 44 | 1 | 43 |
+| DiscreteOptimizationProblem | MLTheory.Methods.OR.DiscreteOptimizationProblem | methods | 44 | 1 | 43 |
+| AlignmentObjective | MLTheory.Applications.LLM.AlignmentObjective | applications | 43 | 1 | 42 |
 
 ## Telemetry driven spine candidate(Top 15)
 | decl |

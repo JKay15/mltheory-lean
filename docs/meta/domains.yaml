@@ -1,0 +1,231 @@
+version: 1
+description: Domain profiles for MLTheory retrieval pruning and graph filtering.
+default_domain: learning
+
+domain_titles:
+  learning: Learning
+  probability: Probability
+  statistics: Statistics
+  optimization: Optimization
+  rl: ReinforcementLearning
+  bandits: Bandits
+  ai: AIApplications
+  llm: LLM
+
+domain_descriptions:
+  learning: Statistical learning theory and model selection modules.
+  probability: Probability foundations and inequalities.
+  statistics: Risk and information statistics modules.
+  optimization: Online convex optimization and operations research modules.
+  rl: Reinforcement learning and dynamic programming modules.
+  bandits: Stochastic and adversarial bandit modules.
+  ai: AI application bridges over learning and RL.
+  llm: LLM application modules.
+
+domain_module_roots:
+  learning:
+    - Incubator.Learning
+    - MLTheory.Core.Learning
+    - MLTheory.Methods.Learning
+    - MLTheory.Applications.Learning
+  probability:
+    - Incubator.Probability
+    - MLTheory.Core.Probability
+  statistics:
+    - Incubator.Statistics
+    - MLTheory.Core.Statistics
+  optimization:
+    - Incubator.Optimization
+    - MLTheory.Methods.OCO
+    - MLTheory.Methods.OR
+  rl:
+    - Incubator.Rl
+    - MLTheory.Core.RL
+    - MLTheory.Methods.RL
+    - MLTheory.Applications.RL
+  bandits:
+    - Incubator.Bandits
+    - MLTheory.Methods.Bandits
+  ai:
+    - Incubator.Ai
+    - MLTheory.Applications.AI
+  llm:
+    - Incubator.Llm
+    - MLTheory.Applications.LLM
+
+domain_allowed_local_roots:
+  learning:
+    - Incubator/Learning
+    - MLTheory/Core/Learning
+    - MLTheory/Methods/Learning
+    - MLTheory/Applications/Learning
+  probability:
+    - Incubator/Probability
+    - MLTheory/Core/Probability
+  statistics:
+    - Incubator/Statistics
+    - MLTheory/Core/Statistics
+  optimization:
+    - Incubator/Optimization
+    - MLTheory/Methods/OCO
+    - MLTheory/Methods/OR
+  rl:
+    - Incubator/Rl
+    - MLTheory/Core/RL
+    - MLTheory/Methods/RL
+    - MLTheory/Applications/RL
+  bandits:
+    - Incubator/Bandits
+    - MLTheory/Methods/Bandits
+  ai:
+    - Incubator/Ai
+    - MLTheory/Applications/AI
+  llm:
+    - Incubator/Llm
+    - MLTheory/Applications/LLM
+
+domain_concept_binds:
+  learning:
+    - methods
+    - MLTheory.Methods.Learning
+  probability:
+    - core
+    - MLTheory.Core.Probability
+  statistics:
+    - core
+    - MLTheory.Core.Statistics
+  optimization:
+    - methods
+    - MLTheory.Methods.OCO
+    - MLTheory.Methods.OR
+  rl:
+    - methods
+    - MLTheory.Core.RL
+    - MLTheory.Methods.RL
+  bandits:
+    - methods
+    - MLTheory.Methods.Bandits
+  ai:
+    - applications
+    - MLTheory.Applications.AI
+  llm:
+    - applications
+    - MLTheory.Applications.LLM
+
+domain_default_imports:
+  learning:
+    - MLTheory.Core.Learning
+    - MLTheory.Methods.Learning
+  probability:
+    - MLTheory.Core.Probability
+  statistics:
+    - MLTheory.Core.Statistics
+  optimization:
+    - MLTheory.Methods.OCO
+    - MLTheory.Methods.OR
+  rl:
+    - MLTheory.Core.RL
+    - MLTheory.Methods.RL
+  bandits:
+    - MLTheory.Methods.Bandits
+  ai:
+    - MLTheory.Applications.AI
+  llm:
+    - MLTheory.Applications.LLM
+
+domain_mathlib_slice_roots:
+  learning:
+    - Mathlib.Topology
+  probability:
+    - Mathlib.Probability
+    - Mathlib.MeasureTheory
+  statistics:
+    - Mathlib.Probability
+    - Mathlib.MeasureTheory
+  optimization:
+    - Mathlib.Analysis
+  rl:
+    - Mathlib.Probability
+  bandits:
+    - Mathlib.Probability
+  ai:
+    - Mathlib.Analysis
+  llm:
+    - Mathlib.Data
+
+domain_skills_whitelist:
+  learning:
+    - mltheory-retrieval
+    - ml-paper-workflow
+  probability:
+    - mltheory-retrieval
+    - lean4
+  statistics:
+    - mltheory-retrieval
+    - lean4
+  optimization:
+    - mltheory-retrieval
+    - lean4
+  rl:
+    - mltheory-retrieval
+    - ml-paper-workflow
+  bandits:
+    - mltheory-retrieval
+    - ml-paper-workflow
+  ai:
+    - mltheory-retrieval
+    - ml-paper-workflow
+  llm:
+    - mltheory-retrieval
+    - ml-paper-workflow
+
+domain_bridge_modules:
+  learning:
+    - MLTheory.Methods.OCO.Generalization
+    - MLTheory.Applications.AI.Generalization
+  probability:
+    - MLTheory.Methods.Bandits.InformationTheory
+  statistics:
+    - MLTheory.Methods.Bandits.InformationTheory
+  optimization:
+    - MLTheory.Methods.OCO.Generalization
+  rl:
+    - MLTheory.Methods.Bandits.RLBridge
+  bandits:
+    - MLTheory.Methods.Bandits.RLBridge
+  ai:
+    - MLTheory.Applications.AI.DecisionLearning
+  llm:
+    - MLTheory.Applications.LLM.AlignmentObjectives
+
+domain_adjacent_domains:
+  learning:
+    - probability
+    - statistics
+    - optimization
+    - ai
+  probability:
+    - statistics
+    - bandits
+    - learning
+  statistics:
+    - probability
+    - learning
+    - bandits
+  optimization:
+    - learning
+    - rl
+  rl:
+    - bandits
+    - optimization
+    - ai
+  bandits:
+    - rl
+    - probability
+    - statistics
+  ai:
+    - learning
+    - rl
+    - llm
+  llm:
+    - ai

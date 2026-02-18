@@ -24,6 +24,7 @@
       --binds: #8c5a3c;
       --alias-of: #6c757d;
       --used-recently: #e09f3e;
+      --pin: #531253;
     }
 
     * { box-sizing: border-box; }
@@ -31,8 +32,7 @@
       margin: 0;
       font-family: "Sora", "Space Grotesk", "Avenir Next", "Segoe UI", sans-serif;
       color: var(--ink);
-      background:
-        radial-gradient(circle at 15% 15%, #ffffff 0%, var(--bg-a) 43%, var(--bg-b) 100%);
+      background: radial-gradient(circle at 15% 15%, #ffffff 0%, var(--bg-a) 43%, var(--bg-b) 100%);
     }
 
     header {
@@ -41,11 +41,13 @@
       background: linear-gradient(110deg, rgba(255, 255, 255, 0.86), rgba(248, 252, 246, 0.8));
       backdrop-filter: blur(3px);
     }
+
     h1 {
       margin: 0;
       font-size: 24px;
       letter-spacing: 0.4px;
     }
+
     .subtitle {
       margin: 6px 0 10px;
       color: var(--muted);
@@ -55,19 +57,21 @@
 
     .controls {
       display: grid;
-      grid-template-columns: repeat(6, minmax(120px, 1fr));
+      grid-template-columns: repeat(6, minmax(140px, 1fr));
       gap: 8px;
       align-items: start;
       font-size: 12px;
     }
-    .controls .block {
+
+    .block {
       border: 1px solid #d7e0d3;
       border-radius: 11px;
       background: #ffffffdd;
       padding: 7px 8px;
-      min-height: 64px;
+      min-height: 70px;
     }
-    .controls .title {
+
+    .title {
       font-weight: 700;
       margin-bottom: 6px;
       color: #30463a;
@@ -75,14 +79,16 @@
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
-    .controls label {
+
+    label {
       display: block;
       margin: 3px 0;
       white-space: nowrap;
     }
-    .controls input[type="text"],
-    .controls select,
-    .controls button {
+
+    input[type="text"],
+    select,
+    button {
       width: 100%;
       border: 1px solid #c5d2c3;
       border-radius: 8px;
@@ -90,15 +96,18 @@
       padding: 6px 8px;
       font-size: 12px;
       color: var(--ink);
+      font-family: inherit;
     }
-    .controls button {
+
+    button {
       cursor: pointer;
       font-weight: 600;
       border-color: #7cb8a5;
       color: #0c6d5a;
       margin-top: 4px;
     }
-    .controls .tiny {
+
+    .tiny {
       font-size: 11px;
       color: var(--muted);
       margin-top: 3px;
@@ -110,7 +119,7 @@
       grid-template-columns: 430px 1fr;
       gap: 12px;
       padding: 12px;
-      min-height: calc(100vh - 220px);
+      min-height: calc(100vh - 235px);
     }
 
     .panel {
@@ -122,6 +131,7 @@
       display: flex;
       flex-direction: column;
     }
+
     .panel h2 {
       margin: 0;
       padding: 11px 12px;
@@ -129,6 +139,7 @@
       border-bottom: 1px solid #e0e8de;
       background: linear-gradient(180deg, #f9fcf5, #f3f8ef);
     }
+
     .stats {
       padding: 10px 12px;
       border-bottom: 1px solid #e3ebe1;
@@ -137,15 +148,17 @@
       line-height: 1.5;
       background: #f6fbf3;
     }
+
     .stats code { font-family: "JetBrains Mono", monospace; }
 
     .node-list {
-      max-height: 35vh;
+      max-height: 29vh;
       overflow: auto;
       padding: 8px;
       border-bottom: 1px solid #e4ece2;
       background: #fff;
     }
+
     .node-item {
       border: 1px solid #d8e3d6;
       border-radius: 10px;
@@ -155,13 +168,16 @@
       cursor: pointer;
       font-size: 12px;
     }
+
     .node-item:hover { border-color: #9ab7a4; }
+
     .node-item.active {
       border-color: var(--accent);
       box-shadow: 0 0 0 1px var(--accent) inset;
       background: #f2fbf7;
     }
-    .node-item .line2 {
+
+    .line2 {
       margin-top: 4px;
       color: var(--muted);
       display: flex;
@@ -169,6 +185,7 @@
       align-items: center;
       flex-wrap: wrap;
     }
+
     .badge {
       border: 1px solid #d2ded2;
       border-radius: 999px;
@@ -178,7 +195,6 @@
       background: #f8fbf7;
       color: #355042;
     }
-    .badge.edge { border-color: #c8d8db; background: #f3fbfc; }
 
     .details {
       padding: 10px 12px;
@@ -187,14 +203,16 @@
       overflow: auto;
       flex: 1;
     }
-    .details .neighbors {
+
+    .neighbors {
       margin-top: 10px;
       border: 1px solid #dbe6d9;
       border-radius: 9px;
       overflow: hidden;
       background: #fcfefb;
     }
-    .details .neighbors h3 {
+
+    .neighbors h3 {
       margin: 0;
       font-size: 11px;
       text-transform: uppercase;
@@ -203,25 +221,26 @@
       background: #f1f7ef;
       border-bottom: 1px solid #dfebdd;
     }
+
     .neighbor-row {
       padding: 6px 8px;
       border-bottom: 1px solid #edf3eb;
       cursor: pointer;
     }
+
     .neighbor-row:hover { background: #f2f8f2; }
     .neighbor-row:last-child { border-bottom: 0; }
-    .neighbor-row code { font-size: 11px; }
 
     #canvas-wrap {
       position: relative;
       border: 1px solid var(--stroke);
       border-radius: 14px;
       overflow: hidden;
-      background:
-        radial-gradient(circle at 70% 30%, #ffffff 0%, #f6fbf2 38%, #e8efe4 100%);
+      background: radial-gradient(circle at 70% 30%, #ffffff 0%, #f6fbf2 38%, #e8efe4 100%);
       box-shadow: 0 8px 24px rgba(21, 37, 27, 0.08);
     }
-    #statsOverlay {
+
+    #overlay {
       position: absolute;
       top: 10px;
       left: 10px;
@@ -233,8 +252,9 @@
       font-size: 12px;
       color: #294034;
       line-height: 1.35;
-      min-width: 240px;
+      min-width: 250px;
     }
+
     #legend {
       position: absolute;
       right: 10px;
@@ -248,6 +268,7 @@
       color: #31483a;
       max-width: 300px;
     }
+
     #legend .row {
       display: flex;
       align-items: center;
@@ -255,6 +276,7 @@
       margin: 3px 0;
       white-space: nowrap;
     }
+
     .sw {
       width: 12px;
       height: 12px;
@@ -262,6 +284,7 @@
       border: 1px solid rgba(0, 0, 0, 0.08);
       flex: 0 0 auto;
     }
+
     .ln {
       width: 16px;
       height: 0;
@@ -269,7 +292,17 @@
       flex: 0 0 auto;
     }
 
-    svg { width: 100%; height: 100%; display: block; }
+    svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      touch-action: none;
+      cursor: grab;
+      user-select: none;
+    }
+
+    svg.panning { cursor: grabbing; }
+
     .node-label {
       font-size: 11px;
       fill: #1b2e24;
@@ -281,10 +314,15 @@
       font-weight: 600;
     }
 
+    .edge {
+      stroke-linecap: round;
+      cursor: pointer;
+    }
+
     @media (max-width: 1220px) {
       .controls { grid-template-columns: repeat(3, minmax(140px, 1fr)); }
       main { grid-template-columns: 1fr; }
-      .node-list { max-height: 28vh; }
+      .node-list { max-height: 26vh; }
       #canvas-wrap { min-height: 62vh; }
       #legend { max-width: 220px; }
     }
@@ -294,13 +332,13 @@
   <header>
     <h1>MLTheory Graph Explorer</h1>
     <p class="subtitle">
-      Spine-first map with edge-type filters, degree-scaled nodes, and clickable neighborhood expansion.
-      Click to select, double-click to expand outgoing, shift-click to expand incoming.
+      Default view is Module Map. Use wheel to zoom, drag background to pan, drag nodes to pin positions,
+      and use search to locate any module/decl quickly.
     </p>
 
     <div class="controls">
       <div class="block">
-        <div class="title">Scope</div>
+        <div class="title">View</div>
         <label>Package scope
           <select id="scope">
             <option value="all">all</option>
@@ -319,76 +357,78 @@
             <option value="other">other</option>
           </select>
         </label>
-      </div>
-
-      <div class="block">
-        <div class="title">Node Types</div>
-        <label><input id="kindModule" type="checkbox" checked /> modules</label>
-        <label><input id="kindDecl" type="checkbox" checked /> declarations</label>
-        <label><input id="kindConcept" type="checkbox" checked /> concepts</label>
-        <label><input id="spineOnly" type="checkbox" checked /> spine only</label>
-      </div>
-
-      <div class="block">
-        <div class="title">Edge Types</div>
-        <label><input id="edge_imports" type="checkbox" checked /> imports <span id="count_imports" class="tiny"></span></label>
-        <label><input id="edge_uses_type" type="checkbox" checked /> uses_type <span id="count_uses_type" class="tiny"></span></label>
-        <label><input id="edge_uses_value" type="checkbox" checked /> uses_value <span id="count_uses_value" class="tiny"></span></label>
-        <label><input id="edge_decl_in_module" type="checkbox" checked /> decl_in_module <span id="count_decl_in_module" class="tiny"></span></label>
-        <label><input id="edge_binds" type="checkbox" checked /> binds <span id="count_binds" class="tiny"></span></label>
-      </div>
-
-      <div class="block">
-        <div class="title">Labels & Density</div>
-        <label>Label density
-          <select id="labelDensity">
-            <option value="lite">lite</option>
-            <option value="normal" selected>normal</option>
-            <option value="full">full</option>
+        <label>Domain
+          <select id="domainFilter">
+            <option value="all">all domains</option>
           </select>
         </label>
+      </div>
+
+      <div class="block">
+        <div class="title">Nodes</div>
+        <label><input id="kindModule" type="checkbox" checked /> modules</label>
+        <label><input id="kindDecl" type="checkbox" /> declarations</label>
+        <label><input id="kindConcept" type="checkbox" /> concepts</label>
+        <label><input id="spineOnly" type="checkbox" /> spine only</label>
+      </div>
+
+      <div class="block">
+        <div class="title">Edges</div>
+        <label><input id="edge_imports" type="checkbox" checked /> imports</label>
+        <label><input id="edge_uses_type" type="checkbox" /> uses_type</label>
+        <label><input id="edge_uses_value" type="checkbox" /> uses_value</label>
+        <label><input id="edge_decl_in_module" type="checkbox" /> decl_in_module</label>
+        <label><input id="edge_binds" type="checkbox" /> binds</label>
+      </div>
+
+      <div class="block">
+        <div class="title">Decl Noise</div>
+        <label><input id="showGenerated" type="checkbox" /> show generated decls</label>
+        <label><input id="expandMathlib" type="checkbox" /> expand mathlib modules</label>
         <label>Max nodes on canvas
           <select id="maxNodes">
             <option value="250">250</option>
-            <option value="350" selected>350</option>
-            <option value="500">500</option>
-            <option value="700">700</option>
+            <option value="350">350</option>
+            <option value="500" selected>500</option>
+            <option value="800">800</option>
           </select>
         </label>
       </div>
 
       <div class="block">
-        <div class="title">Search</div>
+        <div class="title">Search & Locate</div>
         <input id="search" type="text" placeholder="id/title/module/path" />
+        <button id="locateBtn">locate first match</button>
+        <button id="clearSearch">clear search</button>
         <span id="sourceHint" class="tiny">source: loading...</span>
       </div>
 
       <div class="block">
         <div class="title">Actions</div>
-        <button id="resetView">reset spine</button>
-        <button id="expandOutBtn">expand selected outgoing</button>
-        <button id="expandInBtn">expand selected incoming</button>
-        <button id="clearView">clear visible</button>
+        <button id="resetMap">reset module map</button>
+        <button id="fitView">fit visible</button>
+        <button id="clearPins">clear all pins</button>
       </div>
     </div>
   </header>
 
   <main>
     <section class="panel">
-      <h2>Selection & Neighborhood</h2>
+      <h2>Inspector</h2>
       <div id="statsBox" class="stats">loading…</div>
-      <div id="nodeList" class="node-list"></div>
-      <div id="details" class="details">Please select a node.</div>
+      <div id="searchResults" class="node-list"></div>
+      <div id="details" class="details">Please select a node or edge.</div>
     </section>
 
     <section id="canvas-wrap">
-      <div id="statsOverlay">loading…</div>
+      <div id="overlay">loading…</div>
       <div id="legend">
         <div class="row"><strong>Node Kind</strong></div>
-        <div class="row"><span class="sw" style="background: var(--concept)"></span> concept</div>
         <div class="row"><span class="sw" style="background: var(--module)"></span> module</div>
         <div class="row"><span class="sw" style="background: var(--decl)"></span> declaration</div>
+        <div class="row"><span class="sw" style="background: var(--concept)"></span> concept</div>
         <div class="row"><span class="sw" style="background: var(--spine)"></span> spine-highlight</div>
+        <div class="row"><span class="sw" style="background: var(--pin)"></span> pinned node</div>
         <div class="row" style="margin-top: 7px;"><strong>Edge Type</strong></div>
         <div class="row"><span class="ln" style="border-top-color: var(--imports)"></span> imports</div>
         <div class="row"><span class="ln" style="border-top-color: var(--uses-type)"></span> uses_type</div>
@@ -396,13 +436,12 @@
         <div class="row"><span class="ln" style="border-top-color: var(--decl-in-module)"></span> decl_in_module</div>
         <div class="row"><span class="ln" style="border-top-color: var(--binds)"></span> binds</div>
       </div>
-      <svg id="graph" viewBox="0 0 1600 980" preserveAspectRatio="xMidYMid meet"></svg>
+      <svg id="graph" viewBox="0 0 2400 1400" preserveAspectRatio="xMidYMid meet"></svg>
     </section>
   </main>
 
   <script src="./_auto/subgraph.js"></script>
   <script>
-    const dataCandidates = ["./_auto/subgraph.json", "../artifacts/graphs/subgraph.json"];
     const EDGE_COLORS = {
       imports: "var(--imports)",
       uses_type: "var(--uses-type)",
@@ -412,7 +451,9 @@
       alias_of: "var(--alias-of)",
       used_recently: "var(--used-recently)",
     };
-    const KIND_ORDER = { concept: 0, module: 1, decl: 2 };
+
+    const MATHLIB_SLICE_ID = "MathlibSlice";
+    const dataCandidates = ["./_auto/subgraph.json", "../artifacts/graphs/subgraph.json"];
     const svg = document.getElementById("graph");
 
     const state = {
@@ -424,7 +465,18 @@
       degree: new Map(),
       visible: new Set(),
       selected: null,
-      renderedNodeIds: [],
+      selectedEdge: null,
+      pinned: new Map(),
+      basePos: new Map(),
+      lastPos: new Map(),
+      lastDisplay: { nodes: [], edges: [] },
+      world: { w: 2400, h: 1400 },
+      view: { x: 0, y: 0, w: 2400, h: 1400 },
+      drag: null,
+      suppressClickUntil: 0,
+      rafPending: false,
+      searchMatches: [],
+      domainProfiles: new Map(),
     };
 
     const byId = (id) => document.getElementById(id);
@@ -437,17 +489,91 @@
       return state.degree.get(id) || 0;
     }
 
+    function layerKey(node) {
+      const layer = String((node && node.layer) || "other");
+      if (layer === "core") return "core";
+      if (layer === "methods") return "methods";
+      if (layer === "applications") return "applications";
+      if (layer === "books") return "books";
+      if (layer === "mathlib") return "mathlib";
+      return "other";
+    }
+
     function nodeColor(node) {
+      if (state.pinned.has(node.id)) return "var(--pin)";
       if (node.spine) return "var(--spine)";
       if (node.kind === "concept") return "var(--concept)";
       if (node.kind === "module") return "var(--module)";
       return "var(--decl)";
     }
 
+    function hashInt(s) {
+      let h = 2166136261;
+      for (let i = 0; i < s.length; i++) {
+        h ^= s.charCodeAt(i);
+        h = (h * 16777619) >>> 0;
+      }
+      return h >>> 0;
+    }
+
+    function clamp(v, lo, hi) {
+      return Math.max(lo, Math.min(hi, v));
+    }
+
+    function isEdgeTypeEnabled(type) {
+      const el = byId(`edge_${type}`);
+      if (!el) return true;
+      return el.checked;
+    }
+
+    function isNodeKindEnabled(node) {
+      if (node.kind === "module") return byId("kindModule").checked;
+      if (node.kind === "decl") return byId("kindDecl").checked;
+      if (node.kind === "concept") return byId("kindConcept").checked;
+      return true;
+    }
+
+    function isInScope(node) {
+      const scope = byId("scope").value;
+      if (scope === "all") return true;
+      if (scope === "mltheory") return node.package !== "mathlib";
+      return node.package === "mathlib";
+    }
+
+    function nodePassesFilters(node) {
+      if (!node || !node.id) return false;
+      if (!isNodeKindEnabled(node)) return false;
+      if (!isInScope(node)) return false;
+      const layer = byId("layerFilter").value;
+      if (layer !== "all" && String(node.layer || "") !== layer) return false;
+      const activeDomain = byId("domainFilter").value;
+      if (activeDomain !== "all") {
+        const domains = Array.isArray(node.domains) ? node.domains : [];
+        if (!domains.includes(activeDomain)) return false;
+      }
+      if (node.kind === "decl" && !byId("showGenerated").checked && node.generated === true) return false;
+      if (byId("spineOnly").checked && !node.spine) return false;
+      return true;
+    }
+
+    function virtualMathlibNode(domains = []) {
+      return {
+        id: MATHLIB_SLICE_ID,
+        kind: "module",
+        title: "MathlibSlice",
+        layer: "mathlib",
+        package: "mathlib",
+        spine: true,
+        virtual: true,
+        path: "",
+        domains: Array.isArray(domains) ? domains : [],
+      };
+    }
+
     async function loadData() {
       const embedded = globalThis.__MLTHEORY_SUBGRAPH__;
       if (embedded && Array.isArray(embedded.nodes) && Array.isArray(embedded.edges)) {
-        byId("sourceHint").textContent = "source: ./_auto/subgraph.js (embedded fallback)";
+        byId("sourceHint").textContent = "source: ./_auto/subgraph.js";
         return embedded;
       }
       for (const path of dataCandidates) {
@@ -489,109 +615,357 @@
         state.degree.set(edge.src, degreeOf(edge.src) + 1);
         state.degree.set(edge.dst, degreeOf(edge.dst) + 1);
       }
+    }
 
-      const edgeTypeCount = new Map();
-      for (const e of state.edges) {
-        edgeTypeCount.set(e.type, (edgeTypeCount.get(e.type) || 0) + 1);
+    function initDomainFilter() {
+      const select = byId("domainFilter");
+      if (!select) return;
+      const domains = state.graph && state.graph.domains && Array.isArray(state.graph.domains.profiles)
+        ? state.graph.domains
+        : { default_domain: "all", profiles: [] };
+
+      state.domainProfiles = new Map();
+      const options = ['<option value="all">all domains</option>'];
+      for (const profile of domains.profiles) {
+        if (!profile || typeof profile.id !== "string" || !profile.id) continue;
+        state.domainProfiles.set(profile.id, profile);
+        const title = typeof profile.title === "string" && profile.title ? profile.title : profile.id;
+        options.push(`<option value="${profile.id}">${profile.id} (${title})</option>`);
       }
-      for (const key of ["imports", "uses_type", "uses_value", "decl_in_module", "binds"]) {
-        const count = edgeTypeCount.get(key) || 0;
-        const slot = byId(`count_${key}`);
-        if (slot) slot.textContent = `(${count})`;
+      select.innerHTML = options.join("");
+      select.value = "all";
+    }
+
+    function resetToModuleMap() {
+      state.visible.clear();
+      for (const node of state.nodesById.values()) {
+        if (node.kind === "module") state.visible.add(node.id);
+      }
+      state.selected = null;
+      state.selectedEdge = null;
+      state.view = { x: 0, y: 0, w: state.world.w, h: state.world.h };
+    }
+
+    function materializeNode(id) {
+      if (!id || !state.nodesById.has(id)) return;
+      state.visible.add(id);
+      const node = state.nodesById.get(id);
+      if (node.kind === "decl" && typeof node.module === "string" && node.module) {
+        state.visible.add(node.module);
       }
     }
 
-    function isEdgeTypeEnabled(type) {
-      const el = byId(`edge_${type}`);
-      if (!el) return true;
-      return el.checked;
-    }
-
-    function isInScope(node) {
-      const scope = byId("scope").value;
-      if (scope === "all") return true;
-      if (scope === "mltheory") return node.package !== "mathlib";
-      return node.package === "mathlib";
-    }
-
-    function isKindEnabled(node) {
-      if (node.kind === "module") return byId("kindModule").checked;
-      if (node.kind === "decl") return byId("kindDecl").checked;
-      if (node.kind === "concept") return byId("kindConcept").checked;
-      return true;
-    }
-
-    function isNodeVisibleByFilters(node) {
-      if (!isInScope(node)) return false;
-      if (!isKindEnabled(node)) return false;
-      const layer = byId("layerFilter").value;
-      if (layer !== "all" && String(node.layer || "") !== layer) return false;
-      if (byId("spineOnly").checked && !node.spine) return false;
-      const q = byId("search").value.trim().toLowerCase();
-      if (!q) return true;
-      const hay = [
-        node.id,
-        String(node.title || ""),
-        String(node.module || ""),
-        String(node.path || ""),
-      ].join(" ").toLowerCase();
-      return hay.includes(q);
-    }
-
-    function rankedNodesFromVisible() {
-      const selected = state.selected;
-      const selectedNeighbors = new Set();
-      if (selected) {
-        selectedNeighbors.add(selected);
-        for (const e of state.outgoing.get(selected) || []) selectedNeighbors.add(e.dst);
-        for (const e of state.incoming.get(selected) || []) selectedNeighbors.add(e.src);
-      }
-
+    function sortedVisibleNodes() {
       const rows = [];
       for (const id of state.visible) {
         const node = state.nodesById.get(id);
-        if (!node || !isNodeVisibleByFilters(node)) continue;
-        const priority = selectedNeighbors.has(id) ? 0 : (node.spine ? 1 : 2);
-        rows.push({
-          node,
-          priority,
-          kindRank: KIND_ORDER[node.kind] ?? 9,
-          degree: degreeOf(id),
-        });
+        if (!node) continue;
+        if (!nodePassesFilters(node)) continue;
+        rows.push(node);
       }
-
       rows.sort((a, b) =>
-        a.priority - b.priority ||
-        a.kindRank - b.kindRank ||
-        b.degree - a.degree ||
-        a.node.id.localeCompare(b.node.id)
+        (b.spine ? 1 : 0) - (a.spine ? 1 : 0) ||
+        (a.kind === "module" ? 0 : 1) - (b.kind === "module" ? 0 : 1) ||
+        degreeOf(b.id) - degreeOf(a.id) ||
+        a.id.localeCompare(b.id)
       );
-      return rows.map(r => r.node);
+      return rows;
     }
 
-    function setInitialVisible() {
-      state.visible.clear();
-      const nodes = Array.from(state.nodesById.values());
+    function collapseMathlib(nodes, edges) {
+      if (byId("expandMathlib").checked) {
+        return { nodes, edges };
+      }
 
+      const hiddenMathlib = new Set(
+        nodes
+          .filter((n) => n.kind === "module" && n.package === "mathlib")
+          .map((n) => n.id)
+      );
+      const virtualDomains = new Set();
       for (const n of nodes) {
-        if (n.kind === "concept") state.visible.add(n.id);
-        if (n.spine) state.visible.add(n.id);
+        if (!hiddenMathlib.has(n.id)) continue;
+        if (!Array.isArray(n.domains)) continue;
+        for (const d of n.domains) {
+          if (typeof d === "string" && d) virtualDomains.add(d);
+        }
       }
 
-      if (state.visible.size < 80) {
-        const modules = nodes.filter(n => n.kind === "module")
-          .sort((a, b) => degreeOf(b.id) - degreeOf(a.id));
-        for (const m of modules.slice(0, 80)) state.visible.add(m.id);
+      if (hiddenMathlib.size === 0) {
+        return { nodes, edges };
       }
 
-      if (state.visible.size < 180) {
-        const decls = nodes.filter(n => n.kind === "decl")
-          .sort((a, b) => degreeOf(b.id) - degreeOf(a.id));
-        for (const d of decls.slice(0, 120)) state.visible.add(d.id);
+      const keptNodes = nodes.filter((n) => !hiddenMathlib.has(n.id));
+      const aggregated = new Map();
+      const keptEdges = [];
+
+      function bump(src, dst, type) {
+        const key = `${src}__${type}__${dst}`;
+        const prev = aggregated.get(key);
+        if (prev) {
+          prev.weight += 1;
+        } else {
+          aggregated.set(key, { src, dst, type, weight: 1, aggregated: true });
+        }
       }
 
-      if (state.visible.size === 0) {
-        for (const n of nodes.slice(0, 140)) state.visible.add(n.id);
+      for (const e of edges) {
+        const srcHidden = hiddenMathlib.has(e.src);
+        const dstHidden = hiddenMathlib.has(e.dst);
+
+        if (!srcHidden && !dstHidden) {
+          keptEdges.push(e);
+          continue;
+        }
+
+        if (e.type !== "imports") continue;
+        if (srcHidden && dstHidden) continue;
+
+        const src = srcHidden ? MATHLIB_SLICE_ID : e.src;
+        const dst = dstHidden ? MATHLIB_SLICE_ID : e.dst;
+        if (src === dst) continue;
+        bump(src, dst, "imports");
+      }
+
+      keptNodes.push(virtualMathlibNode(Array.from(virtualDomains).sort()));
+      const allEdges = keptEdges.concat(Array.from(aggregated.values()));
+      return { nodes: keptNodes, edges: allEdges };
+    }
+
+    function collectDisplayGraph() {
+      const maxNodes = Number(byId("maxNodes").value || "500");
+      const ranked = sortedVisibleNodes();
+
+      if (state.selected && state.nodesById.has(state.selected)) {
+        const selectedNode = state.nodesById.get(state.selected);
+        if (selectedNode && !ranked.some((n) => n.id === selectedNode.id) && nodePassesFilters(selectedNode)) {
+          ranked.unshift(selectedNode);
+        }
+      }
+
+      const nodes = ranked.slice(0, maxNodes);
+      const nodeSet = new Set(nodes.map((n) => n.id));
+      const edges = [];
+
+      for (const e of state.edges) {
+        if (!isEdgeTypeEnabled(e.type)) continue;
+        if (!nodeSet.has(e.src) || !nodeSet.has(e.dst)) continue;
+        edges.push(e);
+      }
+
+      const collapsed = collapseMathlib(nodes, edges);
+      return collapsed;
+    }
+
+    function computeLayout(displayNodes) {
+      const W = state.world.w;
+      const H = state.world.h;
+      const M = 80;
+      const pos = new Map();
+
+      const layerX = {
+        core: 240,
+        methods: 660,
+        applications: 1080,
+        books: 1460,
+        other: 1820,
+        mathlib: 2180,
+      };
+
+      const concepts = displayNodes.filter((n) => n.kind === "concept").sort((a, b) => a.id.localeCompare(b.id));
+      for (let i = 0; i < concepts.length; i++) {
+        const x = 180 + ((i + 1) * (W - 360)) / (concepts.length + 1);
+        const y = 120;
+        pos.set(concepts[i].id, [x, y]);
+      }
+
+      const modulesByLayer = new Map();
+      for (const n of displayNodes) {
+        if (n.kind !== "module") continue;
+        const layer = layerKey(n);
+        if (!modulesByLayer.has(layer)) modulesByLayer.set(layer, []);
+        modulesByLayer.get(layer).push(n);
+      }
+
+      for (const [layer, mods] of modulesByLayer.entries()) {
+        mods.sort((a, b) =>
+          (b.id === MATHLIB_SLICE_ID ? 1 : 0) - (a.id === MATHLIB_SLICE_ID ? 1 : 0) ||
+          (b.spine ? 1 : 0) - (a.spine ? 1 : 0) ||
+          degreeOf(b.id) - degreeOf(a.id) ||
+          a.id.localeCompare(b.id)
+        );
+        const x = layerX[layer] || layerX.other;
+        const spanTop = layer === "mathlib" ? 180 : 220;
+        const spanBottom = H - 120;
+        for (let i = 0; i < mods.length; i++) {
+          const y = spanTop + ((i + 1) * (spanBottom - spanTop)) / (mods.length + 1);
+          pos.set(mods[i].id, [x, y]);
+        }
+      }
+
+      const decls = displayNodes.filter((n) => n.kind === "decl");
+      const declByModule = new Map();
+      for (const d of decls) {
+        const mod = typeof d.module === "string" && d.module ? d.module : "@orphans";
+        if (!declByModule.has(mod)) declByModule.set(mod, []);
+        declByModule.get(mod).push(d);
+      }
+
+      for (const [mod, rows] of declByModule.entries()) {
+        rows.sort((a, b) => degreeOf(b.id) - degreeOf(a.id) || a.id.localeCompare(b.id));
+        const anchor = pos.get(mod) || [layerX[layerKey(rows[0])] || 1860, 900];
+        const baseSeed = hashInt(mod) % 360;
+        const slots = 20;
+        for (let i = 0; i < rows.length; i++) {
+          const ring = Math.floor(i / slots);
+          const slot = i % slots;
+          const angle = ((baseSeed + slot * (360 / slots)) * Math.PI) / 180;
+          const r = 36 + ring * 21;
+          const x = clamp(anchor[0] + Math.cos(angle) * r, M, W - M);
+          const y = clamp(anchor[1] + Math.sin(angle) * r * 0.9, M, H - M);
+          pos.set(rows[i].id, [x, y]);
+        }
+      }
+
+      for (const n of displayNodes) {
+        if (pos.has(n.id)) continue;
+        const h = hashInt(n.id);
+        const x = 120 + (h % 2000);
+        const y = 180 + ((h >>> 10) % 1050);
+        pos.set(n.id, [x, y]);
+      }
+
+      state.basePos = pos;
+    }
+
+    function nodePos(id) {
+      return state.pinned.get(id) || state.basePos.get(id) || [50, 50];
+    }
+
+    function shouldLabel(node, displayNodes) {
+      if (node.kind === "concept") return true;
+      if (node.kind === "module") return true;
+      if (displayNodes.length <= 260) return true;
+      return node.spine || degreeOf(node.id) >= 8;
+    }
+
+    function applyViewBox() {
+      const v = state.view;
+      svg.setAttribute("viewBox", `${v.x} ${v.y} ${v.w} ${v.h}`);
+    }
+
+    function clampView() {
+      const v = state.view;
+      const maxX = state.world.w - v.w;
+      const maxY = state.world.h - v.h;
+      v.x = clamp(v.x, -0.08 * state.world.w, Math.max(maxX, 0) + 0.08 * state.world.w);
+      v.y = clamp(v.y, -0.08 * state.world.h, Math.max(maxY, 0) + 0.08 * state.world.h);
+    }
+
+    function renderGraph(display, skipInspector = false) {
+      state.lastDisplay = display;
+      computeLayout(display.nodes);
+      state.lastPos = new Map();
+
+      svg.innerHTML = "";
+      applyViewBox();
+
+      const displayed = new Set(display.nodes.map((n) => n.id));
+      const edges = display.edges.filter((e) => displayed.has(e.src) && displayed.has(e.dst));
+
+      const edgeG = document.createElementNS("http://www.w3.org/2000/svg", "g");
+      for (const e of edges.slice(0, 8000)) {
+        const a = nodePos(e.src);
+        const b = nodePos(e.dst);
+        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        line.setAttribute("x1", String(a[0]));
+        line.setAttribute("y1", String(a[1]));
+        line.setAttribute("x2", String(b[0]));
+        line.setAttribute("y2", String(b[1]));
+        line.setAttribute("class", "edge");
+        line.setAttribute("stroke", edgeColor(e.type));
+        line.setAttribute("stroke-opacity", state.selectedEdge === e ? "0.96" : "0.38");
+        line.setAttribute("stroke-width", state.selectedEdge === e ? "2.8" : String(1 + Math.log2((e.weight || 1) + 1) * 0.65));
+        line.addEventListener("click", (ev) => {
+          ev.stopPropagation();
+          state.selectedEdge = e;
+          state.selected = null;
+          renderInspector(display);
+          renderOverlay(display);
+        });
+        edgeG.appendChild(line);
+      }
+      svg.appendChild(edgeG);
+
+      const nodeG = document.createElementNS("http://www.w3.org/2000/svg", "g");
+      for (const n of display.nodes) {
+        const [x, y] = nodePos(n.id);
+        state.lastPos.set(n.id, [x, y]);
+
+        const deg = degreeOf(n.id);
+        const base = n.kind === "module" ? 7 : (n.kind === "concept" ? 8 : 4.5);
+        const r = Math.min(15, base + Math.log2(deg + 1) * 1.15);
+
+        const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        g.setAttribute("data-node-id", n.id);
+
+        const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        circle.setAttribute("cx", String(x));
+        circle.setAttribute("cy", String(y));
+        circle.setAttribute("r", String(r));
+        circle.setAttribute("fill", nodeColor(n));
+        circle.setAttribute("fill-opacity", state.selected === n.id ? "1" : "0.92");
+        circle.style.cursor = "pointer";
+
+        if (state.selected === n.id) {
+          circle.setAttribute("stroke", "#0f271d");
+          circle.setAttribute("stroke-width", "2.4");
+        } else if (state.pinned.has(n.id)) {
+          circle.setAttribute("stroke", "#2a0d2a");
+          circle.setAttribute("stroke-width", "1.7");
+        }
+
+        circle.addEventListener("pointerdown", (ev) => startNodeDrag(ev, n.id));
+        circle.addEventListener("click", (ev) => {
+          ev.stopPropagation();
+          if (Date.now() < state.suppressClickUntil) return;
+          state.selected = n.id;
+          state.selectedEdge = null;
+          materializeNode(n.id);
+          renderAll();
+        });
+        circle.addEventListener("dblclick", (ev) => {
+          ev.stopPropagation();
+          togglePin(n.id);
+          renderAll();
+        });
+
+        const title = document.createElementNS("http://www.w3.org/2000/svg", "title");
+        title.textContent = `${n.id}\nkind=${n.kind} layer=${n.layer || "-"} degree=${deg}`;
+        g.appendChild(circle);
+        g.appendChild(title);
+        nodeG.appendChild(g);
+
+        if (shouldLabel(n, display.nodes)) {
+          const t = document.createElementNS("http://www.w3.org/2000/svg", "text");
+          t.setAttribute("x", String(x + 9));
+          t.setAttribute("y", String(y - 7));
+          t.setAttribute("class", "node-label");
+          if (n.id === MATHLIB_SLICE_ID) {
+            t.textContent = "MathlibSlice";
+          } else if (n.kind === "module") {
+            t.textContent = n.id.replace("MLTheory.", "");
+          } else {
+            t.textContent = n.title || n.id.split(".").pop();
+          }
+          nodeG.appendChild(t);
+        }
+      }
+      svg.appendChild(nodeG);
+
+      if (!skipInspector) {
+        renderInspector(display);
+        renderOverlay(display);
       }
     }
 
@@ -600,130 +974,156 @@
       const edges = dir === "out" ? (state.outgoing.get(nodeId) || []) : (state.incoming.get(nodeId) || []);
       for (const e of edges) {
         if (!isEdgeTypeEnabled(e.type)) continue;
-        state.visible.add(dir === "out" ? e.dst : e.src);
+        materializeNode(dir === "out" ? e.dst : e.src);
       }
       renderAll();
     }
 
-    function edgeCountsByType(edges) {
-      const map = new Map();
+    function expandModuleDecls(moduleId) {
+      if (!moduleId) return;
+      for (const e of state.incoming.get(moduleId) || []) {
+        if (e.type === "decl_in_module") {
+          materializeNode(e.src);
+        }
+      }
+      renderAll();
+    }
+
+    function collapseModuleDecls(moduleId) {
+      if (!moduleId) return;
+      for (const id of Array.from(state.visible)) {
+        const n = state.nodesById.get(id);
+        if (!n || n.kind !== "decl") continue;
+        if (n.module === moduleId) {
+          state.visible.delete(id);
+        }
+      }
+      renderAll();
+    }
+
+    function togglePin(nodeId) {
+      if (!nodeId) return;
+      if (state.pinned.has(nodeId)) {
+        state.pinned.delete(nodeId);
+      } else {
+        const p = state.lastPos.get(nodeId) || state.basePos.get(nodeId);
+        if (p) state.pinned.set(nodeId, [p[0], p[1]]);
+      }
+    }
+
+    function edgeTypeSummary(edges) {
+      const m = new Map();
       for (const e of edges) {
-        map.set(e.type, (map.get(e.type) || 0) + 1);
+        m.set(e.type, (m.get(e.type) || 0) + 1);
       }
-      return map;
+      if (m.size === 0) return "none";
+      return Array.from(m.entries()).sort((a, b) => b[1] - a[1]).map(([k, v]) => `${k}:${v}`).join(" | ");
     }
 
-    function renderStatsBox(displayNodes, displayEdges) {
-      const totalNodes = state.nodesById.size;
-      const totalEdges = state.edges.length;
-      const selected = state.selected ? `<code>${state.selected}</code>` : "(none)";
-      byId("statsBox").innerHTML = [
-        `<div>Selected: ${selected}</div>`,
-        `<div>Visible nodes: <code>${displayNodes.length}</code> / total <code>${totalNodes}</code></div>`,
-        `<div>Visible edges: <code>${displayEdges.length}</code> / total <code>${totalEdges}</code></div>`,
-      ].join("");
-    }
-
-    function renderNodeList(displayNodes) {
-      const list = byId("nodeList");
-      list.innerHTML = "";
-
-      for (const node of displayNodes.slice(0, 450)) {
-        const div = document.createElement("div");
-        div.className = "node-item" + (state.selected === node.id ? " active" : "");
-        div.innerHTML = `
-          <div><strong>${node.title || node.id}</strong></div>
-          <div class="line2">
-            <span class="badge">${node.kind}</span>
-            <span class="badge">deg ${degreeOf(node.id)}</span>
-            <span class="badge">${node.layer || "-"}</span>
-            ${node.spine ? '<span class="badge">spine</span>' : ''}
-          </div>
-          <div class="line2"><code>${node.id}</code></div>
-        `;
-        div.onclick = () => {
-          state.selected = node.id;
-          state.visible.add(node.id);
-          renderAll();
-        };
-        div.ondblclick = () => expandOneHop(node.id, "out");
-        list.appendChild(div);
+    function renderNeighborBlock(title, rows) {
+      if (!rows.length) {
+        return `<div class="neighbors"><h3>${title}</h3><div class="neighbor-row">No neighbors under current filters.</div></div>`;
       }
+      return `
+        <div class="neighbors">
+          <h3>${title}</h3>
+          ${rows.map((r) => `
+            <div class="neighbor-row" data-jump="${r.node.id}">
+              <div><strong>${r.node.title || r.node.id}</strong></div>
+              <div class="line2">
+                <span class="badge">${r.edge.type}</span>
+                <span class="badge">${r.node.kind}</span>
+                <span class="badge">deg ${degreeOf(r.node.id)}</span>
+              </div>
+              <div><code>${r.node.id}</code></div>
+            </div>
+          `).join("")}
+        </div>
+      `;
     }
 
-    function neighborRows(edges, dirLabel, limit = 18) {
-      const rows = [];
-      for (const e of edges) {
-        const targetId = dirLabel === "out" ? e.dst : e.src;
-        const node = state.nodesById.get(targetId);
-        if (!node) continue;
-        rows.push({ edge: e, node, degree: degreeOf(targetId) });
-      }
-      rows.sort((a, b) =>
-        (b.node.spine ? 1 : 0) - (a.node.spine ? 1 : 0) ||
-        b.degree - a.degree ||
-        a.node.id.localeCompare(b.node.id)
-      );
-      return rows.slice(0, limit);
-    }
-
-    function renderDetails(displayEdges) {
+    function renderInspector(display) {
       const box = byId("details");
-      const node = state.selected ? state.nodesById.get(state.selected) : null;
-      if (!node) {
-        box.textContent = "Please select a node. Double-click a node in the list/graph to expand outgoing neighbors.";
+
+      if (state.selectedEdge) {
+        const e = state.selectedEdge;
+        const edgeDomains = Array.isArray(e.domains) ? e.domains.join(", ") : "-";
+        const crossDomain = e.cross_domain === true ? "true" : "false";
+        box.innerHTML = `
+          <div><strong>Selected edge</strong></div>
+          <div>type: <code>${e.type}</code></div>
+          <div>src: <code>${e.src}</code></div>
+          <div>dst: <code>${e.dst}</code></div>
+          <div>weight: <code>${e.weight || 1}</code></div>
+          <div>domains: <code>${edgeDomains || "-"}</code></div>
+          <div>cross_domain: <code>${crossDomain}</code></div>
+        `;
         return;
       }
 
-      const outAll = (state.outgoing.get(node.id) || []).filter(e => isEdgeTypeEnabled(e.type));
-      const inAll = (state.incoming.get(node.id) || []).filter(e => isEdgeTypeEnabled(e.type));
-      const byTypeOut = edgeCountsByType(outAll);
-      const byTypeIn = edgeCountsByType(inAll);
-      const outRows = neighborRows(outAll, "out");
-      const inRows = neighborRows(inAll, "in");
-
-      function renderTypeSummary(counter) {
-        if (!counter.size) return "none";
-        return [...counter.entries()]
-          .sort((a, b) => b[1] - a[1])
-          .map(([k, v]) => `${k}:${v}`)
-          .join(" | ");
+      let node = state.selected ? state.nodesById.get(state.selected) : null;
+      if (!node && state.selected) {
+        node = (display.nodes || []).find((n) => n.id === state.selected) || null;
+      }
+      if (!node) {
+        box.innerHTML = [
+          "<div>Please select a node or use search locate.</div>",
+          "<div class='tiny'>Double click a node to pin/unpin. Drag a node to move and pin it.</div>",
+        ].join("");
+        return;
       }
 
-      function renderNeighborBlock(title, rows) {
-        if (!rows.length) {
-          return `<div class="neighbors"><h3>${title}</h3><div class="neighbor-row">No neighbors under current filters.</div></div>`;
-        }
-        return `
-          <div class="neighbors">
-            <h3>${title}</h3>
-            ${rows.map(r => `
-              <div class="neighbor-row" data-jump="${r.node.id}">
-                <div><strong>${r.node.title || r.node.id}</strong></div>
-                <div>
-                  <span class="badge edge">${r.edge.type}</span>
-                  <span class="badge">${r.node.kind}</span>
-                  <span class="badge">deg ${r.degree}</span>
-                </div>
-                <div><code>${r.node.id}</code></div>
-              </div>
-            `).join("")}
-          </div>
-        `;
-      }
+      const outAll = (state.outgoing.get(node.id) || []).filter((e) => isEdgeTypeEnabled(e.type));
+      const inAll = (state.incoming.get(node.id) || []).filter((e) => isEdgeTypeEnabled(e.type));
+      const outRows = outAll
+        .map((e) => ({ edge: e, node: state.nodesById.get(e.dst) }))
+        .filter((x) => x.node)
+        .slice(0, 18);
+      const inRows = inAll
+        .map((e) => ({ edge: e, node: state.nodesById.get(e.src) }))
+        .filter((x) => x.node)
+        .slice(0, 18);
+
+      const pinText = state.pinned.has(node.id) ? "true" : "false";
+      const declKind = node.decl_kind || "-";
+      const generated = node.generated === true ? "true" : "false";
+      const nodeDomains = Array.isArray(node.domains) ? node.domains : [];
+      const domainText = nodeDomains.length ? nodeDomains.join(", ") : "-";
+      const activeDomain = byId("domainFilter").value;
+      const activeProfile = activeDomain !== "all" ? state.domainProfiles.get(activeDomain) : null;
+      const bridges = activeProfile && Array.isArray(activeProfile.bridge_modules)
+        ? activeProfile.bridge_modules
+        : [];
+      const isBridge = bridges.includes(node.id) || (typeof node.module === "string" && bridges.includes(node.module));
+      const otherDomains = activeDomain === "all"
+        ? []
+        : nodeDomains.filter((d) => d !== activeDomain);
+      const bridgeHint = activeDomain === "all"
+        ? "-"
+        : (isBridge ? `bridge module for ${activeDomain}` : "not a bridge module");
+      const crossHint = activeDomain === "all"
+        ? "-"
+        : (otherDomains.length ? `cross-domain -> ${otherDomains.join(", ")}` : "domain-local");
 
       box.innerHTML = `
         <div><strong>${node.title || node.id}</strong></div>
         <div>id: <code>${node.id}</code></div>
-        <div>kind: <code>${node.kind}</code> | layer: <code>${node.layer || "-"}</code> | spine: <code>${String(Boolean(node.spine))}</code></div>
+        <div>kind: <code>${node.kind}</code> | layer: <code>${node.layer || "-"}</code> | package: <code>${node.package || "-"}</code></div>
         <div>module: <code>${node.module || "-"}</code></div>
+        <div>decl_kind: <code>${declKind}</code> | generated: <code>${generated}</code> | pinned: <code>${pinText}</code></div>
+        <div>domains: <code>${domainText}</code></div>
+        <div>bridge hint: <code>${bridgeHint}</code></div>
+        <div>cross-domain hint: <code>${crossHint}</code></div>
         <div>path: <code>${node.path || "-"}</code></div>
         <div>degree: <code>${degreeOf(node.id)}</code></div>
-        <div>outgoing: <code>${outAll.length}</code> (${renderTypeSummary(byTypeOut)})</div>
-        <div>incoming: <code>${inAll.length}</code> (${renderTypeSummary(byTypeIn)})</div>
+        <div>outgoing: <code>${outAll.length}</code> (${edgeTypeSummary(outAll)})</div>
+        <div>incoming: <code>${inAll.length}</code> (${edgeTypeSummary(inAll)})</div>
         <div style="margin-top:8px;">
           <button id="detailExpandOut">expand outgoing 1-hop</button>
           <button id="detailExpandIn">expand incoming 1-hop</button>
+          <button id="detailTogglePin">toggle pin</button>
+          <button id="detailUnpin">unpin selected</button>
+          ${node.kind === "module" ? '<button id="detailExpandModule">expand module decls</button><button id="detailCollapseModule">collapse module decls</button>' : ""}
         </div>
         ${renderNeighborBlock("Outgoing neighbors", outRows)}
         ${renderNeighborBlock("Incoming neighbors", inRows)}
@@ -731,333 +1131,335 @@
 
       byId("detailExpandOut").onclick = () => expandOneHop(node.id, "out");
       byId("detailExpandIn").onclick = () => expandOneHop(node.id, "in");
-      box.querySelectorAll("[data-jump]").forEach(el => {
+      byId("detailTogglePin").onclick = () => {
+        togglePin(node.id);
+        renderAll();
+      };
+      byId("detailUnpin").onclick = () => {
+        state.pinned.delete(node.id);
+        renderAll();
+      };
+
+      const expandModule = byId("detailExpandModule");
+      if (expandModule) expandModule.onclick = () => expandModuleDecls(node.id);
+
+      const collapseModule = byId("detailCollapseModule");
+      if (collapseModule) collapseModule.onclick = () => collapseModuleDecls(node.id);
+
+      box.querySelectorAll("[data-jump]").forEach((el) => {
         el.onclick = () => {
           const id = el.getAttribute("data-jump");
           if (!id) return;
-          state.visible.add(id);
-          state.selected = id;
-          renderAll();
+          selectAndFocus(id);
         };
       });
     }
 
-    function layerKey(node) {
-      const layer = String(node.layer || "other");
-      if (layer === "core") return "core";
-      if (layer === "methods") return "methods";
-      if (layer === "applications") return "applications";
-      if (layer === "books") return "books";
-      if (layer === "mathlib") return "mathlib";
-      return "other";
-    }
+    function renderOverlay(display) {
+      const edgeType = state.selectedEdge ? state.selectedEdge.type : "-";
+      const activeDomain = byId("domainFilter").value;
+      byId("overlay").innerHTML = [
+        `<div><strong>visible</strong> nodes: <code>${display.nodes.length}</code>, edges: <code>${display.edges.length}</code></div>`,
+        `<div>selected node: <code>${state.selected || "(none)"}</code></div>`,
+        `<div>selected edge type: <code>${edgeType}</code></div>`,
+        `<div>active domain: <code>${activeDomain}</code></div>`,
+        `<div>zoom: <code>${(state.world.w / state.view.w).toFixed(2)}x</code> | pin count: <code>${state.pinned.size}</code></div>`,
+      ].join("");
 
-    function clamp(v, lo, hi) {
-      return Math.max(lo, Math.min(hi, v));
-    }
-
-    function hashInt(s) {
-      let h = 2166136261;
-      for (let i = 0; i < s.length; i++) {
-        h ^= s.charCodeAt(i);
-        h = (h * 16777619) >>> 0;
-      }
-      return h >>> 0;
-    }
-
-    function computeLayout(displayNodes) {
-      const W = 2200;
-      const H = 1320;
-      const M = 44;
-
-      const layerRegions = {
-        core:         { x0: 70,   x1: 420,  y0: 230, y1: 680 },
-        methods:      { x0: 460,  x1: 1270, y0: 230, y1: 680 },
-        applications: { x0: 1310, x1: 1600, y0: 230, y1: 680 },
-        books:        { x0: 1640, x1: 1780, y0: 230, y1: 680 },
-        other:        { x0: 1810, x1: 1940, y0: 230, y1: 680 },
-        mathlib:      { x0: 1960, x1: 2140, y0: 180, y1: 1230 },
-      };
-
-      const declFallbackRegion = {
-        core:         { x0: 80,   x1: 430,  y0: 760, y1: 1240 },
-        methods:      { x0: 460,  x1: 1290, y0: 760, y1: 1240 },
-        applications: { x0: 1310, x1: 1600, y0: 760, y1: 1240 },
-        books:        { x0: 1640, x1: 1780, y0: 760, y1: 1240 },
-        other:        { x0: 1810, x1: 1940, y0: 760, y1: 1240 },
-        mathlib:      { x0: 1960, x1: 2140, y0: 760, y1: 1240 },
-      };
-
-      const pos = new Map();
-      const modulePos = new Map();
-
-      const concepts = displayNodes
-        .filter(n => n.kind === "concept")
-        .sort((a, b) => a.id.localeCompare(b.id));
-      concepts.forEach((node, i) => {
-        const x = 140 + (i + 1) * ((W - 280) / (concepts.length + 1));
-        const y = 96 + (i % 2) * 16;
-        pos.set(node.id, [x, y]);
-      });
-
-      const modulesByLayer = new Map();
-      for (const n of displayNodes) {
-        if (n.kind !== "module") continue;
-        const lk = layerKey(n);
-        if (!modulesByLayer.has(lk)) modulesByLayer.set(lk, []);
-        modulesByLayer.get(lk).push(n);
-      }
-
-      for (const [layer, modules] of modulesByLayer.entries()) {
-        const region = layerRegions[layer] || layerRegions.other;
-        modules.sort((a, b) =>
-          (b.spine ? 1 : 0) - (a.spine ? 1 : 0) ||
-          degreeOf(b.id) - degreeOf(a.id) ||
-          a.id.localeCompare(b.id)
-        );
-        const w = region.x1 - region.x0;
-        const h = region.y1 - region.y0;
-        const cols = Math.max(1, Math.ceil(Math.sqrt((modules.length * w) / Math.max(1, h))));
-        const rows = Math.max(1, Math.ceil(modules.length / cols));
-        modules.forEach((node, idx) => {
-          const row = Math.floor(idx / cols);
-          const col = idx % cols;
-          const x = region.x0 + ((col + 1) * w) / (cols + 1);
-          const y = region.y0 + ((row + 1) * h) / (rows + 1);
-          pos.set(node.id, [x, y]);
-          modulePos.set(node.id, [x, y]);
-        });
-      }
-
-      const declGroups = new Map();
-      for (const n of displayNodes) {
-        if (n.kind !== "decl") continue;
-        const mod = typeof n.module === "string" && n.module.length ? n.module : `@layer:${layerKey(n)}`;
-        if (!declGroups.has(mod)) declGroups.set(mod, []);
-        declGroups.get(mod).push(n);
-      }
-
-      for (const [moduleId, decls] of declGroups.entries()) {
-        decls.sort((a, b) =>
-          (b.spine ? 1 : 0) - (a.spine ? 1 : 0) ||
-          degreeOf(b.id) - degreeOf(a.id) ||
-          a.id.localeCompare(b.id)
-        );
-
-        let anchor = modulePos.get(moduleId);
-        if (!anchor) {
-          const layer = layerKey(decls[0]);
-          const region = declFallbackRegion[layer] || declFallbackRegion.other;
-          const h = hashInt(moduleId);
-          const x = region.x0 + (h % 1000) / 1000 * (region.x1 - region.x0);
-          const y = region.y0 + ((h >>> 10) % 1000) / 1000 * (region.y1 - region.y0);
-          anchor = [x, y];
-        }
-
-        const seed = (hashInt(moduleId) % 360) * Math.PI / 180;
-        const slots = 14;
-        decls.forEach((node, idx) => {
-          const ring = Math.floor(idx / slots);
-          const slot = idx % slots;
-          const r = 26 + ring * 18 + (slot % 2 ? 4 : 0);
-          const angle = seed + (2 * Math.PI * slot) / slots + ring * 0.15;
-          const x = clamp(anchor[0] + Math.cos(angle) * r, M, W - M);
-          const y = clamp(anchor[1] + Math.sin(angle) * r * 0.84, M, H - M);
-          if (!pos.has(node.id)) pos.set(node.id, [x, y]);
-        });
-      }
-
-      for (const node of displayNodes) {
-        if (pos.has(node.id)) continue;
-        const layer = layerKey(node);
-        const region = declFallbackRegion[layer] || declFallbackRegion.other;
-        const h = hashInt(node.id);
-        const x = region.x0 + (h % 1000) / 1000 * (region.x1 - region.x0);
-        const y = region.y0 + ((h >>> 10) % 1000) / 1000 * (region.y1 - region.y0);
-        pos.set(node.id, [x, y]);
-      }
-
-      return { pos, width: W, height: H };
-    }
-
-    function shouldLabel(node, displayNodes, labelDensity, highlighted) {
-      if (highlighted.has(node.id)) return true;
-      if (node.kind === "concept") return true;
-      if (labelDensity === "lite") return node.kind === "module" && node.spine;
-      if (labelDensity === "normal") return node.kind === "module";
-      if (labelDensity === "full") {
-        if (node.kind !== "decl") return true;
-        if (displayNodes.length <= 250) return true;
-        return degreeOf(node.id) >= 8 || node.spine;
-      }
-      return false;
-    }
-
-    function renderSvg(displayNodes, displayEdges) {
-      svg.innerHTML = "";
-      const { pos, width, height } = computeLayout(displayNodes);
-      svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
-
-      const displayedIds = new Set(displayNodes.map(n => n.id));
-      const selected = state.selected;
-      const highlighted = new Set();
-      if (selected) {
-        highlighted.add(selected);
-        for (const e of state.outgoing.get(selected) || []) if (displayedIds.has(e.dst)) highlighted.add(e.dst);
-        for (const e of state.incoming.get(selected) || []) if (displayedIds.has(e.src)) highlighted.add(e.src);
-      }
-
-      const edges = displayEdges.filter(e => displayedIds.has(e.src) && displayedIds.has(e.dst));
-      const edgeG = document.createElementNS("http://www.w3.org/2000/svg", "g");
-
-      for (const e of edges.slice(0, 6000)) {
-        const a = pos.get(e.src);
-        const b = pos.get(e.dst);
-        if (!a || !b) continue;
-        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-        line.setAttribute("x1", String(a[0]));
-        line.setAttribute("y1", String(a[1]));
-        line.setAttribute("x2", String(b[0]));
-        line.setAttribute("y2", String(b[1]));
-        line.setAttribute("stroke", edgeColor(e.type));
-        const focus = selected && (e.src === selected || e.dst === selected);
-        line.setAttribute("stroke-opacity", focus ? "0.92" : "0.34");
-        line.setAttribute("stroke-width", focus ? "2.1" : "1.05");
-        edgeG.appendChild(line);
-      }
-      svg.appendChild(edgeG);
-
-      const nodeG = document.createElementNS("http://www.w3.org/2000/svg", "g");
-      for (const n of displayNodes) {
-        const p = pos.get(n.id);
-        if (!p) continue;
-        const [x, y] = p;
-        const deg = degreeOf(n.id);
-        const base = n.kind === "module" ? 6.2 : (n.kind === "concept" ? 7.2 : 4.2);
-        const r = Math.min(13, base + Math.log2(deg + 1) * 1.2);
-
-        const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
-        group.style.cursor = "pointer";
-        const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-        circle.setAttribute("cx", String(x));
-        circle.setAttribute("cy", String(y));
-        circle.setAttribute("r", String(r));
-        circle.setAttribute("fill", nodeColor(n));
-        circle.setAttribute("fill-opacity", highlighted.has(n.id) ? "1" : "0.92");
-
-        if (state.selected === n.id) {
-          circle.setAttribute("stroke", "#0f271d");
-          circle.setAttribute("stroke-width", "2.3");
-        } else if (highlighted.has(n.id)) {
-          circle.setAttribute("stroke", "#2a3b32");
-          circle.setAttribute("stroke-width", "1.2");
-        }
-
-        const title = document.createElementNS("http://www.w3.org/2000/svg", "title");
-        title.textContent = `${n.id}\nkind=${n.kind} layer=${n.layer || '-'} degree=${deg}`;
-        group.appendChild(circle);
-        group.appendChild(title);
-
-        group.onclick = (ev) => {
-          if (ev.shiftKey) {
-            expandOneHop(n.id, "in");
-            return;
-          }
-          state.selected = n.id;
-          state.visible.add(n.id);
-          renderAll();
-        };
-        group.ondblclick = (ev) => {
-          ev.preventDefault();
-          expandOneHop(n.id, "out");
-        };
-
-        nodeG.appendChild(group);
-      }
-      svg.appendChild(nodeG);
-
-      const labelDensity = byId("labelDensity").value;
-      const labelG = document.createElementNS("http://www.w3.org/2000/svg", "g");
-      for (const n of displayNodes) {
-        if (!shouldLabel(n, displayNodes, labelDensity, highlighted)) continue;
-        const p = pos.get(n.id);
-        if (!p) continue;
-        const [x, y] = p;
-        const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-        text.setAttribute("x", String(x + 8));
-        text.setAttribute("y", String(y - 7));
-        text.setAttribute("class", "node-label");
-        text.textContent = n.kind === "module" ? (n.id.replace("MLTheory.", "")) : (n.title || n.id.split(".").pop());
-        labelG.appendChild(text);
-      }
-      svg.appendChild(labelG);
-
-      byId("statsOverlay").innerHTML = [
-        `<div><strong>canvas</strong> nodes: <code>${displayNodes.length}</code>, edges: <code>${edges.length}</code></div>`,
-        `<div>selected: <code>${state.selected || '(none)'}</code></div>`,
-        `<div>interaction: click select | double-click expand out | shift-click expand in</div>`,
+      byId("statsBox").innerHTML = [
+        `<div>Total graph: nodes <code>${state.nodesById.size}</code>, edges <code>${state.edges.length}</code></div>`,
+        `<div>Visible window: nodes <code>${display.nodes.length}</code>, edges <code>${display.edges.length}</code></div>`,
+        `<div>Mode: <code>Module Map default</code> (decl hidden, mathlib collapsed)</div>`,
       ].join("");
     }
 
-    function collectDisplayGraph() {
-      const maxNodes = Number(byId("maxNodes").value || "350");
-      const ranked = rankedNodesFromVisible();
-      const displayNodes = ranked.slice(0, maxNodes);
-      state.renderedNodeIds = displayNodes.map(n => n.id);
+    function renderSearchResults() {
+      const query = byId("search").value.trim().toLowerCase();
+      const box = byId("searchResults");
 
-      const nodeSet = new Set(state.renderedNodeIds);
-      const displayEdges = [];
-      for (const e of state.edges) {
-        if (!isEdgeTypeEnabled(e.type)) continue;
-        if (!nodeSet.has(e.src) || !nodeSet.has(e.dst)) continue;
-        displayEdges.push(e);
+      if (!query) {
+        box.innerHTML = "<div class='tiny'>Type in search box to see locate candidates.</div>";
+        state.searchMatches = [];
+        return;
       }
-      return { displayNodes, displayEdges };
+
+      const rows = [];
+      for (const node of state.nodesById.values()) {
+        const hay = [node.id, node.title || "", node.module || "", node.path || ""].join(" ").toLowerCase();
+        const idx = hay.indexOf(query);
+        if (idx < 0) continue;
+        const titleMatch = (node.title || "").toLowerCase().startsWith(query);
+        rows.push({
+          node,
+          score: idx + (node.id.toLowerCase().startsWith(query) ? -10 : 0) + (titleMatch ? -5 : 0),
+        });
+      }
+
+      rows.sort((a, b) => a.score - b.score || degreeOf(b.node.id) - degreeOf(a.node.id) || a.node.id.localeCompare(b.node.id));
+      state.searchMatches = rows.slice(0, 60).map((r) => r.node);
+
+      if (!state.searchMatches.length) {
+        box.innerHTML = "<div class='tiny'>No matches.</div>";
+        return;
+      }
+
+      box.innerHTML = state.searchMatches.slice(0, 24).map((node) => {
+        const active = state.selected === node.id ? " active" : "";
+        return `
+          <div class="node-item${active}" data-match="${node.id}">
+            <div><strong>${node.title || node.id}</strong></div>
+            <div class="line2"><span class="badge">${node.kind}</span><span class="badge">deg ${degreeOf(node.id)}</span></div>
+            <div class="line2"><code>${node.id}</code></div>
+          </div>
+        `;
+      }).join("");
+
+      box.querySelectorAll("[data-match]").forEach((el) => {
+        el.onclick = () => {
+          const id = el.getAttribute("data-match");
+          if (!id) return;
+          selectAndFocus(id);
+        };
+      });
+    }
+
+    function selectAndFocus(id) {
+      materializeNode(id);
+      state.selected = id;
+      state.selectedEdge = null;
+      renderAll();
+      centerOnNode(id);
+    }
+
+    function locateFirstMatch() {
+      if (!state.searchMatches.length) {
+        renderSearchResults();
+      }
+      if (!state.searchMatches.length) return;
+      selectAndFocus(state.searchMatches[0].id);
+    }
+
+    function fitViewToDisplay() {
+      const ids = state.lastDisplay.nodes.map((n) => n.id).filter((id) => state.lastPos.has(id));
+      if (!ids.length) return;
+
+      let minX = Infinity;
+      let minY = Infinity;
+      let maxX = -Infinity;
+      let maxY = -Infinity;
+
+      for (const id of ids) {
+        const [x, y] = state.lastPos.get(id);
+        minX = Math.min(minX, x);
+        minY = Math.min(minY, y);
+        maxX = Math.max(maxX, x);
+        maxY = Math.max(maxY, y);
+      }
+
+      const pad = 120;
+      const w = clamp(maxX - minX + pad * 2, 240, state.world.w * 3.2);
+      const h = clamp(maxY - minY + pad * 2, 180, state.world.h * 3.2);
+      state.view.w = w;
+      state.view.h = h;
+      state.view.x = minX - pad;
+      state.view.y = minY - pad;
+      clampView();
+      applyViewBox();
+      renderOverlay(state.lastDisplay);
+    }
+
+    function centerOnNode(nodeId) {
+      const p = state.lastPos.get(nodeId);
+      if (!p) return;
+      state.view.x = p[0] - state.view.w / 2;
+      state.view.y = p[1] - state.view.h / 2;
+      clampView();
+      applyViewBox();
+      renderOverlay(state.lastDisplay);
+    }
+
+    function screenToSvgDelta(dxPx, dyPx) {
+      const rect = svg.getBoundingClientRect();
+      return {
+        dx: (dxPx * state.view.w) / Math.max(rect.width, 1),
+        dy: (dyPx * state.view.h) / Math.max(rect.height, 1),
+      };
+    }
+
+    function startNodeDrag(ev, nodeId) {
+      const p = nodePos(nodeId);
+      state.drag = {
+        type: "node",
+        nodeId,
+        pointerId: ev.pointerId,
+        startClientX: ev.clientX,
+        startClientY: ev.clientY,
+        startNodeX: p[0],
+        startNodeY: p[1],
+      };
+      svg.classList.add("panning");
+      svg.setPointerCapture(ev.pointerId);
+      ev.preventDefault();
+      ev.stopPropagation();
+    }
+
+    function startPan(ev) {
+      state.drag = {
+        type: "pan",
+        pointerId: ev.pointerId,
+        startClientX: ev.clientX,
+        startClientY: ev.clientY,
+        startViewX: state.view.x,
+        startViewY: state.view.y,
+      };
+      svg.classList.add("panning");
+      svg.setPointerCapture(ev.pointerId);
+      ev.preventDefault();
+    }
+
+    function scheduleGraphRender() {
+      if (state.rafPending) return;
+      state.rafPending = true;
+      requestAnimationFrame(() => {
+        state.rafPending = false;
+        renderGraph(state.lastDisplay, true);
+      });
+    }
+
+    function onPointerMove(ev) {
+      if (!state.drag) return;
+      if (state.drag.pointerId !== ev.pointerId) return;
+
+      const delta = screenToSvgDelta(ev.clientX - state.drag.startClientX, ev.clientY - state.drag.startClientY);
+
+      if (state.drag.type === "pan") {
+        state.view.x = state.drag.startViewX - delta.dx;
+        state.view.y = state.drag.startViewY - delta.dy;
+        clampView();
+        applyViewBox();
+        renderOverlay(state.lastDisplay);
+        return;
+      }
+
+      if (state.drag.type === "node") {
+        const nx = state.drag.startNodeX + delta.dx;
+        const ny = state.drag.startNodeY + delta.dy;
+        state.pinned.set(state.drag.nodeId, [nx, ny]);
+        state.suppressClickUntil = Date.now() + 180;
+        scheduleGraphRender();
+      }
+    }
+
+    function onPointerUp(ev) {
+      if (!state.drag || state.drag.pointerId !== ev.pointerId) return;
+      svg.classList.remove("panning");
+      svg.releasePointerCapture(ev.pointerId);
+      const wasNodeDrag = state.drag.type === "node";
+      state.drag = null;
+      if (wasNodeDrag) {
+        renderAll();
+      }
+    }
+
+    function onWheel(ev) {
+      ev.preventDefault();
+      const rect = svg.getBoundingClientRect();
+      const px = (ev.clientX - rect.left) / Math.max(rect.width, 1);
+      const py = (ev.clientY - rect.top) / Math.max(rect.height, 1);
+      const anchorX = state.view.x + px * state.view.w;
+      const anchorY = state.view.y + py * state.view.h;
+
+      const factor = Math.exp(ev.deltaY * 0.0012);
+      const newW = clamp(state.view.w * factor, 220, state.world.w * 4.2);
+      const newH = clamp(state.view.h * factor, 160, state.world.h * 4.2);
+
+      state.view.x = anchorX - (anchorX - state.view.x) * (newW / state.view.w);
+      state.view.y = anchorY - (anchorY - state.view.y) * (newH / state.view.h);
+      state.view.w = newW;
+      state.view.h = newH;
+      clampView();
+      applyViewBox();
+      renderOverlay(state.lastDisplay);
     }
 
     function renderAll() {
-      const { displayNodes, displayEdges } = collectDisplayGraph();
-      renderStatsBox(displayNodes, displayEdges);
-      renderNodeList(displayNodes);
-      renderDetails(displayEdges);
-      renderSvg(displayNodes, displayEdges);
+      const display = collectDisplayGraph();
+      renderGraph(display, false);
+      renderSearchResults();
     }
 
     function wireControls() {
-      const ids = [
-        "scope", "layerFilter", "kindModule", "kindDecl", "kindConcept",
-        "spineOnly", "search", "labelDensity", "maxNodes",
+      const rerenderIds = [
+        "scope", "layerFilter", "domainFilter", "kindModule", "kindDecl", "kindConcept", "spineOnly",
         "edge_imports", "edge_uses_type", "edge_uses_value", "edge_decl_in_module", "edge_binds",
+        "showGenerated", "expandMathlib", "maxNodes",
       ];
-      ids.forEach(id => {
+      for (const id of rerenderIds) {
         const el = byId(id);
-        if (!el) return;
-        const evt = el.tagName === "INPUT" && el.type === "text" ? "input" : "change";
-        el.addEventListener(evt, () => renderAll());
+        if (!el) continue;
+        el.addEventListener("change", () => renderAll());
+      }
+
+      byId("search").addEventListener("input", () => renderSearchResults());
+      byId("search").addEventListener("keydown", (ev) => {
+        if (ev.key === "Enter") {
+          ev.preventDefault();
+          locateFirstMatch();
+        }
       });
 
-      byId("resetView").onclick = () => {
-        setInitialVisible();
+      byId("locateBtn").onclick = () => locateFirstMatch();
+      byId("clearSearch").onclick = () => {
+        byId("search").value = "";
+        renderSearchResults();
+      };
+
+      byId("resetMap").onclick = () => {
+        resetToModuleMap();
+        renderAll();
+        fitViewToDisplay();
+      };
+
+      byId("fitView").onclick = () => fitViewToDisplay();
+
+      byId("clearPins").onclick = () => {
+        state.pinned.clear();
         renderAll();
       };
-      byId("clearView").onclick = () => {
-        state.visible.clear();
-        renderAll();
-      };
-      byId("expandOutBtn").onclick = () => expandOneHop(state.selected, "out");
-      byId("expandInBtn").onclick = () => expandOneHop(state.selected, "in");
+
+      svg.addEventListener("pointerdown", (ev) => {
+        if (ev.target === svg) {
+          state.selectedEdge = null;
+          startPan(ev);
+        }
+      });
+      svg.addEventListener("pointermove", onPointerMove);
+      svg.addEventListener("pointerup", onPointerUp);
+      svg.addEventListener("pointercancel", onPointerUp);
+      svg.addEventListener("wheel", onWheel, { passive: false });
+
+      svg.addEventListener("click", (ev) => {
+        if (ev.target === svg && Date.now() >= state.suppressClickUntil) {
+          state.selected = null;
+          state.selectedEdge = null;
+          renderInspector(state.lastDisplay);
+          renderOverlay(state.lastDisplay);
+        }
+      });
     }
 
     async function boot() {
       try {
         state.graph = await loadData();
         buildIndex();
-        setInitialVisible();
+        initDomainFilter();
+        resetToModuleMap();
         wireControls();
         renderAll();
+        fitViewToDisplay();
       } catch (err) {
         byId("statsBox").textContent = String(err);
-        byId("statsOverlay").textContent = "failed to load graph";
+        byId("overlay").textContent = "failed to load graph";
         byId("details").textContent = String(err);
       }
     }

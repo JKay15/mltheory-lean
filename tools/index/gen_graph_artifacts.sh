@@ -37,6 +37,7 @@ python3 tools/index/gen_subgraph.py \
   --modules "${ROOT_DIR}/artifacts/index/modules.json" \
   --taxonomy "${ROOT_DIR}/docs/meta/taxonomy.yaml" \
   --canon "${ROOT_DIR}/docs/meta/canon.yaml" \
+  --domains "${ROOT_DIR}/docs/meta/domains.yaml" \
   --mathlib-slice "${ROOT_DIR}/artifacts/index/mathlib_slice.json" \
   --mathlib-imports "${ROOT_DIR}/artifacts/index/mathlib_imports.json" \
   --mathlib-hubs "${ROOT_DIR}/artifacts/index/mathlib_hubs.json" \
@@ -55,5 +56,26 @@ python3 tools/index/render_graph_auto_docs.py \
   --usage-graph "${ROOT_DIR}/artifacts/graphs/usage_graph.json" \
   --usage-suggestions "${ROOT_DIR}/artifacts/index/usage_suggestions.json" \
   --out "${ROOT_DIR}/docs/_auto/GraphArtifacts.md"
+
+GRAPH_UI_PUBLIC_AUTO="${ROOT_DIR}/tools/graph_ui/public/_auto"
+GRAPH_UI_DIST_DIR="${ROOT_DIR}/tools/graph_ui/dist"
+GRAPH_UI_DIST_AUTO="${GRAPH_UI_DIST_DIR}/_auto"
+mkdir -p "${GRAPH_UI_PUBLIC_AUTO}" "${GRAPH_UI_DIST_AUTO}"
+
+cp "${ROOT_DIR}/docs/_auto/subgraph.json" "${GRAPH_UI_PUBLIC_AUTO}/subgraph.json"
+cp "${ROOT_DIR}/docs/_auto/subgraph.js" "${GRAPH_UI_PUBLIC_AUTO}/subgraph.js"
+cp "${ROOT_DIR}/docs/_auto/subgraph.json" "${GRAPH_UI_DIST_AUTO}/subgraph.json"
+cp "${ROOT_DIR}/docs/_auto/subgraph.js" "${GRAPH_UI_DIST_AUTO}/subgraph.js"
+cp "${ROOT_DIR}/docs/GraphExplorer.html" "${GRAPH_UI_DIST_DIR}/index.html"
+
+cp "${ROOT_DIR}/artifacts/graphs/decl_graph.json" "${GRAPH_UI_PUBLIC_AUTO}/decl_graph.json"
+cp "${ROOT_DIR}/artifacts/graphs/decl_graph.json" "${GRAPH_UI_DIST_AUTO}/decl_graph.json"
+cp "${ROOT_DIR}/docs/meta/domains.yaml" "${GRAPH_UI_PUBLIC_AUTO}/domains.yaml"
+cp "${ROOT_DIR}/docs/meta/domains.yaml" "${GRAPH_UI_DIST_AUTO}/domains.yaml"
+
+if [[ -f "${ROOT_DIR}/artifacts/index/mathlib_slice.json" ]]; then
+  cp "${ROOT_DIR}/artifacts/index/mathlib_slice.json" "${GRAPH_UI_PUBLIC_AUTO}/mathlib_slice.json"
+  cp "${ROOT_DIR}/artifacts/index/mathlib_slice.json" "${GRAPH_UI_DIST_AUTO}/mathlib_slice.json"
+fi
 
 echo "[gen_graph_artifacts] done"

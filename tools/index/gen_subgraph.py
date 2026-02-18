@@ -102,6 +102,83 @@ def load_canon(path: Path) -> tuple[set[str], set[str]]:
     return mods, decls
 
 
+def as_str_list(value) -> list[str]:
+    if not isinstance(value, list):
+        return []
+    return [x for x in value if isinstance(x, str) and x]
+
+
+def load_domain_profiles(path: Path) -> dict:
+    data = parse_simple_yaml(path)
+
+    def section(name: str) -> dict:
+        sec = data.get(name)
+        return sec if isinstance(sec, dict) else {}
+
+    titles = section("domain_titles")
+    descriptions = section("domain_descriptions")
+    module_roots = section("domain_module_roots")
+    allowed_local_roots = section("domain_allowed_local_roots")
+    concept_binds = section("domain_concept_binds")
+    default_imports = section("domain_default_imports")
+    mathlib_slice_roots = section("domain_mathlib_slice_roots")
+    skills_whitelist = section("domain_skills_whitelist")
+    bridge_modules = section("domain_bridge_modules")
+    adjacent_domains = section("domain_adjacent_domains")
+
+    domain_ids: set[str] = set()
+    for sec in (
+        titles,
+        descriptions,
+        module_roots,
+        allowed_local_roots,
+        concept_binds,
+        default_imports,
+        mathlib_slice_roots,
+        skills_whitelist,
+        bridge_modules,
+        adjacent_domains,
+    ):
+        domain_ids.update(k for k in sec if isinstance(k, str) and k)
+
+    profiles: dict[str, dict] = {}
+    for domain_id in sorted(domain_ids):
+        title_raw = titles.get(domain_id, domain_id)
+        desc_raw = descriptions.get(domain_id, "")
+        profiles[domain_id] = {
+            "id": domain_id,
+            "title": title_raw if isinstance(title_raw, str) else domain_id,
+            "description": desc_raw if isinstance(desc_raw, str) else "",
+            "module_roots": as_str_list(module_roots.get(domain_id)),
+            "allowed_local_roots": as_str_list(allowed_local_roots.get(domain_id)),
+            "concept_binds": as_str_list(concept_binds.get(domain_id)),
+            "default_imports": as_str_list(default_imports.get(domain_id)),
+            "mathlib_slice_roots": as_str_list(mathlib_slice_roots.get(domain_id)),
+            "skills_whitelist": as_str_list(skills_whitelist.get(domain_id)),
+            "bridge_modules": as_str_list(bridge_modules.get(domain_id)),
+            "adjacent_domains": as_str_list(adjacent_domains.get(domain_id)),
+        }
+
+    default_domain = data.get("default_domain")
+    if path.exists() and (not isinstance(default_domain, str) or not default_domain):
+        with path.open("r", encoding="utf-8") as f:
+            for raw in f:
+                line = raw.strip()
+                if not line or line.startswith("#"):
+                    continue
+                if line.startswith("default_domain:"):
+                    default_domain = parse_scalar(line.split(":", 1)[1])
+                    break
+    if not isinstance(default_domain, str) or default_domain not in profiles:
+        default_domain = "all"
+
+    return {
+        "default_domain": default_domain,
+        "profiles": profiles,
+        "source": str(path),
+    }
+
+
 def layer_from_module(module: str) -> str:
     if module.startswith("MLTheory.Core."):
         return "core"
@@ -124,6 +201,12 @@ def main() -> int:
     ap.add_argument("--modules", type=Path, required=True, help="modules.json path")
     ap.add_argument("--taxonomy", type=Path, required=True, help="docs/meta/taxonomy.yaml path")
     ap.add_argument("--canon", type=Path, required=True, help="docs/meta/canon.yaml path")
+    ap.add_argument(
+        "--domains",
+        type=Path,
+        default=Path("docs/meta/domains.yaml"),
+        help="docs/meta/domains.yaml path",
+    )
     ap.add_argument(
         "--mathlib-slice",
         type=Path,
@@ -175,6 +258,8 @@ def main() -> int:
     modules = load_json(args.modules.resolve())
     taxonomy = parse_simple_yaml(args.taxonomy.resolve())
     canon_modules, canon_decls = load_canon(args.canon.resolve())
+    domain_meta = load_domain_profiles(args.domains.resolve())
+    domain_profiles: dict[str, dict] = domain_meta["profiles"]
 
     def load_optional(path: Path) -> dict:
         p = path.resolve()
@@ -211,6 +296,7 @@ def main() -> int:
 
     nodes: list[dict] = []
     seen_nodes: set[str] = set()
+    module_node_ids: set[str] = set()
 
     for row in module_graph.get("nodes", []):
         if not isinstance(row, dict):
@@ -221,6 +307,7 @@ def main() -> int:
         if module_id in seen_nodes:
             continue
         seen_nodes.add(module_id)
+        module_node_ids.add(module_id)
         nodes.append(
             {
                 "id": module_id,
@@ -264,6 +351,7 @@ def main() -> int:
         if module_id in seen_nodes:
             continue
         seen_nodes.add(module_id)
+        module_node_ids.add(module_id)
         nodes.append(
             {
                 "id": module_id,
@@ -281,23 +369,38 @@ def main() -> int:
             continue
         name = row.get("name")
         module = row.get("module")
+        node_kind = row.get("kind")
+        decl_kind = row.get("decl_kind")
+        generated = row.get("generated")
         if not isinstance(name, str) or not isinstance(module, str):
             continue
+        if node_kind != "decl":
+            raise ValueError(f"decl_graph node `{name}` must have kind='decl', got {node_kind!r}")
+        if not isinstance(decl_kind, str) or not decl_kind:
+            raise ValueError(f"decl_graph node `{name}` missing non-empty decl_kind")
+        if not isinstance(generated, bool):
+            raise ValueError(f"decl_graph node `{name}` missing boolean generated")
+        if module not in module_node_ids:
+            raise ValueError(f"decl_graph node `{name}` refers missing module node `{module}`")
         if name in seen_nodes:
             continue
         seen_nodes.add(name)
-        nodes.append(
-            {
-                "id": name,
-                "kind": "decl",
-                "title": name.split(".")[-1],
-                "layer": module_to_layer.get(module, layer_from_module(module)),
-                "spine": (module in canon_modules) or (name in canon_decls) or (name in usage_top),
-                "module": module,
-                "path": module_to_path.get(module, ""),
-                "package": "mathlib" if name.startswith("Mathlib.") else "MLTheory",
-            }
-        )
+        decl_node = {
+            "id": name,
+            "kind": "decl",
+            "title": name.split(".")[-1],
+            "layer": module_to_layer.get(module, layer_from_module(module)),
+            "spine": (module in canon_modules) or (name in canon_decls) or (name in usage_top),
+            "module": module,
+            "decl_kind": decl_kind,
+            "generated": generated,
+            "path": module_to_path.get(module, ""),
+            "package": "mathlib" if name.startswith("Mathlib.") else "MLTheory",
+        }
+        generated_reason = row.get("generated_reason")
+        if isinstance(generated_reason, str) and generated_reason:
+            decl_node["generated_reason"] = generated_reason
+        nodes.append(decl_node)
 
     concept_nodes = taxonomy.get("nodes", [])
     for row in concept_nodes:
@@ -323,6 +426,11 @@ def main() -> int:
 
     edges: list[dict] = []
     seen_edges: set[tuple[str, str, str]] = set()
+    node_kind_by_id: dict[str, str] = {
+        n["id"]: n["kind"]
+        for n in nodes
+        if isinstance(n, dict) and isinstance(n.get("id"), str) and isinstance(n.get("kind"), str)
+    }
 
     def add_edge(src: str, dst: str, etype: str, weight: float | None = None):
         if src not in seen_nodes or dst not in seen_nodes:
@@ -367,8 +475,13 @@ def main() -> int:
             continue
         name = row.get("name")
         module = row.get("module")
-        if isinstance(name, str) and isinstance(module, str):
-            add_edge(name, module, "decl_in_module")
+        if not isinstance(name, str) or not isinstance(module, str):
+            continue
+        if node_kind_by_id.get(name) != "decl":
+            raise ValueError(f"decl_in_module src `{name}` must be decl")
+        if node_kind_by_id.get(module) != "module":
+            raise ValueError(f"decl_in_module dst `{module}` must be module")
+        add_edge(name, module, "decl_in_module")
 
     for row in taxonomy.get("bindings", []):
         if not isinstance(row, dict):
@@ -378,6 +491,68 @@ def main() -> int:
         if not isinstance(node, str) or not isinstance(target, str):
             continue
         add_edge(f"concept:{node}", target, "binds")
+
+    def module_matches_prefix(module_name: str, prefix: str) -> bool:
+        return module_name == prefix or module_name.startswith(f"{prefix}.")
+
+    def path_matches_prefix(path_name: str, prefix: str) -> bool:
+        return path_name.startswith(prefix)
+
+    module_domains: dict[str, list[str]] = {}
+    for node in nodes:
+        if not isinstance(node, dict) or node.get("kind") != "module":
+            continue
+        module_id = node.get("id")
+        module_path = node.get("path", "")
+        if not isinstance(module_id, str):
+            continue
+        if not isinstance(module_path, str):
+            module_path = ""
+        domains: set[str] = set()
+        for domain_id, profile in domain_profiles.items():
+            if any(module_matches_prefix(module_id, root) for root in profile["module_roots"]):
+                domains.add(domain_id)
+            if module_path and any(path_matches_prefix(module_path, root) for root in profile["allowed_local_roots"]):
+                domains.add(domain_id)
+            if module_id in profile["concept_binds"]:
+                domains.add(domain_id)
+        sorted_domains = sorted(domains)
+        node["domains"] = sorted_domains
+        module_domains[module_id] = sorted_domains
+
+    for node in nodes:
+        if not isinstance(node, dict) or node.get("kind") != "decl":
+            continue
+        decl_id = node.get("id")
+        module_id = node.get("module")
+        decl_path = node.get("path", "")
+        if not isinstance(decl_id, str):
+            continue
+        if not isinstance(module_id, str):
+            module_id = ""
+        if not isinstance(decl_path, str):
+            decl_path = ""
+        domains: set[str] = set(module_domains.get(module_id, []))
+        for domain_id, profile in domain_profiles.items():
+            if any(module_matches_prefix(decl_id, root) for root in profile["module_roots"]):
+                domains.add(domain_id)
+            if decl_path and any(path_matches_prefix(decl_path, root) for root in profile["allowed_local_roots"]):
+                domains.add(domain_id)
+        node["domains"] = sorted(domains)
+
+    for node in nodes:
+        if not isinstance(node, dict) or node.get("kind") != "concept":
+            continue
+        concept_id = node.get("id")
+        if not isinstance(concept_id, str):
+            continue
+        concept_short = concept_id.removeprefix("concept:")
+        domains: set[str] = set()
+        for domain_id, profile in domain_profiles.items():
+            binds = set(profile["concept_binds"])
+            if concept_id in binds or concept_short in binds or f"concept:{concept_short}" in binds:
+                domains.add(domain_id)
+        node["domains"] = sorted(domains)
 
     for row in usage_graph.get("edges", []):
         if not isinstance(row, dict):
@@ -402,10 +577,67 @@ def main() -> int:
                 if isinstance(dep, str) and dep in seen_nodes:
                     add_edge(module_id, dep, "imports", 1.0)
 
+    decl_in_module_targets: dict[str, set[str]] = {}
+    for edge in edges:
+        if not isinstance(edge, dict):
+            continue
+        if edge.get("type") != "decl_in_module":
+            continue
+        src = edge.get("src")
+        dst = edge.get("dst")
+        if isinstance(src, str) and isinstance(dst, str):
+            decl_in_module_targets.setdefault(src, set()).add(dst)
+
+    for node in nodes:
+        if not isinstance(node, dict) or node.get("kind") != "decl":
+            continue
+        decl_id = node.get("id")
+        decl_module = node.get("module")
+        if not isinstance(decl_id, str) or not isinstance(decl_module, str):
+            raise ValueError(f"decl node malformed: {node!r}")
+        if node_kind_by_id.get(decl_module) != "module":
+            raise ValueError(f"decl `{decl_id}` references non-module `{decl_module}`")
+        if decl_module not in decl_in_module_targets.get(decl_id, set()):
+            raise ValueError(
+                f"decl `{decl_id}` missing decl_in_module edge to `{decl_module}`"
+            )
+
+    node_domains_by_id: dict[str, set[str]] = {}
+    for node in nodes:
+        if not isinstance(node, dict):
+            continue
+        node_id = node.get("id")
+        raw_domains = node.get("domains", [])
+        if not isinstance(node_id, str):
+            continue
+        domains = set(as_str_list(raw_domains))
+        node["domains"] = sorted(domains)
+        node_domains_by_id[node_id] = domains
+
+    for edge in edges:
+        if not isinstance(edge, dict):
+            continue
+        src = edge.get("src")
+        dst = edge.get("dst")
+        if not isinstance(src, str) or not isinstance(dst, str):
+            continue
+        src_domains = node_domains_by_id.get(src, set())
+        dst_domains = node_domains_by_id.get(dst, set())
+        union_domains = sorted(src_domains | dst_domains)
+        if union_domains:
+            edge["domains"] = union_domains
+        if src_domains and dst_domains and src_domains.isdisjoint(dst_domains):
+            edge["cross_domain"] = True
+
     payload = {
         "generated_at": str(date.today()),
         "node_count": len(nodes),
         "edge_count": len(edges),
+        "domains": {
+            "default_domain": domain_meta["default_domain"],
+            "source": domain_meta["source"],
+            "profiles": [domain_profiles[k] for k in sorted(domain_profiles)],
+        },
         "nodes": sorted(nodes, key=lambda n: (n["kind"], n["id"])),
         "edges": sorted(edges, key=lambda e: (e["type"], e["src"], e["dst"])),
     }

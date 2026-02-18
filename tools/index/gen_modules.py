@@ -67,7 +67,13 @@ def relative_path(root: Path, file_path: Path) -> str:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--root", type=Path, default=Path.cwd(), help="Repository root")
-    ap.add_argument("--src", type=Path, required=True, help="Lean source root")
+    ap.add_argument(
+        "--src",
+        type=Path,
+        action="append",
+        required=True,
+        help="Lean source root (repeatable)",
+    )
     ap.add_argument("--out", type=Path, required=True, help="Output JSON path")
     ap.add_argument(
         "--package",
@@ -78,24 +84,31 @@ def main() -> int:
     args = ap.parse_args()
 
     root = args.root.resolve()
-    src = args.src.resolve()
+    src_roots = [src.resolve() for src in args.src]
     out = args.out.resolve()
 
     records: list[dict] = []
-    for lean_file in sorted(src.rglob("*.lean")):
-        lines = lean_file.read_text(encoding="utf-8").splitlines()
-        mod = module_name(src, lean_file)
-        doc_title = parse_doc_title(lines)
-        rec = {
-            "module": mod,
-            "path": relative_path(root, lean_file),
-            "layer": infer_layer(mod),
-            "imports": parse_imports(lines),
-            "package": args.package,
-        }
-        if doc_title:
-            rec["doc_title"] = doc_title
-        records.append(rec)
+    seen_modules: set[str] = set()
+    for src in src_roots:
+        if not src.exists():
+            continue
+        for lean_file in sorted(src.rglob("*.lean")):
+            lines = lean_file.read_text(encoding="utf-8").splitlines()
+            mod = module_name(src, lean_file)
+            if mod in seen_modules:
+                continue
+            seen_modules.add(mod)
+            doc_title = parse_doc_title(lines)
+            rec = {
+                "module": mod,
+                "path": relative_path(root, lean_file),
+                "layer": infer_layer(mod),
+                "imports": parse_imports(lines),
+                "package": args.package,
+            }
+            if doc_title:
+                rec["doc_title"] = doc_title
+            records.append(rec)
 
     out.parent.mkdir(parents=True, exist_ok=True)
     payload = {
