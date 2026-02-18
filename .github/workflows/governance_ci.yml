@@ -51,3 +51,6 @@ jobs:
 
       - name: Check review views consistency
         run: python3 tools/ci/check_review_views_consistency.py
+
+      - name: Generate MLTheory index artifacts (non-blocking)
+        run: tools/index/gen_mltheory_index.sh

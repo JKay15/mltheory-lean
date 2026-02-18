@@ -2,6 +2,21 @@
 
 Index and graph generation scripts for vNext exploration workflow.
 
+## MLTheory index (Phase 2/3)
+
+Generate code-first module/import artifacts and the auto docs view:
+
+```bash
+tools/index/gen_mltheory_index.sh
+```
+
+Generated files:
+
+- `artifacts/index/modules.json`
+- `artifacts/index/imports.json`
+- `artifacts/graphs/module_graph.json`
+- `docs/_auto/CodeIndex.md`
+
 ## MLTheory -> mathlib structure/slice (Phase 3)
 
 Use the one-shot command:
@@ -43,3 +58,4 @@ Output:
 - mathlib path is resolved from `lake-manifest.json` (no hard-coded `.lake/packages/mathlib`).
 - imports are parsed from Lean source files (`import A B C` supported).
 - slice is computed as closure from direct `Mathlib.*` imports of each `MLTheory*` module.
+- generated JSON artifacts should be refreshed by scripts, not hand-edited.

@@ -1,0 +1,8 @@
+version: 1
+description: Stable API shortlist for MLTheory vNext.
+canonical_modules:
+  - MLTheory.Core.RL.MDP
+  - MLTheory.Methods.RL.MDP
+  - MLTheory.Methods.RL.DynamicProgramming
+  - MLTheory.Methods.Learning.KernelMethods
+canonical_decls: []

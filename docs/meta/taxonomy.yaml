@@ -1,0 +1,37 @@
+version: 1
+description: Minimal concept taxonomy overlay for MLTheory vNext.
+nodes:
+  - id: mltheory
+    title: MLTheory
+    parent: null
+    default_collapsed: false
+  - id: core
+    title: Core
+    parent: mltheory
+    default_collapsed: false
+  - id: methods
+    title: Methods
+    parent: mltheory
+    default_collapsed: false
+  - id: applications
+    title: Applications
+    parent: mltheory
+    default_collapsed: true
+  - id: books
+    title: Books
+    parent: mltheory
+    default_collapsed: true
+
+bindings:
+  - target: MLTheory.Core.RL.MDP
+    kind: module
+    node: core
+    spine: true
+  - target: MLTheory.Methods.RL.DynamicProgramming
+    kind: module
+    node: methods
+    spine: true
+  - target: MLTheory.Methods.Learning.KernelMethods
+    kind: module
+    node: methods
+    spine: true

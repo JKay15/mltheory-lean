@@ -1,0 +1,12 @@
+version: 1
+description: Minimal retrieval aliases for MLTheory vNext.
+aliases:
+  bellman expectation equation:
+    - MLTheory.Core.RL.MDP
+  dynamic programming:
+    - MLTheory.Methods.RL.DynamicProgramming
+  kernel methods:
+    - MLTheory.Methods.Learning.KernelMethods
+  mdp:
+    - MLTheory.Core.RL.MDP
+    - MLTheory.Methods.RL.MDP

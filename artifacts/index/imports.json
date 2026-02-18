@@ -1,0 +1,1217 @@
+{
+  "generated_at": "2026-02-18",
+  "package": "MLTheory",
+  "node_count": 70,
+  "edge_count": 167,
+  "nodes": [
+    "MLTheory.Applications.AI",
+    "MLTheory.Applications.AI.DecisionLearning",
+    "MLTheory.Applications.AI.Generalization",
+    "MLTheory.Applications.LLM",
+    "MLTheory.Applications.LLM.AlignmentObjectives",
+    "MLTheory.Applications.LLM.Autoregressive",
+    "MLTheory.Applications.LLM.Sampling",
+    "MLTheory.Applications.Learning",
+    "MLTheory.Applications.RL",
+    "MLTheory.Basic",
+    "MLTheory.Books.FoML2",
+    "MLTheory.Books.SuttonBartoRL2",
+    "MLTheory.Core",
+    "MLTheory.Core.Learning",
+    "MLTheory.Core.Learning.Capacity",
+    "MLTheory.Core.Learning.FunctionClass",
+    "MLTheory.Core.Learning.PAC",
+    "MLTheory.Core.Probability",
+    "MLTheory.Core.Probability.BasicMeasure",
+    "MLTheory.Core.Probability.Conditioning",
+    "MLTheory.Core.Probability.ProbIneq",
+    "MLTheory.Core.RL",
+    "MLTheory.Core.RL.MDP",
+    "MLTheory.Core.Statistics",
+    "MLTheory.Core.Statistics.Information",
+    "MLTheory.Core.Statistics.Risk",
+    "MLTheory.Methods",
+    "MLTheory.Methods.Bandits",
+    "MLTheory.Methods.Bandits.Adversarial",
+    "MLTheory.Methods.Bandits.BestArmIdentification",
+    "MLTheory.Methods.Bandits.ContextualLinear",
+    "MLTheory.Methods.Bandits.Dueling",
+    "MLTheory.Methods.Bandits.Foundations",
+    "MLTheory.Methods.Bandits.InformationTheory",
+    "MLTheory.Methods.Bandits.LargeActionSpaces",
+    "MLTheory.Methods.Bandits.PureExplorationLinear",
+    "MLTheory.Methods.Bandits.RLBridge",
+    "MLTheory.Methods.Bandits.Stochastic",
+    "MLTheory.Methods.Learning",
+    "MLTheory.Methods.Learning.AdvancedSLT",
+    "MLTheory.Methods.Learning.AutomataLanguage",
+    "MLTheory.Methods.Learning.Capacity",
+    "MLTheory.Methods.Learning.ConcentrationPackaging",
+    "MLTheory.Methods.Learning.Contraction",
+    "MLTheory.Methods.Learning.DiscreteModeling",
+    "MLTheory.Methods.Learning.GeneralizationTools",
+    "MLTheory.Methods.Learning.KernelBayes",
+    "MLTheory.Methods.Learning.KernelMethods",
+    "MLTheory.Methods.Learning.ModelSelection",
+    "MLTheory.Methods.Learning.Rademacher",
+    "MLTheory.Methods.Learning.SVM",
+    "MLTheory.Methods.Learning.Sequential",
+    "MLTheory.Methods.Learning.StoneWeierstrassBridge",
+    "MLTheory.Methods.OCO",
+    "MLTheory.Methods.OCO.BanditConvex",
+    "MLTheory.Methods.OCO.Boosting",
+    "MLTheory.Methods.OCO.DynamicRegret",
+    "MLTheory.Methods.OCO.GamesAndDuality",
+    "MLTheory.Methods.OCO.Generalization",
+    "MLTheory.Methods.OCO.OptimizationCore",
+    "MLTheory.Methods.OR",
+    "MLTheory.Methods.OR.ConvexCore",
+    "MLTheory.Methods.OR.DiscreteOptimization",
+    "MLTheory.Methods.OR.GraphOptimization",
+    "MLTheory.Methods.OR.StochasticMatrix",
+    "MLTheory.Methods.RL",
+    "MLTheory.Methods.RL.DynamicProgramming",
+    "MLTheory.Methods.RL.MDP",
+    "MLTheory.Methods.RL.TemporalDifference",
+    "Mathlib"
+  ],
+  "edges": [
+    {
+      "src": "MLTheory.Applications.AI",
+      "dst": "MLTheory.Applications.AI.DecisionLearning",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Applications.AI",
+      "dst": "MLTheory.Applications.AI.Generalization",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Applications.AI",
+      "dst": "MLTheory.Applications.Learning",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Applications.AI.DecisionLearning",
+      "dst": "MLTheory.Applications.AI.Generalization",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Applications.AI.DecisionLearning",
+      "dst": "MLTheory.Methods.Learning.Capacity",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Applications.AI.DecisionLearning",
+      "dst": "MLTheory.Methods.RL.TemporalDifference",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Applications.AI.Generalization",
+      "dst": "MLTheory.Applications.Learning",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Applications.AI.Generalization",
+      "dst": "MLTheory.Methods.OCO.Generalization",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Applications.LLM",
+      "dst": "MLTheory.Applications.AI",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Applications.LLM",
+      "dst": "MLTheory.Applications.LLM.AlignmentObjectives",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Applications.LLM",
+      "dst": "MLTheory.Applications.LLM.Autoregressive",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Applications.LLM",
+      "dst": "MLTheory.Applications.LLM.Sampling",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Applications.LLM.AlignmentObjectives",
+      "dst": "MLTheory.Applications.LLM.Sampling",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Applications.LLM.Autoregressive",
+      "dst": "MLTheory.Applications.AI.Generalization",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Applications.LLM.Sampling",
+      "dst": "MLTheory.Applications.LLM.Autoregressive",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Applications.Learning",
+      "dst": "MLTheory.Core.Learning",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Applications.Learning",
+      "dst": "MLTheory.Methods.Learning",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Applications.RL",
+      "dst": "MLTheory.Core.RL",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Applications.RL",
+      "dst": "MLTheory.Methods.RL",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Books.FoML2",
+      "dst": "MLTheory.Core.Learning.Capacity",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Books.FoML2",
+      "dst": "MLTheory.Core.Learning.FunctionClass",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Books.FoML2",
+      "dst": "MLTheory.Core.Learning.PAC",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Books.FoML2",
+      "dst": "MLTheory.Methods.Learning.Contraction",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Books.FoML2",
+      "dst": "MLTheory.Methods.Learning.KernelMethods",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Books.FoML2",
+      "dst": "MLTheory.Methods.Learning.ModelSelection",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Books.FoML2",
+      "dst": "MLTheory.Methods.Learning.Rademacher",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Books.FoML2",
+      "dst": "MLTheory.Methods.Learning.SVM",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Books.SuttonBartoRL2",
+      "dst": "MLTheory.Core.RL.MDP",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Books.SuttonBartoRL2",
+      "dst": "MLTheory.Methods.RL.DynamicProgramming",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Core",
+      "dst": "MLTheory.Core.Learning",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Core",
+      "dst": "MLTheory.Core.Probability",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Core",
+      "dst": "MLTheory.Core.RL",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Core",
+      "dst": "MLTheory.Core.Statistics",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Core.Learning",
+      "dst": "MLTheory.Core.Learning.Capacity",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Core.Learning",
+      "dst": "MLTheory.Core.Learning.FunctionClass",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Core.Learning",
+      "dst": "MLTheory.Core.Learning.PAC",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Core.Learning.Capacity",
+      "dst": "Mathlib",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Core.Learning.FunctionClass",
+      "dst": "Mathlib",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Core.Learning.PAC",
+      "dst": "Mathlib",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Core.Probability",
+      "dst": "MLTheory.Core.Probability.BasicMeasure",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Core.Probability",
+      "dst": "MLTheory.Core.Probability.Conditioning",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Core.Probability",
+      "dst": "MLTheory.Core.Probability.ProbIneq",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Core.Probability.BasicMeasure",
+      "dst": "MLTheory.Core.Probability.Conditioning",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Core.Probability.BasicMeasure",
+      "dst": "Mathlib",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Core.Probability.Conditioning",
+      "dst": "Mathlib",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Core.Probability.ProbIneq",
+      "dst": "Mathlib",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Core.RL",
+      "dst": "MLTheory.Core.RL.MDP",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Core.RL.MDP",
+      "dst": "Mathlib",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Core.Statistics",
+      "dst": "MLTheory.Core.Statistics.Information",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Core.Statistics",
+      "dst": "MLTheory.Core.Statistics.Risk",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Core.Statistics.Information",
+      "dst": "Mathlib",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Core.Statistics.Risk",
+      "dst": "Mathlib",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods",
+      "dst": "MLTheory.Methods.Bandits",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods",
+      "dst": "MLTheory.Methods.Learning",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods",
+      "dst": "MLTheory.Methods.OCO",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods",
+      "dst": "MLTheory.Methods.OR",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods",
+      "dst": "MLTheory.Methods.RL",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Bandits",
+      "dst": "MLTheory.Methods.Bandits.Adversarial",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Bandits",
+      "dst": "MLTheory.Methods.Bandits.BestArmIdentification",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Bandits",
+      "dst": "MLTheory.Methods.Bandits.ContextualLinear",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Bandits",
+      "dst": "MLTheory.Methods.Bandits.Dueling",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Bandits",
+      "dst": "MLTheory.Methods.Bandits.Foundations",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Bandits",
+      "dst": "MLTheory.Methods.Bandits.InformationTheory",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Bandits",
+      "dst": "MLTheory.Methods.Bandits.LargeActionSpaces",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Bandits",
+      "dst": "MLTheory.Methods.Bandits.PureExplorationLinear",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Bandits",
+      "dst": "MLTheory.Methods.Bandits.RLBridge",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Bandits",
+      "dst": "MLTheory.Methods.Bandits.Stochastic",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Bandits",
+      "dst": "MLTheory.Methods.OR",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Bandits.Adversarial",
+      "dst": "MLTheory.Methods.Bandits.Foundations",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Bandits.Adversarial",
+      "dst": "Mathlib",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Bandits.BestArmIdentification",
+      "dst": "MLTheory.Methods.Bandits.Foundations",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Bandits.BestArmIdentification",
+      "dst": "Mathlib",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Bandits.ContextualLinear",
+      "dst": "MLTheory.Methods.Bandits.Foundations",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Bandits.ContextualLinear",
+      "dst": "Mathlib",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Bandits.Dueling",
+      "dst": "MLTheory.Methods.Bandits.Foundations",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Bandits.Dueling",
+      "dst": "Mathlib",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Bandits.Foundations",
+      "dst": "Mathlib",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Bandits.InformationTheory",
+      "dst": "MLTheory.Methods.Bandits.Stochastic",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Bandits.InformationTheory",
+      "dst": "Mathlib",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Bandits.LargeActionSpaces",
+      "dst": "MLTheory.Methods.Bandits.Foundations",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Bandits.LargeActionSpaces",
+      "dst": "Mathlib",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Bandits.PureExplorationLinear",
+      "dst": "MLTheory.Methods.Bandits.Foundations",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Bandits.PureExplorationLinear",
+      "dst": "Mathlib",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Bandits.RLBridge",
+      "dst": "MLTheory.Methods.Bandits.Foundations",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Bandits.RLBridge",
+      "dst": "MLTheory.Methods.RL.TemporalDifference",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Bandits.RLBridge",
+      "dst": "Mathlib",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Bandits.Stochastic",
+      "dst": "MLTheory.Methods.Bandits.Foundations",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Bandits.Stochastic",
+      "dst": "Mathlib",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Learning",
+      "dst": "MLTheory.Methods.Learning.AdvancedSLT",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Learning",
+      "dst": "MLTheory.Methods.Learning.AutomataLanguage",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Learning",
+      "dst": "MLTheory.Methods.Learning.Capacity",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Learning",
+      "dst": "MLTheory.Methods.Learning.ConcentrationPackaging",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Learning",
+      "dst": "MLTheory.Methods.Learning.Contraction",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Learning",
+      "dst": "MLTheory.Methods.Learning.DiscreteModeling",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Learning",
+      "dst": "MLTheory.Methods.Learning.GeneralizationTools",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Learning",
+      "dst": "MLTheory.Methods.Learning.KernelBayes",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Learning",
+      "dst": "MLTheory.Methods.Learning.KernelMethods",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Learning",
+      "dst": "MLTheory.Methods.Learning.ModelSelection",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Learning",
+      "dst": "MLTheory.Methods.Learning.Rademacher",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Learning",
+      "dst": "MLTheory.Methods.Learning.SVM",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Learning",
+      "dst": "MLTheory.Methods.Learning.Sequential",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Learning",
+      "dst": "MLTheory.Methods.Learning.StoneWeierstrassBridge",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Learning.AdvancedSLT",
+      "dst": "MLTheory.Methods.Learning.Capacity",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Learning.AdvancedSLT",
+      "dst": "Mathlib",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Learning.AutomataLanguage",
+      "dst": "Mathlib",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Learning.Capacity",
+      "dst": "MLTheory.Core.Learning.Capacity",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Learning.Capacity",
+      "dst": "MLTheory.Core.Probability.ProbIneq",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Learning.Capacity",
+      "dst": "Mathlib",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Learning.ConcentrationPackaging",
+      "dst": "MLTheory.Methods.Learning.GeneralizationTools",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Learning.ConcentrationPackaging",
+      "dst": "Mathlib",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Learning.Contraction",
+      "dst": "MLTheory.Methods.Learning.Rademacher",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Learning.DiscreteModeling",
+      "dst": "MLTheory.Methods.Learning.AutomataLanguage",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Learning.DiscreteModeling",
+      "dst": "Mathlib",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Learning.GeneralizationTools",
+      "dst": "MLTheory.Core.Learning.PAC",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Learning.GeneralizationTools",
+      "dst": "MLTheory.Methods.Learning.Rademacher",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Learning.KernelBayes",
+      "dst": "MLTheory.Methods.Learning.KernelMethods",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Learning.KernelBayes",
+      "dst": "Mathlib",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Learning.KernelMethods",
+      "dst": "Mathlib",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Learning.ModelSelection",
+      "dst": "Mathlib",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Learning.Rademacher",
+      "dst": "MLTheory.Core.Learning.FunctionClass",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Learning.SVM",
+      "dst": "Mathlib",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Learning.Sequential",
+      "dst": "MLTheory.Methods.OCO.OptimizationCore",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Learning.Sequential",
+      "dst": "Mathlib",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.Learning.StoneWeierstrassBridge",
+      "dst": "Mathlib",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.OCO",
+      "dst": "MLTheory.Methods.OCO.BanditConvex",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.OCO",
+      "dst": "MLTheory.Methods.OCO.Boosting",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.OCO",
+      "dst": "MLTheory.Methods.OCO.DynamicRegret",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.OCO",
+      "dst": "MLTheory.Methods.OCO.GamesAndDuality",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.OCO",
+      "dst": "MLTheory.Methods.OCO.Generalization",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.OCO",
+      "dst": "MLTheory.Methods.OCO.OptimizationCore",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.OCO",
+      "dst": "MLTheory.Methods.OR",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.OCO.BanditConvex",
+      "dst": "MLTheory.Methods.OCO.OptimizationCore",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.OCO.BanditConvex",
+      "dst": "MLTheory.Methods.OR.ConvexCore",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.OCO.BanditConvex",
+      "dst": "Mathlib",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.OCO.Boosting",
+      "dst": "MLTheory.Methods.OCO.OptimizationCore",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.OCO.Boosting",
+      "dst": "MLTheory.Methods.OR.ConvexCore",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.OCO.Boosting",
+      "dst": "Mathlib",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.OCO.DynamicRegret",
+      "dst": "MLTheory.Methods.OCO.OptimizationCore",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.OCO.DynamicRegret",
+      "dst": "MLTheory.Methods.OR.ConvexCore",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.OCO.DynamicRegret",
+      "dst": "Mathlib",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.OCO.GamesAndDuality",
+      "dst": "MLTheory.Methods.OCO.OptimizationCore",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.OCO.GamesAndDuality",
+      "dst": "MLTheory.Methods.OR.ConvexCore",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.OCO.GamesAndDuality",
+      "dst": "Mathlib",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.OCO.Generalization",
+      "dst": "MLTheory.Core.Learning.PAC",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.OCO.Generalization",
+      "dst": "MLTheory.Methods.OCO.OptimizationCore",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.OCO.OptimizationCore",
+      "dst": "MLTheory.Methods.OR.ConvexCore",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.OCO.OptimizationCore",
+      "dst": "Mathlib",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.OR",
+      "dst": "MLTheory.Methods.OR.ConvexCore",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.OR",
+      "dst": "MLTheory.Methods.OR.DiscreteOptimization",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.OR",
+      "dst": "MLTheory.Methods.OR.GraphOptimization",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.OR",
+      "dst": "MLTheory.Methods.OR.StochasticMatrix",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.OR.ConvexCore",
+      "dst": "Mathlib",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.OR.DiscreteOptimization",
+      "dst": "MLTheory.Methods.OR.ConvexCore",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.OR.DiscreteOptimization",
+      "dst": "Mathlib",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.OR.GraphOptimization",
+      "dst": "MLTheory.Methods.OR.ConvexCore",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.OR.GraphOptimization",
+      "dst": "Mathlib",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.OR.StochasticMatrix",
+      "dst": "MLTheory.Methods.OR.ConvexCore",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.OR.StochasticMatrix",
+      "dst": "Mathlib",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.RL",
+      "dst": "MLTheory.Methods.RL.DynamicProgramming",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.RL",
+      "dst": "MLTheory.Methods.RL.MDP",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.RL",
+      "dst": "MLTheory.Methods.RL.TemporalDifference",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.RL.DynamicProgramming",
+      "dst": "MLTheory.Core.RL.MDP",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.RL.DynamicProgramming",
+      "dst": "Mathlib",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.RL.MDP",
+      "dst": "MLTheory.Core.RL.MDP",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.RL.MDP",
+      "dst": "MLTheory.Methods.RL.DynamicProgramming",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.RL.TemporalDifference",
+      "dst": "MLTheory.Methods.RL.MDP",
+      "type": "imports",
+      "package": "MLTheory"
+    },
+    {
+      "src": "MLTheory.Methods.RL.TemporalDifference",
+      "dst": "Mathlib",
+      "type": "imports",
+      "package": "MLTheory"
+    }
+  ],
+  "fan_in": {
+    "MLTheory.Applications.AI": 1,
+    "MLTheory.Applications.AI.DecisionLearning": 1,
+    "MLTheory.Applications.AI.Generalization": 3,
+    "MLTheory.Applications.LLM.AlignmentObjectives": 1,
+    "MLTheory.Applications.LLM.Autoregressive": 2,
+    "MLTheory.Applications.LLM.Sampling": 2,
+    "MLTheory.Applications.Learning": 2,
+    "MLTheory.Core.Learning": 2,
+    "MLTheory.Core.Learning.Capacity": 3,
+    "MLTheory.Core.Learning.FunctionClass": 3,
+    "MLTheory.Core.Learning.PAC": 4,
+    "MLTheory.Core.Probability": 1,
+    "MLTheory.Core.Probability.BasicMeasure": 1,
+    "MLTheory.Core.Probability.Conditioning": 2,
+    "MLTheory.Core.Probability.ProbIneq": 2,
+    "MLTheory.Core.RL": 2,
+    "MLTheory.Core.RL.MDP": 4,
+    "MLTheory.Core.Statistics": 1,
+    "MLTheory.Core.Statistics.Information": 1,
+    "MLTheory.Core.Statistics.Risk": 1,
+    "MLTheory.Methods.Bandits": 1,
+    "MLTheory.Methods.Bandits.Adversarial": 1,
+    "MLTheory.Methods.Bandits.BestArmIdentification": 1,
+    "MLTheory.Methods.Bandits.ContextualLinear": 1,
+    "MLTheory.Methods.Bandits.Dueling": 1,
+    "MLTheory.Methods.Bandits.Foundations": 9,
+    "MLTheory.Methods.Bandits.InformationTheory": 1,
+    "MLTheory.Methods.Bandits.LargeActionSpaces": 1,
+    "MLTheory.Methods.Bandits.PureExplorationLinear": 1,
+    "MLTheory.Methods.Bandits.RLBridge": 1,
+    "MLTheory.Methods.Bandits.Stochastic": 2,
+    "MLTheory.Methods.Learning": 2,
+    "MLTheory.Methods.Learning.AdvancedSLT": 1,
+    "MLTheory.Methods.Learning.AutomataLanguage": 2,
+    "MLTheory.Methods.Learning.Capacity": 3,
+    "MLTheory.Methods.Learning.ConcentrationPackaging": 1,
+    "MLTheory.Methods.Learning.Contraction": 2,
+    "MLTheory.Methods.Learning.DiscreteModeling": 1,
+    "MLTheory.Methods.Learning.GeneralizationTools": 2,
+    "MLTheory.Methods.Learning.KernelBayes": 1,
+    "MLTheory.Methods.Learning.KernelMethods": 3,
+    "MLTheory.Methods.Learning.ModelSelection": 2,
+    "MLTheory.Methods.Learning.Rademacher": 4,
+    "MLTheory.Methods.Learning.SVM": 2,
+    "MLTheory.Methods.Learning.Sequential": 1,
+    "MLTheory.Methods.Learning.StoneWeierstrassBridge": 1,
+    "MLTheory.Methods.OCO": 1,
+    "MLTheory.Methods.OCO.BanditConvex": 1,
+    "MLTheory.Methods.OCO.Boosting": 1,
+    "MLTheory.Methods.OCO.DynamicRegret": 1,
+    "MLTheory.Methods.OCO.GamesAndDuality": 1,
+    "MLTheory.Methods.OCO.Generalization": 2,
+    "MLTheory.Methods.OCO.OptimizationCore": 7,
+    "MLTheory.Methods.OR": 3,
+    "MLTheory.Methods.OR.ConvexCore": 9,
+    "MLTheory.Methods.OR.DiscreteOptimization": 1,
+    "MLTheory.Methods.OR.GraphOptimization": 1,
+    "MLTheory.Methods.OR.StochasticMatrix": 1,
+    "MLTheory.Methods.RL": 2,
+    "MLTheory.Methods.RL.DynamicProgramming": 3,
+    "MLTheory.Methods.RL.MDP": 2,
+    "MLTheory.Methods.RL.TemporalDifference": 3,
+    "Mathlib": 41
+  },
+  "fan_out": {
+    "MLTheory.Applications.AI": 3,
+    "MLTheory.Applications.AI.DecisionLearning": 3,
+    "MLTheory.Applications.AI.Generalization": 2,
+    "MLTheory.Applications.LLM": 4,
+    "MLTheory.Applications.LLM.AlignmentObjectives": 1,
+    "MLTheory.Applications.LLM.Autoregressive": 1,
+    "MLTheory.Applications.LLM.Sampling": 1,
+    "MLTheory.Applications.Learning": 2,
+    "MLTheory.Applications.RL": 2,
+    "MLTheory.Books.FoML2": 8,
+    "MLTheory.Books.SuttonBartoRL2": 2,
+    "MLTheory.Core": 4,
+    "MLTheory.Core.Learning": 3,
+    "MLTheory.Core.Learning.Capacity": 1,
+    "MLTheory.Core.Learning.FunctionClass": 1,
+    "MLTheory.Core.Learning.PAC": 1,
+    "MLTheory.Core.Probability": 3,
+    "MLTheory.Core.Probability.BasicMeasure": 2,
+    "MLTheory.Core.Probability.Conditioning": 1,
+    "MLTheory.Core.Probability.ProbIneq": 1,
+    "MLTheory.Core.RL": 1,
+    "MLTheory.Core.RL.MDP": 1,
+    "MLTheory.Core.Statistics": 2,
+    "MLTheory.Core.Statistics.Information": 1,
+    "MLTheory.Core.Statistics.Risk": 1,
+    "MLTheory.Methods": 5,
+    "MLTheory.Methods.Bandits": 11,
+    "MLTheory.Methods.Bandits.Adversarial": 2,
+    "MLTheory.Methods.Bandits.BestArmIdentification": 2,
+    "MLTheory.Methods.Bandits.ContextualLinear": 2,
+    "MLTheory.Methods.Bandits.Dueling": 2,
+    "MLTheory.Methods.Bandits.Foundations": 1,
+    "MLTheory.Methods.Bandits.InformationTheory": 2,
+    "MLTheory.Methods.Bandits.LargeActionSpaces": 2,
+    "MLTheory.Methods.Bandits.PureExplorationLinear": 2,
+    "MLTheory.Methods.Bandits.RLBridge": 3,
+    "MLTheory.Methods.Bandits.Stochastic": 2,
+    "MLTheory.Methods.Learning": 14,
+    "MLTheory.Methods.Learning.AdvancedSLT": 2,
+    "MLTheory.Methods.Learning.AutomataLanguage": 1,
+    "MLTheory.Methods.Learning.Capacity": 3,
+    "MLTheory.Methods.Learning.ConcentrationPackaging": 2,
+    "MLTheory.Methods.Learning.Contraction": 1,
+    "MLTheory.Methods.Learning.DiscreteModeling": 2,
+    "MLTheory.Methods.Learning.GeneralizationTools": 2,
+    "MLTheory.Methods.Learning.KernelBayes": 2,
+    "MLTheory.Methods.Learning.KernelMethods": 1,
+    "MLTheory.Methods.Learning.ModelSelection": 1,
+    "MLTheory.Methods.Learning.Rademacher": 1,
+    "MLTheory.Methods.Learning.SVM": 1,
+    "MLTheory.Methods.Learning.Sequential": 2,
+    "MLTheory.Methods.Learning.StoneWeierstrassBridge": 1,
+    "MLTheory.Methods.OCO": 7,
+    "MLTheory.Methods.OCO.BanditConvex": 3,
+    "MLTheory.Methods.OCO.Boosting": 3,
+    "MLTheory.Methods.OCO.DynamicRegret": 3,
+    "MLTheory.Methods.OCO.GamesAndDuality": 3,
+    "MLTheory.Methods.OCO.Generalization": 2,
+    "MLTheory.Methods.OCO.OptimizationCore": 2,
+    "MLTheory.Methods.OR": 4,
+    "MLTheory.Methods.OR.ConvexCore": 1,
+    "MLTheory.Methods.OR.DiscreteOptimization": 2,
+    "MLTheory.Methods.OR.GraphOptimization": 2,
+    "MLTheory.Methods.OR.StochasticMatrix": 2,
+    "MLTheory.Methods.RL": 3,
+    "MLTheory.Methods.RL.DynamicProgramming": 2,
+    "MLTheory.Methods.RL.MDP": 2,
+    "MLTheory.Methods.RL.TemporalDifference": 2
+  }
+}

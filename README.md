@@ -22,6 +22,21 @@ tools/ci/check_no_sorry_axiom.sh
 tools/ci/check_placeholder_policy.sh
 ```
 
+## 索引与图谱产物（vNext）
+
+```bash
+tools/index/gen_mltheory_index.sh
+tools/index/gen_mathlib_slice.sh
+tools/index/gen_decl_graph.sh
+```
+
+主要产物：
+
+- `artifacts/index/modules.json` / `artifacts/index/imports.json`
+- `artifacts/index/mathlib_slice.json` / `artifacts/index/mltheory_to_mathlib.json`
+- `artifacts/graphs/module_graph.json` / `artifacts/graphs/decl_graph.json`
+- `docs/_auto/CodeIndex.md`
+
 ## 文档系统（SSOT）
 
 - 单一事实源：`/Users/xiongjiangkai/xjk_papers/MLTheory/docs/ssot/registry.json`
@@ -29,6 +44,10 @@ tools/ci/check_placeholder_policy.sh
 - 派生文档生成：`python3 tools/docs/sync_docs.py --write`
 
 除 `registry.json` 外，`docs/*.md` 与 `docs/books/*.md` 都是派生文件，不直接手改正文数据。
+
+`docs/meta/*.yaml` 与 `docs/_auto/*` 用于 vNext 的增量元数据和自动视图：
+- `docs/meta/`：taxonomy/aliases/canon（人工维护，增量信息）
+- `docs/_auto/`：由脚本生成（机器视图）
 
 ## 下游依赖（论文模板仓）
 

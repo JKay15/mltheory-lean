@@ -23,6 +23,11 @@
 | [StructureCleanupCandidates.md](./StructureCleanupCandidates.md) | 结构重整候选清单（分批/窗口/替代入口/风险） |
 | [books/README.md](./books/README.md) | 书籍覆盖索引页 |
 | [Glossary.md](./Glossary.md) | 术语白话表（减少黑话沟通成本） |
+| [meta/taxonomy.yaml](./meta/taxonomy.yaml) | vNext 概念树与绑定（增量 meta） |
+| [meta/aliases.yaml](./meta/aliases.yaml) | vNext 检索别名表（增量 meta） |
+| [meta/canon.yaml](./meta/canon.yaml) | vNext 稳定 API 清单（增量 meta） |
+| [_auto/README.md](./_auto/README.md) | 自动视图目录说明（生成入口） |
+| [_auto/CodeIndex.md](./_auto/CodeIndex.md) | 代码优先模块/import 自动视图 |
 | [ssot/registry.json](./ssot/registry.json) | 单一事实源（唯一可手改数据文件） |
 | [ssot/schema.json](./ssot/schema.json) | SSOT 字段契约 |
 
@@ -40,7 +45,8 @@
 1. 先更新 `ssot/registry.json`，再运行文档生成脚本。
 2. 执行 `python3 tools/docs/validate_ssot.py` 校验字段契约。
 3. 执行 `python3 tools/docs/sync_docs.py --write` 生成派生文档。
-4. 若有删除或替代，必须在 `DecisionLog.md` 留痕。
+4. 执行 `tools/index/gen_mltheory_index.sh` 更新 `artifacts/index` 与 `docs/_auto`。
+5. 若有删除或替代，必须在 `DecisionLog.md` 留痕。
 
 ## ToolForest 快速上手
 1. 验收当前一轮改动：先看 [ReviewDashboard.md](./ReviewDashboard.md)。

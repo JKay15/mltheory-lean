@@ -169,3 +169,4 @@
 | 2026-02-18 | 执行 Phase 1 占位清理：Core/Methods 层删除 `*Placeholder*` theorem/lemma，统一替换为 `...Spec : Prop` 声明，并修复 RL bridge 到新 Spec 接口。 | locked | 消除检索与图谱噪音源，确保 Core/Methods 未完成内容以可追踪规格表达而非假定理。 |
 | 2026-02-18 | 落地 Phase 3 的 mathlib 结构探索脚本：从 `lake-manifest.json` 自动定位 mathlib，生成 modules/imports/hubs/aggregators/slice 与 `MLTheory→mathlib` 映射产物。 | active | 形成可重复的一键索引与切片管线，为限域检索与后续子图构建提供机器可读基础数据。 |
 | 2026-02-18 | 落地 Phase 4 的声明依赖导出：新增 `tools/index/ExtractDeclDeps.lean` 与 `gen_decl_graph.sh`，导出 `uses_type/uses_value` 到 `artifacts/graphs/decl_graph.json`。 | active | 子图从模块级 import 图升级到声明级真实依赖边，可用于邻域检索与“骨干+可展开”可视化。 |
+| 2026-02-18 | 落地 Phase 2/3 的代码优先索引：新增 docs/meta(taxonomy/aliases/canon)、tools/index/gen_modules.py + gen_imports.py + gen_mltheory_index.sh，生成 artifacts/index/modules.json/imports.json、artifacts/graphs/module_graph.json 与 docs/_auto/CodeIndex.md。 | active | 把“全量模块枚举”从 SSOT 主链路降级为自动发现+增量 meta，支持 slice/graph 检索与 docs/_auto 自动视图。 |
