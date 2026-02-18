@@ -376,6 +376,12 @@
             <option value="3">3-hop</option>
           </select>
         </label>
+        <label>Layout
+          <select id="layoutMode">
+            <option value="layered" selected>layered</option>
+            <option value="radial">radial</option>
+          </select>
+        </label>
       </div>
 
       <div class="block">
@@ -393,6 +399,14 @@
         <label><input id="edge_uses_value" type="checkbox" /> uses_value</label>
         <label><input id="edge_decl_in_module" type="checkbox" /> decl_in_module</label>
         <label><input id="edge_binds" type="checkbox" /> binds</label>
+        <label>Max edges on canvas
+          <select id="maxEdges">
+            <option value="1500">1500</option>
+            <option value="3000">3000</option>
+            <option value="5000" selected>5000</option>
+            <option value="8000">8000</option>
+          </select>
+        </label>
       </div>
 
       <div class="block">
@@ -496,6 +510,7 @@
       searchMatches: [],
       domainProfiles: new Map(),
       dataSource: "source: loading...",
+      edgeCapApplied: false,
     };
 
     const byId = (id) => document.getElementById(id);
@@ -563,6 +578,17 @@
         a.id.localeCompare(b.id)
       );
       return rows;
+    }
+
+    function edgePriority(edgeType) {
+      if (edgeType === "imports") return 0;
+      if (edgeType === "decl_in_module") return 1;
+      if (edgeType === "binds") return 2;
+      if (edgeType === "uses_value") return 3;
+      if (edgeType === "uses_type") return 4;
+      if (edgeType === "used_recently") return 5;
+      if (edgeType === "alias_of") return 6;
+      return 9;
     }
 
     function isEdgeTypeEnabled(type) {
@@ -897,7 +923,22 @@
         if (!nodeSet.has(e.src) || !nodeSet.has(e.dst)) continue;
         edges.push(e);
       }
-      return collapseMathlib(nodes, edges);
+      const maxEdges = Number(byId("maxEdges").value || "5000");
+      let limitedEdges = edges;
+      state.edgeCapApplied = false;
+      if (Number.isFinite(maxEdges) && maxEdges > 0 && edges.length > maxEdges) {
+        limitedEdges = edges
+          .slice()
+          .sort((a, b) =>
+            edgePriority(a.type) - edgePriority(b.type) ||
+            ((b.weight || 1) - (a.weight || 1)) ||
+            a.src.localeCompare(b.src) ||
+            a.dst.localeCompare(b.dst)
+          )
+          .slice(0, maxEdges);
+        state.edgeCapApplied = true;
+      }
+      return collapseMathlib(nodes, limitedEdges);
     }
 
     function collectDisplayGraph() {
@@ -912,7 +953,7 @@
       return collectModuleMapGraph(maxNodes);
     }
 
-    function computeLayout(displayNodes) {
+    function computeLayeredLayout(displayNodes) {
       const W = state.world.w;
       const H = state.world.h;
       const M = 80;
@@ -990,7 +1031,85 @@
         pos.set(n.id, [x, y]);
       }
 
-      state.basePos = pos;
+      return pos;
+    }
+
+    function computeRadialLayout(displayNodes) {
+      const W = state.world.w;
+      const H = state.world.h;
+      const M = 80;
+      const pos = new Map();
+      const cx = W / 2;
+      const cy = H / 2;
+
+      const layerRadius = {
+        core: 230,
+        methods: 340,
+        applications: 450,
+        books: 560,
+        other: 640,
+        mathlib: 730,
+      };
+
+      const concepts = displayNodes.filter((n) => n.kind === "concept").sort((a, b) => a.id.localeCompare(b.id));
+      for (let i = 0; i < concepts.length; i++) {
+        const a = (-Math.PI / 2) + ((2 * Math.PI) * i) / Math.max(1, concepts.length);
+        pos.set(concepts[i].id, [cx + Math.cos(a) * 110, cy + Math.sin(a) * 110]);
+      }
+
+      const modules = displayNodes.filter((n) => n.kind === "module").sort((a, b) =>
+        layerKey(a).localeCompare(layerKey(b)) || a.id.localeCompare(b.id)
+      );
+      for (const node of modules) {
+        const r = layerRadius[layerKey(node)] || layerRadius.other;
+        const seed = hashInt(node.id);
+        const angle = ((seed % 360) * Math.PI) / 180;
+        const jitter = ((seed >>> 9) % 40) - 20;
+        const x = clamp(cx + Math.cos(angle) * (r + jitter), M, W - M);
+        const y = clamp(cy + Math.sin(angle) * (r + jitter), M, H - M);
+        pos.set(node.id, [x, y]);
+      }
+
+      const decls = displayNodes.filter((n) => n.kind === "decl");
+      const declByModule = new Map();
+      for (const d of decls) {
+        const mod = typeof d.module === "string" && d.module ? d.module : "@orphans";
+        if (!declByModule.has(mod)) declByModule.set(mod, []);
+        declByModule.get(mod).push(d);
+      }
+
+      for (const [mod, rows] of declByModule.entries()) {
+        rows.sort((a, b) => degreeOf(b.id) - degreeOf(a.id) || a.id.localeCompare(b.id));
+        const anchor = pos.get(mod) || [cx, cy];
+        const seed = hashInt(mod);
+        const slots = 16;
+        for (let i = 0; i < rows.length; i++) {
+          const ring = Math.floor(i / slots);
+          const slot = i % slots;
+          const angle = (((seed % 360) + slot * (360 / slots)) * Math.PI) / 180;
+          const r = 28 + ring * 20;
+          const x = clamp(anchor[0] + Math.cos(angle) * r, M, W - M);
+          const y = clamp(anchor[1] + Math.sin(angle) * r, M, H - M);
+          pos.set(rows[i].id, [x, y]);
+        }
+      }
+
+      for (const n of displayNodes) {
+        if (pos.has(n.id)) continue;
+        const h = hashInt(n.id);
+        const x = 120 + (h % 2000);
+        const y = 180 + ((h >>> 10) % 1050);
+        pos.set(n.id, [x, y]);
+      }
+
+      return pos;
+    }
+
+    function computeLayout(displayNodes) {
+      const mode = byId("layoutMode").value || "layered";
+      state.basePos = mode === "radial"
+        ? computeRadialLayout(displayNodes)
+        : computeLayeredLayout(displayNodes);
     }
 
     function nodePos(id) {
@@ -1029,7 +1148,7 @@
       const edges = display.edges.filter((e) => displayed.has(e.src) && displayed.has(e.dst));
 
       const edgeG = document.createElementNS("http://www.w3.org/2000/svg", "g");
-      for (const e of edges.slice(0, 8000)) {
+      for (const e of edges) {
         const a = nodePos(e.src);
         const b = nodePos(e.dst);
         const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
@@ -1334,12 +1453,15 @@
       const edgeType = state.selectedEdge ? state.selectedEdge.type : "-";
       const activeDomain = byId("domainFilter").value;
       const mode = activeViewMode();
+      const layout = byId("layoutMode").value || "layered";
+      const maxEdges = Number(byId("maxEdges").value || "5000");
       byId("overlay").innerHTML = [
         `<div><strong>visible</strong> nodes: <code>${display.nodes.length}</code>, edges: <code>${display.edges.length}</code></div>`,
         `<div>selected node: <code>${state.selected || "(none)"}</code></div>`,
         `<div>selected edge type: <code>${edgeType}</code></div>`,
         `<div>active domain: <code>${activeDomain}</code></div>`,
         `<div>zoom: <code>${(state.world.w / state.view.w).toFixed(2)}x</code> | pin count: <code>${state.pinned.size}</code></div>`,
+        `<div>layout: <code>${layout}</code> | maxEdges: <code>${maxEdges}</code>${state.edgeCapApplied ? " (capped)" : ""}</div>`,
       ].join("");
 
       byId("statsBox").innerHTML = [
@@ -1676,7 +1798,7 @@
       const rerenderIds = [
         "scope", "layerFilter", "domainFilter", "kindModule", "kindDecl", "kindConcept", "spineOnly",
         "edge_imports", "edge_uses_type", "edge_uses_value", "edge_decl_in_module", "edge_binds",
-        "showGenerated", "expandMathlib", "maxNodes", "neighborhoodDepth",
+        "showGenerated", "expandMathlib", "maxNodes", "maxEdges", "neighborhoodDepth", "layoutMode",
       ];
       for (const id of rerenderIds) {
         const el = byId(id);
