@@ -343,7 +343,7 @@ def render_gaps_md(ctx: ProblemContext) -> str:
 
 def render_spec_lean(ctx: ProblemContext) -> str:
     domain_label = ", ".join(ctx.domains)
-    return f"""import MLTheory\n\nnamespace {ctx.namespace}\n\n/-- Intake v2 generated spec for {ctx.problem_title}.\nDomains: {domain_label}.\nThis declaration is intentionally minimal and compilable. -/\ndef ProblemSpec : Prop := True\n\n/-- Spec witness: keeps Lean Commit stage compilable without placeholder theorem names. -/\ntheorem problemSpec_holds : ProblemSpec := by\n  trivial\n\nend {ctx.namespace}\n"""
+    return f"""import MLTheory\n\nnamespace {ctx.namespace}\n\n/-- Intake v2 generated spec for {ctx.problem_title}.\nDomains: {domain_label}.\nThis declaration is intentionally minimal and compilable. -/\ndef ProblemSpec : Prop := True\n\nend {ctx.namespace}\n"""
 
 
 def render_sketch_lean(ctx: ProblemContext) -> str:
@@ -375,7 +375,7 @@ def render_tasks_yaml(ctx: ProblemContext) -> str:
             "  - id: L1",
             "    title: \"Lemma: TODO\"",
             "    depends_on: []",
-            f"    lean_target: \"{ctx.namespace}.problemSpec_holds\"",
+            f"    lean_target: \"{ctx.namespace}.ProblemSpec\"",
             "    status: todo",
             "    blocker: \"\"",
         ]
