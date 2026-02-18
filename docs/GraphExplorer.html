@@ -1326,18 +1326,23 @@
     }
 
     function shouldLabel(node, displayNodes) {
-      if (state.selected === node.id) return true;
+      const mode = activeViewMode();
       const zoom = currentZoom();
+      if (mode === "module-map") {
+        if (node.kind === "module") return true;
+        if (node.kind === "concept") return true;
+        if (node.kind === "decl") return zoom >= 2.6 && labelDegreeOf(node.id) >= 14;
+        return false;
+      }
       if (node.kind === "concept") return true;
       if (node.kind === "module") {
         if (zoom < 1.25) return node.spine || node.id === MATHLIB_SLICE_ID || labelDegreeOf(node.id) >= 8;
-        if (displayNodes.length <= 40) return true;
+        if (displayNodes.length <= 70) return true;
         if (zoom < 1.8) return node.spine || node.id === MATHLIB_SLICE_ID || labelDegreeOf(node.id) >= 5;
-        if (displayNodes.length <= 90) return node.spine || node.id === MATHLIB_SLICE_ID || labelDegreeOf(node.id) >= 4;
         return node.spine || node.id === MATHLIB_SLICE_ID || labelDegreeOf(node.id) >= 5;
       }
-      if (zoom < 1.4) return node.spine || labelDegreeOf(node.id) >= 14;
-      if (displayNodes.length <= 70) return true;
+      if (zoom < 1.4) return node.spine || labelDegreeOf(node.id) >= 16;
+      if (displayNodes.length <= 90) return true;
       return node.spine || labelDegreeOf(node.id) >= 12;
     }
 
@@ -1431,6 +1436,7 @@
       }
       svg.appendChild(edgeG);
 
+      const mode = activeViewMode();
       const nodeG = document.createElementNS("http://www.w3.org/2000/svg", "g");
       const placedLabelBoxes = [];
       for (const n of display.nodes) {
@@ -1495,8 +1501,9 @@
           const overlaps = placedLabelBoxes.some((b) =>
             !(box.x2 < b.x1 || box.x1 > b.x2 || box.y2 < b.y1 || box.y1 > b.y2)
           );
-          const priority = state.selected === n.id || n.spine || n.kind === "concept";
-          if (!overlaps || priority) {
+          const alwaysShow = mode === "module-map" && n.kind === "module";
+          const priority = n.spine || n.kind === "concept";
+          if (alwaysShow || !overlaps || priority) {
             placedLabelBoxes.push(box);
           const t = document.createElementNS("http://www.w3.org/2000/svg", "text");
             t.setAttribute("x", String(labelX));
