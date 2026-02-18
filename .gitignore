@@ -2,3 +2,13 @@
 /.DS_Store
 .DS_Store
 /artifacts/telemetry/usage_events.jsonl
+
+# Local audit packs and extracted review materials
+/MLTheory_refactor_docs_v6.zip
+/MLTheory_v6_audit_feedback_pack_v3_2026-02-18.zip
+/design/
+/docs/exports/
+
+# Built graph UI artifacts (generated)
+/tools/graph_ui/dist/
+/tools/graph_ui/public/
