@@ -1,3 +1,4 @@
+<!-- AUTO:DOC-DOCS_MODULECATALOG_MD BEGIN -->
 # Module summary(Module Catalog)
 
 <!-- GENERATED FROM docs/ssot/registry.json. DO NOT EDIT MANUALLY. -->
@@ -163,3 +164,4 @@
 | MLTheory.Methods.RL.OffPolicy | rl | RL | native | gap | unscheduled | - | No local .lean file yet; keep as roadmap/planned module (layer=methods, role=placeholder, proof_status=placeholder). |
 | MLTheory.Methods.RL.PolicyGradient | rl | RL | native | gap | unscheduled | - | No local .lean file yet; keep as roadmap/planned module (layer=methods, role=placeholder, proof_status=placeholder). |
 | MLTheory.Methods.RL.PsychologyBridge | rl | RL | native | gap | unscheduled | - | No local .lean file yet; keep as roadmap/planned module (layer=methods, role=placeholder, proof_status=placeholder). |
+<!-- AUTO:DOC-DOCS_MODULECATALOG_MD END -->

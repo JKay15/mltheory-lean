@@ -1,3 +1,4 @@
+<!-- AUTO:DOC-DOCS_BOOKS_README_MD BEGIN -->
 # book coverage index
 
 <!-- GENERATED FROM docs/ssot/registry.json. DO NOT EDIT MANUALLY. -->
@@ -19,3 +20,4 @@
 1. Each book first drops coverage documents,Fill in the gaps.
 2. Only three gears are used for coverage status.:`covered`,`partial`,`gap`(allow `planned` Only for chapters that have not yet been completed).
 3. The module name in the document must match `../ModuleCatalog.md` of `module_path` consistent.
+<!-- AUTO:DOC-DOCS_BOOKS_README_MD END -->

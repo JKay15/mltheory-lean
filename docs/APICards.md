@@ -1,3 +1,4 @@
+<!-- AUTO:DOC-DOCS_APICARDS_MD BEGIN -->
 # smallest API card(APICards)
 
 <!-- GENERATED FROM docs/ssot/registry.json. DO NOT EDIT MANUALLY. -->
@@ -118,3 +119,4 @@
 ## Spot check suggestions
 1. Check first every time 1 indivual `NEW` module + 1 Old modules in the same field,Confirm whether the style is consistent.
 2. If the card description is inconsistent with the code,Prioritize repair SSOT,Regenerate the document.
+<!-- AUTO:DOC-DOCS_APICARDS_MD END -->

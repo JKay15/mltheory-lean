@@ -1,3 +1,4 @@
+<!-- AUTO:DOC-DOCS_NAMESPACECONVERGENCE_MD BEGIN -->
 # Namespace convergence view(Namespace Convergence)
 
 <!-- GENERATED FROM docs/ssot/registry.json. DO NOT EDIT MANUALLY. -->
@@ -54,3 +55,4 @@
 ## Active Alias(Still in compatibility mapping)
 | legacy_module | canonical_module | status |
 |---|---|---|
+<!-- AUTO:DOC-DOCS_NAMESPACECONVERGENCE_MD END -->

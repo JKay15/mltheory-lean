@@ -1,3 +1,4 @@
+<!-- AUTO:DOC-DOCS_GLOSSARY_MD BEGIN -->
 # Glossary of vernacular terms(Glossary)
 
 <!-- GENERATED FROM docs/ssot/registry.json. DO NOT EDIT MANUALLY. -->
@@ -117,3 +118,4 @@
 4. If it is a script term(like `placeholder_policy_scope`),use `rg "placeholder_policy_scope" /Users/xiongjiangkai/xjk_papers/MLTheory/tools` Find verification logic.
 5. if CI the term(like `ImportSmoke`),look `/Users/xiongjiangkai/xjk_papers/MLTheory/.github/workflows/lean_action_ci.yml` Corresponding steps.
 6. If still unclear, ask: 'In which file and line does this term take effect?' to avoid semantic ambiguity.
+<!-- AUTO:DOC-DOCS_GLOSSARY_MD END -->

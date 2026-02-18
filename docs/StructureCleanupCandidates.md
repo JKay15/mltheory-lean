@@ -1,3 +1,4 @@
+<!-- AUTO:DOC-DOCS_STRUCTURECLEANUPCANDIDATES_MD BEGIN -->
 # Structural Cleanup Candidates(Just make a list)
 
 <!-- GENERATED FROM docs/ssot/registry.json. DO NOT EDIT MANUALLY. -->
@@ -9,3 +10,4 @@
 
 | module_path | definition_file | imported_by | role | execution_state | priority | batch | compatibility_window | remove_after_releases | migration_started_epoch | replacement_imports | risk | suggested_action |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
+<!-- AUTO:DOC-DOCS_STRUCTURECLEANUPCANDIDATES_MD END -->

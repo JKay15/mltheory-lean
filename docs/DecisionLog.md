@@ -1,3 +1,4 @@
+<!-- AUTO:DOC-DOCS_DECISIONLOG_MD BEGIN -->
 # Decision log
 
 <!-- GENERATED FROM docs/ssot/registry.json. DO NOT EDIT MANUALLY. -->
@@ -171,3 +172,4 @@
 | 2026-02-18 | landing Phase 4 The declaration depends on the export:New `tools/index/ExtractDeclDeps.lean` and `gen_decl_graph.sh`,Export `uses_type/uses_value` arrive `artifacts/graphs/decl_graph.json`. | active | subgraph from module level import Upgrade the graph to declarative real dependency edges,Can be used for neighborhood searches and'backbone+Expandable'Visualization. |
 | 2026-02-18 | landing Phase 2/3 code-first index:New docs/meta(taxonomy/aliases/canon),tools/index/gen_modules.py + gen_imports.py + gen_mltheory_index.sh,generate artifacts/index/modules.json/imports.json,artifacts/graphs/module_graph.json and docs/_auto/CodeIndex.md. | active | Bundle'Full module enumeration'from SSOT Primary link downgraded to auto-discovery+Increment meta,support slice/graph Search with docs/_auto automatic view. |
 | 2026-02-18 | Floor-standing optional PR-5/PR-6:New GraphExplorer MVP Link to subgraph product(usage_graph + subgraph),and provide telemetry Record script with usage drive spine/Entrance suggestions. | active | Visualize from ToolForest Single tree upgraded to'backbone+Expand'Atlas;Search available usage Default sorting and suggestions by weight. |
+<!-- AUTO:DOC-DOCS_DECISIONLOG_MD END -->

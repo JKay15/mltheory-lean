@@ -1,3 +1,4 @@
+<!-- AUTO:DOC-DOCS_REFACTORHANDOFFFORGPT52PRO_MD BEGIN -->
 # GPT5.2pro Refactoring the handover package(MLTheory Full implementation snapshot)
 
 <!-- GENERATED FROM docs/ssot/registry.json. DO NOT EDIT MANUALLY. -->
@@ -290,3 +291,4 @@ bash /Users/xiongjiangkai/xjk_papers/paper-template/scripts/check_final_signatur
 1. Read 'architectural contract' and 'Phase-0 review snapshot' first to confirm hard constraints.
 2. Then read 'completed implementation trajectory' and the full real-module list to avoid duplication.
 3. Finally read 'planning modules + structural risk' to decide rewrite scope and migration strategy.
+<!-- AUTO:DOC-DOCS_REFACTORHANDOFFFORGPT52PRO_MD END -->

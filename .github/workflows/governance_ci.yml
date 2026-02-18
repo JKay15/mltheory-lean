@@ -51,3 +51,6 @@ jobs:
 
       - name: Check review views consistency
         run: python3 tools/ci/check_review_views_consistency.py
+
+      - name: Report Core/Methods docstring coverage (draft gate)
+        run: python3 tools/ci/check_docstring_coverage.py --min-coverage 0.70

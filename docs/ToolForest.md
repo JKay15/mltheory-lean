@@ -1,3 +1,4 @@
+<!-- AUTO:DOC-DOCS_TOOLFOREST_MD BEGIN -->
 # Tool forest(Tool Forest)
 
 <!-- GENERATED FROM docs/ssot/registry.json. DO NOT EDIT MANUALLY. -->
@@ -117,3 +118,4 @@ graph TD
 - run `python3 tools/docs/sync_docs.py --write`.
 - run `python3 tools/ci/check_taxonomy_contract.py`.
 - run `python3 tools/ci/check_tool_forest_consistency.py`.
+<!-- AUTO:DOC-DOCS_TOOLFOREST_MD END -->

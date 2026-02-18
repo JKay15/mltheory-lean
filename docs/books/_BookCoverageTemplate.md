@@ -1,3 +1,4 @@
+<!-- AUTO:DOC-DOCS_BOOKS__BOOKCOVERAGETEMPLATE_MD BEGIN -->
 # book cover template(Rename after copying)
 
 <!-- GENERATED FROM docs/ssot/registry.json. DO NOT EDIT MANUALLY. -->
@@ -28,3 +29,4 @@
 2. Record granularity requirements:
 - each gap Required `last_search_date` and `next_action`.
 - The module name must match `ModuleCatalog.md` of `module_path` completely consistent.
+<!-- AUTO:DOC-DOCS_BOOKS__BOOKCOVERAGETEMPLATE_MD END -->

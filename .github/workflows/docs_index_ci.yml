@@ -22,6 +22,9 @@ jobs:
       - name: Check derived docs sync
         run: python3 tools/docs/sync_docs.py --check
 
+      - name: Report Core/Methods docstring coverage (draft gate)
+        run: python3 tools/ci/check_docstring_coverage.py --min-coverage 0.70
+
       - name: Generate code/mathlib index artifacts (non-blocking)
         run: |
           tools/index/gen_mltheory_index.sh

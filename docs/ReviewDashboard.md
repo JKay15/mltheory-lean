@@ -1,3 +1,4 @@
+<!-- AUTO:DOC-DOCS_REVIEWDASHBOARD_MD BEGIN -->
 # Acceptance Kanban(Review Dashboard)
 
 <!-- GENERATED FROM docs/ssot/registry.json. DO NOT EDIT MANUALLY. -->
@@ -57,3 +58,4 @@ bash tools/ci/check_no_sorry_axiom.sh
 1. Check 'Recently promoted' first to confirm this batch matches the intended direction.
 2. Then check 'Current execution focus' to confirm the next-step priority.
 3. Finally run the 'One-click acceptance commands' to ensure independent reproducibility.
+<!-- AUTO:DOC-DOCS_REVIEWDASHBOARD_MD END -->

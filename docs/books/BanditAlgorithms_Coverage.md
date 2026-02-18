@@ -1,3 +1,4 @@
+<!-- AUTO:DOC-DOCS_BOOKS_BANDITALGORITHMS_COVERAGE_MD BEGIN -->
 # Lattimore & Szepesvari<Bandit Algorithms> overlay mapping
 
 <!-- GENERATED FROM docs/ssot/registry.json. DO NOT EDIT MANUALLY. -->
@@ -29,3 +30,4 @@
 1. The module path starts with `../ModuleCatalog.md` as the only module manifest source.
 2. Gap tracking starts with `../GapLedger.md` It is the only source of gap ledger.
 3. This file only retains chapter coverage mapping,No repeated maintenance of the full module table.
+<!-- AUTO:DOC-DOCS_BOOKS_BANDITALGORITHMS_COVERAGE_MD END -->

@@ -334,6 +334,27 @@ def _merge_auto_blocks(existing: str, generated: str) -> str:
     return merged
 
 
+def _doc_auto_block_name(path: Path) -> str:
+    rel = path.relative_to(ROOT)
+    token = "_".join(rel.parts)
+    token = token.replace(".", "_")
+    token = re.sub(r"[^A-Za-z0-9_]+", "_", token).strip("_").upper()
+    return f"DOC-{token}"
+
+
+def _wrap_generated_doc_with_auto_block(path: Path, content: str) -> str:
+    # Preserve files that already define fine-grained AUTO blocks.
+    if "<!-- AUTO:" in content:
+        return content
+    block = _doc_auto_block_name(path)
+    body = content.rstrip("\n")
+    return (
+        f"<!-- AUTO:{block} BEGIN -->\n"
+        f"{body}\n"
+        f"<!-- AUTO:{block} END -->\n"
+    )
+
+
 def _has_partial_evidence_reason(reason: str) -> bool:
     lowered = reason.lower()
     if "no local .lean file yet" in lowered:
@@ -2820,6 +2841,9 @@ def render_all(registry: dict) -> dict[Path, str]:
     for book in registry["books"]:
         doc_path = ROOT / book["doc_file"]
         files[doc_path] = render_book_doc(book, registry["meta"]["last_updated"])
+
+    for path, content in list(files.items()):
+        files[path] = _wrap_generated_doc_with_auto_block(path, content)
 
     return files
 

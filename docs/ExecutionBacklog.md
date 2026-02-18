@@ -1,3 +1,4 @@
+<!-- AUTO:DOC-DOCS_EXECUTIONBACKLOG_MD BEGIN -->
 # Planning execution checklist(Execution Backlog)
 
 <!-- GENERATED FROM docs/ssot/registry.json. DO NOT EDIT MANUALLY. -->
@@ -54,3 +55,4 @@
 1. Only from `near` Litori 1-2 Item advancement,Avoid quality degradation caused by excessive concurrency.
 2. only completed `done_when`,Items are allowed to be moved from short-list Move out or downgrade to `mid/far`.
 3. When adding a new planning module,Prioritize whether to enter `execution_backlog`,Otherwise default `unscheduled`.
+<!-- AUTO:DOC-DOCS_EXECUTIONBACKLOG_MD END -->

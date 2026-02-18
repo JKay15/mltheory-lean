@@ -1,3 +1,4 @@
+<!-- AUTO:DOC-DOCS_STRUCTUREISSUES_MD BEGIN -->
 # Structural Issues Ledger(Structure Issues)
 
 <!-- GENERATED FROM docs/ssot/registry.json. DO NOT EDIT MANUALLY. -->
@@ -24,3 +25,4 @@
 1. Look at the highest first severity question(if exists `P1`,Prioritize repair `P1`).
 2. Each batch is completed,All running correspondence gates;Those who fail to pass the gate will not be admitted to the next batch..
 3. If a batch is stuck,According to the batch rollback Withdraw first,Split into smaller batches and try again.
+<!-- AUTO:DOC-DOCS_STRUCTUREISSUES_MD END -->

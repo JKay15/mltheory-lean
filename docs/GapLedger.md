@@ -1,3 +1,4 @@
+<!-- AUTO:DOC-DOCS_GAPLEDGER_MD BEGIN -->
 # Global gap ledger(Gap Ledger)
 
 <!-- GENERATED FROM docs/ssot/registry.json. DO NOT EDIT MANUALLY. -->
@@ -61,3 +62,4 @@ Field constraints:`book`,`chapter`,`topic`,`status`,`last_search_date`,`sources_
 | Vershynin | Ch7 | Slepian/Sudakov-Fernique/Gordon/Gaussian width | gap | 2026-02-13 | mathlib4,SLT | No clear warehouse | Define first `GaussianWidth` Interfaces and Estimation Templates,hang on `Learning.AdvancedSLT`. |
 | Vershynin | Ch8 | VC dimension/generic chaining/Chevet | gap | 2026-02-13 | mathlib4,SLT,FoML | `lean-stat-learning-theory` | Ch8 Index retention TODO;Give priority to supplement VC and generic chaining Literature clues. |
 | Vershynin | Ch9 | M* bound/escape theorem/Dvoretzky-Milman | gap | 2026-02-13 | mathlib4,SLT | No clear warehouse | First record the terminology and definition dependencies,Then split into linear algebra and measurement module. |
+<!-- AUTO:DOC-DOCS_GAPLEDGER_MD END -->
