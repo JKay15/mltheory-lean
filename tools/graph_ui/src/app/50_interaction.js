@@ -248,7 +248,11 @@
 
     function startNodeDrag(ev, nodeId) {
       ev.stopPropagation();
-      if (state.pinned.has(nodeId)) return;
+      if (state.pinned.has(nodeId)) {
+        resetNodeClickTracker();
+        return;
+      }
+      resetNodeClickTracker();
       const p = nodePos(nodeId);
       state.drag = {
         type: "node",
@@ -266,6 +270,7 @@
     }
 
     function startPan(ev) {
+      resetNodeClickTracker();
       state.drag = {
         type: "pan",
         pointerId: ev.pointerId,
@@ -308,6 +313,7 @@
         const nx = state.drag.startNodeX + delta.dx;
         const ny = state.drag.startNodeY + delta.dy;
         state.drag.moved = true;
+        resetNodeClickTracker();
         state.freePos.set(state.drag.nodeId, [nx, ny]);
         state.suppressClickUntil = Date.now() + 180;
         scheduleGraphRender();
@@ -431,6 +437,7 @@
 
       svg.addEventListener("click", (ev) => {
         if (ev.target === svg && Date.now() >= state.suppressClickUntil) {
+          resetNodeClickTracker();
           state.selected = null;
           state.selectedEdge = null;
           renderInspector(state.lastDisplay);

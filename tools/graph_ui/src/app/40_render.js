@@ -46,6 +46,32 @@
       clampView();
     }
 
+    function resetNodeClickTracker() {
+      state.lastNodeClick = { id: "", at: 0 };
+    }
+
+    function handleNodePrimaryClick(nodeId) {
+      if (!nodeId) return;
+      const now = Date.now();
+      if (now < state.suppressClickUntil) return;
+      const prev = state.lastNodeClick || { id: "", at: 0 };
+      const isDouble =
+        prev.id === nodeId &&
+        Number.isFinite(prev.at) &&
+        (now - prev.at) <= NODE_DOUBLE_CLICK_MS;
+
+      state.lastNodeClick = { id: nodeId, at: now };
+      state.selected = nodeId;
+      state.selectedEdge = null;
+      materializeNode(nodeId);
+
+      if (isDouble) {
+        togglePin(nodeId);
+        resetNodeClickTracker();
+      }
+      renderAll();
+    }
+
     function renderGraph(display, skipInspector = false) {
       state.lastDisplay = display;
       computeLayout(display.nodes);
@@ -81,6 +107,7 @@
         line.setAttribute("stroke-width", state.selectedEdge === e ? "2.8" : String(1 + Math.log2((e.weight || 1) + 1) * 0.65));
         line.addEventListener("click", (ev) => {
           ev.stopPropagation();
+          resetNodeClickTracker();
           state.selectedEdge = e;
           state.selected = null;
           renderInspector(display);
@@ -124,22 +151,7 @@
         circle.addEventListener("pointerdown", (ev) => startNodeDrag(ev, n.id));
         circle.addEventListener("click", (ev) => {
           ev.stopPropagation();
-          if (Date.now() < state.suppressClickUntil) return;
-          state.selected = n.id;
-          state.selectedEdge = null;
-          materializeNode(n.id);
-          renderAll();
-        });
-
-        circle.addEventListener("dblclick", (ev) => {
-          ev.preventDefault();
-          ev.stopPropagation();
-          if (Date.now() < state.suppressClickUntil) return;
-          togglePin(n.id);
-          state.selected = n.id;
-          state.selectedEdge = null;
-          materializeNode(n.id);
-          renderAll();
+          handleNodePrimaryClick(n.id);
         });
 
         const title = document.createElementNS("http://www.w3.org/2000/svg", "title");
@@ -382,4 +394,3 @@
         };
       });
     }
-

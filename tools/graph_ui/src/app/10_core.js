@@ -9,6 +9,7 @@
     };
 
     const MATHLIB_SLICE_ID = "MathlibSlice";
+    const NODE_DOUBLE_CLICK_MS = 320;
     const LAYOUT_STORAGE_KEY = "mltheory.graph.layout.v1";
     const dataCandidates = ["./_auto/subgraph.json", "../artifacts/graphs/subgraph.json"];
     const svg = document.getElementById("graph");
@@ -33,6 +34,7 @@
       view: { x: 0, y: 0, w: 3200, h: 1900 },
       drag: null,
       suppressClickUntil: 0,
+      lastNodeClick: { id: "", at: 0 },
       rafPending: false,
       searchMatches: [],
       domainProfiles: new Map(),
@@ -317,4 +319,3 @@
       }
       return sortNodesForDisplay(rows);
     }
-
