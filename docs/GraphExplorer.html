@@ -1072,8 +1072,8 @@
 
     function spacingRadius(node) {
       if (!node) return 10;
-      if (node.kind === "module") return clamp(14 + estimateLabelWidth(node) * 0.22, 20, 74);
-      if (node.kind === "concept") return clamp(12 + estimateLabelWidth(node) * 0.18, 16, 54);
+      if (node.kind === "module") return clamp(22 + estimateLabelWidth(node) * 0.32, 34, 146);
+      if (node.kind === "concept") return clamp(14 + estimateLabelWidth(node) * 0.24, 20, 72);
       return clamp(9 + estimateLabelWidth(node) * 0.08, 9, 26);
     }
 
@@ -1151,15 +1151,6 @@
       const M = 80;
       const pos = new Map();
 
-      const layerX = {
-        core: 240,
-        methods: 660,
-        applications: 1080,
-        books: 1460,
-        other: 1820,
-        mathlib: 2180,
-      };
-
       const concepts = displayNodes.filter((n) => n.kind === "concept").sort((a, b) => a.id.localeCompare(b.id));
       for (let i = 0; i < concepts.length; i++) {
         const x = 180 + ((i + 1) * (W - 360)) / (concepts.length + 1);
@@ -1175,6 +1166,16 @@
         modulesByLayer.get(layer).push(n);
       }
 
+      const layerOrder = ["core", "methods", "applications", "books", "other", "mathlib"];
+      const activeLayers = layerOrder.filter((layer) => modulesByLayer.has(layer));
+      const layerX = new Map();
+      const lanes = activeLayers.length || 1;
+      for (let i = 0; i < lanes; i++) {
+        const layer = activeLayers[i] || "other";
+        const x = M + ((i + 1) * (W - 2 * M)) / (lanes + 1);
+        layerX.set(layer, x);
+      }
+
       for (const [layer, mods] of modulesByLayer.entries()) {
         mods.sort((a, b) =>
           (b.id === MATHLIB_SLICE_ID ? 1 : 0) - (a.id === MATHLIB_SLICE_ID ? 1 : 0) ||
@@ -1182,14 +1183,14 @@
           degreeOf(b.id) - degreeOf(a.id) ||
           a.id.localeCompare(b.id)
         );
-        const x = layerX[layer] || layerX.other;
+        const x = layerX.get(layer) || layerX.get("other") || (W * 0.5);
         const spanTop = layer === "mathlib" ? 180 : 220;
         const spanBottom = H - 120;
         const span = Math.max(120, spanBottom - spanTop);
-        const rowStep = labelSpacingForRows(mods, { floor: 26, ceil: 56, factor: 0.24 });
-        const rowsPerCol = Math.max(4, Math.floor(span / Math.max(rowStep, 1)));
+        const rowStep = labelSpacingForRows(mods, { floor: 38, ceil: 120, factor: 0.5 });
+        const rowsPerCol = Math.max(3, Math.floor(span / Math.max(rowStep + 6, 1)));
         const cols = Math.max(1, Math.ceil(mods.length / rowsPerCol));
-        const colGap = labelSpacingForRows(mods, { floor: 150, ceil: 360, factor: 1.15 });
+        const colGap = labelSpacingForRows(mods, { floor: 240, ceil: 700, factor: 2.1 });
         for (let i = 0; i < mods.length; i++) {
           const col = Math.floor(i / rowsPerCol);
           const row = i % rowsPerCol;
@@ -1209,13 +1210,14 @@
 
       for (const [mod, rows] of declByModule.entries()) {
         rows.sort((a, b) => degreeOf(b.id) - degreeOf(a.id) || a.id.localeCompare(b.id));
-        const anchor = pos.get(mod) || [layerX[layerKey(rows[0])] || 1860, 900];
-        const declChord = labelSpacingForRows(rows, { floor: 20, ceil: 70, factor: 0.24 });
+        const anchorLayer = rows[0] ? layerKey(rows[0]) : "other";
+        const anchor = pos.get(mod) || [layerX.get(anchorLayer) || layerX.get("other") || 1860, 900];
+        const declChord = labelSpacingForRows(rows, { floor: 28, ceil: 120, factor: 0.44 });
         placeCircularCluster(
           rows,
           anchor,
           hashInt(mod),
-          { baseRadius: 56, ringStep: 24, minChord: declChord, yScale: 0.92 },
+          { baseRadius: 78, ringStep: 32, minChord: declChord, yScale: 0.94 },
           pos,
           { w: W, h: H, m: M }
         );
@@ -1326,30 +1328,10 @@
       return state.pinned.get(id) || state.freePos.get(id) || state.basePos.get(id) || [50, 50];
     }
 
-    function isNeighborOfSelected(nodeId) {
-      const sid = state.selected;
-      if (!sid || !nodeId || sid === nodeId) return sid === nodeId;
-      const out = state.outgoing.get(sid) || [];
-      for (const e of out) {
-        if (!isEdgeTypeEnabled(e.type)) continue;
-        if (e.dst === nodeId) return true;
-      }
-      const inc = state.incoming.get(sid) || [];
-      for (const e of inc) {
-        if (!isEdgeTypeEnabled(e.type)) continue;
-        if (e.src === nodeId) return true;
-      }
-      return false;
-    }
-
     function shouldLabel(node, displayNodes) {
       const mode = activeViewMode();
       const zoom = currentZoom();
       if (state.selected === node.id) return true;
-      if (isNeighborOfSelected(node.id)) {
-        if (node.kind === "module" || node.kind === "concept") return true;
-        if (zoom >= 1.1) return true;
-      }
       if (mode === "module-map") {
         if (node.kind === "module") return true;
         if (node.kind === "concept") return true;
@@ -1366,6 +1348,80 @@
       if (zoom < 1.3) return node.spine || labelDegreeOf(node.id) >= 10;
       if (displayNodes.length <= 90) return true;
       return node.spine || labelDegreeOf(node.id) >= 8;
+    }
+
+    function makeLabelPlacement(node, x, y, textWidth, side, offsetY) {
+      const yLine = y + offsetY - 7;
+      if (side === "right") {
+        const labelX = x + 10;
+        return {
+          x: labelX,
+          y: yLine,
+          anchor: "start",
+          box: { x1: labelX - 3, y1: yLine - 13, x2: labelX + textWidth + 3, y2: yLine + 4 },
+        };
+      }
+      if (side === "left") {
+        const labelX = x - 10;
+        return {
+          x: labelX,
+          y: yLine,
+          anchor: "end",
+          box: { x1: labelX - textWidth - 3, y1: yLine - 13, x2: labelX + 3, y2: yLine + 4 },
+        };
+      }
+      if (side === "top") {
+        const labelX = x;
+        const yy = y + offsetY - 7;
+        return {
+          x: labelX,
+          y: yy,
+          anchor: "middle",
+          box: { x1: labelX - textWidth * 0.5 - 3, y1: yy - 13, x2: labelX + textWidth * 0.5 + 3, y2: yy + 4 },
+        };
+      }
+      const labelX = x;
+      const yy = y + offsetY + 7;
+      return {
+        x: labelX,
+        y: yy,
+        anchor: "middle",
+        box: { x1: labelX - textWidth * 0.5 - 3, y1: yy - 13, x2: labelX + textWidth * 0.5 + 3, y2: yy + 4 },
+      };
+    }
+
+    function pickLabelPlacement(node, x, y, textWidth, placedLabelBoxes, mode) {
+      const preferRight = x < state.world.w * 0.5;
+      const sideA = preferRight ? "right" : "left";
+      const sideB = preferRight ? "left" : "right";
+      const candidates = [];
+      if (node.kind === "module" || node.kind === "concept") {
+        const offsets = [0, -16, 16, -30, 30, -44, 44];
+        for (const off of offsets) {
+          candidates.push(makeLabelPlacement(node, x, y, textWidth, sideA, off));
+          candidates.push(makeLabelPlacement(node, x, y, textWidth, sideB, off));
+        }
+        candidates.push(makeLabelPlacement(node, x, y, textWidth, "top", -40));
+        candidates.push(makeLabelPlacement(node, x, y, textWidth, "bottom", 26));
+      } else {
+        const offsets = [0, -12, 12];
+        for (const off of offsets) {
+          candidates.push(makeLabelPlacement(node, x, y, textWidth, sideA, off));
+          candidates.push(makeLabelPlacement(node, x, y, textWidth, sideB, off));
+        }
+      }
+
+      const overlaps = (box) => placedLabelBoxes.some((b) =>
+        !(box.x2 < b.x1 || box.x1 > b.x2 || box.y2 < b.y1 || box.y1 > b.y2)
+      );
+
+      for (const c of candidates) {
+        if (!overlaps(c.box)) return c;
+      }
+      if (mode === "module-map" && node.kind === "module") {
+        return candidates[0] || null;
+      }
+      return null;
     }
 
     function applyViewBox() {
@@ -1521,26 +1577,14 @@
         if (shouldLabel(n, display.nodes)) {
           const text = nodeLabelText(n);
           const textWidth = estimateLabelWidth(n) * 1.12;
-          let preferRight = x < state.world.w * 0.5;
-          if (n.kind === "module" && Math.abs(x - state.world.w * 0.5) < state.world.w * 0.24) {
-            preferRight = (hashInt(n.id) & 1) === 0;
-          }
-          const labelX = preferRight ? (x + 9) : (x - 9);
-          const box = preferRight
-            ? { x1: labelX - 3, y1: y - 20, x2: labelX + textWidth + 3, y2: y }
-            : { x1: labelX - textWidth - 3, y1: y - 20, x2: labelX + 3, y2: y };
-          const overlaps = placedLabelBoxes.some((b) =>
-            !(box.x2 < b.x1 || box.x1 > b.x2 || box.y2 < b.y1 || box.y1 > b.y2)
-          );
-          const alwaysShow = mode === "module-map" && n.kind === "module";
-          const priority = n.spine || n.kind === "concept";
-          if (alwaysShow || !overlaps || priority) {
-            placedLabelBoxes.push(box);
-          const t = document.createElementNS("http://www.w3.org/2000/svg", "text");
-            t.setAttribute("x", String(labelX));
-          t.setAttribute("y", String(y - 7));
-          t.setAttribute("class", "node-label");
-            t.setAttribute("text-anchor", preferRight ? "start" : "end");
+          const placement = pickLabelPlacement(n, x, y, textWidth, placedLabelBoxes, mode);
+          if (placement) {
+            placedLabelBoxes.push(placement.box);
+            const t = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            t.setAttribute("x", String(placement.x));
+            t.setAttribute("y", String(placement.y));
+            t.setAttribute("class", "node-label");
+            t.setAttribute("text-anchor", placement.anchor);
             t.textContent = text;
             nodeG.appendChild(t);
           }
