@@ -32,3 +32,9 @@ jobs:
 
       - name: Check layer boundary imports
         run: tools/ci/check_layer_imports.sh
+
+      - name: Validate meta/index/graph contracts
+        run: python3 tools/ci/check_meta_index_graph_contract.py
+
+      - name: Check Graph UI mirror sync
+        run: tools/ci/check_graph_ui_sync.sh
