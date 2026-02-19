@@ -254,7 +254,7 @@ def build_parser() -> argparse.ArgumentParser:
     run.add_argument(
         "--phase",
         required=True,
-        choices=["research-pack", "lean-commit", "stuck-batch"],
+        choices=["research-pack", "lean-commit", "proof-scope", "stuck-batch"],
         help="intake phase to execute for all problems",
     )
     run.add_argument("--batch-id", default="batch-001", help="batch id for stuck-batch phase")

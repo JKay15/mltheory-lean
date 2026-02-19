@@ -62,6 +62,11 @@ class DomainProfile:
     module_roots: list[str]
     allowed_local_roots: list[str]
     concept_binds: list[str]
+    default_imports: list[str]
+    mathlib_slice_roots: list[str]
+    skills_whitelist: list[str]
+    bridge_modules: list[str]
+    adjacent_domains: list[str]
 
 
 @dataclass
@@ -553,6 +558,11 @@ def load_domain_profiles(repo_root: Path) -> tuple[str, dict[str, DomainProfile]
     module_roots = data.get("domain_module_roots")
     local_roots = data.get("domain_allowed_local_roots")
     concept_binds = data.get("domain_concept_binds")
+    default_imports = data.get("domain_default_imports")
+    mathlib_slice_roots = data.get("domain_mathlib_slice_roots")
+    skills_whitelist = data.get("domain_skills_whitelist")
+    bridge_modules = data.get("domain_bridge_modules")
+    adjacent_domains = data.get("domain_adjacent_domains")
     default_domain = str(data.get("default_domain", "")).strip().lower()
 
     if not isinstance(module_roots, dict) or not module_roots:
@@ -576,6 +586,17 @@ def load_domain_profiles(repo_root: Path) -> tuple[str, dict[str, DomainProfile]
             module_roots=as_str_list(module_roots.get(domain_id)),
             allowed_local_roots=as_str_list(local_roots.get(domain_id)),
             concept_binds=as_str_list(concept_binds.get(domain_id)) if isinstance(concept_binds, dict) else [],
+            default_imports=as_str_list(default_imports.get(domain_id)) if isinstance(default_imports, dict) else [],
+            mathlib_slice_roots=as_str_list(mathlib_slice_roots.get(domain_id))
+            if isinstance(mathlib_slice_roots, dict)
+            else [],
+            skills_whitelist=as_str_list(skills_whitelist.get(domain_id))
+            if isinstance(skills_whitelist, dict)
+            else [],
+            bridge_modules=as_str_list(bridge_modules.get(domain_id)) if isinstance(bridge_modules, dict) else [],
+            adjacent_domains=as_str_list(adjacent_domains.get(domain_id))
+            if isinstance(adjacent_domains, dict)
+            else [],
         )
         profiles[did] = profile
 
@@ -838,11 +859,75 @@ def stage_stuck_batch(ctx: ProblemContext, *, batch_id: str, force: bool) -> Non
     append_telemetry_event(ctx, "replan_batch_opened", success=True)
 
 
+def stage_proof_scope(ctx: ProblemContext, *, domain_profiles: dict[str, DomainProfile]) -> None:
+    if not ctx.problem_dir.exists():
+        raise RuntimeError(
+            f"problem directory does not exist: {ctx.problem_dir}. "
+            "Run research-pack/lean-commit first."
+        )
+
+    required = ("Spec.lean", "Cache.lean", "Sketch.lean", "Tasks.yaml")
+    missing = [name for name in required if not (ctx.problem_dir / name).exists()]
+    if missing:
+        joined = ", ".join(missing)
+        raise RuntimeError(
+            "proof-scope requires Lean Commit outputs. Missing files: "
+            f"{joined}. Run `intake_v2.py lean-commit ...` first."
+        )
+
+    # Proof scope stage: verify core Lean files compile before retrieval/proving loops.
+    run_checked(["lake", "env", "lean", str(ctx.problem_dir / "Spec.lean")], ctx.repo_root)
+    run_checked(["lake", "env", "lean", str(ctx.problem_dir / "Cache.lean")], ctx.repo_root)
+    run_checked(["lake", "env", "lean", str(ctx.problem_dir / "Sketch.lean")], ctx.repo_root)
+
+    active_domain = ctx.domains[0]
+    profile = domain_profiles.get(active_domain)
+    if profile is None:
+        known = ", ".join(sorted(domain_profiles))
+        raise RuntimeError(f"active domain `{active_domain}` not found. known domains: {known}")
+
+    payload = {
+        "version": 1,
+        "problem_id": ctx.problem_id,
+        "problem_title": ctx.problem_title,
+        "namespace": ctx.namespace,
+        "domains": ctx.domains,
+        "active_domain": active_domain,
+        "widening_path": [
+            "domain_local",
+            "domain_mathlib_slice",
+            "adjacent_domains",
+            "full_mltheory",
+            "full_mathlib",
+            "external_semantic",
+        ],
+        "domain_profile": {
+            "module_roots": profile.module_roots,
+            "allowed_local_roots": profile.allowed_local_roots,
+            "default_imports": profile.default_imports,
+            "mathlib_slice_roots": profile.mathlib_slice_roots,
+            "skills_whitelist": profile.skills_whitelist,
+            "bridge_modules": profile.bridge_modules,
+            "adjacent_domains": profile.adjacent_domains,
+        },
+        "status": "proof_scope_ready",
+        "generated_at": str(date.today()),
+    }
+    scope_path = ctx.problem_dir / "proof_scope.json"
+    scope_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    append_telemetry_event(ctx, "proof_scope_ready", success=True)
+    write_if_missing(
+        ctx.problem_dir / "intake_manifest.json",
+        render_manifest(ctx, "proof_scope_ready"),
+        force=True,
+    )
+
+
 def build_arg_parser() -> argparse.ArgumentParser:
     ap = argparse.ArgumentParser(description="MLTheory Intake v2 helper")
     ap.add_argument(
         "phase",
-        choices=["research-pack", "lean-commit", "stuck-batch"],
+        choices=["research-pack", "lean-commit", "stuck-batch", "proof-scope"],
         help="pipeline stage",
     )
     ap.add_argument("--domain", required=True, help="domain name (e.g. learning)")
@@ -930,8 +1015,10 @@ def main() -> int:
             run_artifacts=run_artifacts,
             domain_profiles=domain_profiles,
         )
-    else:
+    elif args.phase == "stuck-batch":
         stage_stuck_batch(ctx, batch_id=args.batch_id, force=args.force)
+    else:
+        stage_proof_scope(ctx, domain_profiles=domain_profiles)
 
     print(
         f"[intake_v2] phase={args.phase} ready at {ctx.problem_dir} "

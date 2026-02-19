@@ -53,6 +53,9 @@ python3 tools/intake/problem_suite.py run \
 python3 tools/intake/problem_suite.py run \
   --suite suites/firstproof_2026/suite.yaml \
   --phase lean-commit
+python3 tools/intake/problem_suite.py run \
+  --suite suites/firstproof_2026/suite.yaml \
+  --phase proof-scope
 ```
 
 ## Generated layout
@@ -72,6 +75,7 @@ Incubator/<Domain>/<Problem>/
   Cache.lean
   Tasks.yaml
   Telemetry.jsonl
+  proof_scope.json
   stuck_batches/
     batch-001.yaml
   intake_manifest.json
@@ -89,3 +93,5 @@ Incubator/<Domain>/<Problem>/
 - `Telemetry.jsonl` appends a minimal `lean_commit_ready` event.
 - `stuck_batches/*.yaml` is the planner batch input for GPTPro-style replan (Codex consumes planner output and continues high-frequency proving).
 - Intake emits `domains_guess`, `domain_confidence`, and `domain_inference_mode` in manifest/tasks for auditable domain classification.
+- `proof-scope` materializes `proof_scope.json` with Domain Profile boundaries and widening path:
+  `domain_local -> domain_mathlib_slice -> adjacent_domains -> full_mltheory -> full_mathlib -> external_semantic`.
