@@ -4,11 +4,11 @@
 
 ## statistics
 - subgraph nodes: `1400`
-- subgraph edges: `5856`
-- usage events: `0`
-- usage nodes: `0`
-- usage edges: `0`
-- telemetry status: `empty (run record_usage.py first)`
+- subgraph edges: `6141`
+- usage events: `5`
+- usage nodes: `5`
+- usage edges: `2`
+- telemetry status: `active`
 
 ## Node Kind Distribution
 | kind | count |
@@ -24,7 +24,9 @@
 | uses_type | 1924 |
 | decl_in_module | 1102 |
 | imports | 649 |
+| contains | 283 |
 | binds | 3 |
+| used_recently | 2 |
 
 ## Module Layer Distribution
 | layer | module_count |
@@ -46,45 +48,46 @@
 | kind | spine_nodes |
 |---|---|
 | module | 50 |
+| decl | 5 |
 | concept | 3 |
 
 ## Structural Hub Modules (MLTheory, Top 15 by degree)
 | title | module_id | layer | degree | out | in |
 |---|---|---|---|---|---|
-| MLTheory.Methods.OCO.OptimizationCore | MLTheory.Methods.OCO.OptimizationCore | methods | 56 | 2 | 54 |
-| MLTheory.Methods.OCO.GamesAndDuality | MLTheory.Methods.OCO.GamesAndDuality | methods | 44 | 3 | 41 |
-| MLTheory.Applications.LLM.Sampling | MLTheory.Applications.LLM.Sampling | applications | 43 | 1 | 42 |
-| MLTheory.Methods.Learning.DiscreteModeling | MLTheory.Methods.Learning.DiscreteModeling | methods | 41 | 2 | 39 |
-| MLTheory.Methods.OR.ConvexCore | MLTheory.Methods.OR.ConvexCore | methods | 41 | 1 | 40 |
-| MLTheory.Methods.Bandits.ContextualLinear | MLTheory.Methods.Bandits.ContextualLinear | methods | 40 | 2 | 38 |
-| MLTheory.Core.Statistics.Information | MLTheory.Core.Statistics.Information | core | 38 | 1 | 37 |
-| MLTheory.Applications.LLM.Autoregressive | MLTheory.Applications.LLM.Autoregressive | applications | 36 | 1 | 35 |
-| MLTheory.Applications.LLM.AlignmentObjectives | MLTheory.Applications.LLM.AlignmentObjectives | applications | 35 | 1 | 34 |
-| MLTheory.Methods.Learning.KernelMethods | MLTheory.Methods.Learning.KernelMethods | methods | 35 | 1 | 34 |
-| MLTheory.Methods.Compat.Mathlib | MLTheory.Methods.Compat.Mathlib | methods | 34 | 1 | 33 |
-| MLTheory.Methods.OCO.BanditConvex | MLTheory.Methods.OCO.BanditConvex | methods | 31 | 3 | 28 |
-| MLTheory.Methods.OCO.Boosting | MLTheory.Methods.OCO.Boosting | methods | 30 | 3 | 27 |
-| MLTheory.Methods.Learning.AdvancedSLT | MLTheory.Methods.Learning.AdvancedSLT | methods | 30 | 2 | 28 |
-| MLTheory.Methods.Learning.KernelBayes | MLTheory.Methods.Learning.KernelBayes | methods | 30 | 2 | 28 |
+| MLTheory.Methods.OCO.OptimizationCore | MLTheory.Methods.OCO.OptimizationCore | methods | 57 | 2 | 55 |
+| MLTheory.Methods.OCO.GamesAndDuality | MLTheory.Methods.OCO.GamesAndDuality | methods | 45 | 3 | 42 |
+| MLTheory.Applications.LLM.Sampling | MLTheory.Applications.LLM.Sampling | applications | 44 | 1 | 43 |
+| MLTheory.Methods.Learning.DiscreteModeling | MLTheory.Methods.Learning.DiscreteModeling | methods | 42 | 2 | 40 |
+| MLTheory.Methods.OR.ConvexCore | MLTheory.Methods.OR.ConvexCore | methods | 42 | 1 | 41 |
+| MLTheory.Methods.Bandits.ContextualLinear | MLTheory.Methods.Bandits.ContextualLinear | methods | 41 | 2 | 39 |
+| MLTheory.Core.Statistics.Information | MLTheory.Core.Statistics.Information | core | 39 | 1 | 38 |
+| MLTheory.Applications.LLM.Autoregressive | MLTheory.Applications.LLM.Autoregressive | applications | 37 | 1 | 36 |
+| MLTheory.Applications.LLM.AlignmentObjectives | MLTheory.Applications.LLM.AlignmentObjectives | applications | 36 | 1 | 35 |
+| MLTheory.Methods.Learning.KernelMethods | MLTheory.Methods.Learning.KernelMethods | methods | 36 | 1 | 35 |
+| MLTheory.Methods.Compat.Mathlib | MLTheory.Methods.Compat.Mathlib | methods | 35 | 1 | 34 |
+| MLTheory.Methods.OCO.BanditConvex | MLTheory.Methods.OCO.BanditConvex | methods | 32 | 3 | 29 |
+| MLTheory.Methods.Learning | MLTheory.Methods.Learning | methods | 31 | 28 | 3 |
+| MLTheory.Methods.OCO.Boosting | MLTheory.Methods.OCO.Boosting | methods | 31 | 3 | 28 |
+| MLTheory.Methods.Learning.AdvancedSLT | MLTheory.Methods.Learning.AdvancedSLT | methods | 31 | 2 | 29 |
 
 ## Structural Hub Modules (mathlib slice, Top 15 by degree)
 | title | module_id | layer | degree | out | in |
 |---|---|---|---|---|---|
-| Mathlib | Mathlib | mathlib | 219 | 218 | 1 |
-| Mathlib.Tactic | Mathlib.Tactic | mathlib | 14 | 13 | 1 |
-| Mathlib.Algebra.BigOperators.Group.Finset.Basic | Mathlib.Algebra.BigOperators.Group.Finset.Basic | mathlib | 12 | 1 | 11 |
-| Mathlib.Algebra.BigOperators.Ring.Finset | Mathlib.Algebra.BigOperators.Ring.Finset | mathlib | 11 | 4 | 7 |
-| Mathlib.Algebra.Algebra.Subalgebra.Lattice | Mathlib.Algebra.Algebra.Subalgebra.Lattice | mathlib | 11 | 2 | 9 |
-| Mathlib.Algebra.BigOperators.Pi | Mathlib.Algebra.BigOperators.Pi | mathlib | 10 | 4 | 6 |
-| Mathlib.Algebra.Algebra.Subalgebra.Basic | Mathlib.Algebra.Algebra.Subalgebra.Basic | mathlib | 9 | 2 | 7 |
-| Mathlib.Algebra.Algebra.Pi | Mathlib.Algebra.Algebra.Pi | mathlib | 8 | 3 | 5 |
-| Mathlib.Algebra.Algebra.Tower | Mathlib.Algebra.Algebra.Tower | mathlib | 8 | 2 | 6 |
-| Mathlib.Algebra.Algebra.Equiv | Mathlib.Algebra.Algebra.Equiv | mathlib | 8 | 1 | 7 |
-| Mathlib.Algebra.Algebra.Defs | Mathlib.Algebra.Algebra.Defs | mathlib | 8 | 0 | 8 |
-| Mathlib.Init | Mathlib.Init | mathlib | 8 | 0 | 8 |
-| Mathlib.Combinatorics.SetFamily.AhlswedeZhang | Mathlib.Combinatorics.SetFamily.AhlswedeZhang | mathlib | 7 | 6 | 1 |
-| Mathlib.Algebra.BigOperators.Group.List.Basic | Mathlib.Algebra.BigOperators.Group.List.Basic | mathlib | 7 | 4 | 3 |
-| Mathlib.Algebra.Algebra.Spectrum.Quasispectrum | Mathlib.Algebra.Algebra.Spectrum.Quasispectrum | mathlib | 7 | 3 | 4 |
+| Mathlib | Mathlib | mathlib | 424 | 423 | 1 |
+| Mathlib.Tactic | Mathlib.Tactic | mathlib | 28 | 26 | 2 |
+| Mathlib.Algebra.BigOperators.Group.Finset.Basic | Mathlib.Algebra.BigOperators.Group.Finset.Basic | mathlib | 13 | 1 | 12 |
+| Mathlib.Algebra.BigOperators.Ring.Finset | Mathlib.Algebra.BigOperators.Ring.Finset | mathlib | 12 | 4 | 8 |
+| Mathlib.Algebra.Algebra.Subalgebra.Lattice | Mathlib.Algebra.Algebra.Subalgebra.Lattice | mathlib | 12 | 2 | 10 |
+| Mathlib.Algebra.BigOperators.Pi | Mathlib.Algebra.BigOperators.Pi | mathlib | 11 | 4 | 7 |
+| Mathlib.Algebra.Algebra.Subalgebra.Basic | Mathlib.Algebra.Algebra.Subalgebra.Basic | mathlib | 10 | 2 | 8 |
+| Mathlib.Algebra.Algebra.Pi | Mathlib.Algebra.Algebra.Pi | mathlib | 9 | 3 | 6 |
+| Mathlib.Algebra.Algebra.Tower | Mathlib.Algebra.Algebra.Tower | mathlib | 9 | 2 | 7 |
+| Mathlib.Algebra.Algebra.Equiv | Mathlib.Algebra.Algebra.Equiv | mathlib | 9 | 1 | 8 |
+| Mathlib.Algebra.Algebra.Defs | Mathlib.Algebra.Algebra.Defs | mathlib | 9 | 0 | 9 |
+| Mathlib.Init | Mathlib.Init | mathlib | 9 | 0 | 9 |
+| Mathlib.Combinatorics.SetFamily.AhlswedeZhang | Mathlib.Combinatorics.SetFamily.AhlswedeZhang | mathlib | 8 | 6 | 2 |
+| Mathlib.Algebra.BigOperators.Group.List.Basic | Mathlib.Algebra.BigOperators.Group.List.Basic | mathlib | 8 | 4 | 4 |
+| Mathlib.Algebra.Algebra.Spectrum.Quasispectrum | Mathlib.Algebra.Algebra.Spectrum.Quasispectrum | mathlib | 8 | 3 | 5 |
 
 ## Structural Hub Declarations (MLTheory, Top 15 by degree)
 | title | decl_id | layer | degree | out | in |
@@ -108,12 +111,18 @@
 ## Telemetry driven spine candidate(Top 15)
 | decl |
 |---|
-| No telemetry candidates yet |
+| MLTheory.Core.RL.bellmanExpectationSpec |
+| MLTheory.Core.RL.bellmanOptimalitySpec |
+| MLTheory.Methods.RL.policyEvaluationSpec |
+| MLTheory.Methods.RL.policyImprovementSpec |
+| MLTheory.Methods.RL.tdError |
 
 ## Telemetry Driver entry module candidate(Top 15)
 | module |
 |---|
-| No telemetry candidates yet |
+| MLTheory.Core.RL.MDP |
+| MLTheory.Methods.RL.DynamicProgramming |
+| MLTheory.Methods.RL.TemporalDifference |
 
 ## One-click update command
 ```bash

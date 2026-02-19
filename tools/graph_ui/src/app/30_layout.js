@@ -29,6 +29,7 @@
 
     function spacingRadius(node) {
       if (!node) return 10;
+      if (node.group === true) return clamp(30 + estimateLabelWidth(node) * 0.36, 42, 170);
       if (node.kind === "module") return clamp(22 + estimateLabelWidth(node) * 0.32, 34, 146);
       if (node.kind === "concept") return clamp(14 + estimateLabelWidth(node) * 0.24, 20, 72);
       return clamp(9 + estimateLabelWidth(node) * 0.08, 9, 26);
@@ -291,8 +292,18 @@
       if (state.selected === node.id) return true;
       if (mode === "module-map") {
         if (node.kind === "module") return true;
+        if (node.group === true) return true;
         if (node.kind === "concept") return true;
-        if (node.kind === "decl") return zoom >= 2.2 && labelDegreeOf(node.id) >= 8;
+        if (node.kind === "decl") {
+          if (state.pinned.has(node.id)) return true;
+          let declCount = 0;
+          for (const row of displayNodes) {
+            if (row.kind === "decl") declCount += 1;
+          }
+          if (declCount <= 80) return true;
+          if (zoom >= 1.6) return labelDegreeOf(node.id) >= 4;
+          return zoom >= 2.1 && labelDegreeOf(node.id) >= 8;
+        }
         return false;
       }
       if (node.kind === "concept") return true;
@@ -380,4 +391,3 @@
       }
       return null;
     }
-

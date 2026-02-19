@@ -18,6 +18,7 @@
       --decl: #cb6a1c;
       --spine: #b83b22;
       --imports: #1f7a8c;
+      --contains: #245b3f;
       --uses-type: #2a9d8f;
       --uses-value: #d1495b;
       --decl-in-module: #52796f;
@@ -114,6 +115,31 @@
       display: block;
     }
 
+    .tag-panel {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 6px;
+    }
+
+    .tag-chip {
+      width: auto;
+      border-radius: 999px;
+      border: 1px solid #c9d9cd;
+      background: #f7fbf5;
+      color: #335244;
+      padding: 3px 9px;
+      font-size: 11px;
+      line-height: 1.1;
+      margin-top: 0;
+    }
+
+    .tag-chip.active {
+      border-color: #4a9d7a;
+      background: #e8f7ef;
+      color: #1b5f43;
+    }
+
     main {
       display: grid;
       grid-template-columns: 430px 1fr;
@@ -140,6 +166,17 @@
       background: linear-gradient(180deg, #f9fcf5, #f3f8ef);
     }
 
+    .panel-tools {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 8px 12px 0;
+    }
+
+    .is-hidden {
+      display: none !important;
+    }
+
     .stats {
       padding: 10px 12px;
       border-bottom: 1px solid #e3ebe1;
@@ -157,6 +194,65 @@
       padding: 8px;
       border-bottom: 1px solid #e4ece2;
       background: #fff;
+    }
+
+    #treeBox {
+      max-height: 24vh;
+    }
+
+    #mathlibLensBox {
+      max-height: 24vh;
+    }
+
+    .lens-title {
+      margin: 0;
+      padding: 7px 10px 6px;
+      font-size: 11px;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+      border-bottom: 1px solid #e3ebe1;
+      background: #f7fbf5;
+      color: #365446;
+    }
+
+    .lens-section {
+      margin-top: 8px;
+    }
+
+    .lens-section-title {
+      font-size: 11px;
+      color: #406152;
+      font-weight: 700;
+      margin: 0 0 6px;
+    }
+
+    .tree-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 6px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      color: #1f3227;
+    }
+
+    .tree-row:hover { background: #eef6ee; }
+    .tree-row.tree-active { background: #ddf0e7; border: 1px solid #b7d8c9; }
+
+    .tree-toggle {
+      display: inline-block;
+      width: 12px;
+      color: #426452;
+      user-select: none;
+      text-align: center;
+      font-weight: 700;
+    }
+
+    .tree-label {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .node-item {
@@ -362,8 +458,8 @@
   <header>
     <h1>MLTheory Graph Explorer</h1>
     <p class="subtitle">
-      Default view is Module Map. Use wheel to zoom, drag background to pan, click a node to inspect details,
-      and double click a node to pin/unpin it.
+      Default view is Module Map. Trackpad two-finger scroll pans, pinch (ctrl+wheel signal) zooms, mouse wheel zooms,
+      drag background to pan, and double click a node to pin/unpin it.
     </p>
 
     <div class="controls">
@@ -374,6 +470,12 @@
             <option value="module-map" selected>module map</option>
             <option value="decl-neighborhood">decl neighborhood</option>
             <option value="concept-browser">concept browser</option>
+            <option value="mathlib-lens">Mathlib lens</option>
+          </select>
+        </label>
+        <label>Dataset
+          <select id="datasetSelect">
+            <option value="latest" selected>latest</option>
           </select>
         </label>
         <label>Package scope
@@ -394,9 +496,19 @@
             <option value="other">other</option>
           </select>
         </label>
-        <label>Domain
+        <label>Domain profile
           <select id="domainFilter">
             <option value="all">all domains</option>
+          </select>
+        </label>
+        <label>Math tag
+          <select id="mathTagFilter">
+            <option value="all">all math tags</option>
+          </select>
+        </label>
+        <label>Applied tag
+          <select id="appliedTagFilter">
+            <option value="all">all applied tags</option>
           </select>
         </label>
         <label>Neighborhood depth
@@ -412,6 +524,30 @@
             <option value="radial">radial</option>
           </select>
         </label>
+        <label>Group collapse
+          <select id="groupCollapseDepth">
+            <option value="0" selected>off</option>
+            <option value="2">namespace L2</option>
+            <option value="3">namespace L3</option>
+          </select>
+        </label>
+        <label>Wheel mode
+          <select id="wheelMode">
+            <option value="smart" selected>smart (trackpad pan)</option>
+            <option value="pan">pan (pinch zoom only)</option>
+            <option value="zoom">zoom (wheel always zoom)</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="block">
+        <div class="title">Domain Tag Panel</div>
+        <span id="tagPanelHint" class="tiny">loading tags…</span>
+        <div class="tiny">Axis A (math)</div>
+        <div id="mathTagPanel" class="tag-panel"></div>
+        <div class="tiny">Axis B (applied)</div>
+        <div id="appliedTagPanel" class="tag-panel"></div>
+        <button id="clearTagPanel">clear panel tags</button>
       </div>
 
       <div class="block">
@@ -425,6 +561,7 @@
       <div class="block">
         <div class="title">Edges</div>
         <label><input id="edge_imports" type="checkbox" checked /> imports</label>
+        <label><input id="edge_contains" type="checkbox" checked /> contains</label>
         <label><input id="edge_uses_type" type="checkbox" /> uses_type</label>
         <label><input id="edge_uses_value" type="checkbox" /> uses_value</label>
         <label><input id="edge_decl_in_module" type="checkbox" /> decl_in_module</label>
@@ -464,8 +601,21 @@
       </div>
 
       <div class="block">
+        <div class="title">Problem Workspace</div>
+        <label>Proof map
+          <select id="proofMapSelect">
+            <option value="">(none)</option>
+          </select>
+        </label>
+        <button id="loadProofMap">load proof map</button>
+        <button id="clearProofMap">clear proof map</button>
+      </div>
+
+      <div class="block">
         <div class="title">Actions</div>
         <button id="resetMap">reset module map</button>
+        <button id="openMathlibLens">open Mathlib lens</button>
+        <button id="clearTreeFocus">clear subtree focus</button>
         <button id="fitView">fit visible</button>
         <button id="clearPins">clear all pins</button>
         <button id="saveLayout">save layout</button>
@@ -478,7 +628,15 @@
   <main>
     <section class="panel">
       <h2>Inspector</h2>
+      <div class="panel-tools">
+        <button id="toggleStats">hide stats</button>
+        <button id="toggleOverlay">hide visible panel</button>
+        <button id="resetPanels">reset panels</button>
+      </div>
       <div id="statsBox" class="stats">loading…</div>
+      <div id="treeBox" class="node-list"></div>
+      <h3 class="lens-title">Mathlib Lens</h3>
+      <div id="mathlibLensBox" class="node-list"></div>
       <div id="searchResults" class="node-list"></div>
       <div id="details" class="details">Please select a node or edge.</div>
     </section>
@@ -494,6 +652,7 @@
         <div class="row"><span class="sw" style="background: var(--pin)"></span> pinned node</div>
         <div class="row" style="margin-top: 7px;"><strong>Edge Type</strong></div>
         <div class="row"><span class="ln" style="border-top-color: var(--imports)"></span> imports</div>
+        <div class="row"><span class="ln" style="border-top-color: var(--contains)"></span> contains</div>
         <div class="row"><span class="ln" style="border-top-color: var(--uses-type)"></span> uses_type</div>
         <div class="row"><span class="ln" style="border-top-color: var(--uses-value)"></span> uses_value</div>
         <div class="row"><span class="ln" style="border-top-color: var(--decl-in-module)"></span> decl_in_module</div>
@@ -505,7 +664,9 @@
     </section>
   </main>
 
+  <script src="./_auto/snapshot_datasets_bundle.js"></script>
   <script src="./_auto/subgraph.js"></script>
+  <script src="./_auto/proof_maps_bundle.js"></script>
   <script>
 __GRAPH_EXPLORER_APP__
   </script>

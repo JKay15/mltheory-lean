@@ -1,0 +1,172 @@
+version: 2
+description: Two-axis v2 math taxonomy aligned with Mathlib structure.
+default_tag: probability
+
+tag_titles:
+  algebra: Algebra
+  linear_algebra: LinearAlgebra
+  analysis: Analysis
+  topology: Topology
+  geometry: Geometry
+  measure_theory: MeasureTheory
+  probability: Probability
+  combinatorics: Combinatorics
+  graph_theory: GraphTheory
+  number_theory: NumberTheory
+  category_theory: CategoryTheory
+  order_lattice: OrderLattice
+  representation_theory: RepresentationTheory
+  lie_groups: LieGroups
+  numerical: Numerical
+  stochastic_analysis: StochasticAnalysis
+  tensor_analysis: TensorAnalysis
+  statistics: Statistics
+
+tag_descriptions:
+  algebra: Algebraic structures and algebraic reasoning.
+  linear_algebra: Vector spaces, matrices, and spectral tools.
+  analysis: Real and functional analysis tools.
+  topology: Topological spaces and continuity-level structure.
+  geometry: Geometric and manifold-oriented structures.
+  measure_theory: Measure-theoretic foundations.
+  probability: Probability and concentration reasoning.
+  combinatorics: Counting and combinatorial constructions.
+  graph_theory: Graph structure and graph optimization.
+  number_theory: Arithmetic and number-theoretic structures.
+  category_theory: Categorical abstractions.
+  order_lattice: Orders, lattices, and monotonicity.
+  representation_theory: Representation-theoretic abstractions.
+  lie_groups: Lie groups and related algebraic geometry.
+  numerical: Numerical analysis and approximation.
+  stochastic_analysis: Stochastic process and stochastic calculus style reasoning.
+  tensor_analysis: Tensor decompositions and multilinear methods.
+  statistics: Statistical inference and information metrics.
+
+tag_module_roots:
+  probability:
+    - MLTheory.Core.Probability
+    - MLTheory.Methods.Bandits
+    - MLTheory.Methods.RL
+  measure_theory:
+    - MLTheory.Core.Probability
+  statistics:
+    - MLTheory.Core.Statistics
+  analysis:
+    - MLTheory.Methods.Learning
+    - MLTheory.Methods.OR
+  linear_algebra:
+    - MLTheory.Methods.Learning.KernelMethods
+    - MLTheory.Methods.Learning.KernelBayes
+    - MLTheory.Applications.LLM
+  graph_theory:
+    - MLTheory.Methods.OR.GraphPath
+  combinatorics:
+    - MLTheory.Methods.Bandits
+  numerical:
+    - MLTheory.Methods.OR
+    - MLTheory.Methods.Learning.KernelMethods
+
+tag_path_roots:
+  probability:
+    - MLTheory/Core/Probability
+    - MLTheory/Methods/Bandits
+    - MLTheory/Methods/RL
+  measure_theory:
+    - MLTheory/Core/Probability
+  statistics:
+    - MLTheory/Core/Statistics
+  analysis:
+    - MLTheory/Methods/Learning
+    - MLTheory/Methods/OR
+  linear_algebra:
+    - MLTheory/Methods/Learning/Kernel
+    - MLTheory/Applications/LLM
+  graph_theory:
+    - MLTheory/Methods/OR/Graph
+  combinatorics:
+    - MLTheory/Methods/Bandits
+  numerical:
+    - MLTheory/Methods/OR
+
+tag_mathlib_roots:
+  algebra:
+    - Mathlib.Algebra
+  linear_algebra:
+    - Mathlib.LinearAlgebra
+    - Mathlib.Matrix
+  analysis:
+    - Mathlib.Analysis
+  topology:
+    - Mathlib.Topology
+  geometry:
+    - Mathlib.Geometry
+  measure_theory:
+    - Mathlib.MeasureTheory
+  probability:
+    - Mathlib.Probability
+  combinatorics:
+    - Mathlib.Combinatorics
+  graph_theory:
+    - Mathlib.Combinatorics.SimpleGraph
+  number_theory:
+    - Mathlib.NumberTheory
+  category_theory:
+    - Mathlib.CategoryTheory
+  order_lattice:
+    - Mathlib.Order
+  representation_theory:
+    - Mathlib.RepresentationTheory
+  lie_groups:
+    - Mathlib.Lie
+  numerical:
+    - Mathlib.Numerics
+  stochastic_analysis:
+    - Mathlib.Probability
+    - Mathlib.MeasureTheory
+    - Mathlib.Analysis
+  tensor_analysis:
+    - Mathlib.LinearAlgebra.TensorProduct
+  statistics:
+    - Mathlib.Probability
+    - Mathlib.MeasureTheory
+
+tag_concept_binds:
+  probability:
+    - core
+    - MLTheory.Core.Probability
+  statistics:
+    - MLTheory.Core.Statistics
+  analysis:
+    - methods
+  linear_algebra:
+    - methods
+  graph_theory:
+    - MLTheory.Methods.OR
+  combinatorics:
+    - MLTheory.Methods.Bandits
+  numerical:
+    - MLTheory.Methods.OR
+
+tag_adjacent_tags:
+  probability:
+    - measure_theory
+    - statistics
+    - stochastic_analysis
+  measure_theory:
+    - probability
+    - analysis
+  analysis:
+    - linear_algebra
+    - topology
+    - numerical
+  linear_algebra:
+    - analysis
+    - tensor_analysis
+    - numerical
+  graph_theory:
+    - combinatorics
+    - linear_algebra
+  stochastic_analysis:
+    - probability
+    - measure_theory
+    - analysis

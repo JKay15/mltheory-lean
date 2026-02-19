@@ -46,30 +46,66 @@
       clampView();
     }
 
-    function resetNodeClickTracker() {
-      state.lastNodeClick = { id: "", at: 0 };
-    }
-
     function handleNodePrimaryClick(nodeId) {
       if (!nodeId) return;
-      const now = Date.now();
-      if (now < state.suppressClickUntil) return;
-      const prev = state.lastNodeClick || { id: "", at: 0 };
-      const isDouble =
-        prev.id === nodeId &&
-        Number.isFinite(prev.at) &&
-        (now - prev.at) <= NODE_DOUBLE_CLICK_MS;
-
-      state.lastNodeClick = { id: nodeId, at: now };
+      if (Date.now() < state.suppressClickUntil) return;
       state.selected = nodeId;
       state.selectedEdge = null;
       materializeNode(nodeId);
+      refreshNodeVisualState();
+      renderInspector(state.lastDisplay);
+      renderOverlay(state.lastDisplay);
+      renderSearchResults();
+    }
 
-      if (isDouble) {
-        togglePin(nodeId);
-        resetNodeClickTracker();
-      }
+    function handleNodeDoubleClick(nodeId) {
+      if (!nodeId) return;
+      state.selected = nodeId;
+      state.selectedEdge = null;
+      materializeNode(nodeId);
+      togglePin(nodeId);
       renderAll();
+    }
+
+    function refreshNodeVisualState() {
+      const lens = state.importLens && state.importLens.rootId
+        ? state.importLens
+        : null;
+      const lensNodes = lens && lens.nodes instanceof Set ? lens.nodes : null;
+      const lensRootId = lens ? lens.rootId : "";
+      svg.querySelectorAll("g[data-node-id]").forEach((group) => {
+        const id = group.getAttribute("data-node-id");
+        if (!id) return;
+        const circle = group.querySelector("circle");
+        if (!circle) return;
+        const isSelected = state.selected === id;
+        const inLensNode = !!(lensNodes && lensNodes.has(id));
+        const isLensRoot = lensRootId === id;
+        const fillOpacity = isSelected
+          ? "1"
+          : (
+            lens
+              ? (isLensRoot || inLensNode ? "0.98" : "0.24")
+              : "0.92"
+          );
+        circle.setAttribute("fill-opacity", fillOpacity);
+        if (isSelected) {
+          circle.setAttribute("stroke", "#0f271d");
+          circle.setAttribute("stroke-width", "2.4");
+        } else if (isLensRoot) {
+          circle.setAttribute("stroke", "#8b3d00");
+          circle.setAttribute("stroke-width", "2.6");
+        } else if (inLensNode) {
+          circle.setAttribute("stroke", "#2f6955");
+          circle.setAttribute("stroke-width", "1.8");
+        } else if (state.pinned.has(id)) {
+          circle.setAttribute("stroke", "#2a0d2a");
+          circle.setAttribute("stroke-width", "1.7");
+        } else {
+          circle.removeAttribute("stroke");
+          circle.removeAttribute("stroke-width");
+        }
+      });
     }
 
     function renderGraph(display, skipInspector = false) {
@@ -83,6 +119,12 @@
 
       const displayed = new Set(display.nodes.map((n) => n.id));
       const edges = display.edges.filter((e) => displayed.has(e.src) && displayed.has(e.dst));
+      const lens = state.importLens && state.importLens.rootId
+        ? state.importLens
+        : null;
+      const lensNodes = lens && lens.nodes instanceof Set ? lens.nodes : null;
+      const lensEdges = lens && lens.edges instanceof Set ? lens.edges : null;
+      const lensRootId = lens ? lens.rootId : "";
       state.displayDegree = new Map();
       for (const n of display.nodes) {
         state.displayDegree.set(n.id, 0);
@@ -96,6 +138,11 @@
       for (const e of edges) {
         const a = nodePos(e.src);
         const b = nodePos(e.dst);
+        const containsNearSelected = (
+          e.type === "contains" &&
+          !!state.selected &&
+          (e.src === state.selected || e.dst === state.selected)
+        );
         const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
         line.setAttribute("x1", String(a[0]));
         line.setAttribute("y1", String(a[1]));
@@ -103,13 +150,30 @@
         line.setAttribute("y2", String(b[1]));
         line.setAttribute("class", "edge");
         line.setAttribute("stroke", edgeColor(e.type));
-        line.setAttribute("stroke-opacity", state.selectedEdge === e ? "0.96" : "0.38");
-        line.setAttribute("stroke-width", state.selectedEdge === e ? "2.8" : String(1 + Math.log2((e.weight || 1) + 1) * 0.65));
+        const isLensEdge = !!(lensEdges && e.type === "imports" && lensEdges.has(importLensEdgeKey(e.src, e.dst)));
+        const edgeOpacity = state.selectedEdge === e
+          ? "0.96"
+          : (
+            isLensEdge
+              ? "0.88"
+              : (lensEdges && e.type === "imports" ? "0.10" : (containsNearSelected ? "0.78" : "0.38"))
+          );
+        line.setAttribute("stroke-opacity", edgeOpacity);
+        line.setAttribute("stroke-width", state.selectedEdge === e
+          ? "2.8"
+          : (
+            isLensEdge
+              ? "2.6"
+              : (containsNearSelected ? "2.3" : String(1 + Math.log2((e.weight || 1) + 1) * 0.65))
+          ));
+        if (e.type === "contains") {
+          line.setAttribute("stroke-dasharray", containsNearSelected ? "8 4" : "6 5");
+        }
         line.addEventListener("click", (ev) => {
           ev.stopPropagation();
-          resetNodeClickTracker();
           state.selectedEdge = e;
           state.selected = null;
+          refreshNodeVisualState();
           renderInspector(display);
           renderOverlay(display);
         });
@@ -137,12 +201,27 @@
         circle.setAttribute("cy", String(y));
         circle.setAttribute("r", String(r));
         circle.setAttribute("fill", nodeColor(n));
-        circle.setAttribute("fill-opacity", state.selected === n.id ? "1" : "0.92");
+        const inLensNode = !!(lensNodes && lensNodes.has(n.id));
+        const isLensRoot = lensRootId === n.id;
+        const fillOpacity = state.selected === n.id
+          ? "1"
+          : (
+            lens
+              ? (isLensRoot || inLensNode ? "0.98" : "0.24")
+              : "0.92"
+          );
+        circle.setAttribute("fill-opacity", fillOpacity);
         circle.style.cursor = "pointer";
 
         if (state.selected === n.id) {
           circle.setAttribute("stroke", "#0f271d");
           circle.setAttribute("stroke-width", "2.4");
+        } else if (isLensRoot) {
+          circle.setAttribute("stroke", "#8b3d00");
+          circle.setAttribute("stroke-width", "2.6");
+        } else if (inLensNode) {
+          circle.setAttribute("stroke", "#2f6955");
+          circle.setAttribute("stroke-width", "1.8");
         } else if (state.pinned.has(n.id)) {
           circle.setAttribute("stroke", "#2a0d2a");
           circle.setAttribute("stroke-width", "1.7");
@@ -152,6 +231,11 @@
         circle.addEventListener("click", (ev) => {
           ev.stopPropagation();
           handleNodePrimaryClick(n.id);
+        });
+        circle.addEventListener("dblclick", (ev) => {
+          ev.stopPropagation();
+          ev.preventDefault();
+          handleNodeDoubleClick(n.id);
         });
 
         const title = document.createElementNS("http://www.w3.org/2000/svg", "title");
@@ -194,25 +278,144 @@
       renderAll();
     }
 
-    function expandModuleDecls(moduleId) {
-      if (!moduleId) return;
-      for (const e of state.incoming.get(moduleId) || []) {
-        if (e.type === "decl_in_module") {
-          materializeNode(e.src);
+    function moduleDeclPassesBaseFilters(node, includeGenerated = byId("showGenerated").checked) {
+      if (!node || node.kind !== "decl") return false;
+      if (!isInScope(node)) return false;
+      const layer = byId("layerFilter").value;
+      if (layer !== "all" && String(node.layer || "") !== layer) return false;
+      const activeProfile = byId("domainFilter").value;
+      if (activeProfile !== "all") {
+        const profiles = Array.isArray(node.profiles)
+          ? node.profiles
+          : (Array.isArray(node.domains) ? node.domains : []);
+        if (!profiles.includes(activeProfile)) return false;
+      }
+      if (!nodeMatchesAxisTags(node, "math")) return false;
+      if (!nodeMatchesAxisTags(node, "applied")) return false;
+      if (!includeGenerated && node.generated === true) return false;
+      if (byId("spineOnly").checked && !node.spine) return false;
+      return true;
+    }
+
+    function moduleDescendantModules(moduleId, limit = 220) {
+      const out = [];
+      const seen = new Set([moduleId]);
+      const queue = [moduleId];
+      while (queue.length > 0 && out.length < limit) {
+        const cur = queue.shift();
+        for (const e of state.outgoing.get(cur) || []) {
+          if (e.type !== "contains") continue;
+          const childId = e.dst;
+          if (!childId || seen.has(childId)) continue;
+          const child = state.nodesById.get(childId);
+          if (!child || child.kind !== "module") continue;
+          seen.add(childId);
+          out.push(childId);
+          queue.push(childId);
+          if (out.length >= limit) break;
         }
+      }
+      return out;
+    }
+
+    function moduleDeclCandidates(moduleId) {
+      const rows = [];
+      const seenDecl = new Set();
+      const collectFromModule = (ownerModuleId) => {
+        for (const e of state.incoming.get(ownerModuleId) || []) {
+          if (e.type !== "decl_in_module") continue;
+          const node = state.nodesById.get(e.src);
+          if (!node || node.kind !== "decl") continue;
+          if (seenDecl.has(node.id)) continue;
+          if (!moduleDeclPassesBaseFilters(node)) continue;
+          seenDecl.add(node.id);
+          rows.push(node);
+        }
+      };
+
+      collectFromModule(moduleId);
+      if (rows.length === 0) {
+        for (const childModuleId of moduleDescendantModules(moduleId)) {
+          collectFromModule(childModuleId);
+          if (rows.length >= 400) break;
+        }
+      }
+      rows.sort((a, b) =>
+        (b.spine ? 1 : 0) - (a.spine ? 1 : 0) ||
+        degreeOf(b.id) - degreeOf(a.id) ||
+        a.id.localeCompare(b.id)
+      );
+      return rows;
+    }
+
+    function syncExpandedModuleDecls() {
+      for (const [moduleId, cursorRaw] of Array.from(state.moduleDeclCursor.entries())) {
+        const requested = Math.max(0, Number(cursorRaw) || 0);
+        if (!requested) continue;
+        const candidates = moduleDeclCandidates(moduleId);
+        const end = Math.min(requested, candidates.length);
+        for (let i = 0; i < end; i += 1) {
+          materializeNode(candidates[i].id);
+        }
+        state.moduleDeclCursor.set(moduleId, end);
+      }
+    }
+
+    function moduleDeclProgress(moduleId) {
+      const candidates = moduleDeclCandidates(moduleId);
+      const candidateIds = new Set(candidates.map((n) => n.id));
+      let visible = 0;
+      for (const id of state.visible) {
+        const node = state.nodesById.get(id);
+        if (!node || node.kind !== "decl") continue;
+        if (candidateIds.has(node.id)) visible += 1;
+      }
+      const cursor = Math.min(state.moduleDeclCursor.get(moduleId) || 0, candidates.length);
+      return { total: candidates.length, visible, cursor };
+    }
+
+    function expandModuleDecls(moduleId, action = "reset") {
+      if (!moduleId) return;
+      if (byId("kindDecl") && !byId("kindDecl").checked) byId("kindDecl").checked = true;
+      if (byId("edge_decl_in_module") && !byId("edge_decl_in_module").checked) {
+        byId("edge_decl_in_module").checked = true;
+      }
+      const candidates = moduleDeclCandidates(moduleId);
+      const previousCursor = Math.min(state.moduleDeclCursor.get(moduleId) || 0, candidates.length);
+      const start = action === "more" ? previousCursor : 0;
+      const end = Math.min(start + MODULE_DECL_PAGE_SIZE, candidates.length);
+      if (action !== "more") {
+        const candidateIds = new Set(candidates.map((n) => n.id));
+        for (const id of Array.from(state.visible)) {
+          const n = state.nodesById.get(id);
+          if (!n || n.kind !== "decl") continue;
+          if (candidateIds.has(id)) state.visible.delete(id);
+        }
+      }
+      for (let i = start; i < end; i += 1) {
+        materializeNode(candidates[i].id);
+      }
+      state.moduleDeclCursor.set(moduleId, end);
+      if (end <= start) {
+        setSourceHint(`module decl expansion exhausted for ${moduleId}`);
+      } else {
+        setSourceHint(`module decls loaded ${end}/${candidates.length} for ${moduleId}`);
       }
       renderAll();
     }
 
     function collapseModuleDecls(moduleId) {
       if (!moduleId) return;
+      const candidates = moduleDeclCandidates(moduleId);
+      const candidateIds = new Set(candidates.map((n) => n.id));
       for (const id of Array.from(state.visible)) {
         const n = state.nodesById.get(id);
         if (!n || n.kind !== "decl") continue;
-        if (n.module === moduleId) {
+        if (candidateIds.has(id)) {
           state.visible.delete(id);
         }
       }
+      state.moduleDeclCursor.delete(moduleId);
       renderAll();
     }
 
@@ -262,6 +465,72 @@
       `;
     }
 
+    function mathlibLensPathRows(node) {
+      if (activeViewMode() !== "mathlib-lens") return [];
+      if (!node || node.kind !== "module" || node.package === "mathlib") return [];
+      const lens = activeMathlibLensConfig();
+      const targets = [];
+      const pushTarget = (id) => {
+        if (typeof id !== "string" || !id) return;
+        if (!state.nodesById.has(id)) return;
+        const tNode = state.nodesById.get(id);
+        if (!tNode || tNode.kind !== "module" || tNode.package !== "mathlib") return;
+        if (targets.includes(id)) return;
+        targets.push(id);
+      };
+      for (const id of lens.roots || []) pushTarget(id);
+      for (const id of lens.hubs || []) pushTarget(id);
+      for (const id of lens.aggregators || []) pushTarget(id);
+
+      const rows = [];
+      for (const target of targets.slice(0, 20)) {
+        const path = shortestImportPath(node.id, target, 10);
+        if (!path || path.length < 2) continue;
+        rows.push({ target, path });
+      }
+      rows.sort((a, b) => a.path.length - b.path.length || a.target.localeCompare(b.target));
+      return rows.slice(0, 6);
+    }
+
+    function mathlibDependencySummary(node) {
+      if (!node || node.kind !== "module" || node.package === "mathlib") return null;
+      const directMathlib = [];
+      for (const edge of state.outgoing.get(node.id) || []) {
+        if (!edge || edge.type !== "imports") continue;
+        const dst = state.nodesById.get(edge.dst);
+        if (!dst || dst.kind !== "module" || dst.package !== "mathlib") continue;
+        directMathlib.push(dst.id);
+      }
+      directMathlib.sort((a, b) => degreeOf(b) - degreeOf(a) || a.localeCompare(b));
+
+      const lens = activeMathlibLensConfig();
+      const targets = [];
+      const pushTarget = (id, kind) => {
+        if (typeof id !== "string" || !id) return;
+        if (!state.nodesById.has(id)) return;
+        const dst = state.nodesById.get(id);
+        if (!dst || dst.kind !== "module" || dst.package !== "mathlib") return;
+        if (targets.some((row) => row.id === id)) return;
+        targets.push({ id, kind });
+      };
+      for (const id of lens.hubs || []) pushTarget(id, "hub");
+      for (const id of lens.aggregators || []) pushTarget(id, "agg");
+      for (const id of lens.roots || []) pushTarget(id, "root");
+
+      const reached = [];
+      for (const row of targets.slice(0, 32)) {
+        const path = shortestImportPath(node.id, row.id, 10);
+        if (!path || path.length < 2) continue;
+        reached.push({ id: row.id, kind: row.kind, hops: path.length - 1 });
+      }
+      reached.sort((a, b) => a.hops - b.hops || a.id.localeCompare(b.id));
+
+      return {
+        directMathlib: directMathlib.slice(0, 8),
+        reachedTargets: reached.slice(0, 8),
+      };
+    }
+
     function renderInspector(display) {
       const box = byId("details");
 
@@ -309,6 +578,29 @@
       const generated = node.generated === true ? "true" : "false";
       const nodeDomains = Array.isArray(node.domains) ? node.domains : [];
       const domainText = nodeDomains.length ? nodeDomains.join(", ") : "-";
+      const nodeMathTags = Array.isArray(node.math_tags) ? node.math_tags : [];
+      const nodeAppliedTags = Array.isArray(node.applied_tags) ? node.applied_tags : [];
+      const mathTagText = nodeMathTags.length ? nodeMathTags.join(", ") : "-";
+      const appliedTagText = nodeAppliedTags.length ? nodeAppliedTags.join(", ") : "-";
+      const usageCount = Number(node.usage_count || 0);
+      const usageSuccessCount = Number(node.usage_success_count || 0);
+      const usageLastUsed = typeof node.usage_last_used === "string" && node.usage_last_used
+        ? node.usage_last_used
+        : "-";
+      const retrievalHitCount = Number(node.retrieval_hit_count || 0);
+      const retrievalFinalHitCount = Number(node.retrieval_final_hit_count || 0);
+      const retrievalLastQuery = typeof node.retrieval_last_query === "string" && node.retrieval_last_query
+        ? node.retrieval_last_query
+        : "-";
+      const retrievalLastStage = typeof node.retrieval_last_stage === "string" && node.retrieval_last_stage
+        ? node.retrieval_last_stage
+        : "-";
+      const retrievalLastSource = typeof node.retrieval_last_source === "string" && node.retrieval_last_source
+        ? node.retrieval_last_source
+        : "-";
+      const retrievalLastSeen = typeof node.retrieval_last_seen === "string" && node.retrieval_last_seen
+        ? node.retrieval_last_seen
+        : "-";
       const activeDomain = byId("domainFilter").value;
       const activeProfile = activeDomain !== "all" ? state.domainProfiles.get(activeDomain) : null;
       const bridges = activeProfile && Array.isArray(activeProfile.bridge_modules)
@@ -325,27 +617,98 @@
         ? "-"
         : (otherDomains.length ? `cross-domain -> ${otherDomains.join(", ")}` : "domain-local");
       const sourcePath = typeof node.path === "string" ? node.path : "";
+      const isGroupNode = node && node.group === true;
+      const moduleDeclInfo = (node.kind === "module" && !isGroupNode && state.nodesById.has(node.id))
+        ? moduleDeclProgress(node.id)
+        : null;
+      const moduleParents = (node.kind === "module" && !isGroupNode)
+        ? inAll
+          .filter((e) => e.type === "contains")
+          .map((e) => e.src)
+          .filter((id, idx, arr) => typeof id === "string" && arr.indexOf(id) === idx)
+          .slice(0, 6)
+        : [];
+      const moduleChildren = (node.kind === "module" && !isGroupNode)
+        ? outAll
+          .filter((e) => e.type === "contains")
+          .map((e) => e.dst)
+          .filter((id, idx, arr) => typeof id === "string" && arr.indexOf(id) === idx)
+        : [];
+      const groupMembers = Array.isArray(node.group_members) ? node.group_members : [];
+      const lensState = state.importLens && typeof state.importLens === "object"
+        ? state.importLens
+        : {};
+      const lensModeText = lensState.rootId ? String(lensState.mode || "deps") : "off";
+      const lensRootText = lensState.rootId ? String(lensState.rootId) : "-";
+      const lensNodeCount = lensState.nodes instanceof Set ? lensState.nodes.size : 0;
+      const lensEdgeCount = lensState.edges instanceof Set ? lensState.edges.size : 0;
+      const lensDepth = Number(lensState.depth || 0);
+      const lensTruncated = lensState.truncated === true ? "true" : "false";
+      const groupInfoLine = isGroupNode
+        ? `<div>group summary: prefix <code>${node.group_prefix || node.title || "-"}</code> | members <code>${Number(node.group_member_count || groupMembers.length)}</code>${groupMembers.length ? ` (<code>${groupMembers.slice(0, 6).join(", ")}</code>${groupMembers.length > 6 ? " ..." : ""})` : ""}</div>`
+        : "";
+      const moduleHierarchyLine = (node.kind === "module" && !isGroupNode)
+        ? `<div>contains hierarchy: parent <code>${moduleParents.length ? moduleParents.join(", ") : "-"}</code> | children <code>${moduleChildren.length}</code>${moduleChildren.length ? ` (<code>${moduleChildren.slice(0, 6).join(", ")}</code>${moduleChildren.length > 6 ? " ..." : ""})` : ""}</div>`
+        : "";
+      const moduleInfoLine = moduleDeclInfo
+        ? `<div>module decls: visible <code>${moduleDeclInfo.visible}</code> | loaded <code>${moduleDeclInfo.cursor}</code>/<code>${moduleDeclInfo.total}</code></div>`
+        : "";
+      const moduleButtons = moduleDeclInfo
+        ? `<button id="detailExpandModule">expand module decls (top ${MODULE_DECL_PAGE_SIZE})</button><button id="detailMoreModule" ${moduleDeclInfo.cursor < moduleDeclInfo.total ? "" : "disabled"}>more decls (+${MODULE_DECL_PAGE_SIZE})</button><button id="detailCollapseModule">collapse module decls</button>`
+        : "";
+      const lensButtons = (node.kind === "module" && !isGroupNode)
+        ? `<button id="detailLensDeps">lens deps</button><button id="detailLensDependees">lens dependees</button><button id="detailLensBoth">lens both</button><button id="detailLensClear">clear lens</button>`
+        : "";
+      const lensPaths = mathlibLensPathRows(node);
+      const mathlibSummary = mathlibDependencySummary(node);
+      const mathlibSummaryBlock = mathlibSummary
+        ? `<div><strong>Mathlib dependency summary</strong></div>
+           <div>direct imports: <code>${mathlibSummary.directMathlib.length ? mathlibSummary.directMathlib.map((x) => compactModuleLabel(x)).join(", ") : "-"}</code></div>
+           <div>reachable hubs/roots: <code>${mathlibSummary.reachedTargets.length ? mathlibSummary.reachedTargets.map((x) => `${compactModuleLabel(x.id)}(${x.kind},${x.hops}h)`).join(" | ") : "-"}</code></div>`
+        : "";
+      const lensPathBlock = lensPaths.length
+        ? `<div><strong>Mathlib lens shortest paths</strong></div>
+           <div class="tiny">Selected MLTheory module to active domain roots/hubs.</div>
+           ${lensPaths.map((row) => `<div><code>${row.path.map((x) => compactModuleLabel(x)).join(" -> ")}</code></div>`).join("")}`
+        : (activeViewMode() === "mathlib-lens" && node.kind === "module" && node.package !== "mathlib"
+          ? `<div>Mathlib lens shortest paths: <code>none found under current lens targets</code></div>`
+          : "");
 
       box.innerHTML = `
         <div><strong>${node.title || node.id}</strong></div>
         <div>id: <code>${node.id}</code></div>
         <div>kind: <code>${node.kind}</code> | layer: <code>${node.layer || "-"}</code> | package: <code>${node.package || "-"}</code></div>
+        <div>group node: <code>${isGroupNode ? "true" : "false"}</code></div>
         <div>module: <code>${node.module || "-"}</code></div>
         <div>decl_kind: <code>${declKind}</code> | generated: <code>${generated}</code> | pinned: <code>${pinText}</code></div>
-        <div>domains: <code>${domainText}</code></div>
+        <div>profiles: <code>${domainText}</code></div>
+        <div>math tags: <code>${mathTagText}</code></div>
+        <div>applied tags: <code>${appliedTagText}</code></div>
         <div>bridge hint: <code>${bridgeHint}</code></div>
         <div>cross-domain hint: <code>${crossHint}</code></div>
         <div>path: <code>${node.path || "-"}</code></div>
+        <div>usage telemetry: count <code>${usageCount}</code> | success <code>${usageSuccessCount}</code> | last <code>${usageLastUsed}</code></div>
+        <div>retrieval telemetry: hits <code>${retrievalHitCount}</code> | final_hits <code>${retrievalFinalHitCount}</code> | last <code>${retrievalLastSeen}</code></div>
+        <div>retrieval source: <code>${retrievalLastSource}</code> | stage: <code>${retrievalLastStage}</code></div>
+        <div>retrieval last query: <code>${retrievalLastQuery}</code></div>
+        <div class="tiny">retrieval meaning: source=backend(local_index/rg_local/loogle_json/leanexplore/retrieval.query), stage=progressive widening stage.</div>
+        <div>import lens: mode <code>${lensModeText}</code> | root <code>${lensRootText}</code> | nodes <code>${lensNodeCount}</code> | edges <code>${lensEdgeCount}</code> | depth <code>${lensDepth}</code> | truncated <code>${lensTruncated}</code></div>
         <div>degree: <code>${degreeOf(node.id)}</code></div>
         <div>outgoing: <code>${outAll.length}</code> (${edgeTypeSummary(outAll)})</div>
         <div>incoming: <code>${inAll.length}</code> (${edgeTypeSummary(inAll)})</div>
+        ${groupInfoLine}
+        ${moduleHierarchyLine}
+        ${moduleInfoLine}
+        ${mathlibSummaryBlock}
+        ${lensPathBlock}
         <div style="margin-top:8px;">
           <button id="detailExpandOut">expand outgoing 1-hop</button>
           <button id="detailExpandIn">expand incoming 1-hop</button>
           <button id="detailTogglePin">toggle pin</button>
           <button id="detailUnpin">unpin selected</button>
           ${sourcePath ? '<button id="detailCopyPath">copy source path</button><button id="detailOpenSource">open source</button>' : ""}
-          ${node.kind === "module" ? '<button id="detailExpandModule">expand module decls</button><button id="detailCollapseModule">collapse module decls</button>' : ""}
+          ${moduleButtons}
+          ${lensButtons}
         </div>
         ${renderNeighborBlock("Outgoing neighbors", outRows)}
         ${renderNeighborBlock("Incoming neighbors", inRows)}
@@ -381,10 +744,46 @@
       }
 
       const expandModule = byId("detailExpandModule");
-      if (expandModule) expandModule.onclick = () => expandModuleDecls(node.id);
+      if (expandModule) expandModule.onclick = () => expandModuleDecls(node.id, "reset");
+
+      const moreModule = byId("detailMoreModule");
+      if (moreModule) moreModule.onclick = () => expandModuleDecls(node.id, "more");
 
       const collapseModule = byId("detailCollapseModule");
       if (collapseModule) collapseModule.onclick = () => collapseModuleDecls(node.id);
+
+      const lensDeps = byId("detailLensDeps");
+      if (lensDeps) {
+        lensDeps.onclick = () => {
+          setImportLens(node.id, "deps");
+          setSourceHint(`import lens deps: ${node.id}`);
+          renderAll();
+        };
+      }
+      const lensDependees = byId("detailLensDependees");
+      if (lensDependees) {
+        lensDependees.onclick = () => {
+          setImportLens(node.id, "dependees");
+          setSourceHint(`import lens dependees: ${node.id}`);
+          renderAll();
+        };
+      }
+      const lensBoth = byId("detailLensBoth");
+      if (lensBoth) {
+        lensBoth.onclick = () => {
+          setImportLens(node.id, "both");
+          setSourceHint(`import lens both: ${node.id}`);
+          renderAll();
+        };
+      }
+      const lensClear = byId("detailLensClear");
+      if (lensClear) {
+        lensClear.onclick = () => {
+          clearImportLens();
+          setSourceHint("import lens cleared");
+          renderAll();
+        };
+      }
 
       box.querySelectorAll("[data-jump]").forEach((el) => {
         el.onclick = () => {

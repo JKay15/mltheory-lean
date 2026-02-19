@@ -7,6 +7,7 @@ cd "${ROOT_DIR}"
 tools/index/gen_mltheory_index.sh
 tools/index/gen_mathlib_slice.sh
 tools/index/gen_graph_artifacts.sh
+python3 tools/ci/check_problem_workspace_contract.py
 
 FILES=(
   "artifacts/index/modules.json"
@@ -27,6 +28,10 @@ FILES=(
   "docs/_auto/GraphArtifacts.md"
   "docs/_auto/subgraph.json"
   "docs/_auto/subgraph.js"
+  "docs/_auto/snapshot_datasets_bundle.js"
+  "docs/_auto/proof_maps.json"
+  "docs/_auto/proof_maps_bundle.js"
+  "docs/_auto/proof_maps"
 )
 
 if ! git diff --quiet -- "${FILES[@]}"; then

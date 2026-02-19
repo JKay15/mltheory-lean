@@ -1,8 +1,72 @@
 {
-  "generated_at": "2026-02-18",
-  "event_count": 0,
-  "node_count": 0,
-  "edge_count": 0,
-  "nodes": [],
-  "edges": []
+  "generated_at": "2026-02-19",
+  "event_count": 5,
+  "node_count": 5,
+  "edge_count": 2,
+  "nodes": [
+    {
+      "id": "MLTheory.Core.RL.bellmanExpectationSpec",
+      "kind": "decl",
+      "title": "bellmanExpectationSpec",
+      "module": "MLTheory.Core.RL.MDP",
+      "usage_count": 3,
+      "success_count": 3,
+      "score": 9,
+      "last_used": "2026-02-19T09:41:42.437781+00:00"
+    },
+    {
+      "id": "MLTheory.Core.RL.bellmanOptimalitySpec",
+      "kind": "decl",
+      "title": "bellmanOptimalitySpec",
+      "module": "MLTheory.Core.RL.MDP",
+      "usage_count": 3,
+      "success_count": 3,
+      "score": 9,
+      "last_used": "2026-02-19T09:41:42.437781+00:00"
+    },
+    {
+      "id": "MLTheory.Methods.RL.policyEvaluationSpec",
+      "kind": "decl",
+      "title": "policyEvaluationSpec",
+      "module": "MLTheory.Methods.RL.DynamicProgramming",
+      "usage_count": 1,
+      "success_count": 1,
+      "score": 3,
+      "last_used": "2026-02-19T09:44:48.015062+00:00"
+    },
+    {
+      "id": "MLTheory.Methods.RL.policyImprovementSpec",
+      "kind": "decl",
+      "title": "policyImprovementSpec",
+      "module": "MLTheory.Methods.RL.DynamicProgramming",
+      "usage_count": 1,
+      "success_count": 1,
+      "score": 3,
+      "last_used": "2026-02-19T09:44:48.015062+00:00"
+    },
+    {
+      "id": "MLTheory.Methods.RL.tdError",
+      "kind": "decl",
+      "title": "tdError",
+      "module": "MLTheory.Methods.RL.TemporalDifference",
+      "usage_count": 1,
+      "success_count": 1,
+      "score": 3,
+      "last_used": "2026-02-19T09:58:28.746452+00:00"
+    }
+  ],
+  "edges": [
+    {
+      "src": "MLTheory.Core.RL.bellmanExpectationSpec",
+      "dst": "MLTheory.Core.RL.bellmanOptimalitySpec",
+      "type": "used_recently",
+      "weight": 3
+    },
+    {
+      "src": "MLTheory.Methods.RL.policyEvaluationSpec",
+      "dst": "MLTheory.Methods.RL.policyImprovementSpec",
+      "type": "used_recently",
+      "weight": 1
+    }
+  ]
 }

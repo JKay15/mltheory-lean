@@ -146,6 +146,18 @@ def validate_meta(errors: list[str]) -> None:
             if not allowed:
                 errors.append(f"docs/meta/domains.yaml: domain `{domain_id}` missing allowed_local_roots")
 
+    for extra_meta in (
+        ROOT / "docs" / "meta" / "taxonomy_math.yaml",
+        ROOT / "docs" / "meta" / "taxonomy_applied.yaml",
+        ROOT / "docs" / "meta" / "domain_profiles.yaml",
+    ):
+        if not extra_meta.exists():
+            continue
+        cfg = parse_simple_yaml(extra_meta)
+        titles = cfg.get("tag_titles") or cfg.get("profile_titles")
+        if not isinstance(titles, dict) or not titles:
+            errors.append(f"{extra_meta.relative_to(ROOT)}: expected non-empty tag/profile titles mapping")
+
     backlog_path = ROOT / "docs" / "meta" / "backlog.yaml"
     if backlog_path.exists():
         backlog = parse_simple_yaml(backlog_path)
@@ -252,6 +264,7 @@ def validate_artifacts(errors: list[str]) -> None:
 
     allowed_edge_types = {
         "imports",
+        "contains",
         "decl_in_module",
         "uses_type",
         "uses_value",
@@ -290,6 +303,15 @@ def validate_artifacts(errors: list[str]) -> None:
             domains = node.get("domains")
             if not isinstance(domains, list) or not all(isinstance(x, str) for x in domains):
                 errors.append(f"subgraph.json: node `{nid}` missing string-list `domains`")
+            profiles = node.get("profiles")
+            if not isinstance(profiles, list) or not all(isinstance(x, str) for x in profiles):
+                errors.append(f"subgraph.json: node `{nid}` missing string-list `profiles`")
+            math_tags = node.get("math_tags")
+            if not isinstance(math_tags, list) or not all(isinstance(x, str) for x in math_tags):
+                errors.append(f"subgraph.json: node `{nid}` missing string-list `math_tags`")
+            applied_tags = node.get("applied_tags")
+            if not isinstance(applied_tags, list) or not all(isinstance(x, str) for x in applied_tags):
+                errors.append(f"subgraph.json: node `{nid}` missing string-list `applied_tags`")
             if kind == "decl":
                 module = node.get("module")
                 generated = node.get("generated")
@@ -363,6 +385,22 @@ def validate_artifacts(errors: list[str]) -> None:
                                 )
                 if not isinstance(default_domain, str) or not default_domain:
                     errors.append("subgraph.json: domains.default_domain must be non-empty string")
+                default_profile = domains_obj.get("default_profile")
+                if default_profile is not None and (not isinstance(default_profile, str) or not default_profile):
+                    errors.append("subgraph.json: domains.default_profile must be non-empty string when present")
+                if domains_obj.get("version") == 2:
+                    axes = domains_obj.get("axes")
+                    if not isinstance(axes, dict):
+                        errors.append("subgraph.json: domains.axes must be object for v2")
+                    else:
+                        for axis in ("math", "applied"):
+                            row = axes.get(axis)
+                            if not isinstance(row, dict):
+                                errors.append(f"subgraph.json: domains.axes.{axis} must be object")
+                                continue
+                            tags = row.get("tags")
+                            if not isinstance(tags, list):
+                                errors.append(f"subgraph.json: domains.axes.{axis}.tags must be list")
 
     if usage_graph is not None:
         require_keys(usage_graph, ["generated_at", "nodes", "edges"], "usage_graph.json", errors)

@@ -1,0 +1,10 @@
+terms:
+  td_error:
+    lean: MLTheory.Methods.RL.tdError
+    note: temporal-difference residual
+  td_update:
+    lean: MLTheory.Methods.RL.tdUpdate
+    note: one-step value update
+  td_update_identity:
+    lean: MLTheory.Methods.RL.tdError_after_update
+    note: residual after update scales by (1 - stepSize)

@@ -1058,6 +1058,26 @@ def run_checked(cmd: list[str], cwd: Path) -> None:
         raise RuntimeError(f"command failed ({proc.returncode}): {' '.join(cmd)}")
 
 
+def sync_problem_workspace(ctx: ProblemContext) -> None:
+    run_checked(
+        [
+            "python3",
+            "tools/intake/sync_problem_workspace.py",
+            "--repo-root",
+            str(ctx.repo_root),
+            "--domain",
+            ctx.domain_tag,
+            "--problem",
+            ctx.problem,
+        ],
+        ctx.repo_root,
+    )
+
+
+def refresh_problem_workspace_artifacts(repo_root: Path) -> None:
+    run_checked(["python3", "tools/index/gen_proof_map.py"], repo_root)
+
+
 def run_blocking_gates(repo_root: Path) -> None:
     gate_cmds: list[list[str]] = [
         ["lake", "build"],
@@ -1369,10 +1389,13 @@ def stage_lean_commit(
     run_checked(["lake", "env", "lean", str(sketch_path)], ctx.repo_root)
 
     sync_taxonomy_aliases(ctx, domain_profiles)
+    sync_problem_workspace(ctx)
 
     if run_artifacts:
         run_checked(["tools/index/gen_mltheory_index.sh"], ctx.repo_root)
         run_checked(["tools/index/gen_graph_artifacts.sh"], ctx.repo_root)
+    else:
+        refresh_problem_workspace_artifacts(ctx.repo_root)
 
     # Lean Commit contract: must pass the repository blocking gate.
     run_blocking_gates(ctx.repo_root)
@@ -1483,6 +1506,8 @@ def stage_apply_replan(
     run_checked(["lake", "env", "lean", str(spec_path)], ctx.repo_root)
     run_checked(["lake", "env", "lean", str(cache_path)], ctx.repo_root)
     run_checked(["lake", "env", "lean", str(sketch_path)], ctx.repo_root)
+    sync_problem_workspace(ctx)
+    refresh_problem_workspace_artifacts(ctx.repo_root)
 
     applied_payload = {
         "version": 1,
@@ -1552,10 +1577,13 @@ def stage_promote_cache(
     run_checked(["lake", "env", "lean", str(spec_path)], ctx.repo_root)
     run_checked(["lake", "env", "lean", str(cache_path)], ctx.repo_root)
     run_checked(["lake", "env", "lean", str(sketch_path)], ctx.repo_root)
+    sync_problem_workspace(ctx)
 
     if run_artifacts:
         run_checked(["tools/index/gen_mltheory_index.sh"], ctx.repo_root)
         run_checked(["tools/index/gen_graph_artifacts.sh"], ctx.repo_root)
+    else:
+        refresh_problem_workspace_artifacts(ctx.repo_root)
 
     run_blocking_gates(ctx.repo_root)
     append_telemetry_event(
@@ -1596,6 +1624,8 @@ def stage_proof_scope(ctx: ProblemContext, *, domain_profiles: dict[str, DomainP
     run_checked(["lake", "env", "lean", str(spec_path)], ctx.repo_root)
     run_checked(["lake", "env", "lean", str(cache_path)], ctx.repo_root)
     run_checked(["lake", "env", "lean", str(sketch_path)], ctx.repo_root)
+    sync_problem_workspace(ctx)
+    refresh_problem_workspace_artifacts(ctx.repo_root)
 
     active_domain = ctx.domains[0]
     profile = domain_profiles.get(active_domain)

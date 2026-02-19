@@ -1,0 +1,152 @@
+version: 2
+description: Domain profile views built on axis-A (math) + axis-B (applied) tags.
+default_profile: learning
+
+profile_titles:
+  learning: Learning Core
+  probability: Probability Core
+  statistics: Statistical Core
+  optimization: Optimization Core
+  rl: Reinforcement Learning Core
+  bandits: Bandits Core
+  ai: AI Applications
+  llm: LLM Core
+  stochastic_analysis: Stochastic Analysis
+  numerical_linear_algebra: Numerical Linear Algebra
+  graph_learning: Graph Learning
+
+profile_descriptions:
+  learning: Learning-theory profile anchored by probability/statistics foundations.
+  probability: Probability and measure-theoretic profile.
+  statistics: Statistical inference profile.
+  optimization: Optimization and online learning profile.
+  rl: Reinforcement learning and control profile.
+  bandits: Bandit feedback and online decision profile.
+  ai: AI application bridge profile.
+  llm: LLM-specific profile.
+  stochastic_analysis: Pure-math stochastic analysis profile.
+  numerical_linear_algebra: Numerical + linear algebra profile.
+  graph_learning: Graph/combinatorics + learning profile.
+
+profile_math_tags:
+  learning:
+    - probability
+    - statistics
+    - analysis
+    - linear_algebra
+  probability:
+    - probability
+    - measure_theory
+  statistics:
+    - statistics
+    - probability
+    - measure_theory
+  optimization:
+    - analysis
+    - linear_algebra
+    - numerical
+  rl:
+    - probability
+    - measure_theory
+    - linear_algebra
+    - analysis
+  bandits:
+    - probability
+    - statistics
+    - analysis
+  ai:
+    - linear_algebra
+    - analysis
+    - probability
+  llm:
+    - linear_algebra
+    - analysis
+    - probability
+    - tensor_analysis
+  stochastic_analysis:
+    - stochastic_analysis
+    - probability
+    - measure_theory
+    - analysis
+  numerical_linear_algebra:
+    - numerical
+    - linear_algebra
+    - analysis
+  graph_learning:
+    - graph_theory
+    - combinatorics
+    - linear_algebra
+
+profile_applied_tags:
+  learning:
+    - learning_theory
+    - statistics
+  probability:
+    - statistics
+  statistics:
+    - statistics
+    - information_theory
+  optimization:
+    - optimization
+    - online_learning
+  rl:
+    - reinforcement_learning
+    - control
+  bandits:
+    - bandits
+    - online_learning
+  ai:
+    - ai_applications
+    - learning_theory
+  llm:
+    - llm
+    - ai_applications
+  stochastic_analysis:
+    - statistics
+  numerical_linear_algebra:
+    - optimization
+  graph_learning:
+    - learning_theory
+
+profile_adjacent_profiles:
+  learning:
+    - probability
+    - statistics
+    - optimization
+    - ai
+  probability:
+    - statistics
+    - bandits
+    - stochastic_analysis
+  statistics:
+    - probability
+    - learning
+    - bandits
+  optimization:
+    - learning
+    - rl
+    - numerical_linear_algebra
+  rl:
+    - bandits
+    - optimization
+    - ai
+  bandits:
+    - rl
+    - probability
+    - statistics
+  ai:
+    - learning
+    - rl
+    - llm
+  llm:
+    - ai
+    - learning
+  stochastic_analysis:
+    - probability
+    - statistics
+  numerical_linear_algebra:
+    - optimization
+    - learning
+  graph_learning:
+    - learning
+    - optimization

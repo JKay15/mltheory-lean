@@ -1,0 +1,137 @@
+version: 2
+description: Two-axis v2 applied taxonomy for MLTheory research areas.
+default_tag: learning_theory
+
+tag_titles:
+  learning_theory: LearningTheory
+  statistics: Statistics
+  optimization: Optimization
+  online_learning: OnlineLearning
+  bandits: Bandits
+  reinforcement_learning: ReinforcementLearning
+  information_theory: InformationTheory
+  control: Control
+  ai_applications: AIApplications
+  llm: LLM
+
+tag_descriptions:
+  learning_theory: Generalization, capacity, and core SLT reasoning.
+  statistics: Estimation, risk, and uncertainty quantification.
+  optimization: Convex/non-convex optimization and search procedures.
+  online_learning: Sequential and regret-minimization workflows.
+  bandits: Exploration-exploitation and bandit feedback.
+  reinforcement_learning: MDP and temporal-difference style methods.
+  information_theory: Information metrics and coding-style bounds.
+  control: Decision/control loops coupled with learning.
+  ai_applications: Application-facing AI abstractions.
+  llm: LLM-specific modeling and alignment workflows.
+
+tag_module_roots:
+  learning_theory:
+    - MLTheory.Core.Learning
+    - MLTheory.Methods.Learning
+  statistics:
+    - MLTheory.Core.Statistics
+  optimization:
+    - MLTheory.Methods.OCO
+    - MLTheory.Methods.OR
+  online_learning:
+    - MLTheory.Methods.OCO
+  bandits:
+    - MLTheory.Methods.Bandits
+  reinforcement_learning:
+    - MLTheory.Core.RL
+    - MLTheory.Methods.RL
+  information_theory:
+    - MLTheory.Core.Statistics.Information
+    - MLTheory.Methods.Bandits.InformationTheory
+  control:
+    - MLTheory.Methods.RL
+  ai_applications:
+    - MLTheory.Applications.AI
+  llm:
+    - MLTheory.Applications.LLM
+
+tag_path_roots:
+  learning_theory:
+    - MLTheory/Core/Learning
+    - MLTheory/Methods/Learning
+  statistics:
+    - MLTheory/Core/Statistics
+  optimization:
+    - MLTheory/Methods/OCO
+    - MLTheory/Methods/OR
+  online_learning:
+    - MLTheory/Methods/OCO
+  bandits:
+    - MLTheory/Methods/Bandits
+  reinforcement_learning:
+    - MLTheory/Core/RL
+    - MLTheory/Methods/RL
+  information_theory:
+    - MLTheory/Core/Statistics/Information
+    - MLTheory/Methods/Bandits/InformationTheory
+  control:
+    - MLTheory/Methods/RL
+  ai_applications:
+    - MLTheory/Applications/AI
+  llm:
+    - MLTheory/Applications/LLM
+
+tag_concept_binds:
+  learning_theory:
+    - methods
+    - MLTheory.Methods.Learning
+  statistics:
+    - core
+    - MLTheory.Core.Statistics
+  optimization:
+    - methods
+    - MLTheory.Methods.OCO
+    - MLTheory.Methods.OR
+  online_learning:
+    - MLTheory.Methods.OCO
+  bandits:
+    - MLTheory.Methods.Bandits
+  reinforcement_learning:
+    - MLTheory.Core.RL
+    - MLTheory.Methods.RL
+  information_theory:
+    - MLTheory.Core.Statistics.Information
+  control:
+    - MLTheory.Methods.RL
+  ai_applications:
+    - applications
+    - MLTheory.Applications.AI
+  llm:
+    - applications
+    - MLTheory.Applications.LLM
+
+tag_adjacent_tags:
+  learning_theory:
+    - statistics
+    - optimization
+    - ai_applications
+  statistics:
+    - learning_theory
+    - information_theory
+    - bandits
+  optimization:
+    - online_learning
+    - reinforcement_learning
+  online_learning:
+    - optimization
+    - bandits
+  bandits:
+    - online_learning
+    - reinforcement_learning
+    - statistics
+  reinforcement_learning:
+    - bandits
+    - control
+  ai_applications:
+    - learning_theory
+    - reinforcement_learning
+    - llm
+  llm:
+    - ai_applications

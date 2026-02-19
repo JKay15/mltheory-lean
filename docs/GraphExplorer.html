@@ -18,6 +18,7 @@
       --decl: #cb6a1c;
       --spine: #b83b22;
       --imports: #1f7a8c;
+      --contains: #245b3f;
       --uses-type: #2a9d8f;
       --uses-value: #d1495b;
       --decl-in-module: #52796f;
@@ -114,6 +115,31 @@
       display: block;
     }
 
+    .tag-panel {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 6px;
+    }
+
+    .tag-chip {
+      width: auto;
+      border-radius: 999px;
+      border: 1px solid #c9d9cd;
+      background: #f7fbf5;
+      color: #335244;
+      padding: 3px 9px;
+      font-size: 11px;
+      line-height: 1.1;
+      margin-top: 0;
+    }
+
+    .tag-chip.active {
+      border-color: #4a9d7a;
+      background: #e8f7ef;
+      color: #1b5f43;
+    }
+
     main {
       display: grid;
       grid-template-columns: 430px 1fr;
@@ -140,6 +166,17 @@
       background: linear-gradient(180deg, #f9fcf5, #f3f8ef);
     }
 
+    .panel-tools {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 8px 12px 0;
+    }
+
+    .is-hidden {
+      display: none !important;
+    }
+
     .stats {
       padding: 10px 12px;
       border-bottom: 1px solid #e3ebe1;
@@ -157,6 +194,65 @@
       padding: 8px;
       border-bottom: 1px solid #e4ece2;
       background: #fff;
+    }
+
+    #treeBox {
+      max-height: 24vh;
+    }
+
+    #mathlibLensBox {
+      max-height: 24vh;
+    }
+
+    .lens-title {
+      margin: 0;
+      padding: 7px 10px 6px;
+      font-size: 11px;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+      border-bottom: 1px solid #e3ebe1;
+      background: #f7fbf5;
+      color: #365446;
+    }
+
+    .lens-section {
+      margin-top: 8px;
+    }
+
+    .lens-section-title {
+      font-size: 11px;
+      color: #406152;
+      font-weight: 700;
+      margin: 0 0 6px;
+    }
+
+    .tree-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 6px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      color: #1f3227;
+    }
+
+    .tree-row:hover { background: #eef6ee; }
+    .tree-row.tree-active { background: #ddf0e7; border: 1px solid #b7d8c9; }
+
+    .tree-toggle {
+      display: inline-block;
+      width: 12px;
+      color: #426452;
+      user-select: none;
+      text-align: center;
+      font-weight: 700;
+    }
+
+    .tree-label {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .node-item {
@@ -362,8 +458,8 @@
   <header>
     <h1>MLTheory Graph Explorer</h1>
     <p class="subtitle">
-      Default view is Module Map. Use wheel to zoom, drag background to pan, click a node to inspect details,
-      and double click a node to pin/unpin it.
+      Default view is Module Map. Trackpad two-finger scroll pans, pinch (ctrl+wheel signal) zooms, mouse wheel zooms,
+      drag background to pan, and double click a node to pin/unpin it.
     </p>
 
     <div class="controls">
@@ -374,6 +470,12 @@
             <option value="module-map" selected>module map</option>
             <option value="decl-neighborhood">decl neighborhood</option>
             <option value="concept-browser">concept browser</option>
+            <option value="mathlib-lens">Mathlib lens</option>
+          </select>
+        </label>
+        <label>Dataset
+          <select id="datasetSelect">
+            <option value="latest" selected>latest</option>
           </select>
         </label>
         <label>Package scope
@@ -394,9 +496,19 @@
             <option value="other">other</option>
           </select>
         </label>
-        <label>Domain
+        <label>Domain profile
           <select id="domainFilter">
             <option value="all">all domains</option>
+          </select>
+        </label>
+        <label>Math tag
+          <select id="mathTagFilter">
+            <option value="all">all math tags</option>
+          </select>
+        </label>
+        <label>Applied tag
+          <select id="appliedTagFilter">
+            <option value="all">all applied tags</option>
           </select>
         </label>
         <label>Neighborhood depth
@@ -412,6 +524,30 @@
             <option value="radial">radial</option>
           </select>
         </label>
+        <label>Group collapse
+          <select id="groupCollapseDepth">
+            <option value="0" selected>off</option>
+            <option value="2">namespace L2</option>
+            <option value="3">namespace L3</option>
+          </select>
+        </label>
+        <label>Wheel mode
+          <select id="wheelMode">
+            <option value="smart" selected>smart (trackpad pan)</option>
+            <option value="pan">pan (pinch zoom only)</option>
+            <option value="zoom">zoom (wheel always zoom)</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="block">
+        <div class="title">Domain Tag Panel</div>
+        <span id="tagPanelHint" class="tiny">loading tags…</span>
+        <div class="tiny">Axis A (math)</div>
+        <div id="mathTagPanel" class="tag-panel"></div>
+        <div class="tiny">Axis B (applied)</div>
+        <div id="appliedTagPanel" class="tag-panel"></div>
+        <button id="clearTagPanel">clear panel tags</button>
       </div>
 
       <div class="block">
@@ -425,6 +561,7 @@
       <div class="block">
         <div class="title">Edges</div>
         <label><input id="edge_imports" type="checkbox" checked /> imports</label>
+        <label><input id="edge_contains" type="checkbox" checked /> contains</label>
         <label><input id="edge_uses_type" type="checkbox" /> uses_type</label>
         <label><input id="edge_uses_value" type="checkbox" /> uses_value</label>
         <label><input id="edge_decl_in_module" type="checkbox" /> decl_in_module</label>
@@ -464,8 +601,21 @@
       </div>
 
       <div class="block">
+        <div class="title">Problem Workspace</div>
+        <label>Proof map
+          <select id="proofMapSelect">
+            <option value="">(none)</option>
+          </select>
+        </label>
+        <button id="loadProofMap">load proof map</button>
+        <button id="clearProofMap">clear proof map</button>
+      </div>
+
+      <div class="block">
         <div class="title">Actions</div>
         <button id="resetMap">reset module map</button>
+        <button id="openMathlibLens">open Mathlib lens</button>
+        <button id="clearTreeFocus">clear subtree focus</button>
         <button id="fitView">fit visible</button>
         <button id="clearPins">clear all pins</button>
         <button id="saveLayout">save layout</button>
@@ -478,7 +628,15 @@
   <main>
     <section class="panel">
       <h2>Inspector</h2>
+      <div class="panel-tools">
+        <button id="toggleStats">hide stats</button>
+        <button id="toggleOverlay">hide visible panel</button>
+        <button id="resetPanels">reset panels</button>
+      </div>
       <div id="statsBox" class="stats">loading…</div>
+      <div id="treeBox" class="node-list"></div>
+      <h3 class="lens-title">Mathlib Lens</h3>
+      <div id="mathlibLensBox" class="node-list"></div>
       <div id="searchResults" class="node-list"></div>
       <div id="details" class="details">Please select a node or edge.</div>
     </section>
@@ -494,6 +652,7 @@
         <div class="row"><span class="sw" style="background: var(--pin)"></span> pinned node</div>
         <div class="row" style="margin-top: 7px;"><strong>Edge Type</strong></div>
         <div class="row"><span class="ln" style="border-top-color: var(--imports)"></span> imports</div>
+        <div class="row"><span class="ln" style="border-top-color: var(--contains)"></span> contains</div>
         <div class="row"><span class="ln" style="border-top-color: var(--uses-type)"></span> uses_type</div>
         <div class="row"><span class="ln" style="border-top-color: var(--uses-value)"></span> uses_value</div>
         <div class="row"><span class="ln" style="border-top-color: var(--decl-in-module)"></span> decl_in_module</div>
@@ -505,10 +664,13 @@
     </section>
   </main>
 
+  <script src="./_auto/snapshot_datasets_bundle.js"></script>
   <script src="./_auto/subgraph.js"></script>
+  <script src="./_auto/proof_maps_bundle.js"></script>
   <script>
     const EDGE_COLORS = {
       imports: "var(--imports)",
+      contains: "var(--contains)",
       uses_type: "var(--uses-type)",
       uses_value: "var(--uses-value)",
       decl_in_module: "var(--decl-in-module)",
@@ -518,9 +680,13 @@
     };
 
     const MATHLIB_SLICE_ID = "MathlibSlice";
-    const NODE_DOUBLE_CLICK_MS = 320;
+    const NODE_DRAG_THRESHOLD_PX = 6;
+    const CANVAS_PAN_THRESHOLD_PX = 4;
+    const MODULE_DECL_PAGE_SIZE = 20;
     const LAYOUT_STORAGE_KEY = "mltheory.graph.layout.v1";
+    const PANEL_UI_STORAGE_KEY = "mltheory.graph.panels.v1";
     const dataCandidates = ["./_auto/subgraph.json", "../artifacts/graphs/subgraph.json"];
+    const proofMapIndexCandidates = ["./_auto/proof_maps.json", "../docs/_auto/proof_maps.json"];
     const svg = document.getElementById("graph");
 
     const state = {
@@ -535,6 +701,7 @@
       selected: null,
       selectedEdge: null,
       pinned: new Map(),
+      moduleDeclCursor: new Map(),
       freePos: new Map(),
       basePos: new Map(),
       lastPos: new Map(),
@@ -543,12 +710,54 @@
       view: { x: 0, y: 0, w: 3200, h: 1900 },
       drag: null,
       suppressClickUntil: 0,
-      lastNodeClick: { id: "", at: 0 },
       rafPending: false,
       searchMatches: [],
       domainProfiles: new Map(),
+      domainAxes: { math: [], applied: [] },
+      selectedMathTags: new Set(),
+      selectedAppliedTags: new Set(),
       dataSource: "source: loading...",
       edgeCapApplied: false,
+      panelUI: {
+        overlayCollapsed: false,
+        statsCollapsed: false,
+      },
+      proofMapEntries: [],
+      activeProofMapId: "",
+      proofMapNodeIds: null,
+      proofMapEdgeKeys: null,
+      datasetEntries: [],
+      activeDatasetId: "latest",
+      groupNodeMap: new Map(),
+      groupMembers: new Map(),
+      namespaceTree: {
+        roots: [],
+        children: new Map(),
+        moduleSet: new Set(),
+      },
+      treeExpanded: new Set(),
+      treeFocusRoot: "",
+      importLens: {
+        rootId: "",
+        mode: "off",
+        nodes: new Set(),
+        edges: new Set(),
+        depth: 0,
+        truncated: false,
+      },
+      collectMeta: {
+        mode: "module-map",
+        maxNodes: 500,
+        maxEdges: 5000,
+        rankedNodeCount: 0,
+        hiddenByNodeCap: 0,
+        rawEdgeCount: 0,
+        hiddenByEdgeCap: 0,
+        collapsedMathlibModules: 0,
+        groupDepth: 0,
+        groupedModuleCount: 0,
+        groupNodeCount: 0,
+      },
     };
 
     const byId = (id) => document.getElementById(id);
@@ -561,6 +770,7 @@
     function modeTitle(mode) {
       if (mode === "decl-neighborhood") return "Decl Neighborhood";
       if (mode === "concept-browser") return "Concept Browser";
+      if (mode === "mathlib-lens") return "Mathlib Lens";
       return "Module Map";
     }
 
@@ -597,6 +807,7 @@
 
     function nodeColor(node) {
       if (state.pinned.has(node.id)) return "var(--pin)";
+      if (node && node.group === true) return "var(--contains)";
       if (node.spine) return "var(--spine)";
       if (node.kind === "concept") return "var(--concept)";
       if (node.kind === "module") return "var(--module)";
@@ -617,6 +828,9 @@
     function nodeLabelText(node) {
       if (!node) return "";
       if (node.id === MATHLIB_SLICE_ID) return "MathlibSlice";
+      if (node.group === true && typeof node.title === "string" && node.title) {
+        return `${compactModuleLabel(node.title)} [grp]`;
+      }
       if (node.kind === "module") return compactModuleLabel(node.id);
       return node.title || node.id.split(".").pop() || node.id;
     }
@@ -669,12 +883,13 @@
 
     function edgePriority(edgeType) {
       if (edgeType === "imports") return 0;
-      if (edgeType === "decl_in_module") return 1;
-      if (edgeType === "binds") return 2;
-      if (edgeType === "uses_value") return 3;
-      if (edgeType === "uses_type") return 4;
-      if (edgeType === "used_recently") return 5;
-      if (edgeType === "alias_of") return 6;
+      if (edgeType === "contains") return 1;
+      if (edgeType === "decl_in_module") return 2;
+      if (edgeType === "binds") return 3;
+      if (edgeType === "uses_value") return 4;
+      if (edgeType === "uses_type") return 5;
+      if (edgeType === "used_recently") return 6;
+      if (edgeType === "alias_of") return 7;
       return 9;
     }
 
@@ -691,11 +906,221 @@
       return true;
     }
 
+    function lensModules(rows, limit = 20) {
+      const out = [];
+      if (!Array.isArray(rows)) return out;
+      for (const row of rows) {
+        const module = row && typeof row === "object" ? row.module : row;
+        if (!module || typeof module !== "string") continue;
+        if (!state.nodesById.has(module)) continue;
+        out.push(module);
+        if (out.length >= limit) break;
+      }
+      return out;
+    }
+
+    function activeMathlibLensConfig() {
+      const lens = state.graph && typeof state.graph === "object" && state.graph.mathlib_lens
+        ? state.graph.mathlib_lens
+        : {};
+      const activeDomain = byId("domainFilter") ? byId("domainFilter").value : "all";
+      const profile = activeDomain !== "all" ? state.domainProfiles.get(activeDomain) : null;
+      const roots = profile && Array.isArray(profile.mathlib_slice_roots)
+        ? profile.mathlib_slice_roots.filter((m) => typeof m === "string")
+        : lensModules(lens.slice_roots || [], 40);
+      const bridges = profile && Array.isArray(profile.bridge_modules)
+        ? profile.bridge_modules.filter((m) => typeof m === "string")
+        : [];
+      const moduleRoots = profile && Array.isArray(profile.module_roots)
+        ? profile.module_roots.filter((m) => typeof m === "string")
+        : [];
+      const hubs = lensModules(lens.top_hubs || [], 24);
+      const aggregators = lensModules(lens.aggregators || [], 24);
+      return { activeDomain, roots, bridges, hubs, aggregators, moduleRoots };
+    }
+
+    function shortestImportPath(srcId, dstId, maxDepth = 10) {
+      if (!srcId || !dstId) return null;
+      if (srcId === dstId) return [srcId];
+      if (!state.nodesById.has(srcId) || !state.nodesById.has(dstId)) return null;
+
+      const queue = [srcId];
+      const depthBy = new Map([[srcId, 0]]);
+      const prev = new Map();
+
+      while (queue.length > 0) {
+        const cur = queue.shift();
+        const depth = depthBy.get(cur) || 0;
+        if (depth >= maxDepth) continue;
+        for (const edge of state.outgoing.get(cur) || []) {
+          if (edge.type !== "imports") continue;
+          const nxt = edge.dst;
+          if (!nxt || depthBy.has(nxt)) continue;
+          depthBy.set(nxt, depth + 1);
+          prev.set(nxt, cur);
+          if (nxt === dstId) {
+            const path = [dstId];
+            let p = dstId;
+            while (prev.has(p)) {
+              p = prev.get(p);
+              path.push(p);
+            }
+            path.reverse();
+            return path[0] === srcId ? path : null;
+          }
+          queue.push(nxt);
+        }
+      }
+      return null;
+    }
+
+    function importLensEdgeKey(src, dst) {
+      return `${src}__imports__${dst}`;
+    }
+
+    function collectImportTraversal(rootId, direction, maxDepth = 6, maxNodes = 900) {
+      const nodes = new Set();
+      const edges = new Set();
+      if (!rootId || !state.nodesById.has(rootId)) {
+        return { nodes, edges, truncated: false };
+      }
+      const root = state.nodesById.get(rootId);
+      if (!root || root.kind !== "module") {
+        return { nodes, edges, truncated: false };
+      }
+
+      const normalizedDirection = direction === "in" ? "in" : "out";
+      const queue = [{ id: rootId, depth: 0 }];
+      nodes.add(rootId);
+      let truncated = false;
+
+      while (queue.length > 0) {
+        const row = queue.shift();
+        if (!row || row.depth >= maxDepth) continue;
+        const around = normalizedDirection === "out"
+          ? (state.outgoing.get(row.id) || [])
+          : (state.incoming.get(row.id) || []);
+        for (const edge of around) {
+          if (!edge || edge.type !== "imports") continue;
+          const src = normalizedDirection === "out" ? row.id : edge.src;
+          const dst = normalizedDirection === "out" ? edge.dst : row.id;
+          const nextId = normalizedDirection === "out" ? edge.dst : edge.src;
+          if (!nextId || !state.nodesById.has(nextId)) continue;
+          const nextNode = state.nodesById.get(nextId);
+          if (!nextNode || nextNode.kind !== "module") continue;
+          edges.add(importLensEdgeKey(src, dst));
+          if (!nodes.has(nextId)) {
+            nodes.add(nextId);
+            if (nodes.size >= maxNodes) {
+              truncated = true;
+              queue.length = 0;
+              break;
+            }
+            queue.push({ id: nextId, depth: row.depth + 1 });
+          }
+        }
+      }
+
+      return { nodes, edges, truncated };
+    }
+
+    function setImportLens(rootId, mode = "deps", options = {}) {
+      if (!rootId || !state.nodesById.has(rootId)) {
+        clearImportLens();
+        return;
+      }
+      const root = state.nodesById.get(rootId);
+      if (!root || root.kind !== "module") {
+        clearImportLens();
+        return;
+      }
+
+      const depth = clamp(Number(options.depth || 6), 1, 12);
+      const limit = clamp(Number(options.limit || 900), 80, 2400);
+      const normalizedMode = mode === "dependees" || mode === "both" ? mode : "deps";
+
+      const allNodes = new Set([rootId]);
+      const allEdges = new Set();
+      let truncated = false;
+
+      if (normalizedMode === "deps" || normalizedMode === "both") {
+        const out = collectImportTraversal(rootId, "out", depth, limit);
+        for (const id of out.nodes) allNodes.add(id);
+        for (const key of out.edges) allEdges.add(key);
+        truncated = truncated || out.truncated;
+      }
+      if (normalizedMode === "dependees" || normalizedMode === "both") {
+        const incoming = collectImportTraversal(rootId, "in", depth, limit);
+        for (const id of incoming.nodes) allNodes.add(id);
+        for (const key of incoming.edges) allEdges.add(key);
+        truncated = truncated || incoming.truncated;
+      }
+
+      state.importLens = {
+        rootId,
+        mode: normalizedMode,
+        nodes: allNodes,
+        edges: allEdges,
+        depth,
+        truncated,
+      };
+
+      for (const moduleId of allNodes) {
+        materializeNode(moduleId);
+      }
+    }
+
+    function clearImportLens() {
+      state.importLens = {
+        rootId: "",
+        mode: "off",
+        nodes: new Set(),
+        edges: new Set(),
+        depth: 0,
+        truncated: false,
+      };
+    }
+
     function isInScope(node) {
       const scope = byId("scope").value;
       if (scope === "all") return true;
       if (scope === "mltheory") return node.package !== "mathlib";
       return node.package === "mathlib";
+    }
+
+    function selectedAxisTags(axis) {
+      if (axis === "math") return state.selectedMathTags instanceof Set ? state.selectedMathTags : new Set();
+      return state.selectedAppliedTags instanceof Set ? state.selectedAppliedTags : new Set();
+    }
+
+    function axisTagSelectValue(axis) {
+      const id = axis === "math" ? "mathTagFilter" : "appliedTagFilter";
+      const el = byId(id);
+      return el && typeof el.value === "string" ? el.value : "all";
+    }
+
+    function activeAxisTagToken(axis) {
+      const selected = selectedAxisTags(axis);
+      if (selected.size > 0) {
+        return `multi:${Array.from(selected).sort().join("|")}`;
+      }
+      return axisTagSelectValue(axis);
+    }
+
+    function nodeMatchesAxisTags(node, axis) {
+      const tags = axis === "math"
+        ? (Array.isArray(node.math_tags) ? node.math_tags : [])
+        : (Array.isArray(node.applied_tags) ? node.applied_tags : []);
+      const selected = selectedAxisTags(axis);
+      if (selected.size > 0) {
+        for (const tag of tags) {
+          if (selected.has(tag)) return true;
+        }
+        return false;
+      }
+      const active = axisTagSelectValue(axis);
+      if (active === "all") return true;
+      return tags.includes(active);
     }
 
     function nodePassesFilters(node) {
@@ -704,11 +1129,15 @@
       if (!isInScope(node)) return false;
       const layer = byId("layerFilter").value;
       if (layer !== "all" && String(node.layer || "") !== layer) return false;
-      const activeDomain = byId("domainFilter").value;
-      if (activeDomain !== "all") {
-        const domains = Array.isArray(node.domains) ? node.domains : [];
-        if (!domains.includes(activeDomain)) return false;
+      const activeProfile = byId("domainFilter").value;
+      if (activeProfile !== "all") {
+        const profiles = Array.isArray(node.profiles)
+          ? node.profiles
+          : (Array.isArray(node.domains) ? node.domains : []);
+        if (!profiles.includes(activeProfile)) return false;
       }
+      if (!nodeMatchesAxisTags(node, "math")) return false;
+      if (!nodeMatchesAxisTags(node, "applied")) return false;
       if (node.kind === "decl" && !byId("showGenerated").checked && node.generated === true) return false;
       if (byId("spineOnly").checked) {
         // Keep module-map readable by default: do not hide non-spine modules.
@@ -731,9 +1160,68 @@
       };
     }
 
-    async function loadData() {
+    function datasetBundleRows() {
+      const bundle = globalThis.__MLTHEORY_DATASETS__;
+      if (!bundle || !Array.isArray(bundle.datasets)) return null;
+      const rows = [];
+      for (const row of bundle.datasets) {
+        if (!row || typeof row.id !== "string" || !row.id) continue;
+        const graph = row.subgraph;
+        if (!graph || !Array.isArray(graph.nodes) || !Array.isArray(graph.edges)) continue;
+        rows.push({
+          id: row.id,
+          label: typeof row.label === "string" && row.label ? row.label : row.id,
+          graph,
+        });
+      }
+      if (rows.length === 0) return null;
+      return rows;
+    }
+
+    function datasetDefaultId(rows) {
+      if (!rows || rows.length === 0) return "latest";
+      const bundle = globalThis.__MLTHEORY_DATASETS__;
+      const raw = bundle && typeof bundle.default_dataset === "string" ? bundle.default_dataset : "latest";
+      if (rows.some((row) => row.id === raw)) return raw;
+      return rows[0].id;
+    }
+
+    function refreshDatasetOptions() {
+      const rows = datasetBundleRows();
+      state.datasetEntries = rows || [];
+      const select = byId("datasetSelect");
+      if (!select) return;
+      if (!rows || rows.length === 0) {
+        select.innerHTML = '<option value="latest">latest</option>';
+        select.value = "latest";
+        select.disabled = true;
+        return;
+      }
+      const options = rows.map((row) => `<option value="${row.id}">${row.label}</option>`);
+      select.innerHTML = options.join("");
+      const desired = rows.some((row) => row.id === state.activeDatasetId)
+        ? state.activeDatasetId
+        : datasetDefaultId(rows);
+      state.activeDatasetId = desired;
+      select.value = desired;
+      select.disabled = rows.length <= 1;
+    }
+
+    async function loadData(datasetId = "latest") {
+      const rows = datasetBundleRows();
+      if (rows && rows.length > 0) {
+        const desired = rows.some((row) => row.id === datasetId)
+          ? datasetId
+          : datasetDefaultId(rows);
+        const row = rows.find((item) => item.id === desired) || rows[0];
+        state.activeDatasetId = row.id;
+        state.dataSource = `source: dataset ${row.id} (embedded snapshots)`;
+        setSourceHint("");
+        return row.graph;
+      }
       const embedded = globalThis.__MLTHEORY_SUBGRAPH__;
       if (embedded && Array.isArray(embedded.nodes) && Array.isArray(embedded.edges)) {
+        state.activeDatasetId = "latest";
         state.dataSource = "source: ./_auto/subgraph.js";
         setSourceHint("");
         return embedded;
@@ -743,6 +1231,7 @@
           const res = await fetch(path, { cache: "no-store" });
           if (!res.ok) continue;
           const graph = await res.json();
+          state.activeDatasetId = "latest";
           state.dataSource = `source: ${path}`;
           setSourceHint("");
           return graph;
@@ -752,6 +1241,51 @@
         throw new Error("No graph data in file:// mode. Run `tools/index/gen_graph_artifacts.sh` and reopen this page.");
       }
       throw new Error("No graph data available.");
+    }
+
+    async function loadProofMapIndex() {
+      const embedded = globalThis.__MLTHEORY_PROOF_MAP_INDEX__;
+      if (embedded && Array.isArray(embedded.problems)) {
+        return embedded;
+      }
+      for (const path of proofMapIndexCandidates) {
+        try {
+          const res = await fetch(path, { cache: "no-store" });
+          if (!res.ok) continue;
+          const data = await res.json();
+          if (!data || !Array.isArray(data.problems)) continue;
+          return data;
+        } catch (_) {}
+      }
+      return { problems: [] };
+    }
+
+    async function loadProofMapData(path) {
+      const embeddedMaps = globalThis.__MLTHEORY_PROOF_MAPS__;
+      if (embeddedMaps && typeof embeddedMaps === "object" && typeof path === "string" && path) {
+        const row = embeddedMaps[path];
+        if (row && Array.isArray(row.nodes) && Array.isArray(row.edges)) {
+          return row;
+        }
+      }
+      const candidates = [];
+      if (typeof path === "string" && path) {
+        candidates.push(path);
+        if (path.startsWith("./_auto/")) {
+          candidates.push(`../docs/_auto/${path.slice("./_auto/".length)}`);
+        }
+      }
+      for (const candidate of candidates) {
+        try {
+          const res = await fetch(candidate, { cache: "no-store" });
+          if (!res.ok) continue;
+          const data = await res.json();
+          if (data && Array.isArray(data.nodes) && Array.isArray(data.edges)) {
+            return data;
+          }
+        } catch (_) {}
+      }
+      return null;
     }
 
     function buildIndex() {
@@ -780,8 +1314,105 @@
       }
     }
 
+    function moduleChildModules(moduleId) {
+      const out = [];
+      for (const edge of state.outgoing.get(moduleId) || []) {
+        if (!edge || edge.type !== "contains") continue;
+        const childId = edge.dst;
+        if (!childId || !state.nodesById.has(childId)) continue;
+        const child = state.nodesById.get(childId);
+        if (!child || child.kind !== "module") continue;
+        out.push(childId);
+      }
+      return out;
+    }
+
+    function moduleSubtreeIds(rootId, limit = 3000) {
+      if (!rootId || !state.nodesById.has(rootId)) return [];
+      const root = state.nodesById.get(rootId);
+      if (!root || root.kind !== "module") return [];
+      const seen = new Set([rootId]);
+      const out = [rootId];
+      const queue = [rootId];
+      while (queue.length > 0 && out.length < limit) {
+        const cur = queue.shift();
+        for (const childId of moduleChildModules(cur)) {
+          if (seen.has(childId)) continue;
+          seen.add(childId);
+          out.push(childId);
+          queue.push(childId);
+          if (out.length >= limit) break;
+        }
+      }
+      return out;
+    }
+
+    function rebuildNamespaceTree() {
+      const moduleSet = new Set();
+      for (const node of state.nodesById.values()) {
+        if (!node || node.kind !== "module") continue;
+        if (node.id === MATHLIB_SLICE_ID) continue;
+        moduleSet.add(node.id);
+      }
+
+      const children = new Map();
+      const parentCount = new Map();
+      for (const id of moduleSet) {
+        children.set(id, []);
+        parentCount.set(id, 0);
+      }
+
+      for (const edge of state.edges) {
+        if (!edge || edge.type !== "contains") continue;
+        const src = edge.src;
+        const dst = edge.dst;
+        if (!moduleSet.has(src) || !moduleSet.has(dst) || src === dst) continue;
+        const arr = children.get(src);
+        if (arr && !arr.includes(dst)) arr.push(dst);
+        parentCount.set(dst, (parentCount.get(dst) || 0) + 1);
+      }
+
+      for (const id of moduleSet) {
+        if ((parentCount.get(id) || 0) > 0) continue;
+        const parts = id.split(".").filter((p) => p);
+        for (let i = parts.length - 1; i >= 1; i -= 1) {
+          const parentId = parts.slice(0, i).join(".");
+          if (!moduleSet.has(parentId) || parentId === id) continue;
+          const arr = children.get(parentId);
+          if (arr && !arr.includes(id)) {
+            arr.push(id);
+            parentCount.set(id, (parentCount.get(id) || 0) + 1);
+          }
+          break;
+        }
+      }
+
+      for (const arr of children.values()) {
+        arr.sort((a, b) => a.localeCompare(b));
+      }
+      const roots = Array.from(moduleSet)
+        .filter((id) => (parentCount.get(id) || 0) === 0)
+        .sort((a, b) => a.localeCompare(b));
+
+      state.namespaceTree = { roots, children, moduleSet };
+      if (!(state.treeExpanded instanceof Set)) {
+        state.treeExpanded = new Set();
+      }
+      if (state.treeExpanded.size === 0) {
+        for (const rootId of roots.slice(0, 8)) state.treeExpanded.add(rootId);
+        for (const id of moduleSet) {
+          if (id.split(".").length <= 2) state.treeExpanded.add(id);
+        }
+      }
+      if (state.treeFocusRoot && !moduleSet.has(state.treeFocusRoot)) {
+        state.treeFocusRoot = "";
+      }
+    }
+
     function initDomainFilter() {
       const select = byId("domainFilter");
+      const mathSelect = byId("mathTagFilter");
+      const appliedSelect = byId("appliedTagFilter");
       if (!select) return;
       const domains = state.graph && state.graph.domains && Array.isArray(state.graph.domains.profiles)
         ? state.graph.domains
@@ -796,11 +1427,62 @@
         options.push(`<option value="${profile.id}">${profile.id} (${title})</option>`);
       }
       select.innerHTML = options.join("");
-      select.value = "all";
+      const defaultProfile = typeof domains.default_profile === "string" && state.domainProfiles.has(domains.default_profile)
+        ? domains.default_profile
+        : (
+          typeof domains.default_domain === "string" && state.domainProfiles.has(domains.default_domain)
+            ? domains.default_domain
+            : "all"
+        );
+      select.value = defaultProfile;
+
+      if (mathSelect) {
+        const rows = domains.axes && domains.axes.math && Array.isArray(domains.axes.math.tags)
+          ? domains.axes.math.tags
+          : [];
+        const normalizedRows = [];
+        const tags = ['<option value="all">all math tags</option>'];
+        for (const row of rows) {
+          if (!row || typeof row.id !== "string" || !row.id) continue;
+          const title = typeof row.title === "string" && row.title ? row.title : row.id;
+          normalizedRows.push({ id: row.id, title });
+          tags.push(`<option value="${row.id}">${row.id} (${title})</option>`);
+        }
+        mathSelect.innerHTML = tags.join("");
+        mathSelect.value = "all";
+        state.domainAxes.math = normalizedRows;
+      }
+
+      if (appliedSelect) {
+        const rows = domains.axes && domains.axes.applied && Array.isArray(domains.axes.applied.tags)
+          ? domains.axes.applied.tags
+          : [];
+        const normalizedRows = [];
+        const tags = ['<option value="all">all applied tags</option>'];
+        for (const row of rows) {
+          if (!row || typeof row.id !== "string" || !row.id) continue;
+          const title = typeof row.title === "string" && row.title ? row.title : row.id;
+          normalizedRows.push({ id: row.id, title });
+          tags.push(`<option value="${row.id}">${row.id} (${title})</option>`);
+        }
+        appliedSelect.innerHTML = tags.join("");
+        appliedSelect.value = "all";
+        state.domainAxes.applied = normalizedRows;
+      }
+
+      const mathIds = new Set((state.domainAxes.math || []).map((row) => row.id));
+      for (const tag of Array.from(selectedAxisTags("math"))) {
+        if (!mathIds.has(tag)) state.selectedMathTags.delete(tag);
+      }
+      const appliedIds = new Set((state.domainAxes.applied || []).map((row) => row.id));
+      for (const tag of Array.from(selectedAxisTags("applied"))) {
+        if (!appliedIds.has(tag)) state.selectedAppliedTags.delete(tag);
+      }
     }
 
     function resetToModuleMap() {
       state.visible.clear();
+      state.moduleDeclCursor.clear();
       for (const node of state.nodesById.values()) {
         if (node.kind === "module") state.visible.add(node.id);
       }
@@ -831,7 +1513,7 @@
 
     function collapseMathlib(nodes, edges) {
       if (byId("expandMathlib").checked) {
-        return { nodes, edges };
+        return { nodes, edges, collapsedMathlibModules: 0 };
       }
 
       const hiddenMathlib = new Set(
@@ -849,7 +1531,7 @@
       }
 
       if (hiddenMathlib.size === 0) {
-        return { nodes, edges };
+        return { nodes, edges, collapsedMathlibModules: 0 };
       }
 
       const keptNodes = nodes.filter((n) => !hiddenMathlib.has(n.id));
@@ -886,7 +1568,189 @@
 
       keptNodes.push(virtualMathlibNode(Array.from(virtualDomains).sort()));
       const allEdges = keptEdges.concat(Array.from(aggregated.values()));
-      return { nodes: keptNodes, edges: allEdges };
+      return { nodes: keptNodes, edges: allEdges, collapsedMathlibModules: hiddenMathlib.size };
+    }
+
+    function groupCollapseDepth() {
+      const el = byId("groupCollapseDepth");
+      if (!el) return 0;
+      const raw = Number(el.value || "0");
+      if (!Number.isFinite(raw) || raw < 0) return 0;
+      return Math.floor(raw);
+    }
+
+    function moduleGroupPrefix(moduleId, depth) {
+      if (depth <= 0 || typeof moduleId !== "string" || !moduleId || moduleId === MATHLIB_SLICE_ID) {
+        return "";
+      }
+      const parts = moduleId.split(".").filter((p) => p);
+      if (parts.length <= depth) return "";
+      return parts.slice(0, depth).join(".");
+    }
+
+    function collapseNamespaceGroups(nodes, edges) {
+      state.groupNodeMap = new Map();
+      state.groupMembers = new Map();
+
+      if (activeViewMode() !== "module-map") {
+        return { nodes, edges, groupDepth: 0, groupedModules: 0, groupNodes: 0 };
+      }
+
+      const depth = groupCollapseDepth();
+      if (depth <= 0) {
+        return { nodes, edges, groupDepth: 0, groupedModules: 0, groupNodes: 0 };
+      }
+
+      const moduleToGroup = new Map();
+      for (const node of nodes) {
+        if (!node || node.kind !== "module") continue;
+        const prefix = moduleGroupPrefix(node.id, depth);
+        if (!prefix) continue;
+        moduleToGroup.set(node.id, `@group:${prefix}`);
+      }
+
+      if (moduleToGroup.size === 0) {
+        return { nodes, edges, groupDepth: depth, groupedModules: 0, groupNodes: 0 };
+      }
+
+      const groupAgg = new Map();
+      const keptNodes = [];
+      for (const node of nodes) {
+        const gid = moduleToGroup.get(node.id);
+        if (!gid) {
+          keptNodes.push(node);
+          continue;
+        }
+        const prefix = gid.slice("@group:".length);
+        if (!groupAgg.has(gid)) {
+          groupAgg.set(gid, {
+            id: gid,
+            prefix,
+            members: [],
+            spine: false,
+            layerCount: new Map(),
+            packageCount: new Map(),
+            domains: new Set(),
+            profiles: new Set(),
+            mathTags: new Set(),
+            appliedTags: new Set(),
+          });
+        }
+        const row = groupAgg.get(gid);
+        row.members.push(node.id);
+        if (node.spine) row.spine = true;
+        row.layerCount.set(String(node.layer || "other"), (row.layerCount.get(String(node.layer || "other")) || 0) + 1);
+        row.packageCount.set(String(node.package || "local"), (row.packageCount.get(String(node.package || "local")) || 0) + 1);
+        for (const d of Array.isArray(node.domains) ? node.domains : []) {
+          if (typeof d === "string" && d) row.domains.add(d);
+        }
+        for (const d of Array.isArray(node.profiles) ? node.profiles : []) {
+          if (typeof d === "string" && d) row.profiles.add(d);
+        }
+        for (const d of Array.isArray(node.math_tags) ? node.math_tags : []) {
+          if (typeof d === "string" && d) row.mathTags.add(d);
+        }
+        for (const d of Array.isArray(node.applied_tags) ? node.applied_tags : []) {
+          if (typeof d === "string" && d) row.appliedTags.add(d);
+        }
+      }
+
+      const topKey = (counter, fallback) => {
+        if (!(counter instanceof Map) || counter.size === 0) return fallback;
+        let bestK = fallback;
+        let bestV = -1;
+        for (const [k, v] of counter.entries()) {
+          if (v > bestV) {
+            bestK = k;
+            bestV = v;
+          }
+        }
+        return bestK;
+      };
+
+      for (const agg of groupAgg.values()) {
+        state.groupMembers.set(agg.id, agg.members.slice());
+        const groupNode = {
+          id: agg.id,
+          kind: "module",
+          title: agg.prefix,
+          layer: topKey(agg.layerCount, "other"),
+          package: topKey(agg.packageCount, "local"),
+          spine: agg.spine,
+          group: true,
+          group_prefix: agg.prefix,
+          group_member_count: agg.members.length,
+          group_members: agg.members.slice(0, 12),
+          domains: Array.from(agg.domains).sort(),
+          profiles: Array.from(agg.profiles).sort(),
+          math_tags: Array.from(agg.mathTags).sort(),
+          applied_tags: Array.from(agg.appliedTags).sort(),
+          path: `group:${agg.prefix}`,
+        };
+        keptNodes.push(groupNode);
+      }
+
+      const groupedEdges = new Map();
+      const arrFrom = (val) => (Array.isArray(val) ? val.filter((x) => typeof x === "string" && x) : []);
+      const edgeWeight = (edge) => {
+        const w = Number(edge && edge.weight);
+        return Number.isFinite(w) && w > 0 ? w : 1;
+      };
+      for (const edge of edges) {
+        if (!edge || typeof edge.src !== "string" || typeof edge.dst !== "string") continue;
+        const src = moduleToGroup.get(edge.src) || edge.src;
+        const dst = moduleToGroup.get(edge.dst) || edge.dst;
+        if (!src || !dst || src === dst) continue;
+        const type = typeof edge.type === "string" && edge.type ? edge.type : "imports";
+        const key = `${src}__${type}__${dst}`;
+        if (!groupedEdges.has(key)) {
+          groupedEdges.set(key, {
+            src,
+            dst,
+            type,
+            weight: edgeWeight(edge),
+            aggregated: src !== edge.src || dst !== edge.dst || edge.aggregated === true,
+            domains: new Set(arrFrom(edge.domains)),
+            math_tags: new Set(arrFrom(edge.math_tags)),
+            applied_tags: new Set(arrFrom(edge.applied_tags)),
+          });
+        } else {
+          const row = groupedEdges.get(key);
+          row.weight += edgeWeight(edge);
+          for (const d of arrFrom(edge.domains)) row.domains.add(d);
+          for (const d of arrFrom(edge.math_tags)) row.math_tags.add(d);
+          for (const d of arrFrom(edge.applied_tags)) row.applied_tags.add(d);
+          if (src !== edge.src || dst !== edge.dst || edge.aggregated === true) {
+            row.aggregated = true;
+          }
+        }
+      }
+
+      const outEdges = Array.from(groupedEdges.values()).map((row) => ({
+        src: row.src,
+        dst: row.dst,
+        type: row.type,
+        weight: row.weight,
+        aggregated: row.aggregated === true,
+        domains: Array.from(row.domains).sort(),
+        math_tags: Array.from(row.math_tags).sort(),
+        applied_tags: Array.from(row.applied_tags).sort(),
+      }));
+      outEdges.sort((a, b) =>
+        edgePriority(a.type) - edgePriority(b.type) ||
+        b.weight - a.weight ||
+        a.src.localeCompare(b.src) ||
+        a.dst.localeCompare(b.dst)
+      );
+
+      state.groupNodeMap = moduleToGroup;
+      return {
+        nodes: keptNodes,
+        edges: outEdges,
+        groupDepth: depth,
+        groupedModules: moduleToGroup.size,
+        groupNodes: groupAgg.size,
+      };
     }
 
     function forceNodeInList(rows, node, maxNodes) {
@@ -898,14 +1762,57 @@
     }
 
     function collectModuleMapGraph(maxNodes) {
-      const ranked = sortedVisibleNodes();
+      if (typeof syncExpandedModuleDecls === "function") {
+        syncExpandedModuleDecls();
+      }
+
+      const focusRoot = state.treeFocusRoot;
+      const focusModules = focusRoot ? new Set(moduleSubtreeIds(focusRoot, 3500)) : null;
+      const inFocusedSubtree = (node) => {
+        if (!focusModules) return true;
+        if (!node) return false;
+        if (node.kind === "module") return focusModules.has(node.id);
+        if (node.kind === "decl") {
+          const mod = typeof node.module === "string" ? node.module : "";
+          return !!mod && focusModules.has(mod);
+        }
+        if (node.kind === "concept") return false;
+        return true;
+      };
+
+      const include = new Map();
+      const pushNode = (node) => {
+        if (!node || !node.id) return;
+        if (!nodePassesFilters(node)) return;
+        if (!inFocusedSubtree(node)) return;
+        include.set(node.id, node);
+      };
+
+      for (const id of state.visible) {
+        pushNode(state.nodesById.get(id));
+      }
+
+      if (byId("kindConcept").checked) {
+        for (const node of state.nodesById.values()) {
+          if (node.kind !== "concept") continue;
+          pushNode(node);
+        }
+      }
 
       if (state.selected && state.nodesById.has(state.selected)) {
         const selectedNode = state.nodesById.get(state.selected);
-        if (selectedNode && nodePassesFilters(selectedNode)) {
-          return collectWithNodeList(forceNodeInList(ranked, selectedNode, maxNodes), maxNodes);
+        if (selectedNode && inFocusedSubtree(selectedNode)) {
+          pushNode(selectedNode);
+        } else if (selectedNode && selectedNode.kind === "module" && state.groupMembers.has(selectedNode.id)) {
+          const members = state.groupMembers.get(selectedNode.id) || [];
+          for (const mid of members.slice(0, 24)) {
+            if (!state.nodesById.has(mid)) continue;
+            pushNode(state.nodesById.get(mid));
+          }
         }
       }
+
+      const ranked = sortNodesForDisplay(Array.from(include.values()));
       return collectWithNodeList(ranked, maxNodes);
     }
 
@@ -1004,8 +1911,88 @@
       return collectWithNodeList(nodes, maxNodes);
     }
 
+    function collectMathlibLensGraph(maxNodes) {
+      const lens = activeMathlibLensConfig();
+      const include = new Set();
+
+      const targets = [];
+      for (const id of lens.roots || []) {
+        if (typeof id === "string" && state.nodesById.has(id)) targets.push(id);
+      }
+      for (const id of lens.hubs || []) {
+        if (typeof id === "string" && state.nodesById.has(id)) targets.push(id);
+      }
+      for (const id of lens.aggregators || []) {
+        if (typeof id === "string" && state.nodesById.has(id)) targets.push(id);
+      }
+      for (const id of lens.bridges || []) {
+        if (typeof id === "string" && state.nodesById.has(id)) include.add(id);
+      }
+
+      const localSources = new Set();
+      const selected = state.selected ? state.nodesById.get(state.selected) : null;
+      if (selected) {
+        if (selected.kind === "module" && selected.package !== "mathlib") {
+          localSources.add(selected.id);
+        } else if (selected.kind === "decl" && typeof selected.module === "string") {
+          localSources.add(selected.module);
+        }
+      }
+      if (localSources.size === 0) {
+        for (const root of lens.moduleRoots || []) {
+          if (typeof root !== "string") continue;
+          if (state.nodesById.has(root)) {
+            localSources.add(root);
+          }
+          for (const node of state.nodesById.values()) {
+            if (node.kind !== "module" || node.package === "mathlib") continue;
+            if (node.id === root || node.id.startsWith(`${root}.`)) {
+              localSources.add(node.id);
+              break;
+            }
+          }
+        }
+      }
+      if (localSources.size === 0) {
+        for (const node of state.nodesById.values()) {
+          if (node.kind !== "module" || node.package === "mathlib") continue;
+          if (!node.spine) continue;
+          localSources.add(node.id);
+          if (localSources.size >= 3) break;
+        }
+      }
+
+      for (const src of localSources) include.add(src);
+      for (const t of targets) include.add(t);
+
+      const targetLimit = 20;
+      const limitedTargets = targets.slice(0, targetLimit);
+      for (const src of localSources) {
+        for (const dst of limitedTargets) {
+          const path = shortestImportPath(src, dst, 10);
+          if (!path || path.length === 0) continue;
+          for (const id of path) include.add(id);
+        }
+      }
+
+      const nodes = [];
+      for (const id of include) {
+        const node = state.nodesById.get(id);
+        if (!node || node.kind !== "module") continue;
+        if (!nodePassesFilters(node)) continue;
+        nodes.push(node);
+      }
+      if (!nodes.length) {
+        return collectModuleMapGraph(maxNodes);
+      }
+      sortNodesForDisplay(nodes);
+      return collectWithNodeList(nodes, maxNodes);
+    }
+
     function collectWithNodeList(rankedNodes, maxNodes) {
+      const rankedNodeCount = rankedNodes.length;
       const nodes = rankedNodes.slice(0, maxNodes);
+      const hiddenByNodeCap = Math.max(0, rankedNodeCount - nodes.length);
       const nodeSet = new Set(nodes.map((n) => n.id));
       const edges = [];
       for (const e of state.edges) {
@@ -1013,6 +2000,7 @@
         if (!nodeSet.has(e.src) || !nodeSet.has(e.dst)) continue;
         edges.push(e);
       }
+      const rawEdgeCount = edges.length;
       const maxEdges = Number(byId("maxEdges").value || "5000");
       let limitedEdges = edges;
       state.edgeCapApplied = false;
@@ -1028,19 +2016,80 @@
           .slice(0, maxEdges);
         state.edgeCapApplied = true;
       }
-      return collapseMathlib(nodes, limitedEdges);
+      const hiddenByEdgeCap = Math.max(0, rawEdgeCount - limitedEdges.length);
+      const collapsed = collapseMathlib(nodes, limitedEdges);
+      const grouped = collapseNamespaceGroups(collapsed.nodes, collapsed.edges);
+      state.collectMeta = {
+        ...state.collectMeta,
+        rankedNodeCount,
+        hiddenByNodeCap,
+        rawEdgeCount,
+        hiddenByEdgeCap,
+        collapsedMathlibModules: collapsed.collapsedMathlibModules || 0,
+        groupDepth: grouped.groupDepth || 0,
+        groupedModuleCount: grouped.groupedModules || 0,
+        groupNodeCount: grouped.groupNodes || 0,
+      };
+      if (state.selected && state.groupNodeMap.has(state.selected)) {
+        state.selected = state.groupNodeMap.get(state.selected) || state.selected;
+      }
+      return { nodes: grouped.nodes, edges: grouped.edges };
+    }
+
+    function applyProofMapFilter(display) {
+      if (!(state.proofMapNodeIds instanceof Set) || state.proofMapNodeIds.size === 0) {
+        return display;
+      }
+      const nodes = (display.nodes || []).filter((n) => state.proofMapNodeIds.has(n.id));
+      const nodeSet = new Set(nodes.map((n) => n.id));
+      let edges = (display.edges || []).filter((e) => nodeSet.has(e.src) && nodeSet.has(e.dst));
+      if (state.proofMapEdgeKeys instanceof Set && state.proofMapEdgeKeys.size > 0) {
+        edges = edges.filter((e) => state.proofMapEdgeKeys.has(`${e.src}__${e.type}__${e.dst}`));
+      }
+      return { nodes, edges };
     }
 
     function collectDisplayGraph() {
       const maxNodes = Number(byId("maxNodes").value || "500");
       const mode = activeViewMode();
+      const maxEdges = Number(byId("maxEdges").value || "5000");
+      state.collectMeta = {
+        mode,
+        maxNodes,
+        maxEdges,
+        rankedNodeCount: 0,
+        hiddenByNodeCap: 0,
+        rawEdgeCount: 0,
+        hiddenByEdgeCap: 0,
+        collapsedMathlibModules: 0,
+        groupDepth: 0,
+        groupedModuleCount: 0,
+        groupNodeCount: 0,
+      };
+      let display;
       if (mode === "decl-neighborhood") {
-        return collectDeclNeighborhoodGraph(maxNodes);
+        display = collectDeclNeighborhoodGraph(maxNodes);
+      } else if (mode === "concept-browser") {
+        display = collectConceptBrowserGraph(maxNodes);
+      } else if (mode === "mathlib-lens") {
+        display = collectMathlibLensGraph(maxNodes);
+      } else {
+        display = collectModuleMapGraph(maxNodes);
       }
-      if (mode === "concept-browser") {
-        return collectConceptBrowserGraph(maxNodes);
+      const filtered = applyProofMapFilter(display);
+      if (state.selected && !filtered.nodes.some((n) => n && n.id === state.selected)) {
+        if (state.groupMembers instanceof Map && state.groupMembers.has(state.selected)) {
+          const members = state.groupMembers.get(state.selected) || [];
+          const fallback = members.find((id) => filtered.nodes.some((n) => n && n.id === id));
+          state.selected = fallback || null;
+        } else if (state.groupNodeMap instanceof Map && state.groupNodeMap.has(state.selected)) {
+          const gid = state.groupNodeMap.get(state.selected);
+          state.selected = filtered.nodes.some((n) => n && n.id === gid) ? gid : null;
+        } else {
+          state.selected = null;
+        }
       }
-      return collectModuleMapGraph(maxNodes);
+      return filtered;
     }
 
     function placeCircularCluster(rows, anchor, seed, options, pos, bounds) {
@@ -1074,6 +2123,7 @@
 
     function spacingRadius(node) {
       if (!node) return 10;
+      if (node.group === true) return clamp(30 + estimateLabelWidth(node) * 0.36, 42, 170);
       if (node.kind === "module") return clamp(22 + estimateLabelWidth(node) * 0.32, 34, 146);
       if (node.kind === "concept") return clamp(14 + estimateLabelWidth(node) * 0.24, 20, 72);
       return clamp(9 + estimateLabelWidth(node) * 0.08, 9, 26);
@@ -1336,8 +2386,18 @@
       if (state.selected === node.id) return true;
       if (mode === "module-map") {
         if (node.kind === "module") return true;
+        if (node.group === true) return true;
         if (node.kind === "concept") return true;
-        if (node.kind === "decl") return zoom >= 2.2 && labelDegreeOf(node.id) >= 8;
+        if (node.kind === "decl") {
+          if (state.pinned.has(node.id)) return true;
+          let declCount = 0;
+          for (const row of displayNodes) {
+            if (row.kind === "decl") declCount += 1;
+          }
+          if (declCount <= 80) return true;
+          if (zoom >= 1.6) return labelDegreeOf(node.id) >= 4;
+          return zoom >= 2.1 && labelDegreeOf(node.id) >= 8;
+        }
         return false;
       }
       if (node.kind === "concept") return true;
@@ -1474,30 +2534,66 @@
       clampView();
     }
 
-    function resetNodeClickTracker() {
-      state.lastNodeClick = { id: "", at: 0 };
-    }
-
     function handleNodePrimaryClick(nodeId) {
       if (!nodeId) return;
-      const now = Date.now();
-      if (now < state.suppressClickUntil) return;
-      const prev = state.lastNodeClick || { id: "", at: 0 };
-      const isDouble =
-        prev.id === nodeId &&
-        Number.isFinite(prev.at) &&
-        (now - prev.at) <= NODE_DOUBLE_CLICK_MS;
-
-      state.lastNodeClick = { id: nodeId, at: now };
+      if (Date.now() < state.suppressClickUntil) return;
       state.selected = nodeId;
       state.selectedEdge = null;
       materializeNode(nodeId);
+      refreshNodeVisualState();
+      renderInspector(state.lastDisplay);
+      renderOverlay(state.lastDisplay);
+      renderSearchResults();
+    }
 
-      if (isDouble) {
-        togglePin(nodeId);
-        resetNodeClickTracker();
-      }
+    function handleNodeDoubleClick(nodeId) {
+      if (!nodeId) return;
+      state.selected = nodeId;
+      state.selectedEdge = null;
+      materializeNode(nodeId);
+      togglePin(nodeId);
       renderAll();
+    }
+
+    function refreshNodeVisualState() {
+      const lens = state.importLens && state.importLens.rootId
+        ? state.importLens
+        : null;
+      const lensNodes = lens && lens.nodes instanceof Set ? lens.nodes : null;
+      const lensRootId = lens ? lens.rootId : "";
+      svg.querySelectorAll("g[data-node-id]").forEach((group) => {
+        const id = group.getAttribute("data-node-id");
+        if (!id) return;
+        const circle = group.querySelector("circle");
+        if (!circle) return;
+        const isSelected = state.selected === id;
+        const inLensNode = !!(lensNodes && lensNodes.has(id));
+        const isLensRoot = lensRootId === id;
+        const fillOpacity = isSelected
+          ? "1"
+          : (
+            lens
+              ? (isLensRoot || inLensNode ? "0.98" : "0.24")
+              : "0.92"
+          );
+        circle.setAttribute("fill-opacity", fillOpacity);
+        if (isSelected) {
+          circle.setAttribute("stroke", "#0f271d");
+          circle.setAttribute("stroke-width", "2.4");
+        } else if (isLensRoot) {
+          circle.setAttribute("stroke", "#8b3d00");
+          circle.setAttribute("stroke-width", "2.6");
+        } else if (inLensNode) {
+          circle.setAttribute("stroke", "#2f6955");
+          circle.setAttribute("stroke-width", "1.8");
+        } else if (state.pinned.has(id)) {
+          circle.setAttribute("stroke", "#2a0d2a");
+          circle.setAttribute("stroke-width", "1.7");
+        } else {
+          circle.removeAttribute("stroke");
+          circle.removeAttribute("stroke-width");
+        }
+      });
     }
 
     function renderGraph(display, skipInspector = false) {
@@ -1511,6 +2607,12 @@
 
       const displayed = new Set(display.nodes.map((n) => n.id));
       const edges = display.edges.filter((e) => displayed.has(e.src) && displayed.has(e.dst));
+      const lens = state.importLens && state.importLens.rootId
+        ? state.importLens
+        : null;
+      const lensNodes = lens && lens.nodes instanceof Set ? lens.nodes : null;
+      const lensEdges = lens && lens.edges instanceof Set ? lens.edges : null;
+      const lensRootId = lens ? lens.rootId : "";
       state.displayDegree = new Map();
       for (const n of display.nodes) {
         state.displayDegree.set(n.id, 0);
@@ -1524,6 +2626,11 @@
       for (const e of edges) {
         const a = nodePos(e.src);
         const b = nodePos(e.dst);
+        const containsNearSelected = (
+          e.type === "contains" &&
+          !!state.selected &&
+          (e.src === state.selected || e.dst === state.selected)
+        );
         const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
         line.setAttribute("x1", String(a[0]));
         line.setAttribute("y1", String(a[1]));
@@ -1531,13 +2638,30 @@
         line.setAttribute("y2", String(b[1]));
         line.setAttribute("class", "edge");
         line.setAttribute("stroke", edgeColor(e.type));
-        line.setAttribute("stroke-opacity", state.selectedEdge === e ? "0.96" : "0.38");
-        line.setAttribute("stroke-width", state.selectedEdge === e ? "2.8" : String(1 + Math.log2((e.weight || 1) + 1) * 0.65));
+        const isLensEdge = !!(lensEdges && e.type === "imports" && lensEdges.has(importLensEdgeKey(e.src, e.dst)));
+        const edgeOpacity = state.selectedEdge === e
+          ? "0.96"
+          : (
+            isLensEdge
+              ? "0.88"
+              : (lensEdges && e.type === "imports" ? "0.10" : (containsNearSelected ? "0.78" : "0.38"))
+          );
+        line.setAttribute("stroke-opacity", edgeOpacity);
+        line.setAttribute("stroke-width", state.selectedEdge === e
+          ? "2.8"
+          : (
+            isLensEdge
+              ? "2.6"
+              : (containsNearSelected ? "2.3" : String(1 + Math.log2((e.weight || 1) + 1) * 0.65))
+          ));
+        if (e.type === "contains") {
+          line.setAttribute("stroke-dasharray", containsNearSelected ? "8 4" : "6 5");
+        }
         line.addEventListener("click", (ev) => {
           ev.stopPropagation();
-          resetNodeClickTracker();
           state.selectedEdge = e;
           state.selected = null;
+          refreshNodeVisualState();
           renderInspector(display);
           renderOverlay(display);
         });
@@ -1565,12 +2689,27 @@
         circle.setAttribute("cy", String(y));
         circle.setAttribute("r", String(r));
         circle.setAttribute("fill", nodeColor(n));
-        circle.setAttribute("fill-opacity", state.selected === n.id ? "1" : "0.92");
+        const inLensNode = !!(lensNodes && lensNodes.has(n.id));
+        const isLensRoot = lensRootId === n.id;
+        const fillOpacity = state.selected === n.id
+          ? "1"
+          : (
+            lens
+              ? (isLensRoot || inLensNode ? "0.98" : "0.24")
+              : "0.92"
+          );
+        circle.setAttribute("fill-opacity", fillOpacity);
         circle.style.cursor = "pointer";
 
         if (state.selected === n.id) {
           circle.setAttribute("stroke", "#0f271d");
           circle.setAttribute("stroke-width", "2.4");
+        } else if (isLensRoot) {
+          circle.setAttribute("stroke", "#8b3d00");
+          circle.setAttribute("stroke-width", "2.6");
+        } else if (inLensNode) {
+          circle.setAttribute("stroke", "#2f6955");
+          circle.setAttribute("stroke-width", "1.8");
         } else if (state.pinned.has(n.id)) {
           circle.setAttribute("stroke", "#2a0d2a");
           circle.setAttribute("stroke-width", "1.7");
@@ -1580,6 +2719,11 @@
         circle.addEventListener("click", (ev) => {
           ev.stopPropagation();
           handleNodePrimaryClick(n.id);
+        });
+        circle.addEventListener("dblclick", (ev) => {
+          ev.stopPropagation();
+          ev.preventDefault();
+          handleNodeDoubleClick(n.id);
         });
 
         const title = document.createElementNS("http://www.w3.org/2000/svg", "title");
@@ -1622,25 +2766,144 @@
       renderAll();
     }
 
-    function expandModuleDecls(moduleId) {
-      if (!moduleId) return;
-      for (const e of state.incoming.get(moduleId) || []) {
-        if (e.type === "decl_in_module") {
-          materializeNode(e.src);
+    function moduleDeclPassesBaseFilters(node, includeGenerated = byId("showGenerated").checked) {
+      if (!node || node.kind !== "decl") return false;
+      if (!isInScope(node)) return false;
+      const layer = byId("layerFilter").value;
+      if (layer !== "all" && String(node.layer || "") !== layer) return false;
+      const activeProfile = byId("domainFilter").value;
+      if (activeProfile !== "all") {
+        const profiles = Array.isArray(node.profiles)
+          ? node.profiles
+          : (Array.isArray(node.domains) ? node.domains : []);
+        if (!profiles.includes(activeProfile)) return false;
+      }
+      if (!nodeMatchesAxisTags(node, "math")) return false;
+      if (!nodeMatchesAxisTags(node, "applied")) return false;
+      if (!includeGenerated && node.generated === true) return false;
+      if (byId("spineOnly").checked && !node.spine) return false;
+      return true;
+    }
+
+    function moduleDescendantModules(moduleId, limit = 220) {
+      const out = [];
+      const seen = new Set([moduleId]);
+      const queue = [moduleId];
+      while (queue.length > 0 && out.length < limit) {
+        const cur = queue.shift();
+        for (const e of state.outgoing.get(cur) || []) {
+          if (e.type !== "contains") continue;
+          const childId = e.dst;
+          if (!childId || seen.has(childId)) continue;
+          const child = state.nodesById.get(childId);
+          if (!child || child.kind !== "module") continue;
+          seen.add(childId);
+          out.push(childId);
+          queue.push(childId);
+          if (out.length >= limit) break;
         }
+      }
+      return out;
+    }
+
+    function moduleDeclCandidates(moduleId) {
+      const rows = [];
+      const seenDecl = new Set();
+      const collectFromModule = (ownerModuleId) => {
+        for (const e of state.incoming.get(ownerModuleId) || []) {
+          if (e.type !== "decl_in_module") continue;
+          const node = state.nodesById.get(e.src);
+          if (!node || node.kind !== "decl") continue;
+          if (seenDecl.has(node.id)) continue;
+          if (!moduleDeclPassesBaseFilters(node)) continue;
+          seenDecl.add(node.id);
+          rows.push(node);
+        }
+      };
+
+      collectFromModule(moduleId);
+      if (rows.length === 0) {
+        for (const childModuleId of moduleDescendantModules(moduleId)) {
+          collectFromModule(childModuleId);
+          if (rows.length >= 400) break;
+        }
+      }
+      rows.sort((a, b) =>
+        (b.spine ? 1 : 0) - (a.spine ? 1 : 0) ||
+        degreeOf(b.id) - degreeOf(a.id) ||
+        a.id.localeCompare(b.id)
+      );
+      return rows;
+    }
+
+    function syncExpandedModuleDecls() {
+      for (const [moduleId, cursorRaw] of Array.from(state.moduleDeclCursor.entries())) {
+        const requested = Math.max(0, Number(cursorRaw) || 0);
+        if (!requested) continue;
+        const candidates = moduleDeclCandidates(moduleId);
+        const end = Math.min(requested, candidates.length);
+        for (let i = 0; i < end; i += 1) {
+          materializeNode(candidates[i].id);
+        }
+        state.moduleDeclCursor.set(moduleId, end);
+      }
+    }
+
+    function moduleDeclProgress(moduleId) {
+      const candidates = moduleDeclCandidates(moduleId);
+      const candidateIds = new Set(candidates.map((n) => n.id));
+      let visible = 0;
+      for (const id of state.visible) {
+        const node = state.nodesById.get(id);
+        if (!node || node.kind !== "decl") continue;
+        if (candidateIds.has(node.id)) visible += 1;
+      }
+      const cursor = Math.min(state.moduleDeclCursor.get(moduleId) || 0, candidates.length);
+      return { total: candidates.length, visible, cursor };
+    }
+
+    function expandModuleDecls(moduleId, action = "reset") {
+      if (!moduleId) return;
+      if (byId("kindDecl") && !byId("kindDecl").checked) byId("kindDecl").checked = true;
+      if (byId("edge_decl_in_module") && !byId("edge_decl_in_module").checked) {
+        byId("edge_decl_in_module").checked = true;
+      }
+      const candidates = moduleDeclCandidates(moduleId);
+      const previousCursor = Math.min(state.moduleDeclCursor.get(moduleId) || 0, candidates.length);
+      const start = action === "more" ? previousCursor : 0;
+      const end = Math.min(start + MODULE_DECL_PAGE_SIZE, candidates.length);
+      if (action !== "more") {
+        const candidateIds = new Set(candidates.map((n) => n.id));
+        for (const id of Array.from(state.visible)) {
+          const n = state.nodesById.get(id);
+          if (!n || n.kind !== "decl") continue;
+          if (candidateIds.has(id)) state.visible.delete(id);
+        }
+      }
+      for (let i = start; i < end; i += 1) {
+        materializeNode(candidates[i].id);
+      }
+      state.moduleDeclCursor.set(moduleId, end);
+      if (end <= start) {
+        setSourceHint(`module decl expansion exhausted for ${moduleId}`);
+      } else {
+        setSourceHint(`module decls loaded ${end}/${candidates.length} for ${moduleId}`);
       }
       renderAll();
     }
 
     function collapseModuleDecls(moduleId) {
       if (!moduleId) return;
+      const candidates = moduleDeclCandidates(moduleId);
+      const candidateIds = new Set(candidates.map((n) => n.id));
       for (const id of Array.from(state.visible)) {
         const n = state.nodesById.get(id);
         if (!n || n.kind !== "decl") continue;
-        if (n.module === moduleId) {
+        if (candidateIds.has(id)) {
           state.visible.delete(id);
         }
       }
+      state.moduleDeclCursor.delete(moduleId);
       renderAll();
     }
 
@@ -1690,6 +2953,72 @@
       `;
     }
 
+    function mathlibLensPathRows(node) {
+      if (activeViewMode() !== "mathlib-lens") return [];
+      if (!node || node.kind !== "module" || node.package === "mathlib") return [];
+      const lens = activeMathlibLensConfig();
+      const targets = [];
+      const pushTarget = (id) => {
+        if (typeof id !== "string" || !id) return;
+        if (!state.nodesById.has(id)) return;
+        const tNode = state.nodesById.get(id);
+        if (!tNode || tNode.kind !== "module" || tNode.package !== "mathlib") return;
+        if (targets.includes(id)) return;
+        targets.push(id);
+      };
+      for (const id of lens.roots || []) pushTarget(id);
+      for (const id of lens.hubs || []) pushTarget(id);
+      for (const id of lens.aggregators || []) pushTarget(id);
+
+      const rows = [];
+      for (const target of targets.slice(0, 20)) {
+        const path = shortestImportPath(node.id, target, 10);
+        if (!path || path.length < 2) continue;
+        rows.push({ target, path });
+      }
+      rows.sort((a, b) => a.path.length - b.path.length || a.target.localeCompare(b.target));
+      return rows.slice(0, 6);
+    }
+
+    function mathlibDependencySummary(node) {
+      if (!node || node.kind !== "module" || node.package === "mathlib") return null;
+      const directMathlib = [];
+      for (const edge of state.outgoing.get(node.id) || []) {
+        if (!edge || edge.type !== "imports") continue;
+        const dst = state.nodesById.get(edge.dst);
+        if (!dst || dst.kind !== "module" || dst.package !== "mathlib") continue;
+        directMathlib.push(dst.id);
+      }
+      directMathlib.sort((a, b) => degreeOf(b) - degreeOf(a) || a.localeCompare(b));
+
+      const lens = activeMathlibLensConfig();
+      const targets = [];
+      const pushTarget = (id, kind) => {
+        if (typeof id !== "string" || !id) return;
+        if (!state.nodesById.has(id)) return;
+        const dst = state.nodesById.get(id);
+        if (!dst || dst.kind !== "module" || dst.package !== "mathlib") return;
+        if (targets.some((row) => row.id === id)) return;
+        targets.push({ id, kind });
+      };
+      for (const id of lens.hubs || []) pushTarget(id, "hub");
+      for (const id of lens.aggregators || []) pushTarget(id, "agg");
+      for (const id of lens.roots || []) pushTarget(id, "root");
+
+      const reached = [];
+      for (const row of targets.slice(0, 32)) {
+        const path = shortestImportPath(node.id, row.id, 10);
+        if (!path || path.length < 2) continue;
+        reached.push({ id: row.id, kind: row.kind, hops: path.length - 1 });
+      }
+      reached.sort((a, b) => a.hops - b.hops || a.id.localeCompare(b.id));
+
+      return {
+        directMathlib: directMathlib.slice(0, 8),
+        reachedTargets: reached.slice(0, 8),
+      };
+    }
+
     function renderInspector(display) {
       const box = byId("details");
 
@@ -1737,6 +3066,29 @@
       const generated = node.generated === true ? "true" : "false";
       const nodeDomains = Array.isArray(node.domains) ? node.domains : [];
       const domainText = nodeDomains.length ? nodeDomains.join(", ") : "-";
+      const nodeMathTags = Array.isArray(node.math_tags) ? node.math_tags : [];
+      const nodeAppliedTags = Array.isArray(node.applied_tags) ? node.applied_tags : [];
+      const mathTagText = nodeMathTags.length ? nodeMathTags.join(", ") : "-";
+      const appliedTagText = nodeAppliedTags.length ? nodeAppliedTags.join(", ") : "-";
+      const usageCount = Number(node.usage_count || 0);
+      const usageSuccessCount = Number(node.usage_success_count || 0);
+      const usageLastUsed = typeof node.usage_last_used === "string" && node.usage_last_used
+        ? node.usage_last_used
+        : "-";
+      const retrievalHitCount = Number(node.retrieval_hit_count || 0);
+      const retrievalFinalHitCount = Number(node.retrieval_final_hit_count || 0);
+      const retrievalLastQuery = typeof node.retrieval_last_query === "string" && node.retrieval_last_query
+        ? node.retrieval_last_query
+        : "-";
+      const retrievalLastStage = typeof node.retrieval_last_stage === "string" && node.retrieval_last_stage
+        ? node.retrieval_last_stage
+        : "-";
+      const retrievalLastSource = typeof node.retrieval_last_source === "string" && node.retrieval_last_source
+        ? node.retrieval_last_source
+        : "-";
+      const retrievalLastSeen = typeof node.retrieval_last_seen === "string" && node.retrieval_last_seen
+        ? node.retrieval_last_seen
+        : "-";
       const activeDomain = byId("domainFilter").value;
       const activeProfile = activeDomain !== "all" ? state.domainProfiles.get(activeDomain) : null;
       const bridges = activeProfile && Array.isArray(activeProfile.bridge_modules)
@@ -1753,27 +3105,98 @@
         ? "-"
         : (otherDomains.length ? `cross-domain -> ${otherDomains.join(", ")}` : "domain-local");
       const sourcePath = typeof node.path === "string" ? node.path : "";
+      const isGroupNode = node && node.group === true;
+      const moduleDeclInfo = (node.kind === "module" && !isGroupNode && state.nodesById.has(node.id))
+        ? moduleDeclProgress(node.id)
+        : null;
+      const moduleParents = (node.kind === "module" && !isGroupNode)
+        ? inAll
+          .filter((e) => e.type === "contains")
+          .map((e) => e.src)
+          .filter((id, idx, arr) => typeof id === "string" && arr.indexOf(id) === idx)
+          .slice(0, 6)
+        : [];
+      const moduleChildren = (node.kind === "module" && !isGroupNode)
+        ? outAll
+          .filter((e) => e.type === "contains")
+          .map((e) => e.dst)
+          .filter((id, idx, arr) => typeof id === "string" && arr.indexOf(id) === idx)
+        : [];
+      const groupMembers = Array.isArray(node.group_members) ? node.group_members : [];
+      const lensState = state.importLens && typeof state.importLens === "object"
+        ? state.importLens
+        : {};
+      const lensModeText = lensState.rootId ? String(lensState.mode || "deps") : "off";
+      const lensRootText = lensState.rootId ? String(lensState.rootId) : "-";
+      const lensNodeCount = lensState.nodes instanceof Set ? lensState.nodes.size : 0;
+      const lensEdgeCount = lensState.edges instanceof Set ? lensState.edges.size : 0;
+      const lensDepth = Number(lensState.depth || 0);
+      const lensTruncated = lensState.truncated === true ? "true" : "false";
+      const groupInfoLine = isGroupNode
+        ? `<div>group summary: prefix <code>${node.group_prefix || node.title || "-"}</code> | members <code>${Number(node.group_member_count || groupMembers.length)}</code>${groupMembers.length ? ` (<code>${groupMembers.slice(0, 6).join(", ")}</code>${groupMembers.length > 6 ? " ..." : ""})` : ""}</div>`
+        : "";
+      const moduleHierarchyLine = (node.kind === "module" && !isGroupNode)
+        ? `<div>contains hierarchy: parent <code>${moduleParents.length ? moduleParents.join(", ") : "-"}</code> | children <code>${moduleChildren.length}</code>${moduleChildren.length ? ` (<code>${moduleChildren.slice(0, 6).join(", ")}</code>${moduleChildren.length > 6 ? " ..." : ""})` : ""}</div>`
+        : "";
+      const moduleInfoLine = moduleDeclInfo
+        ? `<div>module decls: visible <code>${moduleDeclInfo.visible}</code> | loaded <code>${moduleDeclInfo.cursor}</code>/<code>${moduleDeclInfo.total}</code></div>`
+        : "";
+      const moduleButtons = moduleDeclInfo
+        ? `<button id="detailExpandModule">expand module decls (top ${MODULE_DECL_PAGE_SIZE})</button><button id="detailMoreModule" ${moduleDeclInfo.cursor < moduleDeclInfo.total ? "" : "disabled"}>more decls (+${MODULE_DECL_PAGE_SIZE})</button><button id="detailCollapseModule">collapse module decls</button>`
+        : "";
+      const lensButtons = (node.kind === "module" && !isGroupNode)
+        ? `<button id="detailLensDeps">lens deps</button><button id="detailLensDependees">lens dependees</button><button id="detailLensBoth">lens both</button><button id="detailLensClear">clear lens</button>`
+        : "";
+      const lensPaths = mathlibLensPathRows(node);
+      const mathlibSummary = mathlibDependencySummary(node);
+      const mathlibSummaryBlock = mathlibSummary
+        ? `<div><strong>Mathlib dependency summary</strong></div>
+           <div>direct imports: <code>${mathlibSummary.directMathlib.length ? mathlibSummary.directMathlib.map((x) => compactModuleLabel(x)).join(", ") : "-"}</code></div>
+           <div>reachable hubs/roots: <code>${mathlibSummary.reachedTargets.length ? mathlibSummary.reachedTargets.map((x) => `${compactModuleLabel(x.id)}(${x.kind},${x.hops}h)`).join(" | ") : "-"}</code></div>`
+        : "";
+      const lensPathBlock = lensPaths.length
+        ? `<div><strong>Mathlib lens shortest paths</strong></div>
+           <div class="tiny">Selected MLTheory module to active domain roots/hubs.</div>
+           ${lensPaths.map((row) => `<div><code>${row.path.map((x) => compactModuleLabel(x)).join(" -> ")}</code></div>`).join("")}`
+        : (activeViewMode() === "mathlib-lens" && node.kind === "module" && node.package !== "mathlib"
+          ? `<div>Mathlib lens shortest paths: <code>none found under current lens targets</code></div>`
+          : "");
 
       box.innerHTML = `
         <div><strong>${node.title || node.id}</strong></div>
         <div>id: <code>${node.id}</code></div>
         <div>kind: <code>${node.kind}</code> | layer: <code>${node.layer || "-"}</code> | package: <code>${node.package || "-"}</code></div>
+        <div>group node: <code>${isGroupNode ? "true" : "false"}</code></div>
         <div>module: <code>${node.module || "-"}</code></div>
         <div>decl_kind: <code>${declKind}</code> | generated: <code>${generated}</code> | pinned: <code>${pinText}</code></div>
-        <div>domains: <code>${domainText}</code></div>
+        <div>profiles: <code>${domainText}</code></div>
+        <div>math tags: <code>${mathTagText}</code></div>
+        <div>applied tags: <code>${appliedTagText}</code></div>
         <div>bridge hint: <code>${bridgeHint}</code></div>
         <div>cross-domain hint: <code>${crossHint}</code></div>
         <div>path: <code>${node.path || "-"}</code></div>
+        <div>usage telemetry: count <code>${usageCount}</code> | success <code>${usageSuccessCount}</code> | last <code>${usageLastUsed}</code></div>
+        <div>retrieval telemetry: hits <code>${retrievalHitCount}</code> | final_hits <code>${retrievalFinalHitCount}</code> | last <code>${retrievalLastSeen}</code></div>
+        <div>retrieval source: <code>${retrievalLastSource}</code> | stage: <code>${retrievalLastStage}</code></div>
+        <div>retrieval last query: <code>${retrievalLastQuery}</code></div>
+        <div class="tiny">retrieval meaning: source=backend(local_index/rg_local/loogle_json/leanexplore/retrieval.query), stage=progressive widening stage.</div>
+        <div>import lens: mode <code>${lensModeText}</code> | root <code>${lensRootText}</code> | nodes <code>${lensNodeCount}</code> | edges <code>${lensEdgeCount}</code> | depth <code>${lensDepth}</code> | truncated <code>${lensTruncated}</code></div>
         <div>degree: <code>${degreeOf(node.id)}</code></div>
         <div>outgoing: <code>${outAll.length}</code> (${edgeTypeSummary(outAll)})</div>
         <div>incoming: <code>${inAll.length}</code> (${edgeTypeSummary(inAll)})</div>
+        ${groupInfoLine}
+        ${moduleHierarchyLine}
+        ${moduleInfoLine}
+        ${mathlibSummaryBlock}
+        ${lensPathBlock}
         <div style="margin-top:8px;">
           <button id="detailExpandOut">expand outgoing 1-hop</button>
           <button id="detailExpandIn">expand incoming 1-hop</button>
           <button id="detailTogglePin">toggle pin</button>
           <button id="detailUnpin">unpin selected</button>
           ${sourcePath ? '<button id="detailCopyPath">copy source path</button><button id="detailOpenSource">open source</button>' : ""}
-          ${node.kind === "module" ? '<button id="detailExpandModule">expand module decls</button><button id="detailCollapseModule">collapse module decls</button>' : ""}
+          ${moduleButtons}
+          ${lensButtons}
         </div>
         ${renderNeighborBlock("Outgoing neighbors", outRows)}
         ${renderNeighborBlock("Incoming neighbors", inRows)}
@@ -1809,10 +3232,46 @@
       }
 
       const expandModule = byId("detailExpandModule");
-      if (expandModule) expandModule.onclick = () => expandModuleDecls(node.id);
+      if (expandModule) expandModule.onclick = () => expandModuleDecls(node.id, "reset");
+
+      const moreModule = byId("detailMoreModule");
+      if (moreModule) moreModule.onclick = () => expandModuleDecls(node.id, "more");
 
       const collapseModule = byId("detailCollapseModule");
       if (collapseModule) collapseModule.onclick = () => collapseModuleDecls(node.id);
+
+      const lensDeps = byId("detailLensDeps");
+      if (lensDeps) {
+        lensDeps.onclick = () => {
+          setImportLens(node.id, "deps");
+          setSourceHint(`import lens deps: ${node.id}`);
+          renderAll();
+        };
+      }
+      const lensDependees = byId("detailLensDependees");
+      if (lensDependees) {
+        lensDependees.onclick = () => {
+          setImportLens(node.id, "dependees");
+          setSourceHint(`import lens dependees: ${node.id}`);
+          renderAll();
+        };
+      }
+      const lensBoth = byId("detailLensBoth");
+      if (lensBoth) {
+        lensBoth.onclick = () => {
+          setImportLens(node.id, "both");
+          setSourceHint(`import lens both: ${node.id}`);
+          renderAll();
+        };
+      }
+      const lensClear = byId("detailLensClear");
+      if (lensClear) {
+        lensClear.onclick = () => {
+          clearImportLens();
+          setSourceHint("import lens cleared");
+          renderAll();
+        };
+      }
 
       box.querySelectorAll("[data-jump]").forEach((el) => {
         el.onclick = () => {
@@ -1823,24 +3282,210 @@
       });
     }
 
+    function savePanelUIState() {
+      try {
+        localStorage.setItem(PANEL_UI_STORAGE_KEY, JSON.stringify(state.panelUI));
+      } catch (_) {}
+    }
+
+    function loadPanelUIState() {
+      try {
+        const raw = localStorage.getItem(PANEL_UI_STORAGE_KEY);
+        if (!raw) return;
+        const parsed = JSON.parse(raw);
+        if (!parsed || typeof parsed !== "object") return;
+        if (typeof parsed.overlayCollapsed === "boolean") {
+          state.panelUI.overlayCollapsed = parsed.overlayCollapsed;
+        }
+        if (typeof parsed.statsCollapsed === "boolean") {
+          state.panelUI.statsCollapsed = parsed.statsCollapsed;
+        }
+      } catch (_) {}
+    }
+
+    function applyPanelUIState() {
+      const overlay = byId("overlay");
+      const stats = byId("statsBox");
+      if (overlay) overlay.classList.toggle("is-hidden", state.panelUI.overlayCollapsed);
+      if (stats) stats.classList.toggle("is-hidden", state.panelUI.statsCollapsed);
+
+      const toggleOverlay = byId("toggleOverlay");
+      if (toggleOverlay) {
+        toggleOverlay.textContent = state.panelUI.overlayCollapsed ? "show visible panel" : "hide visible panel";
+      }
+      const toggleStats = byId("toggleStats");
+      if (toggleStats) {
+        toggleStats.textContent = state.panelUI.statsCollapsed ? "show stats" : "hide stats";
+      }
+    }
+
     function renderOverlay(display) {
+      const countKinds = (nodes) => {
+        let modules = 0;
+        let decls = 0;
+        let concepts = 0;
+        for (const node of nodes) {
+          if (node.kind === "module") modules += 1;
+          else if (node.kind === "decl") decls += 1;
+          else if (node.kind === "concept") concepts += 1;
+        }
+        return { modules, decls, concepts };
+      };
+      const nodePassesIgnoring = (node, opts = {}) => {
+        if (!node || !node.id) return false;
+        if (!isNodeKindEnabled(node)) return false;
+        if (!isInScope(node)) return false;
+        const layer = byId("layerFilter").value;
+        if (layer !== "all" && String(node.layer || "") !== layer) return false;
+        const activeProfile = byId("domainFilter").value;
+        if (activeProfile !== "all") {
+          const profiles = Array.isArray(node.profiles)
+            ? node.profiles
+            : (Array.isArray(node.domains) ? node.domains : []);
+          if (!profiles.includes(activeProfile)) return false;
+        }
+        if (!nodeMatchesAxisTags(node, "math")) return false;
+        if (!nodeMatchesAxisTags(node, "applied")) return false;
+        if (!opts.ignoreGenerated && node.kind === "decl" && !byId("showGenerated").checked && node.generated === true) {
+          return false;
+        }
+        if (!opts.ignoreSpine && byId("spineOnly").checked) {
+          if (!(activeViewMode() === "module-map" && node.kind === "module") && !node.spine) return false;
+        }
+        return true;
+      };
+
       const edgeType = state.selectedEdge ? state.selectedEdge.type : "-";
-      const activeDomain = byId("domainFilter").value;
+      const activeProfile = byId("domainFilter").value;
+      const activeMathTag = activeAxisTagToken("math");
+      const activeAppliedTag = activeAxisTagToken("applied");
+      const activeProofMap = state.activeProofMapId || "off";
+      const activeDataset = state.activeDatasetId || "latest";
+      const activeTreeFocus = state.treeFocusRoot || "off";
       const mode = activeViewMode();
       const layout = byId("layoutMode").value || "layered";
+      const maxNodes = Number(byId("maxNodes").value || "500");
       const maxEdges = Number(byId("maxEdges").value || "5000");
+      const meta = state.collectMeta || {};
+      const groupDepth = Number(meta.groupDepth || 0);
+      const groupedModules = Number(meta.groupedModuleCount || 0);
+      const groupNodeCount = Number(meta.groupNodeCount || 0);
+      const groupToken = groupDepth > 0 ? `L${groupDepth}` : "off";
+      const scope = byId("scope").value;
+      const spineOnly = byId("spineOnly").checked;
+      const showGenerated = byId("showGenerated").checked;
+      const expandMathlib = byId("expandMathlib").checked;
+      const wheelMode = byId("wheelMode") ? byId("wheelMode").value : "smart";
+      const visibleKinds = countKinds(display.nodes);
+      const lensState = state.importLens && typeof state.importLens === "object"
+        ? state.importLens
+        : {};
+      const lensMode = lensState.rootId ? String(lensState.mode || "deps") : "off";
+      const lensRoot = lensState.rootId ? String(lensState.rootId) : "-";
+      const lensToken = lensMode === "off" ? "off" : `${lensMode}@${lensRoot}`;
+
+      let suppressedBySpine = 0;
+      if (spineOnly) {
+        for (const node of state.nodesById.values()) {
+          if (nodePassesIgnoring(node, { ignoreSpine: true }) && !nodePassesIgnoring(node)) {
+            suppressedBySpine += 1;
+          }
+        }
+      }
+
+      let hiddenGeneratedDecls = 0;
+      if (!showGenerated && byId("kindDecl").checked) {
+        for (const node of state.nodesById.values()) {
+          if (node.kind !== "decl" || node.generated !== true) continue;
+          if (nodePassesIgnoring(node, { ignoreGenerated: true })) {
+            hiddenGeneratedDecls += 1;
+          }
+        }
+      }
+
+      let hiddenByExpansion = 0;
+      if (mode === "module-map" && byId("kindDecl").checked && (meta.hiddenByNodeCap || 0) === 0) {
+        for (const node of state.nodesById.values()) {
+          if (node.kind !== "decl") continue;
+          if (!nodePassesFilters(node)) continue;
+          if (!state.visible.has(node.id)) hiddenByExpansion += 1;
+        }
+      }
+
+      const reasons = [];
+      if (suppressedBySpine > 0) {
+        reasons.push(`${suppressedBySpine} nodes hidden by spineOnly.`);
+      }
+      if (hiddenGeneratedDecls > 0) {
+        reasons.push(`${hiddenGeneratedDecls} generated decls hidden because showGenerated=false.`);
+      }
+      if ((meta.hiddenByNodeCap || 0) > 0) {
+        reasons.push(`${meta.hiddenByNodeCap} nodes omitted by maxNodes=${maxNodes}.`);
+      }
+      if ((meta.hiddenByEdgeCap || 0) > 0) {
+        reasons.push(`${meta.hiddenByEdgeCap} edges omitted by maxEdges=${maxEdges}.`);
+      }
+      if ((meta.collapsedMathlibModules || 0) > 0) {
+        reasons.push(`${meta.collapsedMathlibModules} mathlib modules collapsed (expandMathlib=false).`);
+      }
+      if (groupDepth > 0 && groupNodeCount > 0) {
+        reasons.push(`${groupedModules} modules aggregated into ${groupNodeCount} group nodes (namespace L${groupDepth}).`);
+      }
+      if (hiddenByExpansion > 0) {
+        reasons.push(`${hiddenByExpansion} decl nodes not materialized yet; use \"expand module decls\".`);
+      }
+      if (display.nodes.length === 0) {
+        reasons.push("No visible nodes under current scope/profile/math/applied/kind filters.");
+      }
+      if (state.activeProofMapId && display.nodes.length === 0) {
+        reasons.push(`proof map ${state.activeProofMapId} is active and filtered everything out.`);
+      }
+      if (state.treeFocusRoot && display.nodes.length === 0) {
+        reasons.push(`subtree focus ${state.treeFocusRoot} filtered everything out.`);
+      }
+      if (lensMode !== "off" && lensState.truncated === true) {
+        reasons.push(`import lens traversal truncated at depth=${Number(lensState.depth || 0)}.`);
+      }
+
+      const usageMeta = state.graph && typeof state.graph === "object" && state.graph.usage
+        ? state.graph.usage
+        : {};
+      const retrievalMeta = state.graph && typeof state.graph === "object" && state.graph.retrieval
+        ? state.graph.retrieval
+        : {};
+      const usageEventCount = Number(usageMeta.event_count || 0);
+      const retrievalEventCount = Number(retrievalMeta.event_count || 0);
+      const formatTopNodes = (rows, countKey) => {
+        if (!Array.isArray(rows) || rows.length === 0) return "none";
+        return rows.slice(0, 4).map((row) => {
+          const id = typeof row.id === "string" ? row.id : "(unknown)";
+          const count = Number(row[countKey] || 0);
+          const label = nodeLabelText({ id, kind: "decl", title: id.split(".").pop() || id });
+          return `${label}:${count}`;
+        }).join(" | ");
+      };
+      const topUsedText = formatTopNodes(usageMeta.top_used || [], "usage_count");
+      const topRetrievalText = formatTopNodes(retrievalMeta.top_hits || [], "retrieval_hit_count");
+
       byId("overlay").innerHTML = [
         `<div><strong>visible</strong> nodes: <code>${display.nodes.length}</code>, edges: <code>${display.edges.length}</code></div>`,
+        `<div>visible by kind: module <code>${visibleKinds.modules}</code> | decl <code>${visibleKinds.decls}</code> | concept <code>${visibleKinds.concepts}</code></div>`,
+        `<div>filters: dataset=<code>${activeDataset}</code> scope=<code>${scope}</code> profile=<code>${activeProfile}</code> math=<code>${activeMathTag}</code> applied=<code>${activeAppliedTag}</code> proofMap=<code>${activeProofMap}</code> tree=<code>${activeTreeFocus}</code> group=<code>${groupToken}</code> importLens=<code>${lensToken}</code> spineOnly=<code>${spineOnly}</code> generated=<code>${showGenerated}</code> expandMathlib=<code>${expandMathlib}</code> wheelMode=<code>${wheelMode}</code></div>`,
+        `<div>caps: maxNodes=<code>${maxNodes}</code> maxEdges=<code>${maxEdges}</code></div>`,
         `<div>selected node: <code>${state.selected || "(none)"}</code></div>`,
         `<div>selected edge type: <code>${edgeType}</code></div>`,
-        `<div>active domain: <code>${activeDomain}</code></div>`,
         `<div>zoom: <code>${(state.world.w / state.view.w).toFixed(2)}x</code> | pin count: <code>${state.pinned.size}</code></div>`,
-        `<div>layout: <code>${layout}</code> | maxEdges: <code>${maxEdges}</code>${state.edgeCapApplied ? " (capped)" : ""}</div>`,
+        `<div>layout: <code>${layout}</code>${state.edgeCapApplied ? " | edge cap active" : ""}</div>`,
+        `<div>recent used: events <code>${usageEventCount}</code> | top <code>${topUsedText}</code></div>`,
+        `<div>recent retrieval: events <code>${retrievalEventCount}</code> | top <code>${topRetrievalText}</code></div>`,
+        `<div>why missing: ${reasons.length ? reasons.map((r) => `<code>${r}</code>`).join(" ") : "<code>none</code>"}</div>`,
       ].join("");
 
       byId("statsBox").innerHTML = [
         `<div>Total graph: nodes <code>${state.nodesById.size}</code>, edges <code>${state.edges.length}</code></div>`,
         `<div>Visible window: nodes <code>${display.nodes.length}</code>, edges <code>${display.edges.length}</code></div>`,
+        `<div>Collection stats: ranked <code>${meta.rankedNodeCount || 0}</code>, raw edges <code>${meta.rawEdgeCount || 0}</code>, mode <code>${mode}</code>, grouped modules <code>${groupedModules}</code> -> groups <code>${groupNodeCount}</code></div>`,
+        `<div>Telemetry: usage events <code>${usageEventCount}</code> | retrieval events <code>${retrievalEventCount}</code></div>`,
         `<div>Mode: <code>${modeTitle(mode)}</code></div>`,
         mode === "decl-neighborhood"
           ? `<div>Neighborhood center: <code>${state.selected || defaultNeighborhoodCenterId() || "(none)"}</code> | depth: <code>${byId("neighborhoodDepth").value}</code></div>`
@@ -1898,12 +3543,280 @@
       });
     }
 
-    function selectAndFocus(id) {
+    function namespaceTreeRows(maxRows = 700) {
+      const tree = state.namespaceTree || {};
+      const roots = Array.isArray(tree.roots) ? tree.roots : [];
+      const children = tree.children instanceof Map ? tree.children : new Map();
+      if (roots.length === 0) return [];
+
+      const rows = [];
+      const walk = (moduleId, depth) => {
+        if (!moduleId || rows.length >= maxRows) return;
+        const kids = children.get(moduleId) || [];
+        const expanded = state.treeExpanded instanceof Set && state.treeExpanded.has(moduleId);
+        rows.push({ moduleId, depth, hasChildren: kids.length > 0, expanded });
+        if (!expanded) return;
+        for (const childId of kids) {
+          walk(childId, depth + 1);
+          if (rows.length >= maxRows) break;
+        }
+      };
+      for (const rootId of roots) {
+        walk(rootId, 0);
+        if (rows.length >= maxRows) break;
+      }
+      return rows;
+    }
+
+    function focusNamespaceSubtree(moduleId) {
+      if (!moduleId || !state.nodesById.has(moduleId)) return;
+      const node = state.nodesById.get(moduleId);
+      if (!node || node.kind !== "module") return;
+      state.treeFocusRoot = moduleId;
+      if (byId("viewMode") && byId("viewMode").value !== "module-map") {
+        byId("viewMode").value = "module-map";
+      }
+      state.selected = moduleId;
+      state.selectedEdge = null;
+      materializeNode(moduleId);
+      renderAll();
+      fitViewToDisplay();
+      setSourceHint(`subtree focus: ${moduleId}`);
+    }
+
+    function clearNamespaceSubtreeFocus() {
+      if (!state.treeFocusRoot) return;
+      state.treeFocusRoot = "";
+      setSourceHint("subtree focus cleared");
+      renderAll();
+    }
+
+    function renderNamespaceTree() {
+      const box = byId("treeBox");
+      if (!box) return;
+      const rows = namespaceTreeRows(700);
+      if (!rows.length) {
+        box.innerHTML = "<div class='tiny'>No namespace tree available.</div>";
+        return;
+      }
+      const active = state.treeFocusRoot || "";
+      const html = rows.map((row) => {
+        const indent = row.depth * 14;
+        const toggle = row.hasChildren ? (row.expanded ? "▾" : "▸") : "·";
+        const activeClass = active === row.moduleId ? " tree-active" : "";
+        return `
+          <div class="tree-row${activeClass}" data-tree-row="${row.moduleId}" style="padding-left:${indent}px">
+            <span class="tree-toggle" data-tree-toggle="${row.moduleId}">${toggle}</span>
+            <span class="tree-label">${compactModuleLabel(row.moduleId)}</span>
+          </div>
+        `;
+      }).join("");
+      box.innerHTML = html;
+
+      box.querySelectorAll("[data-tree-toggle]").forEach((el) => {
+        el.onclick = (ev) => {
+          ev.stopPropagation();
+          const id = el.getAttribute("data-tree-toggle");
+          if (!id) return;
+          if (!(state.treeExpanded instanceof Set)) state.treeExpanded = new Set();
+          if (state.treeExpanded.has(id)) state.treeExpanded.delete(id);
+          else state.treeExpanded.add(id);
+          renderNamespaceTree();
+        };
+      });
+
+      box.querySelectorAll("[data-tree-row]").forEach((el) => {
+        el.onclick = () => {
+          const id = el.getAttribute("data-tree-row");
+          if (!id) return;
+          focusNamespaceSubtree(id);
+        };
+      });
+    }
+
+    function renderDomainTagPanels() {
+      const mathBox = byId("mathTagPanel");
+      const appliedBox = byId("appliedTagPanel");
+      const hint = byId("tagPanelHint");
+      if (!mathBox || !appliedBox || !hint) return;
+
+      const axisRows = (axis) => {
+        const axes = state.domainAxes && typeof state.domainAxes === "object"
+          ? state.domainAxes
+          : {};
+        const rows = axes[axis];
+        if (!Array.isArray(rows)) return [];
+        return rows.filter((row) => row && typeof row.id === "string" && row.id);
+      };
+
+      const getSet = (axis) => {
+        if (axis === "math") {
+          if (!(state.selectedMathTags instanceof Set)) state.selectedMathTags = new Set();
+          return state.selectedMathTags;
+        }
+        if (!(state.selectedAppliedTags instanceof Set)) state.selectedAppliedTags = new Set();
+        return state.selectedAppliedTags;
+      };
+
+      const renderAxis = (axis, box) => {
+        const rows = axisRows(axis);
+        const selected = getSet(axis);
+        if (!rows.length) {
+          box.innerHTML = "<div class='tiny'>none</div>";
+          return;
+        }
+        box.innerHTML = rows.map((row) => {
+          const active = selected.has(row.id) ? " active" : "";
+          const title = typeof row.title === "string" && row.title ? row.title : row.id;
+          return `<button class="tag-chip${active}" data-axis="${axis}" data-tag="${row.id}" title="${title}">${row.id}</button>`;
+        }).join("");
+      };
+
+      renderAxis("math", mathBox);
+      renderAxis("applied", appliedBox);
+
+      const selectedMath = selectedAxisTags("math");
+      const selectedApplied = selectedAxisTags("applied");
+      const modeText = (selectedMath.size > 0 || selectedApplied.size > 0)
+        ? "panel tags override dropdown"
+        : "using dropdown single-tag filters";
+      hint.innerHTML = `math <code>${selectedMath.size}</code> | applied <code>${selectedApplied.size}</code> | ${modeText}`;
+
+      const bindClicks = (box) => {
+        box.querySelectorAll("[data-axis][data-tag]").forEach((el) => {
+          el.onclick = () => {
+            const axis = el.getAttribute("data-axis");
+            const tag = el.getAttribute("data-tag");
+            if (!axis || !tag) return;
+            const selected = getSet(axis);
+            if (selected.has(tag)) selected.delete(tag);
+            else selected.add(tag);
+            const selectId = axis === "math" ? "mathTagFilter" : "appliedTagFilter";
+            const select = byId(selectId);
+            if (select && select.value !== "all") select.value = "all";
+            renderAll();
+          };
+        });
+      };
+      bindClicks(mathBox);
+      bindClicks(appliedBox);
+    }
+
+    function lensScoreMap(rows) {
+      const out = new Map();
+      if (!Array.isArray(rows)) return out;
+      for (const row of rows) {
+        if (!row || typeof row !== "object") continue;
+        const moduleId = typeof row.module === "string" ? row.module : "";
+        if (!moduleId) continue;
+        const numericKeys = ["score", "in_degree", "weight", "count"];
+        let value = 0;
+        for (const key of numericKeys) {
+          const raw = Number(row[key]);
+          if (Number.isFinite(raw)) {
+            value = raw;
+            break;
+          }
+        }
+        out.set(moduleId, value);
+      }
+      return out;
+    }
+
+    function renderMathlibLensPanel() {
+      const box = byId("mathlibLensBox");
+      if (!box) return;
+      const mode = activeViewMode();
+      const config = activeMathlibLensConfig();
+      const lensMeta = state.graph && typeof state.graph === "object" && state.graph.mathlib_lens
+        ? state.graph.mathlib_lens
+        : {};
+      const hubScore = lensScoreMap(lensMeta.top_hubs || []);
+      const aggScore = lensScoreMap(lensMeta.aggregators || []);
+      const dedupe = (rows, limit = 24) => {
+        const out = [];
+        const seen = new Set();
+        for (const id of Array.isArray(rows) ? rows : []) {
+          if (typeof id !== "string" || !id) continue;
+          if (!state.nodesById.has(id)) continue;
+          if (seen.has(id)) continue;
+          seen.add(id);
+          out.push(id);
+          if (out.length >= limit) break;
+        }
+        return out;
+      };
+      const roots = dedupe(config.roots, 20);
+      const hubs = dedupe(config.hubs, 20);
+      const aggregators = dedupe(config.aggregators, 20);
+      const bridges = dedupe(config.bridges, 20);
+      const total = roots.length + hubs.length + aggregators.length + bridges.length;
+      const selected = state.selected || "";
+
+      if (total === 0) {
+        box.innerHTML = "<div class='tiny'>No mathlib lens data in current dataset/profile.</div>";
+        return;
+      }
+
+      const renderRows = (title, ids, badge, scoreById = null) => {
+        if (!ids.length) return "";
+        const rows = ids.map((id) => {
+          const activeClass = selected === id ? " active" : "";
+          const score = scoreById instanceof Map && scoreById.has(id)
+            ? `<span class="badge">score ${scoreById.get(id)}</span>`
+            : "";
+          return `
+            <div class="node-item${activeClass}" data-lens-node="${id}">
+              <div><strong>${compactModuleLabel(id)}</strong></div>
+              <div class="line2"><span class="badge">${badge}</span>${score}</div>
+              <div class="line2"><code>${id}</code></div>
+            </div>
+          `;
+        }).join("");
+        return `
+          <div class="lens-section">
+            <div class="lens-section-title">${title} (${ids.length})</div>
+            ${rows}
+          </div>
+        `;
+      };
+
+      const modeText = mode === "mathlib-lens" ? "active" : "inactive";
+      const summary = `<div class="tiny">profile <code>${config.activeDomain || "all"}</code> | lens mode <code>${modeText}</code></div>`;
+      const switchHint = mode === "mathlib-lens"
+        ? ""
+        : `<div class="tiny">Tip: switch to <code>Mathlib lens</code> mode for default lens graph.</div>`;
+      box.innerHTML = [
+        summary,
+        switchHint,
+        renderRows("Slice roots", roots, "root"),
+        renderRows("Top hubs", hubs, "hub", hubScore),
+        renderRows("Aggregators", aggregators, "agg", aggScore),
+        renderRows("Bridge modules", bridges, "bridge"),
+      ].join("");
+
+      box.querySelectorAll("[data-lens-node]").forEach((el) => {
+        el.onclick = () => {
+          const id = el.getAttribute("data-lens-node");
+          if (!id || !state.nodesById.has(id)) return;
+          const modeSelect = byId("viewMode");
+          if (modeSelect && modeSelect.value !== "mathlib-lens") {
+            modeSelect.value = "mathlib-lens";
+            modeSelect.dispatchEvent(new Event("change"));
+          }
+          materializeNode(id);
+          selectAndFocus(id, false);
+          setSourceHint(`mathlib lens node: ${id}`);
+        };
+      });
+    }
+
+    function selectAndFocus(id, focus = false) {
       materializeNode(id);
       state.selected = id;
       state.selectedEdge = null;
       renderAll();
-      centerOnNode(id);
+      if (focus) centerOnNode(id);
     }
 
     function locateFirstMatch() {
@@ -1911,7 +3824,7 @@
         renderSearchResults();
       }
       if (!state.searchMatches.length) return;
-      selectAndFocus(state.searchMatches[0].id);
+      selectAndFocus(state.searchMatches[0].id, true);
     }
 
     function fitViewToDisplay() {
@@ -2074,10 +3987,8 @@
     function startNodeDrag(ev, nodeId) {
       ev.stopPropagation();
       if (state.pinned.has(nodeId)) {
-        resetNodeClickTracker();
         return;
       }
-      resetNodeClickTracker();
       const p = nodePos(nodeId);
       state.drag = {
         type: "node",
@@ -2088,14 +3999,11 @@
         startNodeX: p[0],
         startNodeY: p[1],
         moved: false,
+        captured: false,
       };
-      svg.classList.add("panning");
-      svg.setPointerCapture(ev.pointerId);
-      ev.preventDefault();
     }
 
     function startPan(ev) {
-      resetNodeClickTracker();
       state.drag = {
         type: "pan",
         pointerId: ev.pointerId,
@@ -2103,10 +4011,9 @@
         startClientY: ev.clientY,
         startViewX: state.view.x,
         startViewY: state.view.y,
+        moved: false,
+        captured: false,
       };
-      svg.classList.add("panning");
-      svg.setPointerCapture(ev.pointerId);
-      ev.preventDefault();
     }
 
     function scheduleGraphRender() {
@@ -2122,9 +4029,23 @@
       if (!state.drag) return;
       if (state.drag.pointerId !== ev.pointerId) return;
 
-      const delta = screenToSvgDelta(ev.clientX - state.drag.startClientX, ev.clientY - state.drag.startClientY);
+      const dxPx = ev.clientX - state.drag.startClientX;
+      const dyPx = ev.clientY - state.drag.startClientY;
+      const delta = screenToSvgDelta(dxPx, dyPx);
 
       if (state.drag.type === "pan") {
+        if (!state.drag.moved) {
+          const movedPx = Math.hypot(dxPx, dyPx);
+          if (movedPx < CANVAS_PAN_THRESHOLD_PX) return;
+          state.drag.moved = true;
+          if (!state.drag.captured) {
+            state.drag.captured = true;
+            svg.classList.add("panning");
+            try {
+              svg.setPointerCapture(ev.pointerId);
+            } catch (_) {}
+          }
+        }
         state.view.x = state.drag.startViewX - delta.dx;
         state.view.y = state.drag.startViewY - delta.dy;
         clampView();
@@ -2134,22 +4055,37 @@
       }
 
       if (state.drag.type === "node") {
-        if (Math.abs(delta.dx) <= 0.8 && Math.abs(delta.dy) <= 0.8 && !state.drag.moved) return;
+        if (!state.drag.moved) {
+          const movedPx = Math.hypot(dxPx, dyPx);
+          if (movedPx < NODE_DRAG_THRESHOLD_PX) return;
+          state.drag.moved = true;
+          state.suppressClickUntil = Date.now() + 180;
+          if (!state.drag.captured) {
+            state.drag.captured = true;
+            svg.classList.add("panning");
+            try {
+              svg.setPointerCapture(ev.pointerId);
+            } catch (_) {}
+          }
+        }
         const nx = state.drag.startNodeX + delta.dx;
         const ny = state.drag.startNodeY + delta.dy;
-        state.drag.moved = true;
-        resetNodeClickTracker();
         state.freePos.set(state.drag.nodeId, [nx, ny]);
-        state.suppressClickUntil = Date.now() + 180;
         scheduleGraphRender();
       }
     }
 
     function onPointerUp(ev) {
       if (!state.drag || state.drag.pointerId !== ev.pointerId) return;
-      svg.classList.remove("panning");
-      svg.releasePointerCapture(ev.pointerId);
       const dragState = state.drag;
+      if (dragState.captured) {
+        svg.classList.remove("panning");
+        try {
+          if (!svg.hasPointerCapture || svg.hasPointerCapture(ev.pointerId)) {
+            svg.releasePointerCapture(ev.pointerId);
+          }
+        } catch (_) {}
+      }
       const wasNodeDrag = dragState.type === "node";
       state.drag = null;
       if (wasNodeDrag) {
@@ -2165,12 +4101,47 @@
       const anchorX = state.view.x + px * state.view.w;
       const anchorY = state.view.y + py * state.view.h;
 
-      const factor = Math.exp(ev.deltaY * 0.0012);
-      const newW = clamp(state.view.w * factor, 220, state.world.w * 4.2);
-      const newH = clamp(state.view.h * factor, 160, state.world.h * 4.2);
+      const linePx = 16;
+      const pagePxX = Math.max(rect.width, 1);
+      const pagePxY = Math.max(rect.height, 1);
+      const dxPx = ev.deltaMode === 1
+        ? ev.deltaX * linePx
+        : (ev.deltaMode === 2 ? ev.deltaX * pagePxX : ev.deltaX);
+      const dyPx = ev.deltaMode === 1
+        ? ev.deltaY * linePx
+        : (ev.deltaMode === 2 ? ev.deltaY * pagePxY : ev.deltaY);
 
-      state.view.w = newW;
-      state.view.h = newH;
+      const likelyMouseWheel =
+        ev.deltaMode !== 0 ||
+        (Math.abs(dxPx) <= 2 && Math.abs(dyPx) >= 90) ||
+        (Math.abs(dxPx) <= 2 && Number.isInteger(ev.deltaY) && Math.abs(ev.deltaY) >= 30);
+      const wheelMode = byId("wheelMode") ? byId("wheelMode").value : "smart";
+      let shouldZoom;
+      if (wheelMode === "zoom") {
+        shouldZoom = true;
+      } else if (wheelMode === "pan") {
+        shouldZoom = ev.ctrlKey;
+      } else {
+        shouldZoom = ev.ctrlKey || likelyMouseWheel;
+      }
+
+      if (!shouldZoom) {
+        // Trackpad two-finger scroll defaults to pan.
+        const panSpeed = 1.15;
+        const delta = screenToSvgDelta(dxPx * panSpeed, dyPx * panSpeed);
+        state.view.x += delta.dx;
+        state.view.y += delta.dy;
+        clampView();
+        applyViewBox();
+        renderOverlay(state.lastDisplay);
+        return;
+      }
+
+      // Pinch (ctrlKey) and mouse wheel both zoom, with tuned strengths.
+      const zoomStrength = ev.ctrlKey ? 0.006 : 0.0026;
+      const factor = clamp(Math.exp(dyPx * zoomStrength), 0.25, 4);
+      state.view.w = clamp(state.view.w * factor, 220, state.world.w * 4.2);
+      state.view.h = clamp(state.view.h * factor, 160, state.world.h * 4.2);
       normalizeViewToViewport(anchorX, anchorY, px, py);
       applyViewBox();
       renderOverlay(state.lastDisplay);
@@ -2180,14 +4151,95 @@
       const display = collectDisplayGraph();
       renderGraph(display, false);
       renderSearchResults();
+      renderNamespaceTree();
+      renderDomainTagPanels();
+      renderMathlibLensPanel();
+    }
+
+    async function initProofMapControls() {
+      const select = byId("proofMapSelect");
+      if (!select) return;
+      const index = await loadProofMapIndex();
+      const rows = index && Array.isArray(index.problems) ? index.problems : [];
+      state.proofMapEntries = rows;
+      const options = ['<option value="">(none)</option>'];
+      for (const row of rows) {
+        if (!row || typeof row.id !== "string" || !row.id) continue;
+        const suite = typeof row.suite === "string" ? row.suite : "?";
+        const problem = typeof row.problem === "string" ? row.problem : row.id;
+        const nodes = Number(row.node_count || 0);
+        options.push(`<option value="${row.id}">${suite}/${problem} (${nodes} nodes)</option>`);
+      }
+      select.innerHTML = options.join("");
+      select.value = "";
+    }
+
+    function clearActiveProofMap() {
+      state.activeProofMapId = "";
+      state.proofMapNodeIds = null;
+      state.proofMapEdgeKeys = null;
+      const select = byId("proofMapSelect");
+      if (select) select.value = "";
+    }
+
+    async function loadActiveProofMap() {
+      const select = byId("proofMapSelect");
+      if (!select) return;
+      const mapId = select.value;
+      if (!mapId) {
+        clearActiveProofMap();
+        setSourceHint("proof map cleared");
+        renderAll();
+        return;
+      }
+      const entry = state.proofMapEntries.find((row) => row && row.id === mapId);
+      if (!entry) {
+        setSourceHint(`proof map not found: ${mapId}`);
+        return;
+      }
+      const mapPath = typeof entry.proof_map === "string" && entry.proof_map
+        ? entry.proof_map
+        : "";
+      if (!mapPath) {
+        setSourceHint(`proof map path missing: ${mapId}`);
+        return;
+      }
+      const mapData = await loadProofMapData(mapPath);
+      if (!mapData) {
+        setSourceHint(`proof map load failed: ${mapId}`);
+        return;
+      }
+      const nodeIds = new Set();
+      const edgeKeys = new Set();
+      for (const row of mapData.nodes || []) {
+        if (!row || typeof row.id !== "string" || !row.id) continue;
+        nodeIds.add(row.id);
+      }
+      for (const edge of mapData.edges || []) {
+        if (!edge || typeof edge.src !== "string" || typeof edge.dst !== "string") continue;
+        const edgeType = typeof edge.type === "string" ? edge.type : "";
+        edgeKeys.add(`${edge.src}__${edgeType}__${edge.dst}`);
+      }
+      state.activeProofMapId = mapId;
+      state.proofMapNodeIds = nodeIds;
+      state.proofMapEdgeKeys = edgeKeys;
+      for (const nodeId of nodeIds) {
+        materializeNode(nodeId);
+      }
+      if (state.selected && !nodeIds.has(state.selected)) {
+        state.selected = null;
+      }
+      setSourceHint(`proof map loaded: ${mapId} (${nodeIds.size} nodes)`);
+      renderAll();
+      fitViewToDisplay();
     }
 
     function wireControls() {
       const rerenderIds = [
-        "scope", "layerFilter", "domainFilter", "kindModule", "kindDecl", "kindConcept", "spineOnly",
-        "edge_imports", "edge_uses_type", "edge_uses_value", "edge_decl_in_module", "edge_binds",
+        "scope", "layerFilter", "domainFilter", "mathTagFilter", "appliedTagFilter", "kindModule", "kindDecl", "kindConcept", "spineOnly",
+        "edge_imports", "edge_contains", "edge_uses_type", "edge_uses_value", "edge_decl_in_module", "edge_binds",
         "edge_alias_of", "edge_used_recently",
-        "showGenerated", "expandMathlib", "maxNodes", "maxEdges", "neighborhoodDepth", "layoutMode",
+        "showGenerated", "expandMathlib", "maxNodes", "maxEdges", "neighborhoodDepth", "layoutMode", "wheelMode", "groupCollapseDepth",
       ];
       for (const id of rerenderIds) {
         const el = byId(id);
@@ -2195,8 +4247,161 @@
         el.addEventListener("change", () => renderAll());
       }
 
+      const mathTagSelect = byId("mathTagFilter");
+      if (mathTagSelect) {
+        mathTagSelect.addEventListener("change", () => {
+          if (state.selectedMathTags instanceof Set) state.selectedMathTags.clear();
+        });
+      }
+      const appliedTagSelect = byId("appliedTagFilter");
+      if (appliedTagSelect) {
+        appliedTagSelect.addEventListener("change", () => {
+          if (state.selectedAppliedTags instanceof Set) state.selectedAppliedTags.clear();
+        });
+      }
+
+      const selectedModuleId = () => {
+        if (state.selected && state.nodesById.has(state.selected)) {
+          const node = state.nodesById.get(state.selected);
+          if (node) {
+            if (node.kind === "module") return node.id;
+            if (node.kind === "decl" && typeof node.module === "string") return node.module;
+          }
+        }
+        if (state.selected && state.groupMembers instanceof Map && state.groupMembers.has(state.selected)) {
+          const members = state.groupMembers.get(state.selected) || [];
+          if (Array.isArray(members) && members.length > 0) return members[0];
+        }
+        let best = "";
+        let bestDegree = -1;
+        for (const id of state.visible) {
+          const row = state.nodesById.get(id);
+          if (!row || row.kind !== "module") continue;
+          if (!nodePassesFilters(row)) continue;
+          const deg = degreeOf(row.id);
+          if (deg > bestDegree) {
+            bestDegree = deg;
+            best = row.id;
+          }
+        }
+        if (best) return best;
+        return "";
+      };
+
+      const primeSelectedModuleDecls = () => {
+        const moduleId = selectedModuleId();
+        if (!moduleId) return false;
+        if (!state.nodesById.has(moduleId)) return false;
+        if (!state.moduleDeclCursor.has(moduleId) || (state.moduleDeclCursor.get(moduleId) || 0) <= 0) {
+          state.moduleDeclCursor.set(moduleId, MODULE_DECL_PAGE_SIZE);
+        }
+        if (typeof syncExpandedModuleDecls === "function") {
+          syncExpandedModuleDecls();
+        }
+        return true;
+      };
+
+      const materializeDeclEdgeNeighborhood = (edgeType, limit = 120) => {
+        const seeds = [];
+        for (const id of state.visible) {
+          const node = state.nodesById.get(id);
+          if (!node || node.kind !== "decl") continue;
+          seeds.push(node.id);
+        }
+        let added = 0;
+        for (const nodeId of seeds) {
+          const around = (state.outgoing.get(nodeId) || []).concat(state.incoming.get(nodeId) || []);
+          for (const e of around) {
+            if (e.type !== edgeType) continue;
+            const otherId = e.src === nodeId ? e.dst : e.src;
+            if (!otherId || !state.nodesById.has(otherId)) continue;
+            const other = state.nodesById.get(otherId);
+            if (!other || other.kind !== "decl") continue;
+            if (state.visible.has(otherId)) continue;
+            materializeNode(otherId);
+            added += 1;
+            if (added >= limit) return added;
+          }
+        }
+        return added;
+      };
+
+      byId("kindDecl").addEventListener("change", () => {
+        if (!byId("kindDecl").checked) return;
+        if (byId("edge_decl_in_module")) byId("edge_decl_in_module").checked = true;
+        if (primeSelectedModuleDecls()) renderAll();
+      });
+
+      byId("showGenerated").addEventListener("change", () => {
+        if (!byId("kindDecl").checked) return;
+        if (activeViewMode() !== "module-map") return;
+        if (byId("showGenerated").checked) {
+          const moduleId = selectedModuleId();
+          if (moduleId && state.nodesById.has(moduleId)) {
+            const cursor = Math.max(0, Number(state.moduleDeclCursor.get(moduleId) || 0));
+            state.moduleDeclCursor.set(moduleId, cursor + MODULE_DECL_PAGE_SIZE);
+            let addedGenerated = 0;
+            if (typeof moduleDeclCandidates === "function") {
+              const candidates = moduleDeclCandidates(moduleId);
+              for (const node of candidates) {
+                if (!node || node.kind !== "decl") continue;
+                if (node.generated !== true) continue;
+                if (state.visible.has(node.id)) continue;
+                materializeNode(node.id);
+                addedGenerated += 1;
+                if (addedGenerated >= MODULE_DECL_PAGE_SIZE) break;
+              }
+            }
+            if (addedGenerated === 0) {
+              setSourceHint(`no generated decls added for ${moduleId} under current filters`);
+            } else {
+              setSourceHint(`added ${addedGenerated} generated decls for ${moduleId}`);
+            }
+          }
+        }
+        if (typeof syncExpandedModuleDecls === "function") {
+          syncExpandedModuleDecls();
+          renderAll();
+        }
+      });
+
+      for (const edgeId of ["edge_decl_in_module", "edge_uses_type", "edge_uses_value"]) {
+        const el = byId(edgeId);
+        if (!el) continue;
+        el.addEventListener("change", () => {
+          if (!el.checked) return;
+          byId("kindDecl").checked = true;
+          const primed = primeSelectedModuleDecls();
+          if (edgeId === "edge_uses_type" || edgeId === "edge_uses_value") {
+            materializeDeclEdgeNeighborhood(edgeId === "edge_uses_type" ? "uses_type" : "uses_value");
+          }
+          if (primed || edgeId !== "edge_decl_in_module") renderAll();
+        });
+      }
+
+      const binds = byId("edge_binds");
+      if (binds) {
+        binds.addEventListener("change", () => {
+          if (!binds.checked) return;
+          byId("kindConcept").checked = true;
+          byId("kindDecl").checked = true;
+          let bindRows = 0;
+          for (const e of state.edges) {
+            if (e.type !== "binds") continue;
+            materializeNode(e.src);
+            materializeNode(e.dst);
+            bindRows += 1;
+          }
+          const primed = primeSelectedModuleDecls();
+          if (bindRows > 0 || primed) renderAll();
+        });
+      }
+
       byId("viewMode").addEventListener("change", () => {
         const mode = activeViewMode();
+        if (mode !== "module-map" && mode !== "mathlib-lens") {
+          clearImportLens();
+        }
         if (mode === "decl-neighborhood") {
           byId("kindDecl").checked = true;
           byId("kindModule").checked = true;
@@ -2205,6 +4410,16 @@
         if (mode === "concept-browser") {
           byId("kindConcept").checked = true;
           byId("edge_binds").checked = true;
+        }
+        if (mode === "mathlib-lens") {
+          byId("scope").value = "all";
+          byId("kindModule").checked = true;
+          byId("kindDecl").checked = false;
+          byId("kindConcept").checked = false;
+          byId("edge_imports").checked = true;
+          if (byId("edge_contains")) byId("edge_contains").checked = true;
+          byId("edge_uses_type").checked = false;
+          byId("edge_uses_value").checked = false;
         }
         if (mode === "module-map" && state.visible.size === 0) {
           resetToModuleMap();
@@ -2227,12 +4442,90 @@
         renderSearchResults();
       };
 
+      const datasetSelect = byId("datasetSelect");
+      if (datasetSelect) {
+        datasetSelect.addEventListener("change", async () => {
+          const nextId = datasetSelect.value || "latest";
+          try {
+            clearActiveProofMap();
+            clearImportLens();
+            state.graph = await loadData(nextId);
+            buildIndex();
+            rebuildNamespaceTree();
+            refreshDatasetOptions();
+            await initProofMapControls();
+            initDomainFilter();
+            state.pinned.clear();
+            state.moduleDeclCursor.clear();
+            state.freePos.clear();
+            state.basePos.clear();
+            state.lastPos.clear();
+            resetToModuleMap();
+            renderAll();
+            fitViewToDisplay();
+            setSourceHint(`dataset switched: ${state.activeDatasetId}`);
+          } catch (err) {
+            setSourceHint(`dataset load failed: ${String(err)}`);
+          }
+        });
+      }
+
+      const loadProofMapBtn = byId("loadProofMap");
+      if (loadProofMapBtn) {
+        loadProofMapBtn.onclick = () => {
+          loadActiveProofMap();
+        };
+      }
+      const clearProofMapBtn = byId("clearProofMap");
+      if (clearProofMapBtn) {
+        clearProofMapBtn.onclick = () => {
+          clearActiveProofMap();
+          setSourceHint("proof map cleared");
+          renderAll();
+        };
+      }
+      const proofMapSelect = byId("proofMapSelect");
+      if (proofMapSelect) {
+        proofMapSelect.addEventListener("change", () => {
+          if (!proofMapSelect.value) {
+            clearActiveProofMap();
+            setSourceHint("proof map cleared");
+            renderAll();
+          }
+        });
+      }
+
       byId("resetMap").onclick = () => {
         byId("viewMode").value = "module-map";
+        clearImportLens();
         resetToModuleMap();
         renderAll();
         fitViewToDisplay();
       };
+      const openMathlibLens = byId("openMathlibLens");
+      if (openMathlibLens) {
+        openMathlibLens.onclick = () => {
+          byId("viewMode").value = "mathlib-lens";
+          byId("viewMode").dispatchEvent(new Event("change"));
+        };
+      }
+      const clearTreeFocusBtn = byId("clearTreeFocus");
+      if (clearTreeFocusBtn) {
+        clearTreeFocusBtn.onclick = () => {
+          clearNamespaceSubtreeFocus();
+        };
+      }
+      const clearTagPanelBtn = byId("clearTagPanel");
+      if (clearTagPanelBtn) {
+        clearTagPanelBtn.onclick = () => {
+          if (state.selectedMathTags instanceof Set) state.selectedMathTags.clear();
+          if (state.selectedAppliedTags instanceof Set) state.selectedAppliedTags.clear();
+          if (byId("mathTagFilter")) byId("mathTagFilter").value = "all";
+          if (byId("appliedTagFilter")) byId("appliedTagFilter").value = "all";
+          setSourceHint("tag panel filters cleared");
+          renderAll();
+        };
+      }
 
       byId("fitView").onclick = () => fitViewToDisplay();
 
@@ -2243,9 +4536,26 @@
       byId("saveLayout").onclick = () => saveLayoutToStorage();
       byId("loadLayout").onclick = () => loadLayoutFromStorage();
       byId("clearLayout").onclick = () => clearSavedLayout();
+      byId("toggleOverlay").onclick = () => {
+        state.panelUI.overlayCollapsed = !state.panelUI.overlayCollapsed;
+        applyPanelUIState();
+        savePanelUIState();
+      };
+      byId("toggleStats").onclick = () => {
+        state.panelUI.statsCollapsed = !state.panelUI.statsCollapsed;
+        applyPanelUIState();
+        savePanelUIState();
+      };
+      byId("resetPanels").onclick = () => {
+        state.panelUI.overlayCollapsed = false;
+        state.panelUI.statsCollapsed = false;
+        applyPanelUIState();
+        savePanelUIState();
+      };
 
       svg.addEventListener("pointerdown", (ev) => {
         if (ev.button !== 0) return;
+        if (ev.target !== svg) return;
         state.selectedEdge = null;
         startPan(ev);
       });
@@ -2262,9 +4572,9 @@
 
       svg.addEventListener("click", (ev) => {
         if (ev.target === svg && Date.now() >= state.suppressClickUntil) {
-          resetNodeClickTracker();
           state.selected = null;
           state.selectedEdge = null;
+          refreshNodeVisualState();
           renderInspector(state.lastDisplay);
           renderOverlay(state.lastDisplay);
         }
@@ -2273,11 +4583,17 @@
 
     async function boot() {
       try {
-        state.graph = await loadData();
+        refreshDatasetOptions();
+        state.graph = await loadData(state.activeDatasetId || "latest");
         buildIndex();
+        rebuildNamespaceTree();
+        refreshDatasetOptions();
+        await initProofMapControls();
         initDomainFilter();
         resetToModuleMap();
         wireControls();
+        loadPanelUIState();
+        applyPanelUIState();
         renderAll();
         fitViewToDisplay();
       } catch (err) {

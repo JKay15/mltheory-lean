@@ -235,6 +235,13 @@ def cmd_run(args: argparse.Namespace) -> int:
         run_checked(["tools/index/gen_mltheory_index.sh"], repo_root, dry_run=args.dry_run)
         run_checked(["tools/index/gen_graph_artifacts.sh"], repo_root, dry_run=args.dry_run)
 
+    if phase in {"lean-commit", "promote-cache", "proof-scope", "apply-replan"}:
+        run_checked(
+            ["python3", "tools/ci/check_problem_workspace_contract.py"],
+            repo_root,
+            dry_run=args.dry_run,
+        )
+
     write_run_summary(suite_path=suite_path, phase=phase, problems=problems, dry_run=args.dry_run)
     print(f"[problem_suite] phase={phase} completed for {len(problems)} problems")
     return 0

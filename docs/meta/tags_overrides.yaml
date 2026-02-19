@@ -1,0 +1,29 @@
+version: 2
+description: Optional explicit tag/profile overrides for exceptional modules/decls.
+
+module_math_tags:
+  MLTheory.Methods.Learning.KernelMethods:
+    - linear_algebra
+    - analysis
+  MLTheory.Methods.Learning.KernelBayes:
+    - probability
+    - linear_algebra
+
+module_applied_tags:
+  MLTheory.Methods.Bandits:
+    - bandits
+    - online_learning
+  MLTheory.Methods.RL:
+    - reinforcement_learning
+    - control
+
+module_profiles:
+  MLTheory.Methods.Bandits:
+    - bandits
+  MLTheory.Methods.RL:
+    - rl
+
+concept_applied_tags:
+  methods:
+    - learning_theory
+    - optimization

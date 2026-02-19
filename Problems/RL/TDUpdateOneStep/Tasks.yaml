@@ -1,0 +1,14 @@
+suite: RL
+problem: TDUpdateOneStep
+status: active
+domain_profile: rl
+cards:
+  - id: td-update-spec
+    goal: Keep problem statement executable in Spec.lean
+    status: done
+  - id: td-update-cache
+    goal: Cache reusable lemma for update identity
+    status: done
+  - id: td-update-proof
+    goal: Final readable proof in Proof.lean using Cache.lean
+    status: done

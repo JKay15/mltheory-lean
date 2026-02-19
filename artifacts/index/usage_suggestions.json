@@ -1,8 +1,18 @@
 {
-  "generated_at": "2026-02-18",
-  "event_count": 0,
-  "spine_candidates": [],
-  "entry_module_candidates": [],
+  "generated_at": "2026-02-19",
+  "event_count": 5,
+  "spine_candidates": [
+    "MLTheory.Core.RL.bellmanExpectationSpec",
+    "MLTheory.Core.RL.bellmanOptimalitySpec",
+    "MLTheory.Methods.RL.policyEvaluationSpec",
+    "MLTheory.Methods.RL.policyImprovementSpec",
+    "MLTheory.Methods.RL.tdError"
+  ],
+  "entry_module_candidates": [
+    "MLTheory.Core.RL.MDP",
+    "MLTheory.Methods.RL.DynamicProgramming",
+    "MLTheory.Methods.RL.TemporalDifference"
+  ],
   "notes": [
     "spine_candidates ranked by usage score (2*success + usage_count)",
     "entry_module_candidates aggregated from top usage decl modules"

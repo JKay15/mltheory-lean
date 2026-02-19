@@ -2,13 +2,27 @@
 /.DS_Store
 .DS_Store
 /artifacts/telemetry/usage_events.jsonl
+/artifacts/telemetry/retrieval.jsonl
+/artifacts/telemetry/last_retrieval_result.json
+/artifacts/_snapshots/
+
+# Generated problem-workspace bundles
+/docs/_auto/proof_maps.json
+/docs/_auto/proof_maps/
+/docs/_auto/proof_maps_bundle.js
+/docs/_auto/snapshot_datasets_bundle.js
 
 # Local audit packs and extracted review materials
 /MLTheory_refactor_docs_v6.zip
 /MLTheory_v6_audit_feedback_pack_v3_2026-02-18.zip
+/MLTheory_v6_audit_feedback_pack_v3_*.zip
 /design/
 /docs/exports/
 
 # Built graph UI artifacts (generated)
 /tools/graph_ui/dist/
 /tools/graph_ui/public/
+
+# Python cache
+**/__pycache__/
+*.pyc
