@@ -56,6 +56,8 @@ DOMAIN_KEYWORDS: dict[str, tuple[str, ...]] = {
 PLACEHOLDER_RE = re.compile(r"\b(TODO|TBD)\b|\?\?\?", flags=re.IGNORECASE)
 SORRY_RE = re.compile(r"\bsorry\b")
 AXIOM_RE = re.compile(r"^\s*axiom\b")
+CACHE_PROMOTE_BEGIN_RE = re.compile(r"^\s*--\s*CACHE_PROMOTE_BEGIN\s*:?\s*([A-Za-z0-9_.-]+)\s*$")
+CACHE_PROMOTE_END_RE = re.compile(r"^\s*--\s*CACHE_PROMOTE_END\s*:?\s*([A-Za-z0-9_.-]+)\s*$")
 
 
 @dataclass
@@ -115,6 +117,29 @@ class ProblemContext:
     @property
     def problem_id(self) -> str:
         return f"{self.domain_tag}.{self.problem_slug}"
+
+
+@dataclass
+class TaskCard:
+    id: str
+    title: str
+    status: str
+    blocker: str
+    lean_target: str
+
+
+@dataclass
+class StuckBatchItem:
+    lemma_id: str
+    goal: str
+    blocker: str
+    attempts: list[tuple[str, str]]
+
+
+@dataclass
+class CachePromoteBlock:
+    block_id: str
+    content: str
 
 
 def slug_to_module(raw: str) -> str:
@@ -407,25 +432,63 @@ def render_manifest(ctx: ProblemContext, phase: str) -> str:
     return json.dumps(payload, ensure_ascii=False, indent=2) + "\n"
 
 
-def render_stuck_batch_yaml(ctx: ProblemContext, batch_id: str) -> str:
-    return f"""batch_id: {batch_id}
-problem_id: {ctx.problem_id}
-domains:
-{''.join(f'  - {d}\n' for d in ctx.domains)}status: open
-planner: GPTPro
-builder: Codex
-items:
-  - lemma_id: L1
-    goal: \"TODO\"
-    attempts:
-      - tactic: \"simp?\"
-        result: \"failed\"
-    blocker: \"TODO\"
-planner_reply:
-  split_into: []
-  hints: []
-  required_defs: []
-"""
+def yaml_quote(text: str) -> str:
+    return json.dumps(text, ensure_ascii=False)
+
+
+def render_stuck_batch_yaml(
+    ctx: ProblemContext,
+    batch_id: str,
+    *,
+    items: list[StuckBatchItem] | None = None,
+) -> str:
+    rows = items if items else [
+        StuckBatchItem(
+            lemma_id="L1",
+            goal="TODO",
+            blocker="TODO",
+            attempts=[("simp?", "failed")],
+        )
+    ]
+    lines = [
+        f"batch_id: {batch_id}",
+        f"problem_id: {ctx.problem_id}",
+        "domains:",
+    ]
+    for d in ctx.domains:
+        lines.append(f"  - {d}")
+    lines.extend(
+        [
+            "status: open",
+            "planner: GPTPro",
+            "builder: Codex",
+            "items:",
+        ]
+    )
+    for row in rows:
+        lemma_id = row.lemma_id.strip() or "L1"
+        goal = row.goal.strip() or "TODO"
+        blocker = row.blocker.strip() or "unspecified blocker"
+        lines.append(f"  - lemma_id: {lemma_id}")
+        lines.append(f"    goal: {yaml_quote(goal)}")
+        lines.append("    attempts:")
+        attempts = row.attempts if row.attempts else [("n/a", "failed")]
+        for tactic, result in attempts:
+            tactic_text = tactic.strip() or "n/a"
+            result_text = result.strip() or "failed"
+            lines.append(f"      - tactic: {yaml_quote(tactic_text)}")
+            lines.append(f"        result: {yaml_quote(result_text)}")
+        lines.append(f"    blocker: {yaml_quote(blocker)}")
+    lines.extend(
+        [
+            "planner_reply:",
+            "  split_into: []",
+            "  hints: []",
+            "  required_defs: []",
+            "",
+        ]
+    )
+    return "\n".join(lines)
 
 
 def clean_yaml_scalar(raw: str) -> str:
@@ -563,6 +626,149 @@ def parse_existing_task_ids(tasks_text: str) -> set[str]:
     return ids
 
 
+def parse_tasks_cards(path: Path) -> list[TaskCard]:
+    if not path.exists():
+        return []
+    lines = path.read_text(encoding="utf-8").splitlines()
+    cards: list[TaskCard] = []
+    in_cards = False
+    current: dict[str, str] | None = None
+
+    def flush() -> None:
+        nonlocal current
+        if current is None:
+            return
+        card_id = current.get("id", "").strip()
+        if card_id:
+            cards.append(
+                TaskCard(
+                    id=card_id,
+                    title=current.get("title", "").strip(),
+                    status=current.get("status", "").strip().lower(),
+                    blocker=current.get("blocker", "").strip(),
+                    lean_target=current.get("lean_target", "").strip(),
+                )
+            )
+        current = None
+
+    for raw in lines:
+        stripped = raw.strip()
+        if not stripped or stripped.startswith("#"):
+            continue
+        if not in_cards:
+            if stripped == "cards:":
+                in_cards = True
+            continue
+
+        indent = len(raw) - len(raw.lstrip(" "))
+        if indent <= 1 and ":" in stripped and not stripped.startswith("- "):
+            break
+
+        id_match = re.match(r"^\s{2}-\s+id:\s*(.+)$", raw)
+        if id_match:
+            flush()
+            current = {"id": clean_yaml_scalar(id_match.group(1))}
+            continue
+
+        field_match = re.match(r"^\s{4}([A-Za-z0-9_]+):\s*(.*)$", raw)
+        if field_match and current is not None:
+            key = field_match.group(1)
+            val = clean_yaml_scalar(field_match.group(2))
+            current[key] = val
+    flush()
+    return cards
+
+
+def parse_failed_telemetry_attempts(path: Path) -> dict[str, list[tuple[str, str]]]:
+    if not path.exists():
+        return {}
+    attempts: dict[str, list[tuple[str, str]]] = {}
+    for raw in path.read_text(encoding="utf-8").splitlines():
+        line = raw.strip()
+        if not line:
+            continue
+        try:
+            row = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if not isinstance(row, dict):
+            continue
+        success = row.get("success")
+        event = str(row.get("event", "")).strip()
+        if success is True and "fail" not in event.lower():
+            continue
+        card_id = ""
+        for key in ("card_id", "lemma_id", "task_id"):
+            val = row.get(key)
+            if isinstance(val, str) and val.strip():
+                card_id = val.strip()
+                break
+        if not card_id:
+            continue
+        tactic = str(row.get("tactic", "n/a")).strip() or "n/a"
+        reason = str(row.get("error", "")).strip() or str(row.get("result", "")).strip()
+        if not reason:
+            reason = event if event else "failed"
+        attempts.setdefault(card_id, []).append((tactic, reason))
+    return attempts
+
+
+def nonempty_scalar(text: str) -> bool:
+    value = clean_yaml_scalar(text).strip().lower()
+    return value not in {"", "-", "none", "null"}
+
+
+def collect_auto_stuck_items(ctx: ProblemContext, *, max_items: int) -> list[StuckBatchItem]:
+    tasks_path = ctx.problem_dir / "Tasks.yaml"
+    cards = parse_tasks_cards(tasks_path)
+    telemetry = parse_failed_telemetry_attempts(ctx.problem_dir / "Telemetry.jsonl")
+
+    items: list[StuckBatchItem] = []
+    seen: set[str] = set()
+    for card in cards:
+        if card.id in seen:
+            continue
+        blocked = card.status in {"blocked", "stuck"} or nonempty_scalar(card.blocker)
+        if not blocked:
+            continue
+        blocker = card.blocker if nonempty_scalar(card.blocker) else f"status={card.status or 'blocked'}"
+        goal = card.lean_target or card.title or f"{ctx.namespace}.ProblemSpec"
+        attempts = telemetry.get(card.id, [])
+        if not attempts:
+            attempts = [("n/a", blocker)]
+        items.append(
+            StuckBatchItem(
+                lemma_id=card.id,
+                goal=goal,
+                blocker=blocker,
+                attempts=attempts[:4],
+            )
+        )
+        seen.add(card.id)
+        if len(items) >= max_items:
+            return items
+
+    if items:
+        return items
+
+    for lemma_id, attempts in telemetry.items():
+        lid = lemma_id.strip()
+        if not lid or lid in seen:
+            continue
+        items.append(
+            StuckBatchItem(
+                lemma_id=lid,
+                goal=f"{ctx.namespace}.ProblemSpec",
+                blocker="telemetry failure batch",
+                attempts=attempts[:4] if attempts else [("n/a", "failed")],
+            )
+        )
+        seen.add(lid)
+        if len(items) >= max_items:
+            break
+    return items
+
+
 def append_task_cards(
     path: Path,
     *,
@@ -665,22 +871,86 @@ def lean_noncomment_lines(text: str) -> list[tuple[int, str]]:
     return lines
 
 
-def assert_proved_file_contract(path: Path, *, label: str) -> None:
-    if not path.exists():
-        raise RuntimeError(f"{label} missing: {path}")
-    text = path.read_text(encoding="utf-8")
+def proved_token_violations(text: str) -> list[str]:
     violations: list[str] = []
     for lineno, line in lean_noncomment_lines(text):
         if SORRY_RE.search(line):
             violations.append(f"line {lineno}: contains `sorry`")
         if AXIOM_RE.search(line):
             violations.append(f"line {lineno}: contains `axiom`")
-    if violations:
-        joined = "\n".join(f"- {v}" for v in violations[:12])
-        raise RuntimeError(
-            f"{label} must contain proved declarations only (no sorry/axiom).\n"
-            f"{joined}"
-        )
+    return violations
+
+
+def assert_proved_text_contract(text: str, *, label: str) -> None:
+    violations = proved_token_violations(text)
+    if not violations:
+        return
+    joined = "\n".join(f"- {v}" for v in violations[:12])
+    raise RuntimeError(
+        f"{label} must contain proved declarations only (no sorry/axiom).\n"
+        f"{joined}"
+    )
+
+
+def assert_proved_file_contract(path: Path, *, label: str) -> None:
+    if not path.exists():
+        raise RuntimeError(f"{label} missing: {path}")
+    text = path.read_text(encoding="utf-8")
+    assert_proved_text_contract(text, label=label)
+
+
+def insert_before_namespace_end(text: str, block: str) -> str:
+    end_match = re.search(r"\nend\s+[A-Za-z0-9_.]+\s*\n?$", text)
+    if end_match:
+        idx = end_match.start()
+        return text[:idx].rstrip() + "\n\n" + block.rstrip() + "\n\n" + text[idx:].lstrip("\n")
+    return text.rstrip() + "\n\n" + block.rstrip() + "\n"
+
+
+def extract_cache_promote_blocks(sketch_text: str) -> tuple[list[CachePromoteBlock], str]:
+    blocks: list[CachePromoteBlock] = []
+    new_lines: list[str] = []
+    active_id: str | None = None
+    active_lines: list[str] = []
+
+    for idx, raw in enumerate(sketch_text.splitlines(), start=1):
+        begin_match = CACHE_PROMOTE_BEGIN_RE.match(raw)
+        if begin_match:
+            if active_id is not None:
+                raise RuntimeError(
+                    f"nested CACHE_PROMOTE_BEGIN at line {idx}; current block `{active_id}` is not closed"
+                )
+            active_id = begin_match.group(1)
+            active_lines = []
+            continue
+
+        end_match = CACHE_PROMOTE_END_RE.match(raw)
+        if end_match:
+            if active_id is None:
+                raise RuntimeError(f"CACHE_PROMOTE_END at line {idx} without begin marker")
+            end_id = end_match.group(1)
+            if end_id != active_id:
+                raise RuntimeError(
+                    f"CACHE_PROMOTE_END id mismatch at line {idx}: begin `{active_id}`, end `{end_id}`"
+                )
+            content = "\n".join(active_lines).strip()
+            if not content:
+                raise RuntimeError(f"CACHE_PROMOTE block `{active_id}` is empty")
+            assert_proved_text_contract(content, label=f"Sketch promote block `{active_id}`")
+            blocks.append(CachePromoteBlock(block_id=active_id, content=content))
+            new_lines.append(f"-- CACHE_PROMOTED: {active_id} (moved to Cache.lean)")
+            active_id = None
+            active_lines = []
+            continue
+
+        if active_id is not None:
+            active_lines.append(raw)
+            continue
+        new_lines.append(raw)
+
+    if active_id is not None:
+        raise RuntimeError(f"CACHE_PROMOTE block `{active_id}` is not closed")
+    return blocks, "\n".join(new_lines).rstrip() + "\n"
 
 
 def markdown_table_rows(text: str) -> list[list[str]]:
@@ -1016,7 +1286,13 @@ def sync_taxonomy_aliases(ctx: ProblemContext, domain_profiles: dict[str, Domain
         update_aliases(aliases_path, module_target=ctx.spec_module, phrases=phrases)
 
 
-def append_telemetry_event(ctx: ProblemContext, event: str, *, success: bool) -> None:
+def append_telemetry_event(
+    ctx: ProblemContext,
+    event: str,
+    *,
+    success: bool,
+    extra: dict[str, object] | None = None,
+) -> None:
     payload = {
         "ts": datetime.now(timezone.utc).isoformat(),
         "event": event,
@@ -1027,6 +1303,8 @@ def append_telemetry_event(ctx: ProblemContext, event: str, *, success: bool) ->
         "tactic": "trivial",
         "success": success,
     }
+    if extra:
+        payload.update(extra)
     path = ctx.problem_dir / "Telemetry.jsonl"
     ensure_parent(path)
     with path.open("a", encoding="utf-8") as f:
@@ -1105,7 +1383,14 @@ def stage_lean_commit(
     )
 
 
-def stage_stuck_batch(ctx: ProblemContext, *, batch_id: str, force: bool) -> None:
+def stage_stuck_batch(
+    ctx: ProblemContext,
+    *,
+    batch_id: str,
+    force: bool,
+    auto_from_tasks: bool,
+    max_items: int,
+) -> None:
     if not ctx.problem_dir.exists():
         raise RuntimeError(
             f"problem directory does not exist: {ctx.problem_dir}. "
@@ -1114,8 +1399,35 @@ def stage_stuck_batch(ctx: ProblemContext, *, batch_id: str, force: bool) -> Non
 
     batch_name = normalize_batch_id(batch_id)
     batch_path = ctx.problem_dir / "stuck_batches" / f"{batch_name}.yaml"
-    write_if_missing(batch_path, render_stuck_batch_yaml(ctx, batch_name), force=force)
-    append_telemetry_event(ctx, "replan_batch_opened", success=True)
+    item_count = 1
+    if auto_from_tasks:
+        items = collect_auto_stuck_items(ctx, max_items=max_items)
+        if not items:
+            raise RuntimeError(
+                "stuck-batch auto mode found no blocked cards. "
+                "Mark cards as `status: blocked|stuck` (or set non-empty blocker) in Tasks.yaml "
+                "or pass --stuck-template to generate a manual template."
+            )
+        if batch_path.exists() and not force:
+            raise RuntimeError(
+                f"stuck batch already exists: {batch_path}. "
+                "Use --force to overwrite or choose a new --batch-id."
+            )
+        ensure_parent(batch_path)
+        batch_path.write_text(
+            render_stuck_batch_yaml(ctx, batch_name, items=items),
+            encoding="utf-8",
+        )
+        item_count = len(items)
+    else:
+        write_if_missing(batch_path, render_stuck_batch_yaml(ctx, batch_name), force=force)
+
+    append_telemetry_event(
+        ctx,
+        "replan_batch_opened",
+        success=True,
+        extra={"batch_id": batch_name, "item_count": item_count},
+    )
 
 
 def stage_apply_replan(
@@ -1188,6 +1500,71 @@ def stage_apply_replan(
     write_if_missing(
         ctx.problem_dir / "intake_manifest.json",
         render_manifest(ctx, "replan_batch_applied"),
+        force=True,
+    )
+
+
+def stage_promote_cache(
+    ctx: ProblemContext,
+    *,
+    run_artifacts: bool,
+) -> None:
+    if not ctx.problem_dir.exists():
+        raise RuntimeError(
+            f"problem directory does not exist: {ctx.problem_dir}. "
+            "Run research-pack/lean-commit first."
+        )
+
+    spec_path = ctx.problem_dir / "Spec.lean"
+    cache_path = ctx.problem_dir / "Cache.lean"
+    sketch_path = ctx.problem_dir / "Sketch.lean"
+    tasks_path = ctx.problem_dir / "Tasks.yaml"
+    for required in (spec_path, cache_path, sketch_path, tasks_path):
+        if not required.exists():
+            raise RuntimeError(f"promote-cache requires file: {required}")
+
+    sketch_text = sketch_path.read_text(encoding="utf-8")
+    blocks, rewritten_sketch = extract_cache_promote_blocks(sketch_text)
+    if not blocks:
+        raise RuntimeError(
+            "promote-cache found no markers in Sketch.lean. "
+            "Add blocks using `-- CACHE_PROMOTE_BEGIN: <id>` / `-- CACHE_PROMOTE_END: <id>`."
+        )
+
+    cache_text = cache_path.read_text(encoding="utf-8")
+    promoted_ids: list[str] = []
+    for block in blocks:
+        marker = f"-- CACHE_PROMOTED: {block.block_id}"
+        if marker in cache_text:
+            continue
+        inserted = f"{marker}\n{block.content}"
+        cache_text = insert_before_namespace_end(cache_text, inserted)
+        promoted_ids.append(block.block_id)
+
+    cache_path.write_text(cache_text, encoding="utf-8")
+    sketch_path.write_text(rewritten_sketch, encoding="utf-8")
+
+    assert_proved_file_contract(spec_path, label="Spec.lean")
+    assert_proved_file_contract(cache_path, label="Cache.lean")
+
+    run_checked(["lake", "env", "lean", str(spec_path)], ctx.repo_root)
+    run_checked(["lake", "env", "lean", str(cache_path)], ctx.repo_root)
+    run_checked(["lake", "env", "lean", str(sketch_path)], ctx.repo_root)
+
+    if run_artifacts:
+        run_checked(["tools/index/gen_mltheory_index.sh"], ctx.repo_root)
+        run_checked(["tools/index/gen_graph_artifacts.sh"], ctx.repo_root)
+
+    run_blocking_gates(ctx.repo_root)
+    append_telemetry_event(
+        ctx,
+        "cache_promoted",
+        success=True,
+        extra={"promoted_block_count": len(promoted_ids), "promoted_blocks": promoted_ids},
+    )
+    write_if_missing(
+        ctx.problem_dir / "intake_manifest.json",
+        render_manifest(ctx, "cache_promoted"),
         force=True,
     )
 
@@ -1265,7 +1642,7 @@ def build_arg_parser() -> argparse.ArgumentParser:
     ap = argparse.ArgumentParser(description="MLTheory Intake v2 helper")
     ap.add_argument(
         "phase",
-        choices=["research-pack", "lean-commit", "stuck-batch", "apply-replan", "proof-scope"],
+        choices=["research-pack", "lean-commit", "stuck-batch", "apply-replan", "promote-cache", "proof-scope"],
         help="pipeline stage",
     )
     ap.add_argument("--domain", required=True, help="domain name (e.g. learning)")
@@ -1286,12 +1663,23 @@ def build_arg_parser() -> argparse.ArgumentParser:
     ap.add_argument(
         "--skip-artifacts",
         action="store_true",
-        help="skip index/graph regeneration in lean-commit stage",
+        help="skip index/graph regeneration in lean-commit/promote-cache stages",
     )
     ap.add_argument(
         "--batch-id",
         default="batch-001",
         help="stuck batch id for phases `stuck-batch`/`apply-replan` (default: batch-001)",
+    )
+    ap.add_argument(
+        "--stuck-template",
+        action="store_true",
+        help="for phase `stuck-batch`, write a manual template instead of auto-collecting blocked cards",
+    )
+    ap.add_argument(
+        "--max-stuck-items",
+        type=int,
+        default=12,
+        help="max auto-collected blocked cards in phase `stuck-batch` (default: 12)",
     )
     # backward compatible no-op alias
     ap.add_argument("--run-artifacts", action="store_true", help=argparse.SUPPRESS)
@@ -1354,9 +1742,17 @@ def main() -> int:
             domain_profiles=domain_profiles,
         )
     elif args.phase == "stuck-batch":
-        stage_stuck_batch(ctx, batch_id=args.batch_id, force=args.force)
+        stage_stuck_batch(
+            ctx,
+            batch_id=args.batch_id,
+            force=args.force,
+            auto_from_tasks=not args.stuck_template,
+            max_items=max(1, args.max_stuck_items),
+        )
     elif args.phase == "apply-replan":
         stage_apply_replan(ctx, batch_id=args.batch_id)
+    elif args.phase == "promote-cache":
+        stage_promote_cache(ctx, run_artifacts=not args.skip_artifacts)
     else:
         stage_proof_scope(ctx, domain_profiles=domain_profiles)
 

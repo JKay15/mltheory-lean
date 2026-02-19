@@ -138,7 +138,7 @@ def intake_cmd(
         cmd.extend(["--statement-file", problem.statement_file])
     if phase in {"stuck-batch", "apply-replan"}:
         cmd.extend(["--batch-id", batch_id])
-    if phase == "lean-commit" and skip_artifacts:
+    if phase in {"lean-commit", "promote-cache"} and skip_artifacts:
         cmd.append("--skip-artifacts")
     return cmd
 
@@ -219,7 +219,7 @@ def cmd_run(args: argparse.Namespace) -> int:
 
     phase = args.phase
     batch_id = args.batch_id
-    skip_per_problem_artifacts = phase == "lean-commit"
+    skip_per_problem_artifacts = phase in {"lean-commit", "promote-cache"}
 
     for problem in problems:
         cmd = intake_cmd(
@@ -231,7 +231,7 @@ def cmd_run(args: argparse.Namespace) -> int:
         )
         run_checked(cmd, repo_root, dry_run=args.dry_run)
 
-    if phase == "lean-commit" and not args.skip_final_artifacts:
+    if phase in {"lean-commit", "promote-cache"} and not args.skip_final_artifacts:
         run_checked(["tools/index/gen_mltheory_index.sh"], repo_root, dry_run=args.dry_run)
         run_checked(["tools/index/gen_graph_artifacts.sh"], repo_root, dry_run=args.dry_run)
 
@@ -254,7 +254,7 @@ def build_parser() -> argparse.ArgumentParser:
     run.add_argument(
         "--phase",
         required=True,
-        choices=["research-pack", "lean-commit", "proof-scope", "stuck-batch", "apply-replan"],
+        choices=["research-pack", "lean-commit", "proof-scope", "stuck-batch", "apply-replan", "promote-cache"],
         help="intake phase to execute for all problems",
     )
     run.add_argument(
