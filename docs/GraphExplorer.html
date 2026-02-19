@@ -542,6 +542,7 @@
       view: { x: 0, y: 0, w: 2400, h: 1400 },
       drag: null,
       suppressClickUntil: 0,
+      lastNodeClick: { id: "", ts: 0 },
       rafPending: false,
       searchMatches: [],
       domainProfiles: new Map(),
@@ -1470,15 +1471,18 @@
         circle.addEventListener("pointerdown", (ev) => startNodeDrag(ev, n.id));
         circle.addEventListener("click", (ev) => {
           ev.stopPropagation();
-          if (Date.now() < state.suppressClickUntil) return;
-          state.selected = n.id;
-          state.selectedEdge = null;
-          materializeNode(n.id);
-          renderAll();
-        });
-        circle.addEventListener("dblclick", (ev) => {
-          ev.stopPropagation();
-          togglePin(n.id);
+          const now = Date.now();
+          if (now < state.suppressClickUntil) return;
+          if (state.lastNodeClick.id === n.id && (now - state.lastNodeClick.ts) <= 300) {
+            state.lastNodeClick = { id: "", ts: 0 };
+            togglePin(n.id);
+            state.selected = n.id;
+            state.selectedEdge = null;
+            materializeNode(n.id);
+            renderAll();
+            return;
+          }
+          state.lastNodeClick = { id: n.id, ts: now };
           state.selected = n.id;
           state.selectedEdge = null;
           materializeNode(n.id);
