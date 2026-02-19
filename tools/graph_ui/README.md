@@ -2,8 +2,9 @@
 
 This directory is a generated mirror for Graph Explorer runtime data.
 
-- `src/index.template.html` + `src/app.js` are the source-of-truth inputs.
+- `src/index.template.html` + `src/app/*.js` are the source-of-truth inputs.
 - `python3 tools/graph_ui/build_graph_ui.py --write` renders:
+  - `src/app.js` (concatenated from `src/app/*.js`)
   - `docs/GraphExplorer.html`
   - `dist/index.html`
 - `dist/_auto/*` and `public/_auto/*` are synced by `tools/index/gen_graph_artifacts.sh`.
