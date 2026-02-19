@@ -136,7 +136,7 @@ def intake_cmd(
         cmd.extend(["--domains", problem.domains])
     if problem.statement_file:
         cmd.extend(["--statement-file", problem.statement_file])
-    if phase == "stuck-batch":
+    if phase in {"stuck-batch", "apply-replan"}:
         cmd.extend(["--batch-id", batch_id])
     if phase == "lean-commit" and skip_artifacts:
         cmd.append("--skip-artifacts")
@@ -254,10 +254,14 @@ def build_parser() -> argparse.ArgumentParser:
     run.add_argument(
         "--phase",
         required=True,
-        choices=["research-pack", "lean-commit", "proof-scope", "stuck-batch"],
+        choices=["research-pack", "lean-commit", "proof-scope", "stuck-batch", "apply-replan"],
         help="intake phase to execute for all problems",
     )
-    run.add_argument("--batch-id", default="batch-001", help="batch id for stuck-batch phase")
+    run.add_argument(
+        "--batch-id",
+        default="batch-001",
+        help="batch id for stuck-batch/apply-replan phases",
+    )
     run.add_argument("--repo-root", default=".", help="MLTheory repo root")
     run.add_argument("--skip-final-artifacts", action="store_true", help="skip final artifact refresh")
     run.add_argument("--dry-run", action="store_true", help="print commands without executing")

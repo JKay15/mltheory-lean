@@ -45,6 +45,12 @@ python3 tools/intake/intake_v2.py stuck-batch \
   --problem concentration_gap \
   --batch-id batch-002
 
+# Apply planner reply back into Tasks/Sketch and recompile gates
+python3 tools/intake/intake_v2.py apply-replan \
+  --domain learning \
+  --problem concentration_gap \
+  --batch-id batch-002
+
 # Initialize and run a Problem Suite
 python3 tools/intake/problem_suite.py init --suite-id firstproof_2026
 python3 tools/intake/problem_suite.py run \
@@ -56,6 +62,10 @@ python3 tools/intake/problem_suite.py run \
 python3 tools/intake/problem_suite.py run \
   --suite suites/firstproof_2026/suite.yaml \
   --phase proof-scope
+python3 tools/intake/problem_suite.py run \
+  --suite suites/firstproof_2026/suite.yaml \
+  --phase apply-replan \
+  --batch-id batch-002
 ```
 
 ## Generated layout
@@ -78,6 +88,7 @@ Incubator/<Domain>/<Problem>/
   proof_scope.json
   stuck_batches/
     batch-001.yaml
+    batch-001.applied.json
   intake_manifest.json
 ```
 
@@ -92,6 +103,7 @@ Incubator/<Domain>/<Problem>/
 - By default, `tools/index/gen_mltheory_index.sh` and `tools/index/gen_graph_artifacts.sh` are run to refresh subgraph artifacts.
 - `Telemetry.jsonl` appends a minimal `lean_commit_ready` event.
 - `stuck_batches/*.yaml` is the planner batch input for GPTPro-style replan (Codex consumes planner output and continues high-frequency proving).
+- `apply-replan` consumes `planner_reply` (`split_into`/`hints`/`required_defs`), appends split cards into `Tasks.yaml`, upserts planner blocks into `Sketch.lean`, recompiles `Spec/Cache/Sketch`, and emits `stuck_batches/<batch>.applied.json`.
 - Intake emits `domains_guess`, `domain_confidence`, and `domain_inference_mode` in manifest/tasks for auditable domain classification.
 - `proof-scope` materializes `proof_scope.json` with Domain Profile boundaries and widening path:
   `domain_local -> domain_mathlib_slice -> adjacent_domains -> full_mltheory -> full_mathlib -> external_semantic`.

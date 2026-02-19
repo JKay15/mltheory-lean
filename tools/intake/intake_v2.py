@@ -426,6 +426,229 @@ planner_reply:
 """
 
 
+def clean_yaml_scalar(raw: str) -> str:
+    text = raw.strip()
+    if not text:
+        return ""
+    if "#" in text:
+        text = text.split("#", 1)[0].rstrip()
+    if (text.startswith('"') and text.endswith('"')) or (text.startswith("'") and text.endswith("'")):
+        return text[1:-1]
+    return text
+
+
+def parse_inline_yaml_list(raw: str) -> list[str]:
+    text = raw.strip()
+    if not (text.startswith("[") and text.endswith("]")):
+        return []
+    inner = text[1:-1].strip()
+    if not inner:
+        return []
+    out: list[str] = []
+    for part in inner.split(","):
+        item = clean_yaml_scalar(part)
+        if item:
+            out.append(item)
+    return out
+
+
+def parse_stuck_batch_file(path: Path) -> dict[str, list[str]]:
+    text = path.read_text(encoding="utf-8")
+    split_into: list[str] = []
+    hints: list[str] = []
+    required_defs: list[str] = []
+    item_lemma_ids: list[str] = []
+
+    in_planner_reply = False
+    active_list: str | None = None
+
+    for raw in text.splitlines():
+        line = raw.rstrip("\n")
+        stripped = line.strip()
+        if not stripped or stripped.startswith("#"):
+            continue
+
+        if stripped == "planner_reply:":
+            in_planner_reply = True
+            active_list = None
+            continue
+        if stripped == "items:":
+            in_planner_reply = False
+            active_list = None
+            continue
+
+        lemma_match = re.match(r"(?:-\s*)?lemma_id:\s*(.+)$", stripped)
+        if lemma_match:
+            lemma_id = clean_yaml_scalar(lemma_match.group(1))
+            if lemma_id:
+                item_lemma_ids.append(lemma_id)
+            continue
+
+        if not in_planner_reply:
+            continue
+
+        key_match = re.match(r"(split_into|hints|required_defs):\s*(.*)$", stripped)
+        if key_match:
+            active_list = key_match.group(1)
+            tail = key_match.group(2).strip()
+            if not tail:
+                continue
+            if tail == "[]":
+                active_list = None
+                continue
+            values = parse_inline_yaml_list(tail)
+            if active_list == "split_into":
+                split_into.extend(values)
+            elif active_list == "hints":
+                hints.extend(values)
+            elif active_list == "required_defs":
+                required_defs.extend(values)
+            active_list = None
+            continue
+
+        list_match = re.match(r"-\s*(.+)$", stripped)
+        if list_match and active_list is not None:
+            item = clean_yaml_scalar(list_match.group(1))
+            if not item:
+                continue
+            if active_list == "split_into":
+                split_into.append(item)
+            elif active_list == "hints":
+                hints.append(item)
+            elif active_list == "required_defs":
+                required_defs.append(item)
+
+    return {
+        "item_lemma_ids": item_lemma_ids,
+        "split_into": split_into,
+        "hints": hints,
+        "required_defs": required_defs,
+    }
+
+
+def normalize_card_id(raw: str, fallback_index: int) -> str:
+    base = raw.strip()
+    if ":" in base:
+        base = base.split(":", 1)[0].strip()
+    if " " in base:
+        base = base.split(" ", 1)[0].strip()
+    cleaned = re.sub(r"[^A-Za-z0-9_]+", "_", base).strip("_")
+    if not cleaned:
+        cleaned = f"L{fallback_index}"
+    if cleaned[0].isdigit():
+        cleaned = f"L_{cleaned}"
+    return cleaned
+
+
+def split_title(raw: str, fallback_id: str) -> str:
+    text = raw.strip()
+    if ":" in text:
+        right = text.split(":", 1)[1].strip()
+        if right:
+            text = right
+    text = text.replace('"', "'")
+    if not text:
+        text = fallback_id
+    return text
+
+
+def parse_existing_task_ids(tasks_text: str) -> set[str]:
+    ids: set[str] = set()
+    for raw in tasks_text.splitlines():
+        m = re.match(r"^\s*-\s+id:\s*([A-Za-z0-9_.-]+)\s*$", raw)
+        if m:
+            ids.add(m.group(1))
+    return ids
+
+
+def append_task_cards(
+    path: Path,
+    *,
+    ctx: ProblemContext,
+    batch_id: str,
+    split_into: list[str],
+) -> list[str]:
+    if not path.exists():
+        raise RuntimeError(f"tasks file missing: {path}")
+    text = path.read_text(encoding="utf-8")
+    if "cards:" not in text:
+        raise RuntimeError(f"tasks file malformed (missing `cards:`): {path}")
+
+    existing_ids = parse_existing_task_ids(text)
+    added_ids: list[str] = []
+    new_lines: list[str] = []
+    local_index = 1
+    for item in split_into:
+        card_id = normalize_card_id(item, local_index)
+        while card_id in existing_ids:
+            local_index += 1
+            card_id = normalize_card_id(f"{card_id}_{local_index}", local_index)
+        local_index += 1
+        title = split_title(item, card_id)
+        new_lines.extend(
+            [
+                f"  - id: {card_id}",
+                f"    title: \"Planner split: {title}\"",
+                "    depends_on: []",
+                f"    lean_target: \"{ctx.namespace}.ProblemSpec\"",
+                "    status: todo",
+                f"    blocker: \"planner batch {batch_id}\"",
+            ]
+        )
+        existing_ids.add(card_id)
+        added_ids.append(card_id)
+
+    if not new_lines:
+        return added_ids
+
+    if text and not text.endswith("\n"):
+        text += "\n"
+    text += "\n".join(new_lines) + "\n"
+    path.write_text(text, encoding="utf-8")
+    return added_ids
+
+
+def upsert_planner_block(path: Path, *, batch_id: str, hints: list[str], required_defs: list[str]) -> None:
+    if not path.exists():
+        raise RuntimeError(f"sketch file missing: {path}")
+    text = path.read_text(encoding="utf-8")
+    marker_start = f"-- BEGIN PLANNER BATCH: {batch_id}"
+    marker_end = f"-- END PLANNER BATCH: {batch_id}"
+    ident = re.sub(r"[^A-Za-z0-9_]+", "_", batch_id).strip("_") or "batch"
+
+    def as_lean_str(value: str) -> str:
+        escaped = value.replace("\\", "\\\\").replace("\"", "\\\"")
+        return f"\"{escaped}\""
+
+    hint_lines = ",\n  ".join(as_lean_str(x) for x in hints) if hints else ""
+    req_lines = ",\n  ".join(as_lean_str(x) for x in required_defs) if required_defs else ""
+    block = (
+        f"{marker_start}\n"
+        f"/-- Planner hints imported from stuck batch `{batch_id}`. -/\n"
+        f"def PlannerHints_{ident} : List String := [\n"
+        f"  {hint_lines}\n"
+        f"]\n\n"
+        f"/-- Required definitions imported from stuck batch `{batch_id}`. -/\n"
+        f"def PlannerRequiredDefs_{ident} : List String := [\n"
+        f"  {req_lines}\n"
+        f"]\n"
+        f"{marker_end}\n"
+    )
+
+    if marker_start in text and marker_end in text:
+        head, tail = text.split(marker_start, 1)
+        _, rest = tail.split(marker_end, 1)
+        new_text = head + block + rest.lstrip("\n")
+    else:
+        end_match = re.search(r"\nend\s+[A-Za-z0-9_.]+\s*\n?$", text)
+        if end_match:
+            idx = end_match.start()
+            new_text = text[:idx].rstrip() + "\n\n" + block + "\n" + text[idx:].lstrip("\n")
+        else:
+            new_text = text.rstrip() + "\n\n" + block
+    path.write_text(new_text, encoding="utf-8")
+
+
 def has_placeholder(text: str) -> bool:
     return bool(PLACEHOLDER_RE.search(text))
 
@@ -859,6 +1082,78 @@ def stage_stuck_batch(ctx: ProblemContext, *, batch_id: str, force: bool) -> Non
     append_telemetry_event(ctx, "replan_batch_opened", success=True)
 
 
+def stage_apply_replan(
+    ctx: ProblemContext,
+    *,
+    batch_id: str,
+) -> None:
+    if not ctx.problem_dir.exists():
+        raise RuntimeError(
+            f"problem directory does not exist: {ctx.problem_dir}. "
+            "Run research-pack/lean-commit first."
+        )
+    batch_name = normalize_batch_id(batch_id)
+    batch_path = ctx.problem_dir / "stuck_batches" / f"{batch_name}.yaml"
+    if not batch_path.exists():
+        raise RuntimeError(
+            f"stuck batch file missing: {batch_path}. "
+            "Run `intake_v2.py stuck-batch ...` first or provide a valid batch id."
+        )
+
+    parsed = parse_stuck_batch_file(batch_path)
+    split_into = parsed["split_into"]
+    hints = parsed["hints"]
+    required_defs = parsed["required_defs"]
+    item_lemma_ids = parsed["item_lemma_ids"]
+    if not split_into and not hints and not required_defs:
+        raise RuntimeError(
+            f"planner_reply in {batch_path} is empty. Fill split_into/hints/required_defs before apply-replan."
+        )
+
+    tasks_path = ctx.problem_dir / "Tasks.yaml"
+    sketch_path = ctx.problem_dir / "Sketch.lean"
+    spec_path = ctx.problem_dir / "Spec.lean"
+    cache_path = ctx.problem_dir / "Cache.lean"
+
+    added_card_ids = append_task_cards(
+        tasks_path,
+        ctx=ctx,
+        batch_id=batch_name,
+        split_into=split_into,
+    )
+    upsert_planner_block(
+        sketch_path,
+        batch_id=batch_name,
+        hints=hints,
+        required_defs=required_defs,
+    )
+
+    run_checked(["lake", "env", "lean", str(spec_path)], ctx.repo_root)
+    run_checked(["lake", "env", "lean", str(cache_path)], ctx.repo_root)
+    run_checked(["lake", "env", "lean", str(sketch_path)], ctx.repo_root)
+
+    applied_payload = {
+        "version": 1,
+        "batch_id": batch_name,
+        "problem_id": ctx.problem_id,
+        "domains": ctx.domains,
+        "item_lemma_ids": item_lemma_ids,
+        "split_into": split_into,
+        "hints": hints,
+        "required_defs": required_defs,
+        "added_task_cards": added_card_ids,
+        "applied_at": datetime.now(timezone.utc).isoformat(),
+    }
+    applied_path = ctx.problem_dir / "stuck_batches" / f"{batch_name}.applied.json"
+    applied_path.write_text(json.dumps(applied_payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    append_telemetry_event(ctx, "replan_batch_applied", success=True)
+    write_if_missing(
+        ctx.problem_dir / "intake_manifest.json",
+        render_manifest(ctx, "replan_batch_applied"),
+        force=True,
+    )
+
+
 def stage_proof_scope(ctx: ProblemContext, *, domain_profiles: dict[str, DomainProfile]) -> None:
     if not ctx.problem_dir.exists():
         raise RuntimeError(
@@ -927,7 +1222,7 @@ def build_arg_parser() -> argparse.ArgumentParser:
     ap = argparse.ArgumentParser(description="MLTheory Intake v2 helper")
     ap.add_argument(
         "phase",
-        choices=["research-pack", "lean-commit", "stuck-batch", "proof-scope"],
+        choices=["research-pack", "lean-commit", "stuck-batch", "apply-replan", "proof-scope"],
         help="pipeline stage",
     )
     ap.add_argument("--domain", required=True, help="domain name (e.g. learning)")
@@ -953,7 +1248,7 @@ def build_arg_parser() -> argparse.ArgumentParser:
     ap.add_argument(
         "--batch-id",
         default="batch-001",
-        help="stuck batch id for phase `stuck-batch` (default: batch-001)",
+        help="stuck batch id for phases `stuck-batch`/`apply-replan` (default: batch-001)",
     )
     # backward compatible no-op alias
     ap.add_argument("--run-artifacts", action="store_true", help=argparse.SUPPRESS)
@@ -1017,6 +1312,8 @@ def main() -> int:
         )
     elif args.phase == "stuck-batch":
         stage_stuck_batch(ctx, batch_id=args.batch_id, force=args.force)
+    elif args.phase == "apply-replan":
+        stage_apply_replan(ctx, batch_id=args.batch_id)
     else:
         stage_proof_scope(ctx, domain_profiles=domain_profiles)
 
