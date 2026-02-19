@@ -305,7 +305,7 @@
     svg.panning { cursor: grabbing; }
 
     .node-label {
-      font-size: 11px;
+      font-size: 12px;
       fill: #1b2e24;
       pointer-events: none;
       paint-order: stroke;
@@ -501,7 +501,7 @@
         <div class="row"><span class="ln" style="border-top-color: var(--alias-of)"></span> alias_of</div>
         <div class="row"><span class="ln" style="border-top-color: var(--used-recently)"></span> used_recently</div>
       </div>
-      <svg id="graph" viewBox="0 0 2400 1400" preserveAspectRatio="xMidYMid meet"></svg>
+      <svg id="graph" viewBox="0 0 3200 1900" preserveAspectRatio="xMidYMid meet"></svg>
     </section>
   </main>
 
@@ -538,12 +538,10 @@
       basePos: new Map(),
       lastPos: new Map(),
       lastDisplay: { nodes: [], edges: [] },
-      world: { w: 2400, h: 1400 },
-      view: { x: 0, y: 0, w: 2400, h: 1400 },
+      world: { w: 3200, h: 1900 },
+      view: { x: 0, y: 0, w: 3200, h: 1900 },
       drag: null,
       suppressClickUntil: 0,
-      pendingNodeClickId: "",
-      pendingNodeClickTimer: null,
       rafPending: false,
       searchMatches: [],
       domainProfiles: new Map(),
@@ -567,14 +565,6 @@
     function setSourceHint(extra = "") {
       const base = state.dataSource || "source: unknown";
       byId("sourceHint").textContent = extra ? `${base} | ${extra}` : base;
-    }
-
-    function clearPendingNodeClick() {
-      if (state.pendingNodeClickTimer !== null) {
-        clearTimeout(state.pendingNodeClickTimer);
-        state.pendingNodeClickTimer = null;
-      }
-      state.pendingNodeClickId = "";
     }
 
     function edgeColor(type) {
@@ -1336,25 +1326,46 @@
       return state.pinned.get(id) || state.freePos.get(id) || state.basePos.get(id) || [50, 50];
     }
 
+    function isNeighborOfSelected(nodeId) {
+      const sid = state.selected;
+      if (!sid || !nodeId || sid === nodeId) return sid === nodeId;
+      const out = state.outgoing.get(sid) || [];
+      for (const e of out) {
+        if (!isEdgeTypeEnabled(e.type)) continue;
+        if (e.dst === nodeId) return true;
+      }
+      const inc = state.incoming.get(sid) || [];
+      for (const e of inc) {
+        if (!isEdgeTypeEnabled(e.type)) continue;
+        if (e.src === nodeId) return true;
+      }
+      return false;
+    }
+
     function shouldLabel(node, displayNodes) {
       const mode = activeViewMode();
       const zoom = currentZoom();
+      if (state.selected === node.id) return true;
+      if (isNeighborOfSelected(node.id)) {
+        if (node.kind === "module" || node.kind === "concept") return true;
+        if (zoom >= 1.1) return true;
+      }
       if (mode === "module-map") {
         if (node.kind === "module") return true;
         if (node.kind === "concept") return true;
-        if (node.kind === "decl") return zoom >= 2.6 && labelDegreeOf(node.id) >= 14;
+        if (node.kind === "decl") return zoom >= 2.2 && labelDegreeOf(node.id) >= 8;
         return false;
       }
       if (node.kind === "concept") return true;
       if (node.kind === "module") {
-        if (zoom < 1.25) return node.spine || node.id === MATHLIB_SLICE_ID || labelDegreeOf(node.id) >= 8;
+        if (zoom < 1.2) return node.spine || node.id === MATHLIB_SLICE_ID || labelDegreeOf(node.id) >= 5;
         if (displayNodes.length <= 70) return true;
-        if (zoom < 1.8) return node.spine || node.id === MATHLIB_SLICE_ID || labelDegreeOf(node.id) >= 5;
-        return node.spine || node.id === MATHLIB_SLICE_ID || labelDegreeOf(node.id) >= 5;
+        if (zoom < 1.6) return node.spine || node.id === MATHLIB_SLICE_ID || labelDegreeOf(node.id) >= 4;
+        return node.spine || node.id === MATHLIB_SLICE_ID || labelDegreeOf(node.id) >= 3;
       }
-      if (zoom < 1.4) return node.spine || labelDegreeOf(node.id) >= 16;
+      if (zoom < 1.3) return node.spine || labelDegreeOf(node.id) >= 10;
       if (displayNodes.length <= 90) return true;
-      return node.spine || labelDegreeOf(node.id) >= 12;
+      return node.spine || labelDegreeOf(node.id) >= 8;
     }
 
     function applyViewBox() {
@@ -1373,8 +1384,10 @@
       const v = state.view;
       const maxX = state.world.w - v.w;
       const maxY = state.world.h - v.h;
-      v.x = clamp(v.x, -0.08 * state.world.w, Math.max(maxX, 0) + 0.08 * state.world.w);
-      v.y = clamp(v.y, -0.08 * state.world.h, Math.max(maxY, 0) + 0.08 * state.world.h);
+      const marginX = Math.max(0.12 * state.world.w, 0.65 * v.w);
+      const marginY = Math.max(0.12 * state.world.h, 0.65 * v.h);
+      v.x = clamp(v.x, -marginX, Math.max(maxX, 0) + marginX);
+      v.y = clamp(v.y, -marginY, Math.max(maxY, 0) + marginY);
     }
 
     function normalizeViewToViewport(anchorX, anchorY, px = 0.5, py = 0.5) {
@@ -1450,7 +1463,8 @@
       const mode = activeViewMode();
       const nodeG = document.createElementNS("http://www.w3.org/2000/svg", "g");
       const placedLabelBoxes = [];
-      for (const n of display.nodes) {
+      const drawNodes = sortNodesForDisplay(display.nodes.slice());
+      for (const n of drawNodes) {
         const [x, y] = nodePos(n.id);
         state.lastPos.set(n.id, [x, y]);
 
@@ -1481,26 +1495,21 @@
         circle.addEventListener("click", (ev) => {
           ev.stopPropagation();
           if (Date.now() < state.suppressClickUntil) return;
-          if (state.pendingNodeClickId === n.id && state.pendingNodeClickTimer !== null) {
-            clearPendingNodeClick();
-            togglePin(n.id);
-            state.selected = n.id;
-            state.selectedEdge = null;
-            materializeNode(n.id);
-            renderAll();
-            return;
-          }
-          clearPendingNodeClick();
-          state.pendingNodeClickId = n.id;
-          state.pendingNodeClickTimer = setTimeout(() => {
-            state.pendingNodeClickTimer = null;
-            if (state.pendingNodeClickId !== n.id) return;
-            state.pendingNodeClickId = "";
-            state.selected = n.id;
-            state.selectedEdge = null;
-            materializeNode(n.id);
-            renderAll();
-          }, 420);
+          state.selected = n.id;
+          state.selectedEdge = null;
+          materializeNode(n.id);
+          renderAll();
+        });
+
+        circle.addEventListener("dblclick", (ev) => {
+          ev.preventDefault();
+          ev.stopPropagation();
+          if (Date.now() < state.suppressClickUntil) return;
+          togglePin(n.id);
+          state.selected = n.id;
+          state.selectedEdge = null;
+          materializeNode(n.id);
+          renderAll();
         });
 
         const title = document.createElementNS("http://www.w3.org/2000/svg", "title");
@@ -1857,14 +1866,23 @@
       let maxY = -Infinity;
 
       for (const id of ids) {
+        const node = state.nodesById.get(id);
         const [x, y] = state.lastPos.get(id);
-        minX = Math.min(minX, x);
-        minY = Math.min(minY, y);
-        maxX = Math.max(maxX, x);
-        maxY = Math.max(maxY, y);
+        const deg = degreeOf(id);
+        const base = !node ? 6 : (node.kind === "module" ? 7 : (node.kind === "concept" ? 8 : 4.5));
+        const r = Math.min(15, base + Math.log2(deg + 1) * 1.15);
+        const labelW = node ? estimateLabelWidth(node) : 0;
+        const labelPadX = node && (node.kind === "module" || node.kind === "concept")
+          ? labelW * 0.62
+          : labelW * 0.3;
+        const labelPadY = node && shouldLabel(node, state.lastDisplay.nodes) ? 20 : 8;
+        minX = Math.min(minX, x - r - labelPadX - 6);
+        minY = Math.min(minY, y - r - labelPadY - 6);
+        maxX = Math.max(maxX, x + r + labelPadX + 6);
+        maxY = Math.max(maxY, y + r + labelPadY + 6);
       }
 
-      const pad = 120;
+      const pad = 90;
       const w = clamp(maxX - minX + pad * 2, 240, state.world.w * 3.2);
       const h = clamp(maxY - minY + pad * 2, 180, state.world.h * 3.2);
       state.view.w = w;
@@ -2015,7 +2033,6 @@
     }
 
     function startPan(ev) {
-      clearPendingNodeClick();
       state.drag = {
         type: "pan",
         pointerId: ev.pointerId,
@@ -2055,7 +2072,6 @@
 
       if (state.drag.type === "node") {
         if (Math.abs(delta.dx) <= 0.8 && Math.abs(delta.dy) <= 0.8 && !state.drag.moved) return;
-        clearPendingNodeClick();
         const nx = state.drag.startNodeX + delta.dx;
         const ny = state.drag.startNodeY + delta.dy;
         state.drag.moved = true;
@@ -2182,7 +2198,6 @@
 
       svg.addEventListener("click", (ev) => {
         if (ev.target === svg && Date.now() >= state.suppressClickUntil) {
-          clearPendingNodeClick();
           state.selected = null;
           state.selectedEdge = null;
           renderInspector(state.lastDisplay);
