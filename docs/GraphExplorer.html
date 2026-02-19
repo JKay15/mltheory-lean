@@ -542,7 +542,8 @@
       view: { x: 0, y: 0, w: 2400, h: 1400 },
       drag: null,
       suppressClickUntil: 0,
-      lastNodeClick: { id: "", ts: 0 },
+      pendingNodeClickId: "",
+      pendingNodeClickTimer: null,
       rafPending: false,
       searchMatches: [],
       domainProfiles: new Map(),
@@ -566,6 +567,14 @@
     function setSourceHint(extra = "") {
       const base = state.dataSource || "source: unknown";
       byId("sourceHint").textContent = extra ? `${base} | ${extra}` : base;
+    }
+
+    function clearPendingNodeClick() {
+      if (state.pendingNodeClickTimer !== null) {
+        clearTimeout(state.pendingNodeClickTimer);
+        state.pendingNodeClickTimer = null;
+      }
+      state.pendingNodeClickId = "";
     }
 
     function edgeColor(type) {
@@ -1471,10 +1480,9 @@
         circle.addEventListener("pointerdown", (ev) => startNodeDrag(ev, n.id));
         circle.addEventListener("click", (ev) => {
           ev.stopPropagation();
-          const now = Date.now();
-          if (now < state.suppressClickUntil) return;
-          if (state.lastNodeClick.id === n.id && (now - state.lastNodeClick.ts) <= 300) {
-            state.lastNodeClick = { id: "", ts: 0 };
+          if (Date.now() < state.suppressClickUntil) return;
+          if (state.pendingNodeClickId === n.id && state.pendingNodeClickTimer !== null) {
+            clearPendingNodeClick();
             togglePin(n.id);
             state.selected = n.id;
             state.selectedEdge = null;
@@ -1482,11 +1490,17 @@
             renderAll();
             return;
           }
-          state.lastNodeClick = { id: n.id, ts: now };
-          state.selected = n.id;
-          state.selectedEdge = null;
-          materializeNode(n.id);
-          renderAll();
+          clearPendingNodeClick();
+          state.pendingNodeClickId = n.id;
+          state.pendingNodeClickTimer = setTimeout(() => {
+            state.pendingNodeClickTimer = null;
+            if (state.pendingNodeClickId !== n.id) return;
+            state.pendingNodeClickId = "";
+            state.selected = n.id;
+            state.selectedEdge = null;
+            materializeNode(n.id);
+            renderAll();
+          }, 420);
         });
 
         const title = document.createElementNS("http://www.w3.org/2000/svg", "title");
@@ -2001,6 +2015,7 @@
     }
 
     function startPan(ev) {
+      clearPendingNodeClick();
       state.drag = {
         type: "pan",
         pointerId: ev.pointerId,
@@ -2039,11 +2054,11 @@
       }
 
       if (state.drag.type === "node") {
+        if (Math.abs(delta.dx) <= 0.8 && Math.abs(delta.dy) <= 0.8 && !state.drag.moved) return;
+        clearPendingNodeClick();
         const nx = state.drag.startNodeX + delta.dx;
         const ny = state.drag.startNodeY + delta.dy;
-        if (Math.abs(delta.dx) > 0.3 || Math.abs(delta.dy) > 0.3) {
-          state.drag.moved = true;
-        }
+        state.drag.moved = true;
         state.freePos.set(state.drag.nodeId, [nx, ny]);
         state.suppressClickUntil = Date.now() + 180;
         scheduleGraphRender();
@@ -2058,7 +2073,7 @@
       const wasNodeDrag = dragState.type === "node";
       state.drag = null;
       if (wasNodeDrag) {
-        renderAll();
+        if (dragState.moved) renderAll();
       }
     }
 
@@ -2167,6 +2182,7 @@
 
       svg.addEventListener("click", (ev) => {
         if (ev.target === svg && Date.now() >= state.suppressClickUntil) {
+          clearPendingNodeClick();
           state.selected = null;
           state.selectedEdge = null;
           renderInspector(state.lastDisplay);
