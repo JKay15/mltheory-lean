@@ -54,6 +54,8 @@ DOMAIN_KEYWORDS: dict[str, tuple[str, ...]] = {
 }
 
 PLACEHOLDER_RE = re.compile(r"\b(TODO|TBD)\b|\?\?\?", flags=re.IGNORECASE)
+SORRY_RE = re.compile(r"\bsorry\b")
+AXIOM_RE = re.compile(r"^\s*axiom\b")
 
 
 @dataclass
@@ -653,6 +655,34 @@ def has_placeholder(text: str) -> bool:
     return bool(PLACEHOLDER_RE.search(text))
 
 
+def lean_noncomment_lines(text: str) -> list[tuple[int, str]]:
+    lines: list[tuple[int, str]] = []
+    for lineno, raw in enumerate(text.splitlines(), start=1):
+        stripped = raw.lstrip()
+        if stripped.startswith("--"):
+            continue
+        lines.append((lineno, raw))
+    return lines
+
+
+def assert_proved_file_contract(path: Path, *, label: str) -> None:
+    if not path.exists():
+        raise RuntimeError(f"{label} missing: {path}")
+    text = path.read_text(encoding="utf-8")
+    violations: list[str] = []
+    for lineno, line in lean_noncomment_lines(text):
+        if SORRY_RE.search(line):
+            violations.append(f"line {lineno}: contains `sorry`")
+        if AXIOM_RE.search(line):
+            violations.append(f"line {lineno}: contains `axiom`")
+    if violations:
+        joined = "\n".join(f"- {v}" for v in violations[:12])
+        raise RuntimeError(
+            f"{label} must contain proved declarations only (no sorry/axiom).\n"
+            f"{joined}"
+        )
+
+
 def markdown_table_rows(text: str) -> list[list[str]]:
     rows: list[list[str]] = []
     for raw in text.splitlines():
@@ -1047,10 +1077,16 @@ def stage_lean_commit(
     )
     write_if_missing(ctx.problem_dir / "Telemetry.jsonl", "", force=False)
 
+    spec_path = ctx.problem_dir / "Spec.lean"
+    cache_path = ctx.problem_dir / "Cache.lean"
+    sketch_path = ctx.problem_dir / "Sketch.lean"
+    assert_proved_file_contract(spec_path, label="Spec.lean")
+    assert_proved_file_contract(cache_path, label="Cache.lean")
+
     # Lean Commit stage: files must compile before metadata/artifact updates.
-    run_checked(["lake", "env", "lean", str(ctx.problem_dir / "Spec.lean")], ctx.repo_root)
-    run_checked(["lake", "env", "lean", str(ctx.problem_dir / "Cache.lean")], ctx.repo_root)
-    run_checked(["lake", "env", "lean", str(ctx.problem_dir / "Sketch.lean")], ctx.repo_root)
+    run_checked(["lake", "env", "lean", str(spec_path)], ctx.repo_root)
+    run_checked(["lake", "env", "lean", str(cache_path)], ctx.repo_root)
+    run_checked(["lake", "env", "lean", str(sketch_path)], ctx.repo_root)
 
     sync_taxonomy_aliases(ctx, domain_profiles)
 
@@ -1114,6 +1150,8 @@ def stage_apply_replan(
     sketch_path = ctx.problem_dir / "Sketch.lean"
     spec_path = ctx.problem_dir / "Spec.lean"
     cache_path = ctx.problem_dir / "Cache.lean"
+    assert_proved_file_contract(spec_path, label="Spec.lean")
+    assert_proved_file_contract(cache_path, label="Cache.lean")
 
     added_card_ids = append_task_cards(
         tasks_path,
@@ -1171,9 +1209,14 @@ def stage_proof_scope(ctx: ProblemContext, *, domain_profiles: dict[str, DomainP
         )
 
     # Proof scope stage: verify core Lean files compile before retrieval/proving loops.
-    run_checked(["lake", "env", "lean", str(ctx.problem_dir / "Spec.lean")], ctx.repo_root)
-    run_checked(["lake", "env", "lean", str(ctx.problem_dir / "Cache.lean")], ctx.repo_root)
-    run_checked(["lake", "env", "lean", str(ctx.problem_dir / "Sketch.lean")], ctx.repo_root)
+    spec_path = ctx.problem_dir / "Spec.lean"
+    cache_path = ctx.problem_dir / "Cache.lean"
+    sketch_path = ctx.problem_dir / "Sketch.lean"
+    assert_proved_file_contract(spec_path, label="Spec.lean")
+    assert_proved_file_contract(cache_path, label="Cache.lean")
+    run_checked(["lake", "env", "lean", str(spec_path)], ctx.repo_root)
+    run_checked(["lake", "env", "lean", str(cache_path)], ctx.repo_root)
+    run_checked(["lake", "env", "lean", str(sketch_path)], ctx.repo_root)
 
     active_domain = ctx.domains[0]
     profile = domain_profiles.get(active_domain)
