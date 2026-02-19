@@ -1067,6 +1067,8 @@ def run_blocking_gates(repo_root: Path) -> None:
         ["tools/ci/check_placeholder_policy.sh"],
         ["tools/ci/check_layer_imports.sh"],
         ["python3", "tools/ci/check_meta_index_graph_contract.py"],
+        ["tools/ci/check_graph_ui_sync.sh"],
+        ["tools/ci/check_graph_ui_source_sync.sh"],
         ["python3", "tools/docs/validate_ssot.py"],
         ["python3", "tools/docs/sync_docs.py", "--check"],
     ]

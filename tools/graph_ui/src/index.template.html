@@ -1,0 +1,513 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MLTheory Graph Explorer</title>
+  <style>
+    :root {
+      --bg-a: #f6f3e8;
+      --bg-b: #dbe7da;
+      --panel: #fffdf7;
+      --ink: #14211a;
+      --muted: #4f6356;
+      --stroke: #c6d4c5;
+      --accent: #0f8b6f;
+      --concept: #2f8f46;
+      --module: #1d5f8a;
+      --decl: #cb6a1c;
+      --spine: #b83b22;
+      --imports: #1f7a8c;
+      --uses-type: #2a9d8f;
+      --uses-value: #d1495b;
+      --decl-in-module: #52796f;
+      --binds: #8c5a3c;
+      --alias-of: #6c757d;
+      --used-recently: #e09f3e;
+      --pin: #531253;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Sora", "Space Grotesk", "Avenir Next", "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: radial-gradient(circle at 15% 15%, #ffffff 0%, var(--bg-a) 43%, var(--bg-b) 100%);
+    }
+
+    header {
+      padding: 14px 20px 12px;
+      border-bottom: 1px solid #cedace;
+      background: linear-gradient(110deg, rgba(255, 255, 255, 0.86), rgba(248, 252, 246, 0.8));
+      backdrop-filter: blur(3px);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 24px;
+      letter-spacing: 0.4px;
+    }
+
+    .subtitle {
+      margin: 6px 0 10px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 10px;
+      align-items: start;
+      font-size: 12px;
+    }
+
+    .block {
+      border: 1px solid #d7e0d3;
+      border-radius: 11px;
+      background: #ffffffdd;
+      padding: 7px 8px;
+      min-height: 0;
+    }
+
+    .title {
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: #30463a;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    label {
+      display: block;
+      margin: 3px 0;
+      white-space: normal;
+    }
+
+    input[type="text"],
+    select,
+    button {
+      width: 100%;
+      border: 1px solid #c5d2c3;
+      border-radius: 8px;
+      background: #fff;
+      padding: 6px 8px;
+      font-size: 12px;
+      color: var(--ink);
+      font-family: inherit;
+    }
+
+    button {
+      cursor: pointer;
+      font-weight: 600;
+      border-color: #7cb8a5;
+      color: #0c6d5a;
+      margin-top: 4px;
+    }
+
+    .tiny {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 3px;
+      display: block;
+    }
+
+    main {
+      display: grid;
+      grid-template-columns: 430px 1fr;
+      gap: 12px;
+      padding: 12px;
+      min-height: calc(100vh - 235px);
+    }
+
+    .panel {
+      border: 1px solid var(--stroke);
+      background: var(--panel);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(21, 37, 27, 0.08);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .panel h2 {
+      margin: 0;
+      padding: 11px 12px;
+      font-size: 14px;
+      border-bottom: 1px solid #e0e8de;
+      background: linear-gradient(180deg, #f9fcf5, #f3f8ef);
+    }
+
+    .stats {
+      padding: 10px 12px;
+      border-bottom: 1px solid #e3ebe1;
+      font-size: 12px;
+      color: #243328;
+      line-height: 1.5;
+      background: #f6fbf3;
+    }
+
+    .stats code { font-family: "JetBrains Mono", monospace; }
+
+    .node-list {
+      max-height: 29vh;
+      overflow: auto;
+      padding: 8px;
+      border-bottom: 1px solid #e4ece2;
+      background: #fff;
+    }
+
+    .node-item {
+      border: 1px solid #d8e3d6;
+      border-radius: 10px;
+      background: #fff;
+      padding: 7px 8px;
+      margin-bottom: 7px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .node-item:hover { border-color: #9ab7a4; }
+
+    .node-item.active {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent) inset;
+      background: #f2fbf7;
+    }
+
+    .line2 {
+      margin-top: 4px;
+      color: var(--muted);
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      border: 1px solid #d2ded2;
+      border-radius: 999px;
+      padding: 1px 6px;
+      font-size: 10px;
+      font-weight: 600;
+      background: #f8fbf7;
+      color: #355042;
+    }
+
+    .details {
+      padding: 10px 12px;
+      font-size: 12px;
+      line-height: 1.5;
+      overflow: auto;
+      flex: 1;
+    }
+
+    .neighbors {
+      margin-top: 10px;
+      border: 1px solid #dbe6d9;
+      border-radius: 9px;
+      overflow: hidden;
+      background: #fcfefb;
+    }
+
+    .neighbors h3 {
+      margin: 0;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.45px;
+      padding: 6px 8px;
+      background: #f1f7ef;
+      border-bottom: 1px solid #dfebdd;
+    }
+
+    .neighbor-row {
+      padding: 6px 8px;
+      border-bottom: 1px solid #edf3eb;
+      cursor: pointer;
+    }
+
+    .neighbor-row:hover { background: #f2f8f2; }
+    .neighbor-row:last-child { border-bottom: 0; }
+
+    #canvas-wrap {
+      position: relative;
+      border: 1px solid var(--stroke);
+      border-radius: 14px;
+      overflow: hidden;
+      background: radial-gradient(circle at 70% 30%, #ffffff 0%, #f6fbf2 38%, #e8efe4 100%);
+      box-shadow: 0 8px 24px rgba(21, 37, 27, 0.08);
+    }
+
+    #overlay {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 2;
+      border: 1px solid #d4dfd2;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 6px 9px;
+      font-size: 12px;
+      color: #294034;
+      line-height: 1.35;
+      min-width: 220px;
+      max-width: min(52vw, 360px);
+    }
+
+    #legend {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      z-index: 2;
+      border: 1px solid #d4dfd2;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.92);
+      padding: 7px 9px;
+      font-size: 11px;
+      color: #31483a;
+      max-width: min(38vw, 280px);
+    }
+
+    #legend .row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin: 3px 0;
+      white-space: nowrap;
+    }
+
+    .sw {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      flex: 0 0 auto;
+    }
+
+    .ln {
+      width: 16px;
+      height: 0;
+      border-top: 3px solid #aaa;
+      flex: 0 0 auto;
+    }
+
+    svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      touch-action: none;
+      cursor: grab;
+      user-select: none;
+    }
+
+    svg.panning { cursor: grabbing; }
+
+    .node-label {
+      font-size: 12px;
+      fill: #1b2e24;
+      pointer-events: none;
+      paint-order: stroke;
+      stroke: #ffffff;
+      stroke-width: 3px;
+      stroke-linejoin: round;
+      font-weight: 600;
+    }
+
+    .edge {
+      stroke-linecap: round;
+      cursor: pointer;
+    }
+
+    @media (max-width: 1420px) {
+      .controls { grid-template-columns: repeat(4, minmax(200px, 1fr)); }
+      main { grid-template-columns: 380px 1fr; }
+    }
+
+    @media (max-width: 1220px) {
+      .controls { grid-template-columns: repeat(3, minmax(200px, 1fr)); }
+      main { grid-template-columns: 1fr; }
+      .node-list { max-height: 26vh; }
+      #canvas-wrap { min-height: 62vh; }
+      #legend {
+        max-width: 200px;
+        top: auto;
+        bottom: 10px;
+      }
+    }
+
+    @media (max-width: 860px) {
+      .controls { grid-template-columns: repeat(2, minmax(200px, 1fr)); }
+      #overlay { max-width: min(72vw, 360px); }
+    }
+
+    @media (max-width: 640px) {
+      .controls { grid-template-columns: 1fr; }
+      #canvas-wrap {
+        display: flex;
+        flex-direction: column;
+      }
+      #overlay,
+      #legend {
+        position: static;
+        margin: 8px;
+        max-width: none;
+      }
+      svg { min-height: 56vh; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>MLTheory Graph Explorer</h1>
+    <p class="subtitle">
+      Default view is Module Map. Use wheel to zoom, drag background to pan, click a node to inspect details,
+      and double click a node to pin/unpin it.
+    </p>
+
+    <div class="controls">
+      <div class="block">
+        <div class="title">View</div>
+        <label>Graph view
+          <select id="viewMode">
+            <option value="module-map" selected>module map</option>
+            <option value="decl-neighborhood">decl neighborhood</option>
+            <option value="concept-browser">concept browser</option>
+          </select>
+        </label>
+        <label>Package scope
+          <select id="scope">
+            <option value="all">all</option>
+            <option value="mltheory">MLTheory only</option>
+            <option value="mathlib-slice">mathlib slice only</option>
+          </select>
+        </label>
+        <label>Layer
+          <select id="layerFilter">
+            <option value="all">all</option>
+            <option value="core">core</option>
+            <option value="methods">methods</option>
+            <option value="applications">applications</option>
+            <option value="books">books</option>
+            <option value="mathlib">mathlib</option>
+            <option value="other">other</option>
+          </select>
+        </label>
+        <label>Domain
+          <select id="domainFilter">
+            <option value="all">all domains</option>
+          </select>
+        </label>
+        <label>Neighborhood depth
+          <select id="neighborhoodDepth">
+            <option value="1" selected>1-hop</option>
+            <option value="2">2-hop</option>
+            <option value="3">3-hop</option>
+          </select>
+        </label>
+        <label>Layout
+          <select id="layoutMode">
+            <option value="layered" selected>layered</option>
+            <option value="radial">radial</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="block">
+        <div class="title">Nodes</div>
+        <label><input id="kindModule" type="checkbox" checked /> modules</label>
+        <label><input id="kindDecl" type="checkbox" /> declarations</label>
+        <label><input id="kindConcept" type="checkbox" /> concepts</label>
+        <label><input id="spineOnly" type="checkbox" /> spine only</label>
+      </div>
+
+      <div class="block">
+        <div class="title">Edges</div>
+        <label><input id="edge_imports" type="checkbox" checked /> imports</label>
+        <label><input id="edge_uses_type" type="checkbox" /> uses_type</label>
+        <label><input id="edge_uses_value" type="checkbox" /> uses_value</label>
+        <label><input id="edge_decl_in_module" type="checkbox" /> decl_in_module</label>
+        <label><input id="edge_binds" type="checkbox" /> binds</label>
+        <label><input id="edge_alias_of" type="checkbox" /> alias_of</label>
+        <label><input id="edge_used_recently" type="checkbox" /> used_recently</label>
+        <label>Max edges on canvas
+          <select id="maxEdges">
+            <option value="1500">1500</option>
+            <option value="3000">3000</option>
+            <option value="5000" selected>5000</option>
+            <option value="8000">8000</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="block">
+        <div class="title">Decl Noise</div>
+        <label><input id="showGenerated" type="checkbox" /> show generated decls</label>
+        <label><input id="expandMathlib" type="checkbox" /> expand mathlib modules</label>
+        <label>Max nodes on canvas
+          <select id="maxNodes">
+            <option value="250">250</option>
+            <option value="350">350</option>
+            <option value="500" selected>500</option>
+            <option value="800">800</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="block">
+        <div class="title">Search & Locate</div>
+        <input id="search" type="text" placeholder="id/title/module/path" />
+        <button id="locateBtn">locate first match</button>
+        <button id="clearSearch">clear search</button>
+        <span id="sourceHint" class="tiny">source: loading...</span>
+      </div>
+
+      <div class="block">
+        <div class="title">Actions</div>
+        <button id="resetMap">reset module map</button>
+        <button id="fitView">fit visible</button>
+        <button id="clearPins">clear all pins</button>
+        <button id="saveLayout">save layout</button>
+        <button id="loadLayout">load layout</button>
+        <button id="clearLayout">clear saved layout</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="panel">
+      <h2>Inspector</h2>
+      <div id="statsBox" class="stats">loading…</div>
+      <div id="searchResults" class="node-list"></div>
+      <div id="details" class="details">Please select a node or edge.</div>
+    </section>
+
+    <section id="canvas-wrap">
+      <div id="overlay">loading…</div>
+      <div id="legend">
+        <div class="row"><strong>Node Kind</strong></div>
+        <div class="row"><span class="sw" style="background: var(--module)"></span> module</div>
+        <div class="row"><span class="sw" style="background: var(--decl)"></span> declaration</div>
+        <div class="row"><span class="sw" style="background: var(--concept)"></span> concept</div>
+        <div class="row"><span class="sw" style="background: var(--spine)"></span> spine-highlight</div>
+        <div class="row"><span class="sw" style="background: var(--pin)"></span> pinned node</div>
+        <div class="row" style="margin-top: 7px;"><strong>Edge Type</strong></div>
+        <div class="row"><span class="ln" style="border-top-color: var(--imports)"></span> imports</div>
+        <div class="row"><span class="ln" style="border-top-color: var(--uses-type)"></span> uses_type</div>
+        <div class="row"><span class="ln" style="border-top-color: var(--uses-value)"></span> uses_value</div>
+        <div class="row"><span class="ln" style="border-top-color: var(--decl-in-module)"></span> decl_in_module</div>
+        <div class="row"><span class="ln" style="border-top-color: var(--binds)"></span> binds</div>
+        <div class="row"><span class="ln" style="border-top-color: var(--alias-of)"></span> alias_of</div>
+        <div class="row"><span class="ln" style="border-top-color: var(--used-recently)"></span> used_recently</div>
+      </div>
+      <svg id="graph" viewBox="0 0 3200 1900" preserveAspectRatio="xMidYMid meet"></svg>
+    </section>
+  </main>
+
+  <script src="./_auto/subgraph.js"></script>
+  <script>
+__GRAPH_EXPLORER_APP__
+  </script>
+</body>
+</html>

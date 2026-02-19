@@ -38,3 +38,6 @@ jobs:
 
       - name: Check Graph UI mirror sync
         run: tools/ci/check_graph_ui_sync.sh
+
+      - name: Check Graph UI source sync
+        run: tools/ci/check_graph_ui_source_sync.sh

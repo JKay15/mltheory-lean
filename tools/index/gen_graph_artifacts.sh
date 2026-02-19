@@ -66,7 +66,7 @@ cp "${ROOT_DIR}/docs/_auto/subgraph.json" "${GRAPH_UI_PUBLIC_AUTO}/subgraph.json
 cp "${ROOT_DIR}/docs/_auto/subgraph.js" "${GRAPH_UI_PUBLIC_AUTO}/subgraph.js"
 cp "${ROOT_DIR}/docs/_auto/subgraph.json" "${GRAPH_UI_DIST_AUTO}/subgraph.json"
 cp "${ROOT_DIR}/docs/_auto/subgraph.js" "${GRAPH_UI_DIST_AUTO}/subgraph.js"
-cp "${ROOT_DIR}/docs/GraphExplorer.html" "${GRAPH_UI_DIST_DIR}/index.html"
+python3 tools/graph_ui/build_graph_ui.py --write
 
 cp "${ROOT_DIR}/artifacts/graphs/decl_graph.json" "${GRAPH_UI_PUBLIC_AUTO}/decl_graph.json"
 cp "${ROOT_DIR}/artifacts/graphs/decl_graph.json" "${GRAPH_UI_DIST_AUTO}/decl_graph.json"
